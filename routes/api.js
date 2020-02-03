@@ -1,10 +1,10 @@
 var express = require("express");
-var submitRouter = require("./submit");
+var uploadRouter = require("./upload");
 var authRouter = require("./auth");
 
 var app = express();
 
 app.use("/auth/", authRouter);
-app.use("/submit/", submitRouter);
+app.use("/upload/", uploadRouter);
 
 module.exports = app;

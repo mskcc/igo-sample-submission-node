@@ -1,49 +1,63 @@
-exports.successResponse = function (res, msg) {
+const { loggers } = require("winston");
+
+const logger = loggers.get("logger");
+
+exports.successResponse = function(res, msg) {
 	var data = {
 		status: 1,
 		message: msg
 	};
+	// console.log(data);
 	return res.status(200).json(data);
 };
 
-exports.successResponseWithData = function (res, msg, data) {
+exports.successResponseWithData = function(res, msg, data) {
+	// console.log("test");
 	var resData = {
 		status: 1,
 		message: msg,
 		data: data
 	};
+	// console.log(data);
 	return res.status(200).json(resData);
 };
 
-exports.ErrorResponse = function (res, msg) {
+exports.ErrorResponse = function(res, msg) {
 	var data = {
 		status: 0,
-		message: msg,
+		message: msg
 	};
+	logger.log("error", msg);
+	// console.log(data);
 	return res.status(500).json(data);
 };
 
-exports.notFoundResponse = function (res, msg) {
+exports.notFoundResponse = function(res, msg) {
 	var data = {
-		status: 404,
-		message: msg,
+		status: 0,
+		message: msg
 	};
+	logger.log("error", msg);
+	// console.log(data);
 	return res.status(404).json(data);
 };
 
-exports.validationErrorWithData = function (res, msg, data) {
+exports.validationErrorWithData = function(res, msg, data) {
 	var resData = {
-		status: 400,
+		status: 0,
 		message: msg,
 		data: data
 	};
+	logger.log("error", msg + data);
+	// console.log(resData);
 	return res.status(400).json(resData);
 };
 
-exports.unauthorizedResponse = function (res, msg) {
+exports.unauthorizedResponse = function(res, msg) {
 	var data = {
-		status: 401,
-		message: msg,
+		status: 0,
+		message: msg
 	};
+	// console.log(data);
 	return res.status(401).json(data);
 };

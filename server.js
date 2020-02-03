@@ -1,9 +1,25 @@
 const http = require("http");
 const express = require("express");
 var morgan = require("morgan");
-var morganDebug = require("morgan-debug");
 var path = require("path");
+var cors = require("cors");
 require("dotenv").config();
+
+const winston = require("winston");
+
+const { createLogger, format, transports, loggers } = require("winston");
+
+const { combine, timestamp, label, prettyPrint } = format;
+
+loggers.add("logger", {
+    level: "info",
+    format: combine(winston.format.json(), timestamp(), prettyPrint()),
+    defaultMeta: { service: "user-service" },
+    transports: [
+        new winston.transports.File({ filename: "error.log", level: "error" }),
+        new winston.transports.File({ filename: "combined.log" })
+    ]
+});
 
 const bodyparser = require("body-parser");
 // DB connection
@@ -28,9 +44,9 @@ var db = mongoose.connection;
 var port = 0;
 const hostname = "127.0.0.1";
 if (process.env.NODE_ENV !== "test") {
-    port = 3000;
-} else {
     port = 3002;
+} else {
+    port = 3003;
 }
 
 var publicDir = path.join(__dirname, "public");
@@ -42,9 +58,13 @@ process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 // middleware
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
+//To allow cross-origin requests
+app.use(cors());
 
 if (process.env.NODE_ENV !== "test") {
-    app.use(morgan("combined"));
+    app.use(
+        morgan(":method :url :status :res[content-length] - :response-time ms")
+    );
 }
 
 // ROUTES
