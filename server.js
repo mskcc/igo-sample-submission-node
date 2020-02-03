@@ -56,8 +56,9 @@ var app = express();
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 // middleware
+
+app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({ extended: false }));
 //To allow cross-origin requests
 app.use(cors());
 

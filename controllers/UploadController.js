@@ -93,7 +93,10 @@ exports.materialsAndSpecies = [
                         return apiResponse.successResponseWithData(
                             res,
                             "Operation success",
-                            { materials: materialsResult, species: speciesResult }
+                            {
+                                materials: materialsResult,
+                                species: speciesResult
+                            }
                         );
                     } else {
                         return apiResponse.ErrorResponse(
@@ -188,6 +191,89 @@ exports.picklist = [
                 });
             }
         } catch (err) {
+            return apiResponse.ErrorResponse(res, err);
+        }
+    }
+];
+
+exports.grid = [
+    // auth,
+    body("application")
+        .isLength({ min: 1 })
+        .trim()
+        .withMessage("Application must be present."),
+    body("material")
+        .isLength({ min: 1 })
+        .trim()
+        .withMessage("Material must be present."),
+    body("serviceId")
+        .isLength({ min: 1 })
+        .trim()
+        .withMessage("ServiceId must be present."),
+    body("numberOfSamples")
+        .isLength({ min: 1 })
+        .trim()
+        .withMessage("NumberOfSamples must be present."),
+    body("species")
+        .isLength({ min: 1 })
+        .trim()
+        .withMessage("Species must be present."),
+    body("container")
+        .isLength({ min: 1 })
+        .trim()
+        .withMessage("Container must be present."),
+    body("patientIdType")
+        .isLength({ min: 1 })
+        .trim()
+        .withMessage("PatientIdType must be present."),
+    body("groupingChecked")
+        .isLength({ min: 1 })
+        .trim()
+        .withMessage("GroupingChecked must be present."),
+    body("altServiceId")
+        .isLength({ min: 1 })
+        .trim()
+        .withMessage("AltServiceId must be present."),
+    sanitizeBody("*").escape(),
+    function(req, res) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return apiResponse.validationErrorWithData(
+                    res,
+                    "Validation error.",
+                    errors.array()
+                );
+            } else {
+                let formValues = req.body;
+                // console.log(formValues)
+
+                util.getColumns(
+                    formValues.material,
+                    formValues.application
+                ).then(columnsResult => {
+                    if (columnsResult) {
+                        let columns = util.generateGrid(
+                            columnsResult,
+                            formValues
+                        );
+                        return apiResponse.successResponseWithData(
+                            res,
+                            "Operation success",
+                            {
+                                columns: columns
+                            }
+                        );
+                    } else {
+                        return apiResponse.ErrorResponse(
+                            res,
+                            `Could not retrieve columns for '${material}' and '${application}'.`
+                        );
+                    }
+                });
+            }
+        } catch (err) {
+            console.log(error);
             return apiResponse.ErrorResponse(res, err);
         }
     }
