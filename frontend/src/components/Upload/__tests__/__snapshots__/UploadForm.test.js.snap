@@ -1,0 +1,801 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Render UploadForm render UploadForm correctly 1`] = `
+<div
+  className="MuiPaper-root MuiPaper-elevation1 UploadForm-container-1 MuiPaper-rounded"
+>
+  <form
+    className="UploadForm-form-2"
+    id="upload-form"
+    onSubmit={[Function]}
+  >
+    <div
+      className="Dropdown-textField-35"
+    >
+      <div
+        aria-expanded={false}
+        aria-haspopup="listbox"
+        aria-labelledby="downshift-0-label"
+        aria-owns={null}
+        role="combobox"
+      >
+        <div
+          className="MuiFormControl-root MuiFormControl-fullWidth"
+        >
+          <label
+            className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+            data-shrink={false}
+            htmlFor="downshift-0-input"
+            id="downshift-0-label"
+          >
+            Missing translationId: upload.form.material_label for language: \${ languageCode }
+          </label>
+          <div
+            aria-activedescendant={null}
+            aria-autocomplete="list"
+            aria-controls={null}
+            aria-labelledby="downshift-0-label"
+            className="MuiInputBase-root MuiInput-root MuiInput-underline Dropdown-input-34 MuiInputBase-formControl MuiInput-formControl MuiInputBase-adornedEnd"
+            onClick={[Function]}
+          >
+            <input
+              aria-invalid={false}
+              autoComplete="off"
+              autoFocus={true}
+              className="MuiInputBase-input MuiInput-input MuiInputBase-inputAdornedEnd"
+              disabled={false}
+              id="material"
+              onAnimationStart={[Function]}
+              onBlur={[Function]}
+              onChange={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              required={false}
+              type="text"
+              value=""
+            />
+            <div
+              className="MuiInputAdornment-root MuiInputAdornment-positionEnd"
+            >
+              <button
+                aria-label="Clear selection"
+                className="MuiButtonBase-root MuiIconButton-root"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                tabIndex={0}
+                type="button"
+              >
+                <span
+                  className="MuiIconButton-label"
+                >
+                  <svg
+                    aria-hidden="true"
+                    className="MuiSvgIcon-root"
+                    focusable="false"
+                    role="presentation"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                    />
+                    <path
+                      d="M0 0h24v24H0z"
+                      fill="none"
+                    />
+                  </svg>
+                </span>
+              </button>
+              <button
+                aria-label="Toggle menu open"
+                className="MuiButtonBase-root MuiIconButton-root"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                tabIndex={0}
+                type="button"
+              >
+                <span
+                  className="MuiIconButton-label"
+                >
+                  <svg
+                    aria-hidden="true"
+                    className="MuiSvgIcon-root"
+                    focusable="false"
+                    role="presentation"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M7 10l5 5 5-5z"
+                    />
+                    <path
+                      d="M0 0h24v24H0z"
+                      fill="none"
+                    />
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+          <p
+            className="MuiFormHelperText-root"
+          >
+            Missing translationId: upload.form.material_helptext for language: \${ languageCode } (1 choices)
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      className="Dropdown-textField-35"
+    >
+      <div
+        aria-expanded={false}
+        aria-haspopup="listbox"
+        aria-labelledby="downshift-1-label"
+        aria-owns={null}
+        role="combobox"
+      >
+        <div
+          className="MuiFormControl-root MuiFormControl-fullWidth"
+        >
+          <label
+            className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+            data-shrink={false}
+            htmlFor="downshift-1-input"
+            id="downshift-1-label"
+          >
+            Missing translationId: upload.form.application_label for language: \${ languageCode }
+          </label>
+          <div
+            aria-activedescendant={null}
+            aria-autocomplete="list"
+            aria-controls={null}
+            aria-labelledby="downshift-1-label"
+            className="MuiInputBase-root MuiInput-root MuiInput-underline Dropdown-input-34 MuiInputBase-formControl MuiInput-formControl MuiInputBase-adornedEnd"
+            onClick={[Function]}
+          >
+            <input
+              aria-invalid={false}
+              autoComplete="off"
+              className="MuiInputBase-input MuiInput-input MuiInputBase-inputAdornedEnd"
+              disabled={false}
+              id="application"
+              onAnimationStart={[Function]}
+              onBlur={[Function]}
+              onChange={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              required={false}
+              type="text"
+              value=""
+            />
+            <div
+              className="MuiInputAdornment-root MuiInputAdornment-positionEnd"
+            >
+              <button
+                aria-label="Clear selection"
+                className="MuiButtonBase-root MuiIconButton-root"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                tabIndex={0}
+                type="button"
+              >
+                <span
+                  className="MuiIconButton-label"
+                >
+                  <svg
+                    aria-hidden="true"
+                    className="MuiSvgIcon-root"
+                    focusable="false"
+                    role="presentation"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                    />
+                    <path
+                      d="M0 0h24v24H0z"
+                      fill="none"
+                    />
+                  </svg>
+                </span>
+              </button>
+              <button
+                aria-label="Toggle menu open"
+                className="MuiButtonBase-root MuiIconButton-root"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                tabIndex={0}
+                type="button"
+              >
+                <span
+                  className="MuiIconButton-label"
+                >
+                  <svg
+                    aria-hidden="true"
+                    className="MuiSvgIcon-root"
+                    focusable="false"
+                    role="presentation"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M7 10l5 5 5-5z"
+                    />
+                    <path
+                      d="M0 0h24v24H0z"
+                      fill="none"
+                    />
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+          <p
+            className="MuiFormHelperText-root"
+          >
+            Missing translationId: upload.form.application_helptext for language: \${ languageCode } (1 choices)
+          </p>
+        </div>
+      </div>
+    </div>
+    <fieldset
+      className="MuiFormControl-root"
+    >
+      <div
+        className="Dropdown-textField-35"
+      >
+        <div
+          aria-expanded={false}
+          aria-haspopup="listbox"
+          aria-labelledby="downshift-2-label"
+          aria-owns={null}
+          role="combobox"
+        >
+          <div
+            className="MuiFormControl-root MuiFormControl-fullWidth"
+          >
+            <label
+              className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+              data-shrink={false}
+              htmlFor="downshift-2-input"
+              id="downshift-2-label"
+            >
+              Missing translationId: upload.form.species_label for language: \${ languageCode }
+            </label>
+            <div
+              aria-activedescendant={null}
+              aria-autocomplete="list"
+              aria-controls={null}
+              aria-labelledby="downshift-2-label"
+              className="MuiInputBase-root MuiInput-root MuiInput-underline Dropdown-input-34 MuiInputBase-formControl MuiInput-formControl MuiInputBase-adornedEnd"
+              onClick={[Function]}
+            >
+              <input
+                aria-invalid={false}
+                autoComplete="off"
+                className="MuiInputBase-input MuiInput-input MuiInputBase-inputAdornedEnd"
+                disabled={false}
+                id="species"
+                onAnimationStart={[Function]}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                required={false}
+                type="text"
+                value=""
+              />
+              <div
+                className="MuiInputAdornment-root MuiInputAdornment-positionEnd"
+              >
+                <button
+                  aria-label="Clear selection"
+                  className="MuiButtonBase-root MuiIconButton-root"
+                  disabled={false}
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onDragLeave={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseLeave={[Function]}
+                  onMouseUp={[Function]}
+                  onTouchEnd={[Function]}
+                  onTouchMove={[Function]}
+                  onTouchStart={[Function]}
+                  tabIndex={0}
+                  type="button"
+                >
+                  <span
+                    className="MuiIconButton-label"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      className="MuiSvgIcon-root"
+                      focusable="false"
+                      role="presentation"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                      />
+                      <path
+                        d="M0 0h24v24H0z"
+                        fill="none"
+                      />
+                    </svg>
+                  </span>
+                </button>
+                <button
+                  aria-label="Toggle menu open"
+                  className="MuiButtonBase-root MuiIconButton-root"
+                  disabled={false}
+                  onBlur={[Function]}
+                  onClick={[Function]}
+                  onDragLeave={[Function]}
+                  onFocus={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseLeave={[Function]}
+                  onMouseUp={[Function]}
+                  onTouchEnd={[Function]}
+                  onTouchMove={[Function]}
+                  onTouchStart={[Function]}
+                  tabIndex={0}
+                  type="button"
+                >
+                  <span
+                    className="MuiIconButton-label"
+                  >
+                    <svg
+                      aria-hidden="true"
+                      className="MuiSvgIcon-root"
+                      focusable="false"
+                      role="presentation"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M7 10l5 5 5-5z"
+                      />
+                      <path
+                        d="M0 0h24v24H0z"
+                        fill="none"
+                      />
+                    </svg>
+                  </span>
+                </button>
+              </div>
+            </div>
+            <p
+              className="MuiFormHelperText-root"
+            >
+              Missing translationId: upload.form.species_helptext for language: \${ languageCode } (1 choices)
+            </p>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+    <div
+      className="Dropdown-textField-35"
+    >
+      <div
+        aria-expanded={false}
+        aria-haspopup="listbox"
+        aria-labelledby="downshift-3-label"
+        aria-owns={null}
+        role="combobox"
+      >
+        <div
+          className="MuiFormControl-root MuiFormControl-fullWidth"
+        >
+          <label
+            className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+            data-shrink={false}
+            htmlFor="downshift-3-input"
+            id="downshift-3-label"
+          >
+            Missing translationId: upload.form.container_label for language: \${ languageCode }
+          </label>
+          <div
+            aria-activedescendant={null}
+            aria-autocomplete="list"
+            aria-controls={null}
+            aria-labelledby="downshift-3-label"
+            className="MuiInputBase-root MuiInput-root MuiInput-underline Dropdown-input-34 MuiInputBase-formControl MuiInput-formControl MuiInputBase-adornedEnd"
+            onClick={[Function]}
+          >
+            <input
+              aria-invalid={false}
+              autoComplete="off"
+              className="MuiInputBase-input MuiInput-input MuiInputBase-inputAdornedEnd"
+              disabled={false}
+              id="container"
+              onAnimationStart={[Function]}
+              onBlur={[Function]}
+              onChange={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              required={false}
+              type="text"
+              value=""
+            />
+            <div
+              className="MuiInputAdornment-root MuiInputAdornment-positionEnd"
+            >
+              <button
+                aria-label="Clear selection"
+                className="MuiButtonBase-root MuiIconButton-root"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                tabIndex={0}
+                type="button"
+              >
+                <span
+                  className="MuiIconButton-label"
+                >
+                  <svg
+                    aria-hidden="true"
+                    className="MuiSvgIcon-root"
+                    focusable="false"
+                    role="presentation"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                    />
+                    <path
+                      d="M0 0h24v24H0z"
+                      fill="none"
+                    />
+                  </svg>
+                </span>
+              </button>
+              <button
+                aria-label="Toggle menu open"
+                className="MuiButtonBase-root MuiIconButton-root"
+                disabled={false}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onDragLeave={[Function]}
+                onFocus={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                onMouseDown={[Function]}
+                onMouseLeave={[Function]}
+                onMouseUp={[Function]}
+                onTouchEnd={[Function]}
+                onTouchMove={[Function]}
+                onTouchStart={[Function]}
+                tabIndex={0}
+                type="button"
+              >
+                <span
+                  className="MuiIconButton-label"
+                >
+                  <svg
+                    aria-hidden="true"
+                    className="MuiSvgIcon-root"
+                    focusable="false"
+                    role="presentation"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M7 10l5 5 5-5z"
+                    />
+                    <path
+                      d="M0 0h24v24H0z"
+                      fill="none"
+                    />
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+          <p
+            className="MuiFormHelperText-root"
+          >
+            Missing translationId: upload.form.container_helptext for language: \${ languageCode } (2 choices)
+          </p>
+        </div>
+      </div>
+    </div>
+    <div
+      className="MuiFormControl-root MuiTextField-root Input-textField-131"
+    >
+      <label
+        className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+        data-shrink={false}
+        htmlFor="number_of_samples"
+        id="number_of_samples-label"
+      >
+        Missing translationId: upload.form.number_of_samples_label for language: \${ languageCode }
+      </label>
+      <div
+        className="MuiInputBase-root MuiInput-root MuiInput-underline Input-input-132 MuiInputBase-formControl MuiInput-formControl"
+        onClick={[Function]}
+      >
+        <input
+          aria-describedby="number_of_samples-helper-text"
+          aria-invalid={false}
+          autoFocus={false}
+          className="MuiInputBase-input MuiInput-input"
+          disabled={false}
+          id="number_of_samples"
+          min={0}
+          onAnimationStart={[Function]}
+          onBlur={[Function]}
+          onChange={[Function]}
+          onFocus={[Function]}
+          required={false}
+          type="number"
+          value=""
+        />
+      </div>
+      <p
+        className="MuiFormHelperText-root"
+        id="number_of_samples-helper-text"
+      >
+        Missing translationId: upload.form.number_of_samples_helptext for language: \${ languageCode }
+      </p>
+    </div>
+    <fieldset
+      className="MuiFormControl-root"
+    >
+      <div
+        className="MuiFormControl-root MuiTextField-root Input-textField-131"
+      >
+        <label
+          className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink"
+          data-shrink={true}
+          htmlFor="service_id"
+          id="service_id-label"
+        >
+          Missing translationId: upload.form.service_id_label for language: \${ languageCode }
+        </label>
+        <div
+          className="MuiInputBase-root MuiInput-root MuiInput-underline Input-input-132 MuiInputBase-formControl MuiInput-formControl MuiInputBase-adornedStart"
+          onClick={[Function]}
+        >
+          <div
+            className="MuiInputAdornment-root MuiInputAdornment-positionStart"
+          >
+            <p
+              className="MuiTypography-root MuiTypography-body1 MuiTypography-colorTextSecondary"
+            >
+              IGO-
+            </p>
+          </div>
+          <input
+            aria-describedby="service_id-helper-text"
+            aria-invalid={false}
+            autoFocus={false}
+            className="MuiInputBase-input MuiInput-input MuiInputBase-inputAdornedStart"
+            disabled={false}
+            id="service_id"
+            onAnimationStart={[Function]}
+            onBlur={[Function]}
+            onChange={[Function]}
+            onFocus={[Function]}
+            required={false}
+            type="number"
+            value=""
+          />
+        </div>
+        <p
+          className="MuiFormHelperText-root"
+          id="service_id-helper-text"
+        >
+          Missing translationId: upload.form.service_id_helptext for language: \${ languageCode }
+        </p>
+      </div>
+      <div
+        className="CheckboxComponent-container-164"
+      >
+        <label
+          className="MuiFormControlLabel-root"
+        >
+          <span
+            aria-disabled={false}
+            className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-180 MuiCheckbox-root MuiCheckbox-colorSecondary MuiIconButton-colorSecondary"
+            fontSize="small"
+            onBlur={[Function]}
+            onDragLeave={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex={null}
+          >
+            <span
+              className="MuiIconButton-label"
+            >
+              <input
+                checked={false}
+                className="PrivateSwitchBase-input-183"
+                data-indeterminate={false}
+                disabled={false}
+                onChange={[Function]}
+                type="checkbox"
+                value="alt_service_id"
+              />
+              <svg
+                aria-hidden="true"
+                className="MuiSvgIcon-root"
+                focusable="false"
+                role="presentation"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+                />
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+              </svg>
+            </span>
+          </span>
+          <span
+            className="MuiTypography-root MuiFormControlLabel-label CheckboxComponent-label-165 MuiTypography-body1"
+          >
+            Missing translationId: upload.form.alt_service_id_label for language: \${ languageCode }
+          </span>
+        </label>
+        <div>
+          <div
+            className="MuiPaper-root MuiPaper-elevation1 MuiCard-root CheckboxComponent-card-166 MuiPaper-rounded"
+            style={
+              Object {
+                "opacity": 0,
+                "visibility": "hidden",
+              }
+            }
+          >
+            <div
+              className="MuiCardContent-root CheckboxComponent-content-167"
+            >
+              <p
+                className="MuiTypography-root MuiTypography-body1 MuiTypography-colorTextSecondary"
+              >
+                Missing translationId: upload.form.alt_service_id_helptext for language: \${ languageCode }
+                 
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+  <div>
+    <button
+      className="MuiButtonBase-root MuiButton-root MuiButton-contained Button-button-186 MuiButton-containedPrimary"
+      disabled={false}
+      form="upload-form"
+      onBlur={[Function]}
+      onDragLeave={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      tabIndex={0}
+      type="submit"
+    >
+      <span
+        className="MuiButton-label"
+      >
+        Missing translationId: upload.form_submit_label for language: \${ languageCode }
+      </span>
+    </button>
+    <div
+      className="Button-nothingToSubmit-189"
+      style={
+        Object {
+          "opacity": 0,
+          "visibility": "hidden",
+        }
+      }
+    >
+      Missing translationId: upload.form.nothing_to_change for language: \${ languageCode }
+    </div>
+    <button
+      className="MuiButtonBase-root MuiButton-root MuiButton-contained Button-button-186 MuiButton-containedSecondary"
+      disabled={false}
+      onBlur={[Function]}
+      onDragLeave={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      tabIndex={0}
+      type="submit"
+    >
+      <span
+        className="MuiButton-label"
+      >
+        Missing translationId: upload.form_clear_label for language: \${ languageCode }
+      </span>
+    </button>
+    <div
+      className="Button-nothingToSubmit-189"
+      style={
+        Object {
+          "opacity": 0,
+          "visibility": "hidden",
+        }
+      }
+    >
+      Missing translationId: upload.form.nothing_to_change for language: \${ languageCode }
+    </div>
+  </div>
+</div>
+`;

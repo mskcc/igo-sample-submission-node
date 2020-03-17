@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Render Message render Message correctly 1`] = `
+<div>
+  <div
+    className="MuiPaper-root MuiPaper-elevation1 Message-container-1 MuiPaper-rounded"
+  >
+    <p
+      className="MuiTypography-root MuiTypography-body1"
+    />
+  </div>
+</div>
+`;

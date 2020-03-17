@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Render Dropdown render Dropdown correctly 1`] = `
+<div
+  className="Dropdown-textField-2"
+>
+  <div
+    aria-expanded={false}
+    aria-haspopup="listbox"
+    aria-labelledby="downshift-0-label"
+    aria-owns={null}
+    role="combobox"
+  >
+    <div
+      className="MuiFormControl-root MuiFormControl-fullWidth"
+    >
+      <label
+        className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+        data-shrink={false}
+        htmlFor="downshift-0-input"
+        id="downshift-0-label"
+      >
+        Missing translationId: upload.form.test_me_label for language: \${ languageCode }
+      </label>
+      <div
+        aria-activedescendant={null}
+        aria-autocomplete="list"
+        aria-controls={null}
+        aria-labelledby="downshift-0-label"
+        className="MuiInputBase-root MuiInput-root MuiInput-underline Dropdown-input-1 MuiInputBase-formControl MuiInput-formControl MuiInputBase-adornedEnd"
+        onClick={[Function]}
+      >
+        <input
+          aria-invalid={false}
+          autoComplete="off"
+          className="MuiInputBase-input MuiInput-input MuiInputBase-inputAdornedEnd"
+          disabled={false}
+          id="test_me"
+          onAnimationStart={[Function]}
+          onBlur={[Function]}
+          onChange={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          required={false}
+          type="text"
+          value=""
+        />
+        <div
+          className="MuiInputAdornment-root MuiInputAdornment-positionEnd"
+        >
+          <button
+            aria-label="Toggle menu open"
+            className="MuiButtonBase-root MuiIconButton-root"
+            disabled={false}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onDragLeave={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex={0}
+            type="button"
+          >
+            <span
+              className="MuiIconButton-label"
+            >
+              <svg
+                aria-hidden="true"
+                className="MuiSvgIcon-root"
+                focusable="false"
+                role="presentation"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M7 10l5 5 5-5z"
+                />
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+      <p
+        className="MuiFormHelperText-root"
+      >
+        Missing translationId: upload.form.test_me_helptext for language: \${ languageCode } (2 choices)
+      </p>
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,15 @@
+{
+  "extends": ["prettier"],
+  "plugins": ["prettier"],
+  "rules": {},
+  "globals": {
+    "window": true,
+    "document": true,
+    "localStorage": true,
+    "FormData": true,
+    "FileReader": true,
+    "Blob": true,
+    "navigator": true
+  },
+  "parser": "babel-eslint"
+}

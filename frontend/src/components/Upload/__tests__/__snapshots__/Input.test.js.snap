@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Render Input render Input correctly 1`] = `
+<div
+  className="MuiFormControl-root MuiTextField-root Input-textField-1"
+>
+  <label
+    className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated"
+    data-shrink={false}
+    htmlFor="test_me"
+    id="test_me-label"
+  >
+    Missing translationId: upload.form.test_me_label for language: \${ languageCode }
+  </label>
+  <div
+    className="MuiInputBase-root MuiInput-root MuiInput-underline Input-input-2 MuiInputBase-formControl MuiInput-formControl"
+    onClick={[Function]}
+  >
+    <input
+      aria-describedby="test_me-helper-text"
+      aria-invalid={false}
+      autoFocus={false}
+      className="MuiInputBase-input MuiInput-input"
+      disabled={false}
+      id="test_me"
+      onAnimationStart={[Function]}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      required={false}
+      type="number"
+    />
+  </div>
+  <p
+    className="MuiFormHelperText-root"
+    id="test_me-helper-text"
+  >
+    Missing translationId: upload.form.test_me_helptext for language: \${ languageCode }
+  </p>
+</div>
+`;
