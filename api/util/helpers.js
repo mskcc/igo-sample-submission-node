@@ -1,5 +1,7 @@
 import CacheService from "./cache";
 import axios from "axios";
+
+
 const { constants } = require("./constants");
 const { columns } = require("./columns");
 const ttl = 60 * 60 * 1; // cache for 1 Hour
@@ -14,78 +16,7 @@ exports.determineRole = groups => {
     if (groups.includes(process.env.LAB_GROUP)) return "lab_member";
     if (groups.includes(process.env.PM_GROUP)) return "project_manager";
     else return "user";
-};
-
-export const getPicklist = picklist => {
-    return (
-        cache
-            .get(picklist + "-Picklist", () =>
-                axios
-                    .get(LIMS_URL + "/getPickListValues?list=" + picklist, {
-                        auth: { ...LIMS_AUTH }
-                    })
-                    .then(response => {
-                        return response.data;
-                    })
-                    .catch(error => {
-                        // console.log(error);
-                        return;
-                    })
-            )
-            // return cache result or axios result/error
-            .then(result => {
-                // console.log(result)
-                return result;
-            })
-    );
-};
-
-exports.getMaterials = recipe => {
-    return cache
-        .get(recipe + "-Materials", () =>
-            axios
-                .get(
-                    LIMS_URL +
-                        "/getIntakeTerms?recipe=" +
-                        recipe.replace("/", "_PIPI_SLASH_"),
-                    {
-                        auth: { ...LIMS_AUTH }
-                    }
-                )
-                .then(response => {
-                    return response.data[0];
-                })
-                .catch(error => {
-                    return;
-                })
-        )
-        .then(result => {
-            return result;
-        });
-};
-exports.getApplications = material => {
-    return cache
-        .get(material + "-Applications", () =>
-            axios
-                .get(
-                    LIMS_URL +
-                        "/getIntakeTerms?type=" +
-                        material.replace("/", "_PIPI_SLASH_"),
-                    {
-                        auth: { ...LIMS_AUTH }
-                    }
-                )
-                .then(response => {
-                    return response.data[0];
-                })
-                .catch(error => {
-                    return;
-                })
-        )
-        .then(result => {
-            return result;
-        });
-};
+}; 
 
 exports.getContainers = material => {
     if (material in constants.containersByMaterial) {
@@ -123,134 +54,205 @@ exports.getColumns = (material, application) => {
         });
 };
 
-exports.generateGrid = (limsColumnList, clientFormValues, userRole) => {
+
+export async function generateGrid(limsColumnList, clientFormValues, userRole) {
     console.log(userRole);
+
     let result = {
         columnFeatures: [],
         rowData: [],
         columnHeaders: [],
         hiddenColumns: { columns: [] }
     };
-    limsColumnList
-        .forEach(element => {
+    console.log(limsColumnList)
+    let picklistPromises = []
+    limsColumnList.map((element) => {
+        if (columns[element[0]].picklistName != undefined) {
+            cache
+                .get(columns[element[0]].picklistName + "-Picklist", () =>
+                    axios
+                        .get(LIMS_URL + "/getPickListValues?list=" + columns[element[0]].picklistName, {
+                            auth: { ...LIMS_AUTH }
+                        }))
+
+        }
+    })
+    console.log(picklistPromises)
+
+    Promise.all([picklistPromises]).then(() => {
+        console.log("DONE")
+        // return picklistPromises
+
+
+        for (let element in limsColumnList) {
+
+
             if (element) {
                 let colDef = columns[element[0]];
                 if (colDef) {
                     if (colDef.picklistName && !colDef.source) {
-                        getPicklist(colDef.picklistName).then(picklist => {
+                        cache.get(colDef.picklistName).then(picklist => {
+
                             colDef.source = picklist;
                             result.columnFeatures.push(colDef);
                             result.columnHeaders.push(
                                 "<span title='" +
-                                    (colDef.tooltip ? colDef.tooltip : "") +
-                                    "'>" +
-                                    colDef.columnHeader +
-                                    "</span>"
+                                (colDef.tooltip ? colDef.tooltip : "") +
+                                "'>" +
+                                colDef.columnHeader +
+                                "</span>"
                             );
                         });
                     } else {
                         result.columnFeatures.push(colDef);
                         result.columnHeaders.push(
                             "<span title='" +
-                                (colDef.tooltip ? colDef.tooltip : "") +
-                                "'>" +
-                                colDef.columnHeader +
-                                "</span>"
+                            (colDef.tooltip ? colDef.tooltip : "") +
+                            "'>" +
+                            colDef.columnHeader +
+                            "</span>"
                         );
                     }
-                    console.log(colDef.hiddenFrom);
+
                     if (colDef.hiddenFrom && colDef.hiddenFrom === userRole) {
-                        console.log(result.columnFeatures.length);
                         result.hiddenColumns.columns.push(
                             result.columnFeatures.length
                         );
                     }
                 }
-            }
-        })
-        .then(
-            generateData(result.columnFeatures, clientFormValues).then(
-                dataResult => {
-                    result.rowData = dataResult;
-                    return result;
-                }
-            )
-        );
-};
+                //     }
+                // })).then(() => {
+                //     console.log("DONE")
+                //     return result
+                // })
 
-// Lots of autofilling happening here
-const generateData = (columnFeatures, clientFormValues) => {
-    let rowData = [];
-    let numberOfRows = clientFormValues.numberOfSamples;
-    // for each row, go through all columns to generate the correct object
-    for (var i = 0; i < numberOfRows; i++) {
-        for (let j = 0; j < columnFeatures.length; j++) {
-            if (
-                columnFeatures[j].data == "species" ||
-                columnFeatures[j].data == "organism"
-            ) {
-                rowData[i] = {
-                    ...rowData[i],
-                    organism: clientFormValues.species
-                };
+                // <!--  -->allback();
+                // }
             }
-            if (columnFeatures[j].data == "preservation") {
-                if (clientFormValues.material == "Blood") {
-                    rowData[i] = {
-                        ...rowData[i],
-                        preservation: "EDTA-Streck"
-                    };
-                } else if (clientFormValues.material == "Buffy Coat") {
-                    rowData[i] = {
-                        ...rowData[i],
-                        preservation: "Frozen"
-                    };
-                }
-            }
-            if (columnFeatures[j].data == "sampleOrigin") {
-                if (clientFormValues.material == "Blood") {
-                    rowData[i] = {
-                        ...rowData[i],
-                        sampleOrigin: "Whole Blood"
-                    };
-                } else if (clientFormValues.material == "Buffy Coat") {
-                    rowData[i] = {
-                        ...rowData[i],
-                        sampleOrigin: "Buffy Coat"
-                    };
-                }
-            }
-            if (columnFeatures[j].data == "specimenType") {
-                if (
-                    clientFormValues.material == "Blood" ||
-                    clientFormValues.material == "Buffy Coat"
-                ) {
-                    rowData[i] = {
-                        ...rowData[i],
-                        specimenType: "Blood"
-                    };
-                }
-            }
-            if (
-                columnFeatures[j].rowData == "patientId" &&
-                columnFeatures[j].columnHeader == "Cell Line Name"
-            ) {
-                rowData[i] = { ...rowData[i], specimenType: "CellLine" };
-            } else {
-                rowData[i] = { ...rowData[i], [columnFeatures[j].rowData]: "" };
-            }
+            return result
         }
-    }
+    })
+    // await Promise.all(limsColumnList.map(async (element) => {
 
-    for (let j = 0; j < columnFeatures.length; j++) {
-        if (columnFeatures[j].data == "wellPosition") {
-            return setWellPos(rowData);
-            // break
-        }
-    }
-    console.log(rowData);
-    return rowData;
-};
+    //     console.log(element)
+    //     if (element) {
+    //         let colDef = columns[element[0]];
+    //         if (colDef) {
+    //             if (colDef.picklistName && !colDef.source) {
+    //                 getPicklist(colDef.picklistName).then(picklist => {
+    //                     console.log(picklist)
+    //                     colDef.source = picklist;
+    //                     result.columnFeatures.push(colDef);
+    //                     result.columnHeaders.push(
+    //                         "<span title='" +
+    //                         (colDef.tooltip ? colDef.tooltip : "") +
+    //                         "'>" +
+    //                         colDef.columnHeader +
+    //                         "</span>"
+    //                     );
+    //                 });
+    //             } else {
+    //                 result.columnFeatures.push(colDef);
+    //                 result.columnHeaders.push(
+    //                     "<span title='" +
+    //                     (colDef.tooltip ? colDef.tooltip : "") +
+    //                     "'>" +
+    //                     colDef.columnHeader +
+    //                     "</span>"
+    //                 );
+    //             }
+
+    //             if (colDef.hiddenFrom && colDef.hiddenFrom === userRole) {
+    //                 result.hiddenColumns.columns.push(
+    //                     result.columnFeatures.length
+    //                 );
+    //             }
+    //         }
+    //     }
+    // })).then(() => {
+    //     console.log("DONE")
+    //     return result
+    // })
+
+    // <!--  -->allback();
+    // }
+
+
+}
+// exports.generateGrid = generateGrid;
+// // Lots of autofilling happening here
+// const generateData = (columnFeatures, clientFormValues) => {
+//     let rowData = [];
+//     let numberOfRows = clientFormValues.numberOfSamples;
+//     // for each row, go through all columns to generate the correct object
+//     for (var i = 0; i < numberOfRows; i++) {
+//         for (let j = 0; j < columnFeatures.length; j++) {
+//             if (
+//                 columnFeatures[j].data == "species" ||
+//                 columnFeatures[j].data == "organism"
+//             ) {
+//                 rowData[i] = {
+//                     ...rowData[i],
+//                     organism: clientFormValues.species
+//                 };
+//             }
+//             if (columnFeatures[j].data == "preservation") {
+//                 if (clientFormValues.material == "Blood") {
+//                     rowData[i] = {
+//                         ...rowData[i],
+//                         preservation: "EDTA-Streck"
+//                     };
+//                 } else if (clientFormValues.material == "Buffy Coat") {
+//                     rowData[i] = {
+//                         ...rowData[i],
+//                         preservation: "Frozen"
+//                     };
+//                 }
+//             }
+//             if (columnFeatures[j].data == "sampleOrigin") {
+//                 if (clientFormValues.material == "Blood") {
+//                     rowData[i] = {
+//                         ...rowData[i],
+//                         sampleOrigin: "Whole Blood"
+//                     };
+//                 } else if (clientFormValues.material == "Buffy Coat") {
+//                     rowData[i] = {
+//                         ...rowData[i],
+//                         sampleOrigin: "Buffy Coat"
+//                     };
+//                 }
+//             }
+//             if (columnFeatures[j].data == "specimenType") {
+//                 if (
+//                     clientFormValues.material == "Blood" ||
+//                     clientFormValues.material == "Buffy Coat"
+//                 ) {
+//                     rowData[i] = {
+//                         ...rowData[i],
+//                         specimenType: "Blood"
+//                     };
+//                 }
+//             }
+//             if (
+//                 columnFeatures[j].rowData == "patientId" &&
+//                 columnFeatures[j].columnHeader == "Cell Line Name"
+//             ) {
+//                 rowData[i] = { ...rowData[i], specimenType: "CellLine" };
+//             } else {
+//                 rowData[i] = { ...rowData[i], [columnFeatures[j].rowData]: "" };
+//             }
+//         }
+//     }
+
+//     for (let j = 0; j < columnFeatures.length; j++) {
+//         if (columnFeatures[j].data == "wellPosition") {
+//             return setWellPos(rowData);
+//             // break
+//         }
+//     }
+//     console.log(rowData);
+//     return rowData;
+// };
 
 // pre-filling WellPosition for a plate of 96 wells
 // times = how many times bigger is the #samples than the plate rows (8 A-H) -

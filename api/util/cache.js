@@ -1,5 +1,5 @@
 // https://medium.com/@danielsternlicht/caching-like-a-boss-in-nodejs-9bccbbc71b9b
-
+var _ = require('lodash');
 import NodeCache from "node-cache";
 
 class Cache {
@@ -19,7 +19,8 @@ class Cache {
     }
 
     return storeFunction().then(result => {
-      if (result) {
+      
+      if (!_.isEmpty(result)) {
         this.cache.set(key, result);
         console.log("added to cache: " + key);
         return result;

@@ -1,4 +1,12 @@
 export const constants = {
+
+    containers: [
+        "Plates",
+        "Micronic Barcoded Tubes",
+        "Blocks/Slides/Tubes"
+    ],
+
+
     containersByMaterial: {
         Tissue: ["Blocks/Slides/Tubes"],
         Cells: ["Plates", "Blocks/Slides/Tubes"],
@@ -26,5 +34,9 @@ export const constants = {
 
     mouseApplications: ["mousewholegenome ", "m-impact_v1"],
 
-    humanOrMouseApplications: ["wholeexomesequencing"]
+    humanOrMouseApplications: ["wholeexomesequencing"],
+
+    logger: "sample-sub"
+
+
 };

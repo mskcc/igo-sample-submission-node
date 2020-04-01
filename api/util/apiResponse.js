@@ -12,13 +12,12 @@ exports.successResponse = function(res, msg) {
 };
 
 exports.successResponseWithData = function(res, msg, data) {
-	// console.log("test");
 	var resData = {
 		status: 1,
 		message: msg,
 		data: data
 	};
-	// console.log(data);
+	console.log(resData);
 	return res.status(200).json(resData);
 };
 

@@ -1,9 +1,16 @@
+
+import CacheService from "../util/cache";
+import { resolve } from "dns";
 // const { sanitizeBody } = require("express-validator");
 const apiResponse = require("../util/apiResponse");
 const { body, query, validationResult } = require("express-validator");
 const { sanitizeBody } = require("express-validator");
 const { authenticate, getUser } = require("../middlewares/jwt");
 const util = require("../util/helpers");
+var _ = require('lodash');
+const service = require("../services/services");
+const ttl = 60 * 60 * 1; // cache for 1 Hour
+const cache = new CacheService(ttl); // Create a new cache service instance
 const { constants } = require("../util/constants");
 
 /**
@@ -13,57 +20,46 @@ const { constants } = require("../util/constants");
  */
 exports.headerValues = [
     // authenticate,
-    function(req, res) {
-        try {
-            let applications;
-            let containers;
-            let species;
-            let materials;
+    function (req, res) {
 
-            util.getPicklist("Recipe").then(applicationsResult => {
-                util.getPicklist("Exemplar+Sample+Types").then(
-                    materialsResult => {
-                        util.getPicklist("Species").then(speciesResult => {
-                            if (
-                                applicationsResult &&
-                                materialsResult &&
-                                speciesResult
-                            ) {
-                                containers = [
-                                    "Plates",
-                                    "Micronic Barcoded Tubes",
-                                    "Blocks/Slides/Tubes"
-                                ];
 
-                                let responseObject = {
-                                    applications: applicationsResult,
-                                    materials: materialsResult,
-                                    species: speciesResult,
-                                    containers: containers
-                                };
+        let containers = constants.containers
 
-                                return apiResponse.successResponseWithData(
-                                    res,
-                                    "Operation success",
-                                    responseObject
-                                );
-                            } else {
-                                return apiResponse.ErrorResponse(
-                                    res,
-                                    "Could not retrieve picklists from LIMS."
-                                );
-                            }
-                        });
-                    }
-                );
-            });
-        } catch (err) {
-            console.log(err.stack);
-            //throw error in json response with status 500.
-            return apiResponse.ErrorResponse(res, err);
-        }
+        let applicationsPromise = cache.get("Recipe-Picklist", () => service.getPicklist("Recipe"))
+        let materialsPromise = cache.get("Exemplar+Sample+Types", () => service.getPicklist("Exemplar+Sample+Types"))
+        let speciesPromise = cache.get("Species", () => service.getPicklist("Species"))
+
+        Promise.all([applicationsPromise, materialsPromise, speciesPromise]).then((results) => {
+            if (results.some(x => x.length == 0)) {
+                return apiResponse.ErrorResponse(
+                    res,
+                    "Could not retrieve picklists from LIMS."
+                )
+            }
+            let [applicationsResult, materialsResult, speciesResult] = results
+
+            let responseObject = {
+                applications: applicationsResult,
+                materials: materialsResult,
+                species: speciesResult,
+                containers: containers
+            };
+            return apiResponse.successResponseWithData(
+                res,
+                "Operation success",
+                responseObject
+            );
+
+        }).catch(error => {
+            return apiResponse.ErrorResponse(
+                error,
+                "Could not retrieve picklists from LIMS."
+            )
+        })
+
     }
-];
+
+]
 
 /**
  * Returns Materials and Species for application/recipe.
@@ -76,7 +72,7 @@ exports.materialsAndSpecies = [
         .isLength({ min: 1 })
         .trim()
         .withMessage("Recipe must be specified."),
-    function(req, res) {
+    function (req, res) {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -88,14 +84,17 @@ exports.materialsAndSpecies = [
             } else {
                 let recipe = req.query.recipe;
                 let speciesResult = util.getSpecies(recipe);
-                util.getMaterials(recipe).then(materialsResult => {
-                    if (materialsResult && speciesResult) {
+                let materialsPromise = cache.get(recipe + "-Materials", () => service.getMaterials(recipe))
+
+                Promise.all([materialsPromise]).then(materialsResult => {
+                    if (!_.isEmpty(materialsResult)) {
+                        console.log(materialsResult)
                         return apiResponse.successResponseWithData(
                             res,
                             "Operation success",
                             {
-                                materials: materialsResult,
-                                species: speciesResult
+                                materialsResult,
+                                speciesResult
                             }
                         );
                     } else {
@@ -104,7 +103,8 @@ exports.materialsAndSpecies = [
                             `Could not retrieve materials and species for '${recipe}'.`
                         );
                     }
-                });
+
+                })
             }
         } catch (err) {
             return apiResponse.ErrorResponse(res, err);
@@ -122,7 +122,7 @@ exports.applicationsAndContainers = [
         .isLength({ min: 1 })
         .trim()
         .withMessage("Material must be specified."),
-    function(req, res) {
+    function (req, res) {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -134,8 +134,13 @@ exports.applicationsAndContainers = [
             } else {
                 let material = req.query.material;
                 let containersResult = util.getContainers(material);
-                util.getApplications(material).then(applicationsResult => {
-                    if (applicationsResult && containersResult) {
+
+                let applicationsPromise = cache.get(material + "-Applications", () => { service.getApplications(material) })
+                Promise.all([applicationsPromise]).then(applicationsResult => {
+                    console.log(applicationsResult)
+                    console.log(containersResult)
+                    if (!_.isEmpty(applicationsResult)) {
+
                         return apiResponse.successResponseWithData(
                             res,
                             "Operation success",
@@ -164,7 +169,7 @@ exports.picklist = [
         .isLength({ min: 1 })
         .trim()
         .withMessage("Picklist must be specified."),
-    function(req, res) {
+    function (req, res) {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -235,7 +240,7 @@ exports.grid = [
         .trim()
         .withMessage("AltServiceId must be present."),
     sanitizeBody("*").escape(),
-    function(req, res) {
+    async function (req, res) {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -246,34 +251,38 @@ exports.grid = [
                 );
             } else {
                 let formValues = req.body;
-                console.log(formValues);
-                getUser();
-                util.getColumns(
-                    formValues.material,
-                    formValues.application
-                ).then(columnsResult => {
-                    if (columnsResult) {
-                        let columns = util.generateGrid(
-                            columnsResult,
-                            formValues,
-                            req.user.role
-                        );
-                        // console.log(columns);
-                        return apiResponse.successResponseWithData(
-                            res,
-                            "Operation success",
-                            {
-                                columns: columns,
-                                user: req.user
-                            }
-                        );
-                    } else {
-                        return apiResponse.ErrorResponse(
-                            res,
-                            `Could not retrieve columns for '${material}' and '${application}'.`
-                        );
-                    }
-                });
+                util.getColumns(formValues.material, formValues.application)
+                    .then(columnsResult => {
+                        if (columnsResult) {
+                            util.generateGrid(
+                                columnsResult,
+                                formValues,
+                                req.user.role
+                            ).then(gridResult => {
+                                console.log("done with grid")
+                                if (gridResult) {
+                                    // console.log(columns);
+                                    return apiResponse.successResponseWithData(
+                                        res,
+                                        "Operation success",
+                                        {
+                                            columns: gridResult.columns,
+                                            user: req.user
+                                        }
+                                    );
+                                }
+                            });
+                        } else {
+                            return apiResponse.ErrorResponse(
+                                res,
+                                `Could not retrieve columns for '${material}' and '${application}'.`
+                            );
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        return apiResponse.ErrorResponse(res, err);
+                    });
             }
         } catch (err) {
             console.log(error);
@@ -289,7 +298,7 @@ exports.grid = [
  */
 exports.submissionsList = [
     // authenticate,
-    function(req, res) {
+    function (req, res) {
         try {
             return apiResponse.successResponseWithData(
                 res,

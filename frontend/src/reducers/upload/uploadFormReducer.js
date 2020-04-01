@@ -11,6 +11,7 @@ export default function uploadFormReducer(state = initialFormState, action) {
       }
 
     case ActionTypes.RECEIVE_INITIAL_STATE_SUCCESS:
+      console.log(action.form_data)
       return {
         ...state,
         formIsLoading: false,

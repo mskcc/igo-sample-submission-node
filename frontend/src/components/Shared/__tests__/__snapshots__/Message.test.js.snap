@@ -3,7 +3,7 @@
 exports[`Render Message render Message correctly 1`] = `
 <div>
   <div
-    className="MuiPaper-root MuiPaper-elevation1 Message-container-1 MuiPaper-rounded"
+    className="MuiPaper-root Message-container-1 MuiPaper-elevation1 MuiPaper-rounded"
   >
     <p
       className="MuiTypography-root MuiTypography-body1"

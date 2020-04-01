@@ -1,17 +1,18 @@
-const winston = require('winston');
+const winston = require("winston");
+const {constants} = require("./constants");
 
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.json(),
-  defaultMeta: { service: 'user-service' },
-  transports: [
-    //
-    // - Write all logs with level `error` and below to `error.log`
-    // - Write all logs with level `info` and below to `combined.log`
-    //
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'combined.log' })
-  ]
+/**
+ * Configures winston logger for application
+ */
+const container = new winston.Container();
+const {format} = winston;
+const {combine, label, json} = format;
+container.add(constants.logger, {
+	format: combine(
+		label({label: "Sample-Sub"}),
+		json()
+	),
+	transports: [new winston.transports.Console({level: "info"})]
 });
 
-module.exports.logger;
+exports.logger = container.get(constants.logger);

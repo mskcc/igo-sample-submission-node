@@ -25,18 +25,20 @@ axios.interceptors.request.use(
     return Promise.reject(error)
   }
 )
-
 // Add a response interceptor
 axios.interceptors.response.use(
-  function(response) {
+  function (response) {
     // Do something with response data
-    console.log(response)
     if (response.data.data) {
       response.payload = response.data.data
     }
     return response
   },
-  function(error) {
+  function (error) {
+    if (error.data) {
+      error.payload = error.data
+    }
+
     // Do something with response error
     return Promise.reject(error)
   }

@@ -5,6 +5,25 @@ import { Config } from '../../config.js'
 
 import { generateSubmissionsGrid } from '../helpers'
 
+
+// Add a response interceptor
+axios.interceptors.response.use(
+  function (response) {
+    // Do something with response data
+    if (response.data.data) {
+      response.payload = response.data.data
+    }
+    return response
+  },
+  function (error) {
+    if (error.data) {
+      error.payload = error.data
+    }
+
+    // Do something with response error
+    return Promise.reject(error)
+  }
+)
 // species that trigger patient id field
 const PatientIDSpecies = ['human']
 
@@ -35,9 +54,10 @@ export function getInitialState() {
       return axios
         .get(Config.NODE_API_ROOT + '/upload/headerValues')
         .then(response => {
+          console.log(response)
           dispatch({
             type: RECEIVE_INITIAL_STATE_SUCCESS,
-            form_data: response.data.data,
+            form_data: response.payload,
           })
           return response
         })
@@ -78,8 +98,8 @@ export function getMaterialsForApplication(selectedApplication) {
       .then(response => {
         dispatch({
           type: RECEIVE_DATA_FOR_APPLICATION_SUCCESS,
-          materials: response.data.data.materials,
-          species: response.data.data.species,
+          materials: response.payload.materials,
+          species: response.payload.species,
         })
         return response
       })

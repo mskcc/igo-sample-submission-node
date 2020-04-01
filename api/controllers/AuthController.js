@@ -40,7 +40,8 @@ exports.login = [
                 );
             } else {
                 axios
-                    .post("https://igodev.mskcc.org/auth/login", {
+                    // .post("https://igodev.mskcc.org/auth/login", {
+                    .post("http://localhost:8500/login", {
                         username: req.body.username,
                         password: req.body.password,
                         token: process.env.AUTH_TOKEN
@@ -107,10 +108,13 @@ exports.login = [
                                 res,
                                 "Invalid username or password. Please try again."
                             );
+                        }else{
+                            return apiResponse.ErrorResponse(error);                
                         }
                     });
             }
         } catch (err) {
+            console("what")
             return apiResponse.ErrorResponse(res, err);
         }
     }
