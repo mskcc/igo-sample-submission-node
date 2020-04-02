@@ -41,7 +41,7 @@ function commonReducer(state = initialState, action) {
     return {
       ...state,
       // error: true,
-      message: error.response.data.message,
+      message: error.response.message,
     }
   } else {
     // return {

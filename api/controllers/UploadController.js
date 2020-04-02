@@ -1,6 +1,7 @@
 
 import CacheService from "../util/cache";
 import { resolve } from "dns";
+import { ContextRunnerImpl } from "express-validator/src/chain";
 // const { sanitizeBody } = require("express-validator");
 const apiResponse = require("../util/apiResponse");
 const { body, query, validationResult } = require("express-validator");
@@ -73,43 +74,40 @@ exports.materialsAndSpecies = [
         .trim()
         .withMessage("Recipe must be specified."),
     function (req, res) {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return apiResponse.validationErrorWithData(
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(
+                res,
+                "Validation error.",
+                errors.array()
+            );
+        } else {
+            let recipe = req.query.recipe;
+            let speciesResult = util.getSpecies(recipe);
+            let materialsPromise = cache.get(recipe + "-Materials", () => service.getMaterials(recipe))
+
+            Promise.all([materialsPromise]).then((results) => {
+                if (results.some(x => x.length == 0)) {
+                    return apiResponse.ErrorResponse(
+                        res,
+                        `Could not retrieve materials and species for '${recipe}'.`
+                    )
+                }
+                let [materialsResult] = results
+                let responseObject = {
+                    materials: materialsResult,
+                    species: speciesResult,
+                };
+                return apiResponse.successResponseWithData(
                     res,
-                    "Validation error.",
-                    errors.array()
+                    "Operation success",
+                    responseObject
                 );
-            } else {
-                let recipe = req.query.recipe;
-                let speciesResult = util.getSpecies(recipe);
-                let materialsPromise = cache.get(recipe + "-Materials", () => service.getMaterials(recipe))
-
-                Promise.all([materialsPromise]).then(materialsResult => {
-                    if (!_.isEmpty(materialsResult)) {
-                        console.log(materialsResult)
-                        return apiResponse.successResponseWithData(
-                            res,
-                            "Operation success",
-                            {
-                                materialsResult,
-                                speciesResult
-                            }
-                        );
-                    } else {
-                        return apiResponse.ErrorResponse(
-                            res,
-                            `Could not retrieve materials and species for '${recipe}'.`
-                        );
-                    }
-
-                })
-            }
-        } catch (err) {
-            return apiResponse.ErrorResponse(res, err);
+            })
         }
     }
+
 ];
 /**
  * Returns applications/recipes for materials.
@@ -134,28 +132,27 @@ exports.applicationsAndContainers = [
             } else {
                 let material = req.query.material;
                 let containersResult = util.getContainers(material);
+                let applicationsPromise = cache.get(material + "-Applications", () => service.getApplications(material))
 
-                let applicationsPromise = cache.get(material + "-Applications", () => { service.getApplications(material) })
-                Promise.all([applicationsPromise]).then(applicationsResult => {
-                    console.log(applicationsResult)
-                    console.log(containersResult)
-                    if (!_.isEmpty(applicationsResult)) {
-
-                        return apiResponse.successResponseWithData(
-                            res,
-                            "Operation success",
-                            {
-                                applications: applicationsResult,
-                                containers: containersResult
-                            }
-                        );
-                    } else {
+                Promise.all([applicationsPromise]).then((results) => {
+                    if (results.some(x => x.length == 0)) {
                         return apiResponse.ErrorResponse(
                             res,
                             `Could not retrieve applications and containers for '${material}'.`
-                        );
+                        )
                     }
-                });
+                    let [applicationsResult] = results
+                    let responseObject = {
+                        applications: applicationsResult,
+                        containers: containersResult,
+                    };
+                    return apiResponse.successResponseWithData(
+                        res,
+                        "Operation success",
+                        responseObject
+                    );
+                })
+
             }
         } catch (err) {
             return apiResponse.ErrorResponse(res, err);
@@ -241,53 +238,78 @@ exports.grid = [
         .withMessage("AltServiceId must be present."),
     sanitizeBody("*").escape(),
     async function (req, res) {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return apiResponse.validationErrorWithData(
-                    res,
-                    "Validation error.",
-                    errors.array()
-                );
-            } else {
-                let formValues = req.body;
-                util.getColumns(formValues.material, formValues.application)
-                    .then(columnsResult => {
-                        if (columnsResult) {
-                            util.generateGrid(
-                                columnsResult,
-                                formValues,
-                                req.user.role
-                            ).then(gridResult => {
-                                console.log("done with grid")
-                                if (gridResult) {
-                                    // console.log(columns);
-                                    return apiResponse.successResponseWithData(
-                                        res,
-                                        "Operation success",
-                                        {
-                                            columns: gridResult.columns,
-                                            user: req.user
-                                        }
-                                    );
-                                }
-                            });
-                        } else {
-                            return apiResponse.ErrorResponse(
-                                res,
-                                `Could not retrieve columns for '${material}' and '${application}'.`
-                            );
+        // try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(
+                res,
+                "Validation error.",
+                errors.array()
+            );
+        } else {
+            let formValues = req.body;
+
+
+            let columnsPromise = cache.get(`${formValues.material}-${formValues.application}-Columns`, () => service.getColumns(formValues.material, formValues.application))
+
+
+
+            Promise.all([columnsPromise]).then(result => {
+                if (!_.isEmpty(applicationsResult)) {
+                    console.log(applicationsResult)
+                    return apiResponse.successResponseWithData(
+                        res,
+                        "Operation success",
+                        {
+                            applicationsResult,
+                            containersResult
                         }
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        return apiResponse.ErrorResponse(res, err);
-                    });
-            }
-        } catch (err) {
-            console.log(error);
-            return apiResponse.ErrorResponse(res, err);
+                    );
+                } else {
+                    return apiResponse.ErrorResponse(
+                        res,
+                        `Could not retrieve applications and containers for '${material}'.`
+                    );
+                }
+
+            })
         }
+        //         .then(columnsResult => {
+        //         if (columnsResult) {
+        //             util.generateGrid(
+        //                 columnsResult,
+        //                 formValues,
+        //                 req.user.role
+        //             ).then(gridResult => {
+        //                 console.log("done with grid")
+        //                 if (gridResult) {
+        //                     // console.log(columns);
+        //                     return apiResponse.successResponseWithData(
+        //                         res,
+        //                         "Operation success",
+        //                         {
+        //                             columns: gridResult.columns,
+        //                             user: req.user
+        //                         }
+        //                     );
+        //                 }
+        //             });
+        //         } else {
+        //             return apiResponse.ErrorResponse(
+        //                 res,
+        //                 `Could not retrieve columns for '${material}' and '${application}'.`
+        //             );
+        //         }
+        //     })
+        // .catch(err => {
+        //     console.log(err);
+        //     return apiResponse.ErrorResponse(res, err);
+        // });
+        //     }
+        // } catch (err) {
+        //     console.log(error);
+        //     return apiResponse.ErrorResponse(res, err);
+        // }
     }
 ];
 

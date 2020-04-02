@@ -1,6 +1,6 @@
 import CacheService from "./cache";
 import axios from "axios";
-
+const service = require("../services/services");
 
 const { constants } = require("./constants");
 const { columns } = require("./columns");
@@ -16,7 +16,7 @@ exports.determineRole = groups => {
     if (groups.includes(process.env.LAB_GROUP)) return "lab_member";
     if (groups.includes(process.env.PM_GROUP)) return "project_manager";
     else return "user";
-}; 
+};
 
 exports.getContainers = material => {
     if (material in constants.containersByMaterial) {
@@ -36,23 +36,6 @@ exports.getSpecies = recipe => {
     }
 };
 
-exports.getColumns = (material, application) => {
-    return axios
-        .get(LIMS_URL + "/getIntakeTerms", {
-            params: {
-                type: material.replace("/", "_PIPI_SLASH_"),
-                recipe: application.replace("/", "_PIPI_SLASH_")
-            },
-
-            auth: { ...LIMS_AUTH }
-        })
-        .then(response => {
-            return response.data;
-        })
-        .catch(error => {
-            return;
-        });
-};
 
 
 export async function generateGrid(limsColumnList, clientFormValues, userRole) {
@@ -66,20 +49,15 @@ export async function generateGrid(limsColumnList, clientFormValues, userRole) {
     };
     console.log(limsColumnList)
     let picklistPromises = []
-    limsColumnList.map((element) => {
-        if (columns[element[0]].picklistName != undefined) {
-            cache
-                .get(columns[element[0]].picklistName + "-Picklist", () =>
-                    axios
-                        .get(LIMS_URL + "/getPickListValues?list=" + columns[element[0]].picklistName, {
-                            auth: { ...LIMS_AUTH }
-                        }))
 
+    limsColumnList.map((element) => {
+        let picklist = columns[element[0]].picklistName
+        if (picklist != undefined) {
+            cache.get(picklist + "-Picklist", () => () => service.getPicklist(picklist))
         }
     })
-    console.log(picklistPromises)
 
-    Promise.all([picklistPromises]).then(() => {
+    Promise.all([picklistPromises]).then((results) => {
         console.log("DONE")
         // return picklistPromises
 

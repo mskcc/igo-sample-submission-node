@@ -200,18 +200,10 @@ export function getApplicationsForMaterial(selectedMaterial) {
       .then(response => {
         dispatch({
           type: RECEIVE_APPLICATIONS_FOR_MATERIAL_SUCCESS,
-          applications: response.data.data.applications,
-          containers: response.data.data.containers,
+          applications: response.payload.applications,
+          containers: response.payload.containers,
         })
-        //   response.data.choices.includes({
-        //     id: getState().upload.form.selected.application,
-        //     value: getState().upload.form.selected.application,
-        //   })
-        // if (
-        //   getState().upload.form.selected.application in response.data.choices
-        // ) {
-        //   console.log('not here')
-        // }
+       
         return response
       })
       .catch(error => {
