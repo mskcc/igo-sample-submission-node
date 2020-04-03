@@ -174,8 +174,8 @@ export function getInitialColumns(formValues, userRole) {
         ...formValues,
       })
       .then(response => {
-        console.log(response.data.data)
-        let data = response.data.data.columns
+        console.log(response.payload)
+        let data = response.payload
         // Handsontable binds to your data source (list of arrays or list of objects) by reference. Therefore, all the data entered in the grid will alter the original data source.
         // let grid = generateGridData(
         //   response.data.columnDefs,

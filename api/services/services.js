@@ -44,8 +44,8 @@ exports.getPicklist = (listname) => {
 
 }
 
-exports.getMaterials = (recipe) => {
-    const url = `${LIMS_URL}/getIntakeTerms?recipe=${recipe.replace("/", "_PIPI_SLASH_")}`;
+exports.getMaterials = (application) => {
+    const url = `${LIMS_URL}/getIntakeTerms?recipe=${application.replace("/", "_PIPI_SLASH_")}`;
     logger.log("info", `Sending request to ${url}`);
     return axios.get(url,
         {
@@ -80,8 +80,8 @@ exports.getApplications = (material) => {
         }).then((resp) => { return formatDataMaterialsOrApps(resp) })
 
 }
-exports.getColums = (material, application) => {
-    const url = `${LIMS_URL}/getIntakeTerms?type=${material.replace("/", "_PIPI_SLASH_")}&recipe=${recipe.replace("/", "_PIPI_SLASH_")}`
+exports.getColumns = (material, application) => {
+    const url = `${LIMS_URL}/getIntakeTerms?type=${material.replace("/", "_PIPI_SLASH_")}&recipe=${application.replace("/", "_PIPI_SLASH_")}`
     logger.log("info", `Sending request to ${url}`)
     return axios.get(url,
         {
@@ -94,6 +94,6 @@ exports.getColums = (material, application) => {
         }).catch((error) => {
             logger.log("info", `Error retrieving response from ${url}`)
             return error
-        }).then((resp) => { return formatDataMaterialsOrApps(resp) })
+        }).then((resp) => { return formatData(resp) })
 
 }

@@ -199,7 +199,7 @@ exports.picklist = [
 ];
 
 exports.grid = [
-    // authenticate,
+    authenticate,
     body("application")
         .isLength({ min: 1 })
         .trim()
@@ -248,30 +248,38 @@ exports.grid = [
             );
         } else {
             let formValues = req.body;
+            let material = formValues.material
+            let application = formValues.application
+
+            let columnsPromise = cache.get(`${material}-${application}-Columns`, () => service.getColumns(material, application))
 
 
-            let columnsPromise = cache.get(`${formValues.material}-${formValues.application}-Columns`, () => service.getColumns(formValues.material, formValues.application))
+            Promise.all([columnsPromise]).then((results) => {
+                if (results.some(x => x.length == 0)) {
+                    return apiResponse.ErrorResponse(
+                        res,
+                        `Could not retrieve grid for '${material}' and '${application}'.`
+                    )
+                }
 
+                let [columnsResult] = results
+                let gridPromise = util.generateGrid(columnsResult, req.user.role, formValues)
 
-
-            Promise.all([columnsPromise]).then(result => {
-                if (!_.isEmpty(applicationsResult)) {
-                    console.log(applicationsResult)
+                Promise.all([gridPromise]).then((results) => {
+                    if (results.some(x => x.length == 0)) {
+                        return apiResponse.ErrorResponse(
+                            res,
+                            `Could not retrieve grid for '${material}' and '${application}'.`
+                        )
+                    }
+                    let [gridResult] = results
                     return apiResponse.successResponseWithData(
                         res,
                         "Operation success",
-                        {
-                            applicationsResult,
-                            containersResult
-                        }
+                        gridResult
                     );
-                } else {
-                    return apiResponse.ErrorResponse(
-                        res,
-                        `Could not retrieve applications and containers for '${material}'.`
-                    );
-                }
 
+                })
             })
         }
         //         .then(columnsResult => {
