@@ -32,10 +32,28 @@ axios.interceptors.request.use(
     if (token && !config.headers['Authorization']) {
       config.headers['Authorization'] = `Bearer ${token}`
     }
+
     return config
   },
 
   error => {
+    return Promise.reject(error)
+  }
+)
+// Add a response interceptor
+axios.interceptors.response.use(
+  function (response) {
+    // Do something with response data
+    if (response.data.data) {
+      response.payload = response.data.data
+    }
+    return response
+  },
+  function (error) {
+    if (error.response) {
+      error.payload = error.response.data
+    }
+    // Do something with response error
     return Promise.reject(error)
   }
 )
@@ -165,6 +183,16 @@ export function getColumns(formValues) {
 
 export function getInitialColumns(formValues, userRole) {
   return dispatch => {
+    // sconst url = `http://oncotree.mskcc.org/api/tumorTypes?version=oncotree_candidate_release&flat=true&deprecated=false`
+    // // logger.log("info", `Sending request to ${url}`)
+    // return axios.get(url)
+    //   .then((resp) => {
+    //     // logger.log("info", `Successfully retrieved response from ${url}`);
+    //     return resp;
+    //   }).catch((error) => {
+    //     // logger.log("info", `Error retrieving response from ${url}`)
+    //     return error
+    //   }).then((resp) => { resp.data.map((record) => { console.log(record) }) })
     dispatch({ type: GET_INITIAL_COLUMNS })
     let material = formValues.material
     let application = formValues.application
@@ -182,7 +210,7 @@ export function getInitialColumns(formValues, userRole) {
         //   formValues,
         //   userRole
         // )
-  
+
         return dispatch({
           type: GET_COLUMNS_SUCCESS,
           columnHeaders: data.columnHeaders,
@@ -199,6 +227,7 @@ export function getInitialColumns(formValues, userRole) {
         })
       })
       .catch(error => {
+        console.log(error)
         return dispatch({
           type: GET_COLUMNS_FAIL,
           error: error,
@@ -207,6 +236,7 @@ export function getInitialColumns(formValues, userRole) {
         })
       })
   }
+
 }
 
 export const ADD_GRID_TO_BANKED_SAMPLE = 'ADD_GRID_TO_BANKED_SAMPLE'

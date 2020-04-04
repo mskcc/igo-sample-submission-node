@@ -35,10 +35,9 @@ axios.interceptors.response.use(
     return response
   },
   function (error) {
-    if (error.data) {
-      error.payload = error.data
+    if (error.response) {
+      error.payload = error.response.data
     }
-
     // Do something with response error
     return Promise.reject(error)
   }

@@ -17,11 +17,11 @@ class UploadGridContainer extends React.Component {
 
   // while grid is open, refresh token every ten minutes
   // not too risky since refresh token is set to expire after few hours
-  componentDidMount() {
-    setInterval(async () => {
-      this.props.refreshToken()
-    }, 600000)
-  }
+  // componentDidMount() {
+  //   setInterval(async () => {
+  //     this.props.refreshToken()
+  //   }, 600000)
+  // }
 
   // componentDidMount(prevProps, prevState) {
   // console.log('prevState')

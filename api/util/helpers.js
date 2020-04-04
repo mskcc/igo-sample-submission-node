@@ -1,9 +1,9 @@
 import CacheService from "./cache";
 import axios from "axios";
 const service = require("../services/services");
-
+var _ = require('lodash');
 const { constants } = require("./constants");
-const { columns } = require("./columns");
+const { constantColumns } = require("./columns");
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 const LIMS_AUTH = {
@@ -36,162 +36,267 @@ exports.getSpecies = recipe => {
     }
 };
 
+function cacheAllPicklists(limsColumns) {
+    return new Promise((resolve, reject) => {
+        let picklistPromises = []
+        let picklists = {}
+        limsColumns.map((element) => {
+            let picklist = constantColumns[element[0]].picklistName
 
+            if (picklist != undefined) {
+                picklists[picklist] = []
+                if (picklist === "tumorType") {
+                    picklistPromises.push(cache.get(picklist + "-Picklist", () => service.getOnco()))
 
-export function generateGrid(limsColumnList, userRole, formValues) {
-    return new Promise((resolve) => {
+                } else { picklistPromises.push(cache.get(picklist + "-Picklist", () => service.getPicklist(picklist))) }
+            }
+        })
+        Promise.all(picklistPromises).then((results) => {
+            if (results.some(x => x.length == 0)) {
+                reject(`Could not cache picklists.`)
+            }
+            Object.keys(picklists).map((element, index) => { picklists[element] = results[index] })
+            resolve(picklists)
+        })
+    })
 
-
+}
+function fillColumns(limsColumnList, userRole, formValues, picklists) {
+    return new Promise((resolve, reject) => {
         let result = {
             columnFeatures: [],
             rowData: [],
             columnHeaders: [],
             hiddenColumns: { columns: [] }
         };
+        limsColumnList.forEach((element, index) => {
+            let columnName = element[0]
+            let optional = element[1] == "Optional"
+            let colDef = constantColumns[columnName];
 
-        let picklistPromises = []
-        let picklists = {}
-        limsColumnList.map((element) => {
-            let picklist = columns[element[0]].picklistName
+            if (colDef) {
 
-            if (picklist != undefined) {
-                picklists[picklist] = []
-                picklistPromises.push(cache.get(picklist + "-Picklist", () => service.getPicklist(picklist)))
+
+                if (colDef.container && colDef.container !== formValues.container && formValues.application != 'Expanded_Genomics'
+                ) {
+                    colDef = overwriteContainer(formValues.container)
+                }
+                if (colDef.picklistName && !colDef.source) {
+
+                    colDef.source = picklists[colDef.picklistName];
+                    result.columnFeatures.push(colDef);
+                    result.columnHeaders.push(
+                        "<span title='" +
+                        (colDef.tooltip ? colDef.tooltip : "") +
+                        "'>" +
+                        colDef.columnHeader +
+                        "</span>"
+                    );
+                }
+
+                else {
+                    result.columnFeatures.push(colDef);
+                    result.columnHeaders.push(
+                        "<span title='" +
+                        (colDef.tooltip ? colDef.tooltip : "") +
+                        "'>" +
+                        colDef.columnHeader +
+                        "</span>"
+                    );
+                }
+
+                if (colDef.hiddenFrom && colDef.hiddenFrom === userRole) {
+                    result.hiddenColumns.columns.push(
+                        result.columnFeatures.length
+                    );
+                }
+            }
+            if (index == limsColumnList.length - 1) {
+                if (
+
+                    result.columnFeatures[0].data == 'plateId' &&
+                    result.columnFeatures[1].data != 'wellPosition'
+                ) {
+                    result.columnFeatures.unshift(constantColumns["Well Position"])
+                }
+                if (
+                    formValues.container != 'Plates' &&
+                    result.columnFeatures[1].data == 'wellPosition'
+                ) {
+                    result.columnFeatures[1] = result.columnFeatures[0]
+                    result.columnFeatures.shift()
+                }
+                resolve(result)
             }
         })
 
-        Promise.all(picklistPromises).then((results) => {
-            Object.keys(picklists).map((element, index) => { picklists[element] = results[index] })
-            limsColumnList.forEach((element, index) => {
-                let columnName = element[0]
-                let optional = element[1] == "Optional"
-                let colDef = columns[columnName];
-                
-                if (colDef) {
-                    if (colDef.picklistName && !colDef.source) {
+    })
+}
 
-                        colDef.source = picklists[colDef.picklistName];
-                        result.columnFeatures.push(colDef);
-                        result.columnHeaders.push(
-                            "<span title='" +
-                            (colDef.tooltip ? colDef.tooltip : "") +
-                            "'>" +
-                            colDef.columnHeader +
-                            "</span>"
-                        );
 
-                    } else {
-                        result.columnFeatures.push(colDef);
-                        result.columnHeaders.push(
-                            "<span title='" +
-                            (colDef.tooltip ? colDef.tooltip : "") +
-                            "'>" +
-                            colDef.columnHeader +
-                            "</span>"
-                        );
-                    }
+export function generateGrid(limsColumnList, userRole, formValues) {
 
-                    if (colDef.hiddenFrom && colDef.hiddenFrom === userRole) {
-                        result.hiddenColumns.columns.push(
-                            result.columnFeatures.length
-                        );
-                    }
-                }
-                if (index == limsColumnList.length - 1) {
-                    result.rowData=generateData(result.columnFeatures, formValues)
-                    resolve(result)                        
-                }
+    return new Promise((resolve, reject) => {
+
+        cacheAllPicklists(limsColumnList)
+            .then((picklists) => fillColumns(limsColumnList, userRole, formValues, picklists))
+            // .then((columns) => overwriteContainer(columns, formValues))
+            .then((columns) => fillData(columns, formValues)).catch((reasons) => reject(reasons))
+
+            .then((columns) => {
+                if (columns.columnFeatures.some((x) => x.data == "wellPosition")) {
+                    resolve(setWellPos(columns))
+                } else { resolve(columns) }
             })
-        }
-        )
+            // .then((result) => resolve(result))
+            .catch((reasons) => reject(reasons))
     })
 }
 
 
 // Lots of autofilling happening here
-const generateData = (columnFeatures, clientFormValues) => {
-    let rowData = [];
-    let numberOfRows = clientFormValues.numberOfSamples;
-    setTimeout(() => {  }, 1500);
+const fillData = (columns, formValues) => {
 
-    // for each row, go through all columns to generate the correct object
-    for (var i = 0; i < numberOfRows; i++) {
-        for (let j = 0; j < columnFeatures.length; j++) {
-            if (
-                columnFeatures[j].data == "species" ||
-                columnFeatures[j].data == "organism"
-            ) {
-                rowData[i] = {
-                    ...rowData[i],
-                    organism: clientFormValues.species
-                };
-            }
-            if (columnFeatures[j].data == "preservation") {
-                if (clientFormValues.material == "Blood") {
-                    rowData[i] = {
-                        ...rowData[i],
-                        preservation: "EDTA-Streck"
-                    };
-                } else if (clientFormValues.material == "Buffy Coat") {
-                    rowData[i] = {
-                        ...rowData[i],
-                        preservation: "Frozen"
-                    };
-                }
-            }
-            if (columnFeatures[j].data == "sampleOrigin") {
-                if (clientFormValues.material == "Blood") {
-                    rowData[i] = {
-                        ...rowData[i],
-                        sampleOrigin: "Whole Blood"
-                    };
-                } else if (clientFormValues.material == "Buffy Coat") {
-                    rowData[i] = {
-                        ...rowData[i],
-                        sampleOrigin: "Buffy Coat"
-                    };
-                }
-            }
-            if (columnFeatures[j].data == "specimenType") {
+    return new Promise((resolve, reject) => {
+        let rowData = [];
+        let numberOfRows = formValues.numberOfSamples;
+        for (var i = 0; i < numberOfRows; i++) {
+
+            columns.columnFeatures.map((entry) => {
+                // console.log(entry)
+                rowData[i] = { ...rowData[i], [entry.data]: "" };
                 if (
-                    clientFormValues.material == "Blood" ||
-                    clientFormValues.material == "Buffy Coat"
+                    entry.data == "species" ||
+                    entry.data == "organism"
                 ) {
                     rowData[i] = {
                         ...rowData[i],
-                        specimenType: "Blood"
+                        organism: formValues.species
                     };
                 }
-            }
-            if (
-                columnFeatures[j].rowData == "patientId" &&
-                columnFeatures[j].columnHeader == "Cell Line Name"
-            ) {
-                rowData[i] = { ...rowData[i], specimenType: "CellLine" };
-            } else {
-                rowData[i] = { ...rowData[i], [columnFeatures[j].rowData]: "" };
+
+                if (entry.data == "preservation") {
+                    if (formValues.material == "Blood") {
+                        rowData[i] = {
+                            ...rowData[i],
+                            preservation: "EDTA-Streck"
+                        };
+                    } else if (formValues.material == "Buffy Coat") {
+                        rowData[i] = {
+                            ...rowData[i],
+                            preservation: "Frozen"
+                        };
+                    }
+                }
+                if (entry.data == "sampleOrigin") {
+                    if (formValues.material == "Blood") {
+                        rowData[i] = {
+                            ...rowData[i],
+                            sampleOrigin: "Whole Blood"
+                        };
+                    } else if (formValues.material == "Buffy Coat") {
+                        rowData[i] = {
+                            ...rowData[i],
+                            sampleOrigin: "Buffy Coat"
+                        };
+                    }
+                }
+                if (entry.data == "specimenType") {
+                    if (
+                        formValues.material == "Blood" ||
+                        formValues.material == "Buffy Coat"
+                    ) {
+                        rowData[i] = {
+                            ...rowData[i],
+                            specimenType: "Blood"
+                        };
+                    }
+                }
+                if (
+                    entry.rowData == "patientId" &&
+                    entry.columnHeader == "Cell Line Name"
+                ) {
+                    rowData[i] = { ...rowData[i], specimenType: "CellLine" };
+                }
+            })
+            if (rowData.length == numberOfRows) {
+                columns.rowData = rowData
+                resolve(columns);
             }
         }
+
+        // for each row, go through all columns to generate the correct object
+
+        // for (let j = 0; j < columns.length; j++) {
+        //     if (columns[j].data == "wellPosition") {
+        //         return setWellPos(rowData);
+        //         // break
+        //     }
+        // }
+
+    })
+}
+
+// if lims returned a container type is different from the container the user indicated, chose the user one
+const overwriteContainer = (userContainer) => {
+    // const overwriteContainer = (columns, formValues) => {
+    // return new Promise((resolve, reject) => {
+    // find the index of the container with a mismatched value
+    // let userContainer = formValues.container
+    // let containerIndex = columns.columnFeatures.findIndex(x => (x.container && x.container !== formValues.container))
+    // let limsContainer = columns.columnFeatures[containerIndex]
+
+    // if (limsContainer) {
+    let newContainer
+    // console.log("mismatch lims" + limsContainer.container)
+    switch (userContainer) {
+        case 'Plates':
+            newContainer = constantColumns["Plate ID"]
+            break
+        case 'Micronic Barcoded Tubes':
+            newContainer = constantColumns["Micronic Tube Barcode"]
+            break
+        case 'Blocks/Slides/Tubes':
+            newContainer = constantColumns["Block/Slide/TubeID"]
+            break
+        default:
+            return ("Container not found")
     }
 
-    for (let j = 0; j < columnFeatures.length; j++) {
-        if (columnFeatures[j].data == "wellPosition") {
-            return setWellPos(rowData);
-            // break
-        }
-    }
-    console.log(rowData);
-    return rowData;
-};
+    return (newContainer)
+
+    // columns.columnFeatures[containerIndex] = newContainer
+    // columns.columnHeaders[containerIndex] = (
+    //     "<span title='" +
+    //     (newContainer.tooltip ? newContainer.tooltip : "") +
+    //     "'>" +
+    //     newContainer.columnHeader +
+    //     "</span>"
+    // );
+    // console.log(userContainer, "OVERWRITE user")
+    // console.log(newContainer, "OVERWRITE new")
+    // resolve(newContainer)
+    // reject(containerIndex = )
+    // }
+    // // console.log( columns.columnFeatures[containerIndex])
+    // else {
+    //     console.log(userContainer, "NO MISMATCH")
+    //     resolve(limsContainer)
+    // }
+    // })
+
+}
+
 
 // pre-filling WellPosition for a plate of 96 wells
 // times = how many times bigger is the #samples than the plate rows (8 A-H) -
 // how many columns will have to be filled, used as end condition
 // i = counter indicating how often I stepped through A-H
 // plateColIndex = plate column
-const setWellPos = rows => {
+const setWellPos = columns => {
+    // console.log(columns)
+    let rows = columns.rowData
     let plateRows = ["A", "B", "C", "D", "E", "F", "G", "H"];
-    let plateColsLength = 12;
 
     let numPlates = Math.ceil(rows.length / plateRows.length);
     let i = 0;
@@ -228,8 +333,8 @@ const setWellPos = rows => {
         plateColIndex++;
         i++;
     }
-
-    return rows;
+    columns.rows = rows
+    return columns;
 };
 
 //   .then((connection) =>
@@ -268,3 +373,4 @@ const setWellPos = rows => {
 //                 picklist.append({"id": value, "value": value})
 //             uwsgi.cache_set(listname, pickle.dumps(picklist), 900)
 //         return pickle.loads(uwsgi.cache_get(listname))
+

@@ -236,7 +236,7 @@ exports.grid = [
         .isLength({ min: 1 })
         .trim()
         .withMessage("AltServiceId must be present."),
-    sanitizeBody("*").escape(),
+    // sanitizeBody("*").escape(),
     async function (req, res) {
         // try {
         const errors = validationResult(req);
@@ -248,6 +248,8 @@ exports.grid = [
             );
         } else {
             let formValues = req.body;
+            console.log(formValues)
+            // return
             let material = formValues.material
             let application = formValues.application
 
@@ -279,6 +281,12 @@ exports.grid = [
                         gridResult
                     );
 
+                }).catch((reasons) => {
+                    console.log(reasons)
+                    return apiResponse.ErrorResponse(
+                        res,
+                        reasons
+                    )
                 })
             })
         }

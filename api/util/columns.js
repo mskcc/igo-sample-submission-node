@@ -1,4 +1,4 @@
-export const columns = {
+export const constantColumns = {
     "Service ID": {
         name: "Service ID",
         columnHeader: "Service ID",
@@ -16,14 +16,14 @@ export const columns = {
             "The Micronic Tube Barcode has been provided to you in advance by the sample receiving team.  If you cannot find it, the Micronic Tube Barcode is located on the side of the tube, and the 2D barcode can be scanned by a reade"
     },
     "Block/Slide/TubeID": {
-        name: "Block/Slide/TubeID",
-        container: "Blocks/Slides/Tubes",
-        columnHeader: "Block/Slide/TubeID",
-        data: "tubeId",
-        pattern: "blockslidetube",
-        error: "No more than 25 characters.",
+        name: 'Block/Slide/TubeID',
+        container: 'Blocks/Slides/Tubes',
+        columnHeader: 'Block/Slide/TubeID',
+        data: 'tubeId',
+        pattern: '^.{1,35}$',
+        error: 'Only letters, digits and –, please.',
         tooltip:
-            "The identifier on your tube, block or slide.  You can paste in directly from excel, and there are no formatting rules.  Please be as correct as possible, and ensure your tubes, blocks and slides are labeled clearly."
+            'The identifier on your tube, block or slide.  You can paste in directly from excel, and there are no formatting rules.  Please be as correct as possible, and ensure your tubes, blocks and slides are labeled clearly.',
     },
     "Plate ID": {
         name: "Plate ID",
@@ -260,22 +260,22 @@ export const columns = {
         error: "Only dropdown options are permitted as values",
         strict: "true",
         source: [
-            { id: "Normal", value: "Normal" },
-            { id: ".01", value: "1%" },
-            { id: ".05", value: "5%" },
-            { id: ".1", value: "10%" },
-            { id: ".15", value: "15%" },
-            { id: ".20", value: "20%" },
-            { id: ".30", value: "30%" },
-            { id: ".40", value: "40%" },
-            { id: ".50", value: "50%" },
-            { id: ".60", value: "60%" },
-            { id: ".70", value: "70%" },
-            { id: ".80", value: "80%" },
-            { id: ".90", value: "90%" },
-            { id: ".95", value: "95%" },
-            { id: "1.0", value: "100%" }
-        ]
+            "Normal",
+            "1%",
+            "5%",
+            "10%",
+            "15%",
+            "20%",
+            "30%",
+            "40%",
+            "50%",
+            "60%",
+            "70%",
+            "80%",
+            "90%",
+            "95%",
+            "100%"]
+
     },
     "Collection Year": {
         name: "Collection Year",

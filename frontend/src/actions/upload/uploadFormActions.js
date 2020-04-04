@@ -6,6 +6,21 @@ import { Config } from '../../config.js'
 import { generateSubmissionsGrid } from '../helpers'
 
 
+// Add a request interceptor
+axios.interceptors.request.use(
+  config => {
+    let token = sessionStorage.getItem('access_token')
+    if (token && !config.headers['Authorization']) {
+      config.headers['Authorization'] = `Bearer ${token}`
+    }
+
+    return config
+  },
+
+  error => {
+    return Promise.reject(error)
+  }
+)
 // Add a response interceptor
 axios.interceptors.response.use(
   function (response) {
@@ -16,14 +31,15 @@ axios.interceptors.response.use(
     return response
   },
   function (error) {
-    if (error.data) {
-      error.payload = error.data
+    if (error.response) {
+      error.payload = error.response.data
     }
-
     // Do something with response error
     return Promise.reject(error)
   }
 )
+
+
 // species that trigger patient id field
 const PatientIDSpecies = ['human']
 
@@ -203,7 +219,7 @@ export function getApplicationsForMaterial(selectedMaterial) {
           applications: response.payload.applications,
           containers: response.payload.containers,
         })
-       
+
         return response
       })
       .catch(error => {

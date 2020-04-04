@@ -17,7 +17,7 @@ exports.successResponseWithData = function(res, msg, data) {
 		message: msg,
 		data: data
 	};
-	console.log(resData);
+	// console.log(resData);
 	return res.status(200).json(resData);
 };
 
