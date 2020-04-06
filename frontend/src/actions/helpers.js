@@ -7,17 +7,6 @@ import { Config } from '../config.js'
 export const generateGridData = (responseColumns, formValues, userRole) => {
   let grid = { columnFeatures: [], columnHeaders: [], rows: [] }
   grid.columnFeatures = generateColumnFeatures(responseColumns, formValues)
-  grid.columnHeaders = grid.columnFeatures.map(
-    a =>
-      '<span class="' +
-      a.className +
-      '" title="' +
-      a.tooltip +
-      '">' +
-      a.columnHeader +
-      '</span>'
-  )
-
   grid.rows = generateRows(
     grid.columnFeatures,
     formValues,

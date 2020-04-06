@@ -177,7 +177,7 @@ exports.picklist = [
                 );
             } else {
                 let picklist = req.query.picklist;
-                util.getPicklist(picklist).then(picklistResult => {
+                cache.get(picklist + "-Picklist", () => service.getPicklist(picklist)).then(picklistResult => {
                     if (picklistResult) {
                         return apiResponse.successResponseWithData(
                             res,

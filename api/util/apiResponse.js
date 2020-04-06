@@ -24,7 +24,7 @@ exports.successResponseWithData = function(res, msg, data) {
 exports.ErrorResponse = function(res, msg) {
 	var data = {
 		status: 0,
-		message: msg
+		message: "Application Error: " + msg
 	};
 	logger.log("error", msg);
 	// console.log(data);

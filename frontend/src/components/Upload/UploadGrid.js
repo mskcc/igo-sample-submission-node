@@ -1,20 +1,15 @@
 import React from 'react'
 import { withStyles } from '@material-ui/core'
-import { GridButton } from '../index'
 import { HotTable } from '@handsontable/react'
-import Handsontable from 'handsontable'
 import 'handsontable/dist/handsontable.full.css'
 import Swal from 'sweetalert2'
 
-// after comparing agGrid, react-data-grid, canvas-datagrid, react-data-sheet, ReactHandsOnTable won
+import { GridButton } from '../index'
+
 class UploadGrid extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { invalidCells: [] } //   // this.handsontableData = this.props.grid.rows
-    //   this.handsontableCols = this.props.grid.columns
-    //   this.handsontableColFeatures = this.props.grid.columnFeatures
-    // }
-
+    this.state = { invalidCells: [] } 
     this.hotTableComponent = React.createRef()
   }
 
@@ -37,7 +32,6 @@ class UploadGrid extends React.Component {
 
   handleSubmit = () => {
     const { columnFeatures, hiddenColumns, rows } = this.props.grid
-
     // run through grid required columns
     let emptyColumns = new Set()
 
@@ -62,11 +56,9 @@ class UploadGrid extends React.Component {
       Swal.fire({
         title: 'Required Fields',
         html: [...emptyColumns].join('<br> '),
-        // footer: 'To avoid mistakes, invalid cells are cleared immediately.',
         type: 'error',
         animation: false,
         confirmButtonText: 'Dismiss',
-        // customClass: { content: 'alert' },
       })
     } else {
       this.props.handleSubmit()
@@ -80,11 +72,9 @@ class UploadGrid extends React.Component {
         'Please increase the number of samples in the header to at least ' +
         count +
         ' and re-generate the grid before you paste this data. Make sure you paste starting at the first cell if you want to paste the full grid.',
-      // footer: 'To avoid mistakes, invalid cells are cleared immediately.',
       type: 'warning',
       animation: false,
       confirmButtonText: 'Dismiss',
-      // customClass: { content: 'alert' },
     })
   }
 
@@ -94,12 +84,11 @@ class UploadGrid extends React.Component {
       grid,
       handleChange,
       user,
-      handleMRN,
       handleAssay,
       handleTumorType,
-      handleIndex,
       handlePatientId,
     } = this.props
+    console.log(grid)
     return (
       <div>
         <div className={classes.container}>
@@ -134,13 +123,13 @@ class UploadGrid extends React.Component {
             colHeaders={grid.columnHeaders}
             columns={grid.columnFeatures}
             rowHeaders={true}
-            hiddenColumns={grid.hiddenColumns}
+            hiddenColumns={{columns:grid.hiddenColumns}}
             headerTooltips={true}
             manualColumnResize={true}
             comments={true}
             ref={this.hotTableComponent}
             beforeChange={(changes, source) => {
-              //  only do something if rows can fit the changes/if
+              // only do something if rows can fit the changes/if
               // last changes[] element's row index is <= rows
               if (changes[changes.length - 1][0] > grid.rows.length) {
                 this.showRowWarning(changes[changes.length - 1][0])
@@ -205,12 +194,10 @@ class UploadGrid extends React.Component {
 
 const styles = theme => ({
   container: {
-    // borderRight: '1px solid gray',
     display: 'grid',
     justifyItems: 'center',
     marginLeft: theme.spacing(2),
     width: '95vw',
-    // maxHeight: 600,
     overflow: 'hidden',
     marginBottom: '5em',
   },

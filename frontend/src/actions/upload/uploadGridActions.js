@@ -183,16 +183,6 @@ export function getColumns(formValues) {
 
 export function getInitialColumns(formValues, userRole) {
   return dispatch => {
-    // sconst url = `http://oncotree.mskcc.org/api/tumorTypes?version=oncotree_candidate_release&flat=true&deprecated=false`
-    // // logger.log("info", `Sending request to ${url}`)
-    // return axios.get(url)
-    //   .then((resp) => {
-    //     // logger.log("info", `Successfully retrieved response from ${url}`);
-    //     return resp;
-    //   }).catch((error) => {
-    //     // logger.log("info", `Error retrieving response from ${url}`)
-    //     return error
-    //   }).then((resp) => { resp.data.map((record) => { console.log(record) }) })
     dispatch({ type: GET_INITIAL_COLUMNS })
     let material = formValues.material
     let application = formValues.application
@@ -204,18 +194,12 @@ export function getInitialColumns(formValues, userRole) {
       .then(response => {
         console.log(response.payload)
         let data = response.payload
-        // Handsontable binds to your data source (list of arrays or list of objects) by reference. Therefore, all the data entered in the grid will alter the original data source.
-        // let grid = generateGridData(
-        //   response.data.columnDefs,
-        //   formValues,
-        //   userRole
-        // )
-
+        console.log(data)
         return dispatch({
           type: GET_COLUMNS_SUCCESS,
           columnHeaders: data.columnHeaders,
           columnFeatures: data.columnFeatures,
-          hiddenColumns: [],
+          hiddenColumns: data.hiddenColumns,
           rows: data.rowData,
           form: formValues,
           message:

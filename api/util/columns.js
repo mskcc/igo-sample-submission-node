@@ -247,7 +247,9 @@ export const constantColumns = {
         tooltip:
             "This field is multi-select.  If you are submitting one sample for multiple assays, please select the first, followed by the second, than the third, in the order of priority.",
         editableCellTemplate: "uiMultiSelect",
-        picklistName: "ddPCR+Assay"
+        picklistName: "ddPCR+Assay",
+        allowInvalid : true,
+        allowEmpty : true
     },
     "Estimated % Tumor": {
         name: "Estimated % Tumor",
@@ -332,7 +334,7 @@ export const constantColumns = {
         name: "Normalized Patient Id",
         columnHeader: "Normalized Patient Id",
         data: "normalizedPatientId",
-        hiddenFrom: "lab_member",
+        hiddenFrom: "user",
         readOnly: true,
         cellEditableCondition: false,
         tooltip: "Normalized Patient Id that is sent to CMO service"
@@ -341,7 +343,7 @@ export const constantColumns = {
         name: "CMO Patient Id",
         columnHeader: "CMO Patient Id",
         data: "cmoPatientId",
-        hiddenFrom: "lab_member",
+        hiddenFrom: "user",
         readOnly: true,
         cellEditableCondition: false,
         tooltip: "CMO anonymized patient id"
