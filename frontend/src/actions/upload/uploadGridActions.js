@@ -187,15 +187,12 @@ export function getInitialColumns(formValues, userRole) {
     dispatch({ type: GET_INITIAL_COLUMNS })
     let material = formValues.material
     let application = formValues.application
-    console.log(formValues)
     return axios
       .post(Config.NODE_API_ROOT + '/upload/grid', {
         ...formValues,
       })
       .then(response => {
-        console.log(response.payload)
         let data = response.payload
-        console.log(data)
         return dispatch({
           type: GET_COLUMNS_SUCCESS,
           columnHeaders: data.columnHeaders,
@@ -212,7 +209,6 @@ export function getInitialColumns(formValues, userRole) {
         })
       })
       .catch(error => {
-        console.log(error)
         return dispatch({
           type: GET_COLUMNS_FAIL,
           error: error,
@@ -297,7 +293,6 @@ export function editSubmission(submissionId, ownProps) {
     dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...' })
     let submission = findSubmission(getState().user.submissions, submissionId)
     if (submission) {
-      //  decided to rebuild grid instead of saving colFeatues and headers to avoid version
       let formValues = JSON.parse(submission.form_values)
       dispatch(getInitialColumns(formValues), getState().user.role).then(() => {
         dispatch(updateHeader(formValues))
@@ -321,58 +316,40 @@ export const HANDLE_PATIENT_ID_FAIL = 'HANDLE_PATIENT_ID_FAIL'
 export const HANDLE_PATIENT_ID_SUCCESS = 'HANDLE_PATIENT_ID_SUCCESS'
 export function handlePatientId(rowIndex) {
   return (dispatch, getState) => {
-    if (getState().upload.grid.rows[rowIndex].patientId == '') {
-      return dispatch({
-        type: HANDLE_PATIENT_ID_SUCCESS,
-        rows: redactMRN(getState().upload.grid.rows, rowIndex, '', '', ''),
-      })
-    }
-
+    let patientId = getState().upload.grid.rows[rowIndex].patientId
+    let normalizedPatientID = ''
+    let rows = getState().upload.grid.rows
     let patientIdType = getState().upload.grid.columnFeatures.find(
       element => element.data == 'patientId'
     )
-    let rows = getState().upload.grid.rows
     dispatch({ type: 'HANDLE_PATIENT_ID' })
-    // handle as MRN whenever 8 digit id is entered
-    if (/^[0-9]{8}$/.test(rows[rowIndex].patientId.trim())) {
-      return dispatch(handleMRN(rowIndex, rows[rowIndex].patientId.trim()))
+    if (patientId == '') {
+      return dispatch({
+        type: HANDLE_PATIENT_ID_SUCCESS,
+        rows: redactMRN(rows, rowIndex, '', '', ''),
+      })
     }
-    let normalizedPatientID = ''
+    // handle as MRN whenever 8 digit id is entered
+    if (/^[0-9]{8}$/.test(patientId.trim())) {
+      return dispatch(handleMRN(rowIndex, patientId.trim()))
+    }
+    // validation necessary because this fct is triggered before any handsontable validation would be
     let regex = new RegExp(patientIdType.pattern)
-    let valid = regex.test(rows[rowIndex].patientId)
-    if (valid) {
-      if (patientIdType.columnHeader == 'Cell Line Name') {
-        normalizedPatientID =
-          'CELLLINE_' +
-          getState()
-            .upload.grid.rows[rowIndex].patientId.replace(/_|\W/g, '')
-            .toUpperCase()
-      } else {
-        normalizedPatientID =
-          getState().user.username.toUpperCase() +
-          '_' +
-          getState().upload.grid.rows[rowIndex].patientId
-      }
-      let message = {}
+    let isValidId = regex.test(patientId)
+
+    if (isValidId) {
+      normalizedPatientID = util.normalizePatientId(patientId, patientIdType, getState().user.username)
       return axios
-        .post(Config.API_ROOT + '/patientIdConverter', {
-          data: {
-            patient_id: normalizedPatientID,
-          },
+        .post(Config.NODE_API_ROOT + '/upload/crdbId', {
+          patientId: normalizedPatientID,
         })
         .then(response => {
-          if (getState().user.role != 'user') {
-            message = {
-              message: 'Patient ID normalized for IGO internal use.',
-            }
-          }
           dispatch({
             type: HANDLE_PATIENT_ID_SUCCESS,
-            // ...message,
-            rows: createPatientId(
-              getState().upload.grid.rows,
+            rows: util.createPatientId(
+              rows,
               rowIndex,
-              response.data.patient_id,
+              response.payload.patientId,
               normalizedPatientID
             ),
           })
@@ -381,19 +358,15 @@ export function handlePatientId(rowIndex) {
         .catch(error => {
           dispatch({
             type: HANDLE_PATIENT_ID_FAIL,
-
             error: error,
-            rows: redactMRN(getState().upload.grid.rows, rowIndex, '', '', ''),
+            rows: redactMRN(rows, rowIndex, '', '', ''),
           })
-          return error
         })
-      return dispatch({ type: REGISTER_GRID_CHANGE })
     } else {
       dispatch({
         type: HANDLE_PATIENT_ID_FAIL,
-
         message: patientIdType.error,
-        rows: redactMRN(getState().upload.grid.rows, rowIndex, '', '', ''),
+        rows: redactMRN(rows, rowIndex, '', '', ''),
       })
     }
   }
@@ -405,23 +378,22 @@ export const HANDLE_MRN_SUCCESS = 'HANDLE_MRN_SUCCESS'
 export function handleMRN(rowIndex, patientId) {
   return (dispatch, getState) => {
     dispatch({ type: 'HANDLE_MRN' })
-
+    let rows = getState().upload.grid.rows
     return axios
-      .post(Config.API_ROOT + '/patientIdConverter', {
-        data: {
-          patient_id: patientId,
-        },
+      .post(Config.NODE_API_ROOT + '/upload/crdbId', {
+        patientId: patientId,
       })
       .then(response => {
+        console.log(response)
         dispatch({
           type: HANDLE_MRN_SUCCESS,
           message: 'MRN redacted.',
           rows: redactMRN(
-            getState().upload.grid.rows,
+            rows,
             rowIndex,
-            response.data.patient_id,
+            response.payload.patientId,
             'MRN REDACTED',
-            response.data.sex
+            response.payload.sex
           ),
         })
         dispatch({ type: REGISTER_GRID_CHANGE })
@@ -429,23 +401,21 @@ export function handleMRN(rowIndex, patientId) {
       .catch(error => {
         dispatch({
           type: HANDLE_MRN_FAIL,
-
           error: error,
-          rows: redactMRN(getState().upload.grid.rows, rowIndex, '', '', ''),
+          rows: redactMRN(rows, rowIndex, '', '', ''),
         })
         return error
       })
-    return dispatch({ type: REGISTER_GRID_CHANGE })
   }
 }
 
 export const HANDLE_ASSAY = 'HANDLE_ASSAY'
-// export const HANDLE_ASSAY_FAIL = 'HANDLE_ASSAY_FAIL'
-// export const HANDLE_ASSAY_SUCCESS = 'HANDLE_ASSAY_SUCCESS'
+export const HANDLE_ASSAY_FAIL = 'HANDLE_ASSAY_FAIL'
+export const HANDLE_ASSAY_SUCCESS = 'HANDLE_ASSAY_SUCCESS'
 export function handleAssay(rowIndex, colIndex, oldValue, newValue) {
   return (dispatch, getState) => {
     return dispatch({
-      type: 'HANDLE_ASSAY_SUCCESS',
+      type: HANDLE_ASSAY_SUCCESS,
       rows: appendAssay(
         getState().upload.grid.rows,
         rowIndex,
@@ -458,12 +428,12 @@ export function handleAssay(rowIndex, colIndex, oldValue, newValue) {
 }
 
 export const HANDLE_TUMOR_TYPE = 'HANDLE_TUMOR_TYPE'
-// export const HANDLE_TUMOR_TYPE_FAIL = 'HANDLE_TUMOR_TYPE_FAIL'
-// export const HANDLE_TUMOR_TYPE_SUCCESS = 'HANDLE_TUMOR_TYPE_SUCCESS'
+export const HANDLE_TUMOR_TYPE_FAIL = 'HANDLE_TUMOR_TYPE_FAIL'
+export const HANDLE_TUMOR_TYPE_SUCCESS = 'HANDLE_TUMOR_TYPE_SUCCESS'
 export function handleTumorType(rowIndex, colIndex, oldValue, newValue) {
   return (dispatch, getState) => {
     return dispatch({
-      type: 'HANDLE_TUMOR_TYPE_SUCCESS',
+      type: HANDLE_TUMOR_TYPE_SUCCESS,
       rows: translateTumorTypes(
         getState().upload.grid.rows,
         getState().upload.grid.columnFeatures[colIndex].source,

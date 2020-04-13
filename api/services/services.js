@@ -10,6 +10,12 @@ const LIMS_AUTH = {
 };
 const LIMS_URL = process.env.LIMS_URL;
 
+const ONCO_URL = process.env.ONCO_URL
+const CRDB_URL = process.env.CRDB_URL
+const CRDB_USERNAME = process.env.CRDB_USERNAME
+const CRDB_PASSWORD = process.env.CRDB_PASSWORD
+const CRDB_SERVER_ID = process.env.CRDB_SERVER_ID
+
 // LIMS is authorized. Avoids certificate verification & "unable to verify the first certificate in nodejs" errors
 const agent = new https.Agent({
     rejectUnauthorized: false
@@ -26,10 +32,22 @@ const formatDataMaterialsOrApps = function (resp) {
     return data;
 }
 
+const formatCrdb = function (resp) {
+    let data = {}
+    if (resp.data.PRM_JOB_STATUS == 0) {
+        data = {
+            patientId: resp.data.PRM_PT_ID,
+            sex: resp.data.PRM_PT_GENDER || ''
+        }
+    } else {
+        data = []
+    }
+    return data;
+}
+
 const formatOncoData = function (resp) {
     if (_.isEmpty(resp)) { return [] }
     else {
-        // console.log(resp)
         let oncotree = []
         let values = [{}]
         let duplicates = []
@@ -68,7 +86,7 @@ exports.getPicklist = (listname) => {
             httpsAgent: agent
         })
         .then((resp) => {
-            if (resp.data && resp.data[0].includes("ERROR")){
+            if (resp.data && resp.data[0].includes("ERROR")) {
                 logger.log("info", `Error retrieving response from ${url}`)
                 return []
             }
@@ -137,15 +155,42 @@ exports.getColumns = (material, application) => {
 
 
 exports.getOnco = () => {
-    const url = `http://oncotree.mskcc.org/api/tumorTypes?version=oncotree_candidate_release&flat=true&deprecated=false`
-    logger.log("info", `Sending request to ${url}`)
+    const url = ONCO_URL
+    logger.log("info", "Sending request to OncoTree")
     return axios.get(url)
         .then((resp) => {
-            logger.log("info", `Successfully retrieved response from ${url}`);
+            logger.log("info", "Successfully retrieved response from OncoTree");
             return resp;
         }).catch((error) => {
-            logger.log("info", `Error retrieving response from ${url}`)
+            logger.log("info", "Error retrieving response from OncoTree")
             return error
         }).then((resp) => { return formatOncoData(resp) })
 
 }
+exports.getCrdbId = (patientId) => {
+    const url = CRDB_URL
+    logger.log("info", "Sending request to CRDB")
+    let data = {
+        "username": CRDB_USERNAME,
+        "password": CRDB_PASSWORD,
+        "mrn": patientId,
+        "sid": CRDB_SERVER_ID,
+    }
+
+    let headers = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+    }
+    return axios.post(url, { ...data, headers })
+        .then((resp) => {
+            logger.log("info", "Successfully retrieved response from CRDB");
+            return resp;
+        }).catch((error) => {
+            logger.log("info", "Error retrieving response from CRDB")
+            return error
+        }).then((resp) => { return formatCrdb(resp) })
+
+
+
+}
+

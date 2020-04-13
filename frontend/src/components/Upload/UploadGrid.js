@@ -88,7 +88,6 @@ class UploadGrid extends React.Component {
       handleTumorType,
       handlePatientId,
     } = this.props
-    console.log(grid)
     return (
       <div>
         <div className={classes.container}>
