@@ -1,9 +1,23 @@
+const validationPatterns = {
+    "userId": "^[A-Za-z0-9](?!.*__)[A-Za-z0-9\\,_-]{2}[A-Za-z0-9\\,_-]*$",
+    "patientId": "^[A-Za-z0-9][A-Za-z0-9\\,_-]*$",
+    "blockslidetube": "^.{1,25}$",
+    "number": "^[0-9.]*$",
+    "collectionYear": "\d{4}|^$",
+    "wellPosition": "[A-Za-z]+\d+|^$",
+    "micronicTubeBarcode": "^[0-9]{10}$",
+    alphanum: "[0-9a-zA-Z]",
+    alphanumdash: "^[A-Za-z0-9](?!.*__)[A-Za-z0-9\\,_-]{2}[A-Za-z0-9\\,_-]*$",
+    // "mskPatients": "d{8}",
+    // "nonMSKPatients": "[0-9a-zA-Z]{4,}",
+    // "bothMSKAndNonMSKPatients": "[0-9a-zA-Z]{4,}|d{8}",
+}
 export const constantColumns = {
     "Service ID": {
         name: "Service ID",
         columnHeader: "Service ID",
         data: "serviceId",
-        pattern: "alphanumdash"
+        pattern: validationPatterns.alphanumdash,
     },
     "Micronic Tube Barcode": {
         name: "Micronic Tube Barcode",
@@ -50,7 +64,7 @@ export const constantColumns = {
         name: "Known Genetic Alterations",
         columnHeader: "Known Genetic Alterations",
         data: "knownGeneticAlteration",
-        pattern: "alphanum"
+        pattern: validationPatterns.alphanum,
     },
     "Sample ID": {
         name: "Sample ID",
@@ -75,7 +89,7 @@ export const constantColumns = {
         //  "editor": "select",
         type: "autocomplete",
         error: "Only dropdown options are permitted as values",
-        strict: "true",
+        strict: true,
         picklistName: "Species"
     },
     "Nucleic Acid Type": {
@@ -87,7 +101,7 @@ export const constantColumns = {
         //  "editor": "select",
         type: "autocomplete",
         error: "Only dropdown options are permitted as values",
-        strict: "true",
+        strict: true,
         picklistName: "Exemplar+Sample+Types"
     },
     Preservation: {
@@ -101,7 +115,7 @@ export const constantColumns = {
         //  "editor": "select",
         type: "autocomplete",
         error: "Only dropdown options are permitted as values",
-        strict: "true",
+        strict: true,
         picklistName: "Preservation"
     },
     "Sample Origin": {
@@ -115,7 +129,7 @@ export const constantColumns = {
         //  "editor": "select",
         type: "autocomplete",
         error: "Only dropdown options are permitted as values",
-        strict: "true",
+        strict: true,
         picklistName: "Sample+Origins"
     },
     "Specimen Type": {
@@ -129,7 +143,7 @@ export const constantColumns = {
         //  "editor": "select",
         type: "autocomplete",
         error: "Only dropdown options are permitted as values",
-        strict: "true",
+        strict: true,
         picklistName: "Specimen+Types"
     },
     "Sequencing Read Length": {
@@ -144,7 +158,7 @@ export const constantColumns = {
         //  "editor": "select",
         type: "autocomplete",
         error: "Only dropdown options are permitted as values",
-        strict: "true",
+        strict: true,
         picklistName: "Illumina+Sequencing+Run+Types"
     },
     "Reads Requested/Coverage": {
@@ -158,14 +172,14 @@ export const constantColumns = {
         //  "editor": "select",
         type: "autocomplete",
         error: "Only dropdown options are permitted as values",
-        strict: "true",
+        strict: true,
         picklistName: "Sequencing+Reads+Requested"
     },
     Index: {
         name: "Index",
         columnHeader: "Index",
         data: "index",
-        pattern: "alphanum",
+        pattern: validationPatterns.alphanum,
         error: "Index ID is not known to IGO.",
         tooltip:
             "This list represents barcodes that are already registered with IGO.  Please select from the list.  If you are submitting custom barcodes, you must pre-register them with IGO, and confirm your design and construct in advance.  Once you have identified the barcode by name, the sequence will appear in the adjacent field.  Please confirm that the sequence is expected based on your documentation."
@@ -196,7 +210,7 @@ export const constantColumns = {
         //  "editor": "select",
         type: "autocomplete",
         error: "Only dropdown options are permitted as values",
-        strict: "true",
+        strict: true,
         picklistName: "Nucleic+Acid+Type+to+Extract",
         width: 190
     },
@@ -243,13 +257,13 @@ export const constantColumns = {
         data: "assay",
         type: "dropdown",
         error: "Only dropdown options are permitted as values",
-        strict: "true",
+        strict: true,
         tooltip:
             "This field is multi-select.  If you are submitting one sample for multiple assays, please select the first, followed by the second, than the third, in the order of priority.",
         editableCellTemplate: "uiMultiSelect",
         picklistName: "ddPCR+Assay",
-        allowInvalid : true,
-        allowEmpty : true
+        allowInvalid: true,
+        allowEmpty: true
     },
     "Estimated % Tumor": {
         name: "Estimated % Tumor",
@@ -260,7 +274,7 @@ export const constantColumns = {
         //  "editor": "select",
         type: "autocomplete",
         error: "Only dropdown options are permitted as values",
-        strict: "true",
+        strict: true,
         source: [
             "Normal",
             "1%",
@@ -298,7 +312,7 @@ export const constantColumns = {
         type: "autocomplete",
         error:
             "Only OncoTree Tumor IDs or exact dropdown options are permitted.",
-        strict: "true",
+        strict: true,
         picklistName: "tumorType"
     },
     "Sample Class": {
@@ -312,21 +326,21 @@ export const constantColumns = {
         //  "editor": "select",
         type: "autocomplete",
         error: "Only dropdown options are permitted as values",
-        strict: "true",
+        strict: true,
         picklistName: "Sample+Class"
     },
     "Tissue Site": {
         name: "Tissue Site",
         columnHeader: "Tissue Site",
         data: "tissueType",
-        pattern: "alphanum",
+        pattern: validationPatterns.alphanum,
         tooltip: "Site where tumor removed. If unknown, leave blank."
     },
     "Patient ID": {
         name: "Patient ID",
         columnHeader: "Patient ID",
         data: "patientId",
-        pattern: "alphanumdash",
+        pattern: validationPatterns.alphanumdash,
         tooltip:
             "For non-MSKCC patient samples, mouse samples, or cell lines without patient origin, please use this field to provide us with group names i.e. compare this group (A) with this group (B). For CMO projects, fill out something unique and correspond with your PM for more information."
     },
@@ -358,14 +372,14 @@ export const constantColumns = {
 
         type: "autocomplete",
         error: "Only dropdown options are permitted as values",
-        strict: "true",
+        strict: true,
         picklistName: "Gender"
     },
     "Known Genetic Alteration": {
         name: "Known Genetic Alteration",
         columnHeader: "Known Genetic Alteration",
         data: "geneticAlterations",
-        pattern: "alphanum",
+        pattern: validationPatterns.alphanum,
         tooltip: "If known, otherwise leave blank.",
         width: 190
     },
@@ -380,7 +394,7 @@ export const constantColumns = {
         headerCellClass: "optional",
         optional: "true",
         data: "sampleType",
-        pattern: "alphanum"
+        pattern: validationPatterns.alphanum,
     },
     Recipe: {
         name: "Recipe",
@@ -388,7 +402,7 @@ export const constantColumns = {
         headerCellClass: "optional",
         optional: "true",
         data: "recipe",
-        pattern: "alphanum"
+        pattern: validationPatterns.alphanum,
     },
     "CMO Sample Type": {
         name: "CMO Sample Type",
@@ -396,7 +410,7 @@ export const constantColumns = {
         headerCellClass: "optional",
         optional: "true",
         data: "specimenType",
-        pattern: "alphanum"
+        pattern: validationPatterns.alphanum,
     },
     "Spike In Genes": {
         name: "Spike In Genes",
@@ -404,14 +418,16 @@ export const constantColumns = {
         headerCellClass: "optional",
         optional: "true",
         data: "spikeInGenes",
-        pattern: "alphanum"
+        pattern: validationPatterns.alphanum,
     },
     Platform: {
         name: "Platform",
         columnHeader: "Platform",
         headerCellClass: "optional",
         optional: "true",
-        pattern: "alphanum",
+        pattern: validationPatterns.alphanum,
         data: "platform"
     }
 };
+
+

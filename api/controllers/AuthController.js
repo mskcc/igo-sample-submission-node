@@ -114,7 +114,6 @@ exports.login = [
                     });
             }
         } catch (err) {
-            console("what")
             return apiResponse.ErrorResponse(res, err);
         }
     }

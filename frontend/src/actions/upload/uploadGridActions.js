@@ -3,7 +3,7 @@ import React from 'react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { updateHeader } from './uploadFormActions'
-
+import * as util from '../helpers'
 import {
   diff,
   findSubmission,
@@ -21,6 +21,7 @@ import {
   validateGrid,
   checkGridAndForm,
   submissionExists,
+  addValidatorToRegexCols,
 } from '../helpers'
 
 import { Config } from '../../config.js'
@@ -198,7 +199,7 @@ export function getInitialColumns(formValues, userRole) {
         return dispatch({
           type: GET_COLUMNS_SUCCESS,
           columnHeaders: data.columnHeaders,
-          columnFeatures: data.columnFeatures,
+          columnFeatures: util.addValidatorToRegexCols(data.columnFeatures),
           hiddenColumns: data.hiddenColumns,
           rows: data.rowData,
           form: formValues,

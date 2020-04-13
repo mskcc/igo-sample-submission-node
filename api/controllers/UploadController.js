@@ -254,8 +254,6 @@ exports.grid = [
             let application = formValues.application
 
             let columnsPromise = cache.get(`${material}-${application}-Columns`, () => service.getColumns(material, application))
-
-
             Promise.all([columnsPromise]).then((results) => {
                 if (results.some(x => x.length == 0)) {
                     return apiResponse.ErrorResponse(
@@ -290,42 +288,6 @@ exports.grid = [
                 })
             })
         }
-        //         .then(columnsResult => {
-        //         if (columnsResult) {
-        //             util.generateGrid(
-        //                 columnsResult,
-        //                 formValues,
-        //                 req.user.role
-        //             ).then(gridResult => {
-        //                 console.log("done with grid")
-        //                 if (gridResult) {
-        //                     // console.log(columns);
-        //                     return apiResponse.successResponseWithData(
-        //                         res,
-        //                         "Operation success",
-        //                         {
-        //                             columns: gridResult.columns,
-        //                             user: req.user
-        //                         }
-        //                     );
-        //                 }
-        //             });
-        //         } else {
-        //             return apiResponse.ErrorResponse(
-        //                 res,
-        //                 `Could not retrieve columns for '${material}' and '${application}'.`
-        //             );
-        //         }
-        //     })
-        // .catch(err => {
-        //     console.log(err);
-        //     return apiResponse.ErrorResponse(res, err);
-        // });
-        //     }
-        // } catch (err) {
-        //     console.log(error);
-        //     return apiResponse.ErrorResponse(res, err);
-        // }
     }
 ];
 

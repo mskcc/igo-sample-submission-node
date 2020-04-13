@@ -28,6 +28,26 @@ export const generateRows = (columns, formValues, numberToAdd) => {
   return rows
 }
 
+// Handsontable does its own validation if columns have a validator method
+export const addValidatorToRegexCols = (columnFeatures) => {
+  columnFeatures.map((element) => {
+    if ('pattern' in element) {
+      let pattern = new RegExp(element.pattern)
+      element.validator =
+        function (value, callback) {
+          if (pattern.test(value)) {
+            callback(true)
+          } else {
+            callback(false)
+          }
+        }
+    }
+
+  })
+  return columnFeatures
+}
+
+
 // pre-filling WellPosition for a plate of 96 wells
 // times = how many times bigger is the #samples than the plate rows (8 A-H) -
 // how many columns will have to be filled, used as end condition
@@ -166,14 +186,14 @@ export const generateSubmissionsGrid = response => {
       submitted_on: submission.submitted_on,
       // available actions depend on submitted status
       edit: submission.submitted
-        ? '<span  submitted="'+submission.submitted+'" service-id="'+submission.service_id+'" submission-id="'+submission.id+'" class="grid-action-disabled">edit</span>'
-        : '<span submitted="'+submission.submitted+'" service-id="'+submission.service_id+'" submission-id="'+submission.id+'" class="grid-action">edit</span>',
+        ? '<span  submitted="' + submission.submitted + '" service-id="' + submission.service_id + '" submission-id="' + submission.id + '" class="grid-action-disabled">edit</span>'
+        : '<span submitted="' + submission.submitted + '" service-id="' + submission.service_id + '" submission-id="' + submission.id + '" class="grid-action">edit</span>',
       receipt: submission.submitted
-        ? '<span submitted="'+submission.submitted+'" service-id="'+submission.service_id+'" submission-id="'+submission.id+'" class="grid-action grid-action">download</span>'
-        : '<span submitted="'+submission.submitted+'" service-id="'+submission.service_id+'" submission-id="'+submission.id+'" class="grid-action-disabled">download</span>',
+        ? '<span submitted="' + submission.submitted + '" service-id="' + submission.service_id + '" submission-id="' + submission.id + '" class="grid-action grid-action">download</span>'
+        : '<span submitted="' + submission.submitted + '" service-id="' + submission.service_id + '" submission-id="' + submission.id + '" class="grid-action-disabled">download</span>',
       delete: submission.submitted
-        ? '<span submitted="'+submission.submitted+'" service-id="'+submission.service_id+'" submission-id="'+submission.id+'" class="grid-action-disabled">delete</span>'
-        : '<span submitted="'+submission.submitted+'" service-id="'+submission.service_id+'" submission-id="'+submission.id+'" class="grid-action">delete</span>',
+        ? '<span submitted="' + submission.submitted + '" service-id="' + submission.service_id + '" submission-id="' + submission.id + '" class="grid-action-disabled">delete</span>'
+        : '<span submitted="' + submission.submitted + '" service-id="' + submission.service_id + '" submission-id="' + submission.id + '" class="grid-action">delete</span>',
     }
   }
   return grid
@@ -346,6 +366,12 @@ const isAssay = (newValue, assays) => {
   return false
 }
 
+// Validation for all the fields where a pattern/validator approach can't be used
+// unique values (patientid, samplename)
+// tumortype
+// index
+// assay
+// drodpown selection restricted to picklist (if done through handsontable, validation experience very different from overall user experience)
 export const validateGrid = (changes, grid) => {
   let errors = new Set([])
   for (let i = 0; i < changes.length; i++) {
@@ -367,6 +393,7 @@ export const validateGrid = (changes, grid) => {
       continue
     }
 
+    // userid, samplename duplicate check
     if (columnName == 'userId') {
       let count = 0
       for (let j = 0; j < grid.rows.length; j++) {
@@ -378,17 +405,18 @@ export const validateGrid = (changes, grid) => {
       if (!valid) {
         errors.add(
           grid.columnFeatures[columnIndex].name +
-            ': ' +
-            grid.columnFeatures[columnIndex].uniqueError
+          ': ' +
+          grid.columnFeatures[columnIndex].uniqueError
         )
         grid.rows[rowIndex][columnName] = ''
         continue
       }
+      // "sample" not allowed in this id
       if (newValue.toLowerCase().includes('sample')) {
         errors.add(
           grid.columnFeatures[columnIndex].name +
-            ': ' +
-            grid.columnFeatures[columnIndex].containsSampleError
+          ': ' +
+          grid.columnFeatures[columnIndex].containsSampleError
         )
         grid.rows[rowIndex][columnName] = ''
         continue
@@ -404,8 +432,8 @@ export const validateGrid = (changes, grid) => {
       if (!tumorTypeInList) {
         errors.add(
           grid.columnFeatures[columnIndex].name +
-            ': ' +
-            grid.columnFeatures[columnIndex].error
+          ': ' +
+          grid.columnFeatures[columnIndex].error
         )
         grid.rows[rowIndex][columnName] = ''
       }
@@ -417,34 +445,24 @@ export const validateGrid = (changes, grid) => {
       if (!indexResult.success) {
         errors.add(
           grid.columnFeatures[columnIndex].name +
-            ': ' +
-            grid.columnFeatures[columnIndex].error
+          ': ' +
+          grid.columnFeatures[columnIndex].error
         )
         grid.rows[rowIndex][columnName] = ''
       }
+      continue
     }
 
-    if ('pattern' in grid.columnFeatures[columnIndex]) {
-      let regex = new RegExp(grid.columnFeatures[columnIndex].pattern)
-      let valid = newValue == '' || newValue == null || regex.test(newValue)
-      if (!valid) {
-        errors.add(
-          grid.columnFeatures[columnIndex].name +
-            ': ' +
-            grid.columnFeatures[columnIndex].error
-        )
-        grid.rows[rowIndex][columnName] = ''
-      }
-    }
     if ('source' in grid.columnFeatures[columnIndex]) {
       if (!grid.columnFeatures[columnIndex].source.includes(newValue)) {
         errors.add(
           grid.columnFeatures[columnIndex].name +
-            ': ' +
-            grid.columnFeatures[columnIndex].error
+          ': ' +
+          grid.columnFeatures[columnIndex].error
         )
         grid.rows[rowIndex][columnName] = ''
       }
+      continue
     }
   }
   buildErrorMessage(errors)
@@ -455,7 +473,7 @@ export const validateGrid = (changes, grid) => {
   }
 }
 
-// compare grid and header for inconsistencies
+// compare grid and header for inconsistencies, detects if user changed header values but did not re-generate grid
 export const checkGridAndForm = (form, grid) => {
   let errors = new Set([])
 
@@ -474,17 +492,17 @@ export const checkGridAndForm = (form, grid) => {
   if (form.patient_id_type != grid.patient_id_type) {
     errors.add(
       'Patient ID Type: ' +
-        form.patient_id_type +
-        ' vs. ' +
-        grid.patient_id_type
+      form.patient_id_type +
+      ' vs. ' +
+      grid.patient_id_type
     )
   }
   if (form.grouping_checked != grid.grouping_checked) {
     errors.add(
       'Groups pairs or replicates: ' +
-        (form.grouping_checked ? 'yes' : 'no') +
-        ' vs. ' +
-        (grid.grouping_checked ? 'yes' : 'no')
+      (form.grouping_checked ? 'yes' : 'no') +
+      ' vs. ' +
+      (grid.grouping_checked ? 'yes' : 'no')
     )
   }
 

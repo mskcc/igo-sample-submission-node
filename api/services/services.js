@@ -68,6 +68,10 @@ exports.getPicklist = (listname) => {
             httpsAgent: agent
         })
         .then((resp) => {
+            if (resp.data && resp.data[0].includes("ERROR")){
+                logger.log("info", `Error retrieving response from ${url}`)
+                return []
+            }
             logger.log("info", `Successfully retrieved response from ${url}`);
             return resp;
         }).catch((error) => {
