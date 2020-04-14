@@ -1,9 +1,9 @@
 //TODO ERROR HANDLING
 import axios from 'axios'
 
-import { Config } from '../../config.js'
+import { Config } from '../config.js'
 
-import { generateSubmissionsGrid } from '../helpers'
+import { generateSubmissionsGrid } from './helpers'
 
 
 // Add a request interceptor
