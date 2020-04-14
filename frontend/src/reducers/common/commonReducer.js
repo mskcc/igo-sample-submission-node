@@ -1,8 +1,8 @@
 import {
   commonActions,
   userActions,
-  uploadFormActions,
-  uploadGridActions as ActionTypes,
+  formActions,
+  gridActions as ActionTypes,
 } from '../../actions'
 
 import Swal from 'sweetalert2'

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import { withLocalize } from 'react-localize-redux'
 import { connect } from 'react-redux'
-import { uploadGridActions, userActions } from '../../actions'
+import { gridActions, userActions } from '../../actions'
 import { Redirect } from 'react-router-dom'
 
 import { Dialog } from '../../components'
@@ -51,7 +51,7 @@ export default withLocalize(
   connect(
     mapStateToProps,
     {
-      ...uploadGridActions,
+      ...gridActions,
       ...userActions,
     }
   )(UploadPage)

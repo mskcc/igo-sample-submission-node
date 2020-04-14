@@ -1,6 +1,6 @@
 import * as commonActions from './commonActions'
 import * as userActions from './user/userActions'
-import * as uploadFormActions from './upload/uploadFormActions'
-import * as uploadGridActions from './upload/uploadGridActions'
+import * as formActions from './upload/formActions'
+import * as gridActions from './upload/gridActions'
 
-export { commonActions, userActions, uploadFormActions, uploadGridActions }
+export { commonActions, userActions, formActions, gridActions }

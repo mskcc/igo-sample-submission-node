@@ -2,7 +2,7 @@ import { formActions as ActionTypes } from '../../actions'
 import { initialFormState } from './initialState'
 import { gridActions as GridActionTypes } from '../../actions'
 
-export default function uploadFormReducer(state = initialFormState, action) {
+export default function formReducer(state = initialFormState, action) {
   switch (action.type) {
     case ActionTypes.REQUEST_INITIAL_STATE:
       return {
@@ -11,7 +11,6 @@ export default function uploadFormReducer(state = initialFormState, action) {
       }
 
     case ActionTypes.RECEIVE_INITIAL_STATE_SUCCESS:
-      console.log(action.form_data)
       return {
         ...state,
         formIsLoading: false,

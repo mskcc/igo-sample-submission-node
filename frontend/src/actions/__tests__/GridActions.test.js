@@ -5,7 +5,7 @@ import thunk from 'redux-thunk'
 import multi from 'redux-multi'
 import moxios from 'moxios'
 
-import { uploadGridActions } from '../../actions/'
+import { gridActions } from '../../actions/'
 
 import {
   initialFullStateMock,
@@ -60,7 +60,7 @@ describe('upload grid actions', () => {
     ]
 
     return store
-      .dispatch(uploadGridActions.getColumns(formValuesMock))
+      .dispatch(gridActions.getColumns(formValuesMock))
       .then(() => {
         const actions = store.getActions()
         expect(actions).toEqual(expectedActions)
@@ -92,7 +92,7 @@ describe('upload grid actions', () => {
 
     return store
       .dispatch(
-        uploadGridActions.getInitialColumns({
+        gridActions.getInitialColumns({
           material: 'Cells',
           application: 'AmpliSeq',
         })
@@ -126,7 +126,7 @@ describe('upload grid actions', () => {
     // expect(store.getState().upload.grid.rows.length).toEqual(
     //   parseInt(oldNumber)
     // )
-    store.dispatch(uploadGridActions.getColumns(formValuesMock))
+    store.dispatch(gridActions.getColumns(formValuesMock))
 
     const actions = store.getActions()
 

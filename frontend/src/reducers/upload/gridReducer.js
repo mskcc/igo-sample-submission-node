@@ -2,7 +2,7 @@ import { gridActions as ActionTypes } from '../../actions'
 import { formActions as FormActionTypes } from '../../actions'
 import { initialGridState } from './initialState'
 
-export default function uploadGridReducer(state = initialGridState, action) {
+export default function gridReducer(state = initialGridState, action) {
   switch (action.type) {
     case ActionTypes.RESET_GRID_ERROR_MESSAGE:
       return {

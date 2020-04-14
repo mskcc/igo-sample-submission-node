@@ -16,7 +16,7 @@ import uploadReducer from '../../../reducers/upload/uploadReducer'
 
 import TestUploadPage from '../UploadPage'
 import uploadFormReducer from '../../../reducers/upload/uploadFormReducer'
-// import uploadGridActions from '../../../actions/upload/uploadGridActions'
+// import gridActions from '../../../actions/upload/gridActions'
 
 import { initialFullStateMock, filledFullStateMock } from '../../../mocks'
 
@@ -58,11 +58,11 @@ describe('renders UploadPage', () => {
     // const getColumns = jest.fn()
     const store = mockStore(filledFullStateMock)
     // let oldState = store.getState()
-    // const uploadGridActions = { getColumns: jest.fn() }
+    // const gridActions = { getColumns: jest.fn() }
     const wrapper = mount(
       <UploadPage
         store={store}
-        // uploadGridActions={uploadGridActions}
+        // gridActions={gridActions}
         // getColumns={getColumns}
       />
     )

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import Swal from 'sweetalert2'
 
 import { connect } from 'react-redux'
-import { uploadFormActions } from '../../actions'
+import { formActions } from '../../actions'
 
 import { UploadForm } from '../../components'
 
@@ -114,7 +114,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = {
-  ...uploadFormActions,
+  ...formActions,
 }
 
 export default connect(

@@ -1,5 +1,5 @@
 import {
-  uploadFormActions as FormActionTypes,
+  formActions as FormActionTypes,
   userActions as ActionTypes,
 } from '../../actions'
 import FileSaver from 'file-saver'

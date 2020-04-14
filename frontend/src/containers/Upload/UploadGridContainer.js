@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import Swal from 'sweetalert2'
 
 import { connect } from 'react-redux'
-import { uploadGridActions, userActions } from '../../actions'
+import { gridActions, userActions } from '../../actions'
 
 import CircularProgress from '@material-ui/core/CircularProgress'
 
@@ -120,7 +120,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = {
-  ...uploadGridActions,
+  ...gridActions,
   ...userActions,
 }
 

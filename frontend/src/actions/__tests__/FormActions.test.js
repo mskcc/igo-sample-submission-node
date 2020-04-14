@@ -5,7 +5,7 @@ import thunk from 'redux-thunk'
 import multi from 'redux-multi'
 import moxios from 'moxios'
 
-import { uploadFormActions } from '../../actions/'
+import { formActions } from '../../actions/'
 
 import { getChoicesForDNALibraryMock, initialFullStateMock } from '../../mocks'
 
@@ -33,7 +33,7 @@ describe('upload form actions', () => {
         type: 'CLEARED',
       },
     ]
-    store.dispatch(uploadFormActions.clearMaterial())
+    store.dispatch(formActions.clearMaterial())
     const actions = store.getActions()
     expect(actions).toEqual(expectedActions)
   })
@@ -67,7 +67,7 @@ describe('upload form actions', () => {
       },
     ]
     return store
-      .dispatch(uploadFormActions.getFormatterForSpecies(species))
+      .dispatch(formActions.getFormatterForSpecies(species))
       .then(() => {
         const actions = store.getActions()
         expect(actions).toEqual(expectedActions)
@@ -99,7 +99,7 @@ describe('upload form actions', () => {
   //     },
   //   ]
   //   return store
-  //     .dispatch(uploadFormActions.getFormatterForSpecies(species))
+  //     .dispatch(formActions.getFormatterForSpecies(species))
   //     .then(() => {
   //       const actions = store.getActions()
   //       expect(actions).toEqual(expectedActions)
@@ -115,7 +115,7 @@ describe('upload form actions', () => {
         type: 'SELECT_SPECIES_WITHOUT_ID_FORMATTER',
       },
     ]
-    store.dispatch(uploadFormActions.getFormatterForSpecies(species))
+    store.dispatch(formActions.getFormatterForSpecies(species))
 
     const actions = store.getActions()
     expect(actions).toEqual(expectedActions)
@@ -154,7 +154,7 @@ describe('upload form actions', () => {
       },
     ]
     return store
-      .dispatch(uploadFormActions.getApplicationsForMaterial(material))
+      .dispatch(formActions.getApplicationsForMaterial(material))
       .then(() => {
         const actions = store.getActions()
         expect(actions).toEqual(expectedActions)
@@ -186,7 +186,7 @@ describe('upload form actions', () => {
   //     },
   //   ]
   //   return store
-  //     .dispatch(uploadFormActions.getApplicationsForMaterial(material))
+  //     .dispatch(formActions.getApplicationsForMaterial(material))
   //     .then(() => {
   //       const actions = store.getActions()
   //       expect(actions).toEqual(expectedActions)
@@ -217,7 +217,7 @@ describe('upload form actions', () => {
   //     },
   //   ]
   //   return store
-  //     .dispatch(uploadFormActions.getMaterialsForApplication(application))
+  //     .dispatch(formActions.getMaterialsForApplication(application))
   //     .then(() => {
   //       const actions = store.getActions()
   //       expect(actions).toEqual(expectedActions)

@@ -70,7 +70,6 @@ export function getInitialState() {
       return axios
         .get(Config.NODE_API_ROOT + '/upload/headerValues')
         .then(response => {
-          console.log(response)
           dispatch({
             type: RECEIVE_INITIAL_STATE_SUCCESS,
             form_data: response.payload,
