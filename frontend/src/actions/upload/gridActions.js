@@ -385,6 +385,7 @@ export function handleMRN(rowIndex, patientId) {
         patientId: patientId,
       })
       .then(response => {
+        console.log(response)
         dispatch({
           type: HANDLE_MRN_SUCCESS,
           message: 'MRN redacted.',
