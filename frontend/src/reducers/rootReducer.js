@@ -2,6 +2,7 @@ import { combineReducers } from 'redux'
 import { LocalizeProvider, localizeReducer } from 'react-localize-redux'
 
 import uploadReducer from './upload/uploadReducer'
+import submissionsReducer from './submissions/submissionsReducer'
 import commonReducer from './common/commonReducer'
 import userReducer from './user/userReducer'
 import { persistReducer } from 'redux-persist'
@@ -21,6 +22,7 @@ const appReducer = combineReducers({
   upload: uploadReducer,
   common: commonReducer,
   user: userReducer,
+  submissions: submissionsReducer,
 
   // gridReducer,
   // promoteReducer,

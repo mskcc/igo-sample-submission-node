@@ -1,6 +1,7 @@
 import * as commonActions from './commonActions'
-import * as userActions from './userActions'
-import * as formActions from './formActions'
-import * as gridActions from './gridActions'
+import * as formActions from './upload/formActions'
+import * as gridActions from './upload/gridActions'
+import * as submissionActions from './submissions/submissionActions'
+import * as userActions from './user/userActions'
 
-export { commonActions, userActions, formActions, gridActions }
+export { commonActions, userActions, formActions, gridActions, submissionActions }

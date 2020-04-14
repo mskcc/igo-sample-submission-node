@@ -87,70 +87,70 @@ function userReducer(state = initialState, action) {
     //     submissions: action.user_data.submissions,
     //   }
 
-    case ActionTypes.GET_SUBMISSIONS:
-      return {
-        ...state,
-        loading: true,
-      }
-    case ActionTypes.GET_SUBMISSIONS_FAIL:
-      return { ...state, loading: false, error: action.error }
+    // case ActionTypes.GET_SUBMISSIONS:
+    //   return {
+    //     ...state,
+    //     loading: true,
+    //   }
+    // case ActionTypes.GET_SUBMISSIONS_FAIL:
+    //   return { ...state, loading: false, error: action.error }
    
-    case ActionTypes.GET_SUBMISSIONS_SUCCESS:
-      return {
-        ...state,
-        submissionsTable: action.payload.table,
-        submissions: action.payload.submissions,
-        loading: false,
-      }
+    // case ActionTypes.GET_SUBMISSIONS_SUCCESS:
+    //   return {
+    //     ...state,
+    //     submissionsTable: action.payload.table,
+    //     submissions: action.payload.submissions,
+    //     loading: false,
+    //   }
 
-    case ActionTypes.SAVE_PARTIAL_SUBMISSION:
-      return {
-        ...state,
-        isSaving: true,
-      }
-    case ActionTypes.SAVE_PARTIAL_SUBMISSION_FAIL:
-      return { ...state, isSaving: false }
-    case ActionTypes.SAVE_PARTIAL_SUBMISSION_CANCEL:
-      return { ...state, isSaving: false }
-    case ActionTypes.SAVE_PARTIAL_SUBMISSION_SUCCESS:
-      return {
-        ...state,
-        isSaving: false,
-        saved: true,
-        submissionsTable: action.payload.table,
-        submissions: action.payload.submissions,
-      }
+    // case ActionTypes.SAVE_PARTIAL_SUBMISSION:
+    //   return {
+    //     ...state,
+    //     isSaving: true,
+    //   }
+    // case ActionTypes.SAVE_PARTIAL_SUBMISSION_FAIL:
+    //   return { ...state, isSaving: false }
+    // case ActionTypes.SAVE_PARTIAL_SUBMISSION_CANCEL:
+    //   return { ...state, isSaving: false }
+    // case ActionTypes.SAVE_PARTIAL_SUBMISSION_SUCCESS:
+    //   return {
+    //     ...state,
+    //     isSaving: false,
+    //     saved: true,
+    //     submissionsTable: action.payload.table,
+    //     submissions: action.payload.submissions,
+    //   }
 
-    case ActionTypes.EDIT_SUBMISSION:
-      return {
-        ...state,
-        loading: true,
-      }
-    case ActionTypes.EDIT_SUBMISSION_FAIL:
-      return { ...state, loading: false }
+    // case ActionTypes.EDIT_SUBMISSION:
+    //   return {
+    //     ...state,
+    //     loading: true,
+    //   }
+    // case ActionTypes.EDIT_SUBMISSION_FAIL:
+    //   return { ...state, loading: false }
 
-    case ActionTypes.EDIT_SUBMISSION_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-      }
+    // case ActionTypes.EDIT_SUBMISSION_SUCCESS:
+    //   return {
+    //     ...state,
+    //     loading: false,
+    //   }
 
-    case ActionTypes.DELETE_SUBMISSION:
-      return {
-        ...state,
-        isSaving: true,
-      }
-    case ActionTypes.DELETE_SUBMISSION_FAIL:
-      return { ...state, isSaving: false }
-    case ActionTypes.DELETE_SUBMISSION_SUCCESS:
-      return {
-        ...state,
-        isSaving: false,
-        saved: true,
+    // case ActionTypes.DELETE_SUBMISSION:
+    //   return {
+    //     ...state,
+    //     isSaving: true,
+    //   }
+    // case ActionTypes.DELETE_SUBMISSION_FAIL:
+    //   return { ...state, isSaving: false }
+    // case ActionTypes.DELETE_SUBMISSION_SUCCESS:
+    //   return {
+    //     ...state,
+    //     isSaving: false,
+    //     saved: true,
 
-        submissionsTable: action.payload.table,
-        submissions: action.payload.submissions,
-      }
+    //     submissionsTable: action.payload.table,
+    //     submissions: action.payload.submissions,
+    //   }
 
     case ActionTypes.BUTTON_RESET: {
       return { ...state, submitted: false, saved: false }

@@ -1,9 +1,9 @@
 var express = require("express");
-const SubmissionController = require("../controllers/SubmissionController");
+const SubmissionsController = require("../controllers/SubmissionsController");
 
 var router = express.Router();
 
-// router.get("/", UploadController.submissionsList);
+router.get("/list", SubmissionsController.list);
 // router.get("/headerValues", UploadController.headerValues);
 // router.get("/materialsAndSpecies", UploadController.materialsAndSpecies);
 // router.get("/applicationsAndContainers", UploadController.applicationsAndContainers);

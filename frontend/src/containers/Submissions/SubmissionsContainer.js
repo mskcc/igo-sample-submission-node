@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { withLocalize } from 'react-localize-redux'
 import { connect } from 'react-redux'
 import Swal from 'sweetalert2'
-import { userActions, gridActions } from '../../actions'
+import { userActions, gridActions, submissionActions } from '../../actions'
 import { resetErrorMessage } from '../../actions/commonActions'
 
 import SubmissionsTable from '../../components/Submissions/SubmissionsTable'
@@ -47,8 +47,7 @@ export class SubmissionsPage extends Component {
   }
 
   render() {
-    return this.props.user.submissions &&
-      this.props.user.submissions.length > 0 ? (
+    return this.props.submissions.list > 0 ? (
       <SubmissionsTable user={this.props.user} handleClick={this.handleClick} />
     ) : (
       'You have not submitted anything since the launch of V2!'
@@ -58,6 +57,7 @@ export class SubmissionsPage extends Component {
 
 const mapStateToProps = state => ({
   user: state.user,
+  submissions: state.submissions,
   loggedIn: state.user.loggedIn,
   loading: state.user.loading,
 })
@@ -69,6 +69,7 @@ export default withLocalize(
       resetErrorMessage,
       ...userActions,
       ...gridActions,
+      ...submissionActions
     }
   )(SubmissionsPage)
 )

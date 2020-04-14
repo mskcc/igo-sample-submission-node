@@ -15,7 +15,28 @@ const cache = new CacheService(ttl); // Create a new cache service instance
 const { constants } = require("../util/constants");
 
 
+exports.list = [
+    // authenticate,
+    function (req, res) {
+        console.log(req)
+        // const errors = validationResult(req);
+        // if (!errors.isEmpty()) {
+        //     return apiResponse.validationErrorWithData(
+        //         res,
+        //         "Validation error.",
+        //         errors.array()
+        //     );
+        // } else {
 
+            return apiResponse.successResponseWithData(
+                res,
+                "Operation success",
+                {}
+            );
+        }
+
+
+]
 /**
  * Returns Materials and Species for application/recipe.
  *

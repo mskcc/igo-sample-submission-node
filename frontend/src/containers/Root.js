@@ -16,7 +16,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { Header, Message, SnackMessage } from '../components'
 import UploadPage from './Upload/UploadPage'
-import SubmissionsPage from './Submissions/SubmissionsPage'
+import SubmissionsPage from './Submissions/SubmissionsContainer'
 import Promote from './Promote/Promote'
 import Login from './Login'
 import Logout from './Logout'

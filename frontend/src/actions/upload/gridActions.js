@@ -3,7 +3,7 @@ import React from 'react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { updateHeader } from './formActions'
-import * as util from './helpers'
+import * as util from '../helpers'
 import {
   diff,
   findSubmission,
@@ -22,9 +22,9 @@ import {
   checkGridAndForm,
   submissionExists,
   addValidatorToRegexCols,
-} from './helpers'
+} from '../helpers'
 
-import { Config } from '../config.js'
+import { Config } from '../../config.js'
 
 // Add a request interceptor
 axios.interceptors.request.use(

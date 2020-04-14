@@ -10,6 +10,6 @@ var app = express();
 
 app.use("/auth/", authRouter);
 app.use("/upload/", authenticate, uploadRouter);
-app.use("/submission/", authenticate, submissionRouter);
+app.use("/submissions/", authenticate, submissionRouter);
 
 module.exports = app;
