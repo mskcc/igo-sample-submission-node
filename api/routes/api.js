@@ -1,6 +1,7 @@
 var express = require("express");
 var uploadRouter = require("./upload");
 var authRouter = require("./auth");
+var submissionRouter = require("./submission");
 const { authenticate, getUser } = require("../middlewares/jwt");
 var app = express();
 
@@ -9,5 +10,6 @@ var app = express();
 
 app.use("/auth/", authRouter);
 app.use("/upload/", authenticate, uploadRouter);
+app.use("/submission/", authenticate, submissionRouter);
 
 module.exports = app;

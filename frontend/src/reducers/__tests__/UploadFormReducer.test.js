@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import uploadFormReducer from '../upload/uploadFormReducer'
+import formReducer from '../upload/formReducer'
 
 import { initialFormStateMock } from '../../mocks'
 
@@ -8,7 +8,7 @@ const formTestStore = initialFormStateMock
 
 describe('upload form reducers', () => {
   it('returns the initial state', () => {
-    expect(uploadFormReducer(undefined, {})).toEqual(formTestStore)
+    expect(formReducer(undefined, {})).toEqual(formTestStore)
   })
 
   it('handles materials for selected application', () => {
@@ -22,7 +22,7 @@ describe('upload form reducers', () => {
       species: [],
     }
 
-    expect(uploadFormReducer(formTestStore, action)).toEqual({
+    expect(formReducer(formTestStore, action)).toEqual({
       ...formTestStore,
       filteredMaterials: expectedMaterials,
       formIsLoading: false,

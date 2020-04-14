@@ -22,7 +22,7 @@ const appReducer = combineReducers({
   common: commonReducer,
   user: userReducer,
 
-  // uploadGridReducer,
+  // gridReducer,
   // promoteReducer,
   // receiptReducer,
   // loginReducer,

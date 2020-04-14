@@ -6,7 +6,6 @@ import multi from 'redux-multi'
 import moxios from 'moxios'
 
 import { formActions } from '../../actions/'
-
 import { getChoicesForDNALibraryMock, initialFullStateMock } from '../../mocks'
 
 const formTestStore = initialFullStateMock
@@ -74,37 +73,6 @@ describe('upload form actions', () => {
       })
   })
 
-  // it('creates RECEIVE_PICKLIST_FAIL action for Species selection with formatter', () => {
-  //   const store = mockStore(formTestStore)
-  //   const species = 'Human'
-
-  //   moxios.wait(() => {
-  //     const request = moxios.requests.mostRecent()
-  //     request.respondWith({
-  //       status: 200,
-  //     })
-  //   })
-  //   const expectedActions = [
-  //     {
-  //       type: 'SELECT_SPECIES_WITH_ID_FORMATTER',
-  //     },
-  //     {
-  //       type: 'REQUEST_PICKLIST',
-  //       picklist: 'PatientIDTypes',
-  //     },
-
-  //     {
-  //       type: 'RECEIVE_PICKLIST_FAIL',
-  //       error: 'Request failed with status code 400',
-  //     },
-  //   ]
-  //   return store
-  //     .dispatch(formActions.getFormatterForSpecies(species))
-  //     .then(() => {
-  //       const actions = store.getActions()
-  //       expect(actions).toEqual(expectedActions)
-  //     })
-  // })
 
   it('creates actions for Species selection without formatter', () => {
     const store = mockStore(formTestStore)
@@ -116,7 +84,6 @@ describe('upload form actions', () => {
       },
     ]
     store.dispatch(formActions.getFormatterForSpecies(species))
-
     const actions = store.getActions()
     expect(actions).toEqual(expectedActions)
   })

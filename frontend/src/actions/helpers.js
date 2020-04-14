@@ -222,6 +222,7 @@ export const submissionExists = (
   )
 }
 
+/*------------ PATIENT ID HANDLING ------------*/
 // make sure MRNs are always redacted and all depending fields handled accordingly
 export const redactMRN = (rows, index, crdbId, msg, sex) => {
   rows[index].cmoPatientId = crdbId.length > 0 ? 'C-' + crdbId : ''
@@ -233,14 +234,24 @@ export const redactMRN = (rows, index, crdbId, msg, sex) => {
   return rows
 }
 
-// handle patient ids
+export const normalizePatientId = (patientId, type, username) => {
+  if (type.columnHeader == 'Cell Line Name') {
+    return `CELLLINE_${patientId.replace(/_|\W/g, '').toUpperCase()}`
+  } else {
+    return `${username.toUpperCase()}_${patientId}`
+  }
+}
+
 export const createPatientId = (rows, index, crdbId, normalizedPatientID) => {
   rows[index].cmoPatientId = crdbId.length > 0 ? 'C-' + crdbId : ''
   rows[index].normalizedPatientId = normalizedPatientID
-
   return rows
-}
 
+
+}
+/*------------------------------------------------------------------------*/
+
+/*------------ INDEX HANDLING ------------*/
 //  barcode hash is saved in colFeatures.index when index is part of the getCols response
 export const findIndexSeq = (grid, colIndex, rowIndex, indexId) => {
   let result = { success: false, rows: '' }
@@ -260,19 +271,15 @@ export const findIndexSeq = (grid, colIndex, rowIndex, indexId) => {
     return { success: false, rows: grid.rows }
   }
 
-  return result
 }
-
-export const findSingleIndexSeq = (indexId, indexSequenceHash) => {
-  if (indexId == '') {
-    return ''
-  }
-  if (indexId in barcodes) {
+export const findSingleIndexSeq = (indexId) => {
+  if (indexId !== '' && indexId  in barcodes) {
     return barcodes[indexId].barcodeTag
   } else {
     return ''
   }
 }
+/*------------------------------------------------------------------------*/
 
 export const translateTumorTypes = (
   rows,
@@ -366,6 +373,8 @@ const isAssay = (newValue, assays) => {
   return false
 }
 
+
+/*------------ VALIDATION ------------*/
 // Validation for all the fields where a pattern/validator approach can't be used
 // unique values (patientid, samplename)
 // tumortype
@@ -525,3 +534,5 @@ export const buildErrorMessage = errors => {
   errors.forEach(a => (message = message.concat('<br>' + a + '<br>')))
   return message
 }
+
+/*------------------------------------------------------------------------*/

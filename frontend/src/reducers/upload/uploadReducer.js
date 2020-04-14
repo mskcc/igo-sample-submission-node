@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux'
 
-import uploadFormReducer from './uploadFormReducer'
-import uploadGridReducer from './uploadGridReducer'
+import formReducer from './formReducer'
+import gridReducer from './gridReducer'
 
 export default combineReducers({
-  form: uploadFormReducer,
-  grid: uploadGridReducer,
+  form: formReducer,
+  grid: gridReducer,
 })

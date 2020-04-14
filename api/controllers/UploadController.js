@@ -248,8 +248,6 @@ exports.grid = [
             );
         } else {
             let formValues = req.body;
-            console.log(formValues)
-            // return
             let material = formValues.material
             let application = formValues.application
 
@@ -261,7 +259,6 @@ exports.grid = [
                         `Could not retrieve grid for '${material}' and '${application}'.`
                     )
                 }
-
                 let [columnsResult] = results
                 let gridPromise = util.generateGrid(columnsResult, req.user.role, formValues)
 
@@ -280,7 +277,6 @@ exports.grid = [
                     );
 
                 }).catch((reasons) => {
-                    console.log(reasons)
                     return apiResponse.ErrorResponse(
                         res,
                         reasons
@@ -290,6 +286,52 @@ exports.grid = [
         }
     }
 ];
+
+exports.crdbId = [
+    // authenticate,
+    body("patientId")
+        .isLength({ min: 1 })
+        .trim()
+        .withMessage("patientId must be specified."),
+    function (req, res) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return apiResponse.validationErrorWithData(
+                    res,
+                    "Validation error.",
+                    errors.array()
+                );
+            } else {
+                // remove leading and trailing whitespaces just in case
+                let patientId = req.body.patientId.replace(/^\s+|\s+$/g, '') 
+                let patientIdPromise =  service.getCrdbId(patientId)
+
+                Promise.all([patientIdPromise]).then((results) => {
+                    if (results.some(x => x.length == 0)) {
+                        return apiResponse.ErrorResponse(
+                            res,
+                            `Could not anonymize ID.`
+                        )
+                    }
+                    let [patientIdResult] = results
+                    let responseObject = {
+                        ...patientIdResult
+                    };
+                    return apiResponse.successResponseWithData(
+                        res,
+                        "Operation success",
+                        responseObject
+                    );
+                })
+            }
+        } catch (err) {
+            return apiResponse.ErrorResponse(res, err);
+        }
+    }
+];
+
+
 
 /**
  * Submissions List.

@@ -3,7 +3,7 @@ const { body, validationResult } = require("express-validator");
 const { sanitizeBody } = require("express-validator");
 //helper file to prepare responses.
 const apiResponse = require("../util/apiResponse");
-const helpers = require("../util/helpers");
+const util = require("../util/helpers");
 // const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
@@ -52,15 +52,16 @@ exports.login = [
                         }).then(user => {
                             if (user) {
                                 user.loginCounter += 1;
-                                user.role = helpers.determineRole(
+                                user.role = util.determineRole(
                                     response.data.groups
                                 );
+                                user.title = response.data.title,
                                 user.groups = response.data.groups;
                             } else {
                                 var user = new UserModel({
                                     username: response.data.username,
                                     fullName: response.data.full_name,
-                                    role: helpers.determineRole(
+                                    role: util.determineRole(
                                         response.data.groups
                                     ),
                                     title: response.data.title,

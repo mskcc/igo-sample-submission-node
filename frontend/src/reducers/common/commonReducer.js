@@ -18,21 +18,16 @@ const initialState = {
 // global errors and messages
 function commonReducer(state = initialState, action) {
   const { type, error, message, serverError } = action
-  // const { status } = error.response
   if (message) {
-    console.log(message)
     return {
       ...state,
-      // error: true,
       message: message,
     }
   }
   else if(error && error.payload){
-    
     console.log(error.payload.message)
     return {
       ...state,
-      // error: true,
       message: error.payload.message,
     }
   }
@@ -40,7 +35,6 @@ function commonReducer(state = initialState, action) {
     console.log(error.message)
     return {
       ...state,
-      // error: true,
       message: error.message,
     }
   } else {

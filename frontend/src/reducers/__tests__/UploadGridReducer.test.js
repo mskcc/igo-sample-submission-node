@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-import uploadGridReducer from '../upload/uploadGridReducer'
+import gridReducer from '../upload/gridReducer'
 
 import { initialGridStateMock, formValuesMock } from '../../mocks'
 
@@ -9,7 +9,7 @@ const gridTestStore = initialGridStateMock
 describe('upload grid reducers', () => {
   it('returns the initial state', () => {
     // using lengths since jest has some issue with empty arrays showing up as undefined in matchers
-    expect(uploadGridReducer(undefined, {}).length).toEqual(
+    expect(gridReducer(undefined, {}).length).toEqual(
       gridTestStore.length
     )
   })
@@ -21,7 +21,7 @@ describe('upload grid reducers', () => {
       form: formValuesMock,
     }
 
-    expect(uploadGridReducer(gridTestStore, action)).toEqual({
+    expect(gridReducer(gridTestStore, action)).toEqual({
       ...gridTestStore,
       rows: [{ tubeId: '', userId: '' }, { tubeId: '', userId: '' }],
       form: formValuesMock,
