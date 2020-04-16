@@ -1,7 +1,6 @@
 import axios from 'axios'
 
-import { Config } from '../config.js'
-import { getCookie } from './helpers.js'
+import { Config } from '../../config.js'
 
 axios.defaults.withCredentials = true;
 

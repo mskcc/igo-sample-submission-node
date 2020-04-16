@@ -9,7 +9,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { Translate } from 'react-localize-redux'
 import { Redirect } from 'react-router-dom'
 
-import { userActions } from '../actions'
+import { userActions } from '../redux/actions'
 import Message from '../components/Shared/Message'
 
 class Login extends React.Component {

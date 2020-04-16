@@ -9,7 +9,7 @@ import { persistReducer } from 'redux-persist'
 // import storage from 'redux-persist/lib/storage' // defaults to localStorage for web and AsyncStorage for react-native
 import sessionStorage from 'redux-persist/lib/storage/session' // defaults to localStorage for web and AsyncStorage for react-native
 
-import { commonActions } from '../actions'
+import { commonActions } from '../redux/actions'
 
 const persistConfig = {
   key: 'root',

@@ -5,7 +5,7 @@ import thunk from 'redux-thunk'
 import multi from 'redux-multi'
 import moxios from 'moxios'
 
-import { gridActions } from '../../actions/'
+import { gridActions } from '../../redux/actions/'
 
 import {
   initialFullStateMock,

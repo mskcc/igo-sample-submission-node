@@ -8,7 +8,7 @@ import {
   checkGridAndForm,
 } from '../helpers'
 
-import { Config } from '../../config.js'
+import { Config } from '../../../config.js'
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST'
 export const LOGIN_FAIL = 'LOGIN_FAIL'

@@ -5,7 +5,7 @@ import thunk from 'redux-thunk'
 import multi from 'redux-multi'
 import moxios from 'moxios'
 
-import { formActions } from '../../actions/'
+import { formActions } from '../../redux/actions/'
 import { getChoicesForDNALibraryMock, initialFullStateMock } from '../../mocks'
 
 const formTestStore = initialFullStateMock

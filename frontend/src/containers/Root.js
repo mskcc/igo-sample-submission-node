@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
 import { renderToStaticMarkup } from 'react-dom/server'
 
 import { connect } from 'react-redux'
-import { commonActions, userActions } from '../actions'
+import { commonActions, userActions } from '../redux/actions'
 import DevTools from './DevTools'
 
 import { LocalizeProvider, withLocalize } from 'react-localize-redux'

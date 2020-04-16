@@ -5,7 +5,7 @@ import {
   gridActions as ActionTypes,
 } from '../../actions'
 
-import * as swal from "../../actions/swal"
+import * as swal from "../../redux/actions/swal"
 import Swal from 'sweetalert2'
 
 const initialState = {

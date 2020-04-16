@@ -16,7 +16,7 @@ import uploadReducer from '../../../reducers/upload/uploadReducer'
 
 import TestUploadPage from '../UploadPage'
 import uploadFormReducer from '../../../reducers/upload/uploadFormReducer'
-// import gridActions from '../../../actions/upload/gridActions'
+// import gridActions from '../../../redux/actions/upload/gridActions'
 
 import { initialFullStateMock, filledFullStateMock } from '../../../mocks'
 

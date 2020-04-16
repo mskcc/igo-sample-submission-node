@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { userActions } from '../actions'
+import { userActions } from '../redux/actions'
 import { Redirect } from 'react-router-dom'
 import CircularProgress from '@material-ui/core/CircularProgress'
 

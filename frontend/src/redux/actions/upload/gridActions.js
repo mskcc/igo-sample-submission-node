@@ -24,7 +24,7 @@ import {
   addValidatorToRegexCols,
 } from '../helpers'
 
-import { Config } from '../../config.js'
+import { Config } from '../../../config.js'
  
 export const REGISTER_GRID_CHANGE = 'REGISTER_GRID_CHANGE'
 export const REGISTER_GRID_CHANGE_PRE_VALIDATE =

@@ -1,7 +1,7 @@
 //TODO ERROR HANDLING
 import axios from 'axios'
 
-import { Config } from '../../config.js'
+import { Config } from '../../../config.js'
 
 
 
