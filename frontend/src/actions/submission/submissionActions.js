@@ -14,12 +14,19 @@ export function getSubmissions() {
     return axios
       .get(Config.NODE_API_ROOT + '/submission/list', {})
       .then(response => {
-        console.log(response)
+        if (response.payload.submissions.length == 0) {
+          return dispatch({
+            type: GET_SUBMISSIONS_FAIL,
+            error: {
+              message: "Nothing submitted yet."
+            }
+          })
+        }
         return dispatch({
           type: GET_SUBMISSIONS_SUCCESS,
           payload: {
             submissions: response.payload.submissions,
-            table: util.generateSubmissionsGrid(response.payload),
+            table: response.payload.table,
           },
         })
       })

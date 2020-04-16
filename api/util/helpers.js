@@ -115,7 +115,6 @@ function fillColumns(limsColumnList, userRole, formValues, picklists) {
             
                 colDef.error = colDef.error ? colDef.error : 'Invalid format.'
                 result.columnFeatures.push(colDef);
-               
                 if (colDef.hiddenFrom && colDef.hiddenFrom === userRole) {
                     result.hiddenColumns.push(
                         result.columnFeatures.length

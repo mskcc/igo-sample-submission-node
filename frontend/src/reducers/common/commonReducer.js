@@ -5,6 +5,7 @@ import {
   gridActions as ActionTypes,
 } from '../../actions'
 
+import * as swal from "../../actions/swal"
 import Swal from 'sweetalert2'
 
 const initialState = {
@@ -25,7 +26,11 @@ function commonReducer(state = initialState, action) {
     }
   }
   else if(error && error.payload){
-    return {
+    if (error.status = 401){
+      swal.apiValidationError(error.payload.message, error.payload.data)
+      return {...state}
+    }
+    return { 
       ...state,
       message: error.payload.message,
     }
