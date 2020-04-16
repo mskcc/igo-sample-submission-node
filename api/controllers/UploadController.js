@@ -20,9 +20,7 @@ const { constants } = require("../util/constants");
  * @returns {Object}
  */
 exports.headerValues = [
-    // authenticate,
     function (req, res) {
-
 
         let containers = constants.containers
 
@@ -68,7 +66,6 @@ exports.headerValues = [
  * @returns {Object}
  */
 exports.materialsAndSpecies = [
-    // authenticate,
     query("recipe")
         .isLength({ min: 1 })
         .trim()
@@ -115,12 +112,12 @@ exports.materialsAndSpecies = [
  * @returns {Object}
  */
 exports.applicationsAndContainers = [
-    // authenticate,
     query("material")
         .isLength({ min: 1 })
         .trim()
         .withMessage("Material must be specified."),
     function (req, res) {
+        
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -161,7 +158,6 @@ exports.applicationsAndContainers = [
 ];
 
 exports.picklist = [
-    // authenticate,
     query("picklist")
         .isLength({ min: 1 })
         .trim()
@@ -288,7 +284,6 @@ exports.grid = [
 ];
 
 exports.crdbId = [
-    // authenticate,
     body("patientId")
         .isLength({ min: 1 })
         .trim()
@@ -339,7 +334,6 @@ exports.crdbId = [
  * @returns {Object}
  */
 exports.submissionsList = [
-    // authenticate,
     function (req, res) {
         try {
             return apiResponse.successResponseWithData(

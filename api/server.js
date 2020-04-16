@@ -4,6 +4,8 @@ var morgan = require("morgan");
 var path = require("path");
 var cors = require("cors");
 require("dotenv").config();
+var cookieParser = require('cookie-parser')
+
 
 const winston = require("winston");
 
@@ -20,6 +22,8 @@ loggers.add("logger", {
         new winston.transports.File({ filename: "combined.log" })
     ]
 });
+
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 const bodyparser = require("body-parser");
 // DB connection
@@ -53,13 +57,22 @@ var publicDir = path.join(__dirname, "public");
 
 var app = express();
 
-process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+
+
+app.use(cookieParser())
+const jwtInCookie = require("jwt-in-cookie");
+jwtInCookie.configure({secret: process.env.JWT_SECRET});
 
 // middleware
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
+const corsConfig = {
+    origin: true,
+    credentials: true,
+};
+
 //To allow cross-origin requests
-app.use(cors());
+app.use(cors(corsConfig));
 
 if (process.env.NODE_ENV !== "test") {
     app.use(

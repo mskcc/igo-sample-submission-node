@@ -77,7 +77,7 @@ const formatOncoData = function (resp) {
 }
 
 
-exports.getPicklist = (listname) => {
+exports.getPicklist = listname => {
     const url = `${LIMS_URL}/getPickListValues?list=${listname}`;
     logger.log("info", `Sending request to ${url}`);
     return axios.get(url,
