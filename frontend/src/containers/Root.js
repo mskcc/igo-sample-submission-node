@@ -31,11 +31,11 @@ function PrivateRoute({ component: Component, loggedIn, ...rest }) {
     <Route
       {...rest}
       render={props =>
-        loggedIn === true ? (
+        // loggedIn === false ? (
           <Component {...props} />
-        ) : (
-          <Redirect to={{ pathname: '/login' }} />
-        )
+        // ) : (
+        //   <Redirect to={{ pathname: '/login' }} />
+        // )
       }
     />
   )

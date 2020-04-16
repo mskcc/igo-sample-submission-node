@@ -7,7 +7,7 @@ const initialState = {
   submissions: {},
   username: '',
   loading: false,
-  loggedIn: false,
+  loggedIn: true,
   saved: false,
   submissionsTable: {},
   isSaving: false,
@@ -20,7 +20,7 @@ function userReducer(state = initialState, action) {
   if (error && error.response && error.response.status == 401) {
     return {
       ...state,
-      loggedIn: false,
+      loggedIn: true,
     }
   }
   switch (action.type) {
@@ -43,7 +43,7 @@ function userReducer(state = initialState, action) {
     case ActionTypes.REFRESH_TOKEN_INVALID:
       return {
         ...state,
-        loggedIn: false,
+        loggedIn: true,
         loading: false,
         username: '',
       }
@@ -63,7 +63,7 @@ function userReducer(state = initialState, action) {
     case ActionTypes.LOGIN_FAIL:
       return {
         ...state,
-        loggedIn: false,
+        loggedIn: true,
         loading: false,
       }
 

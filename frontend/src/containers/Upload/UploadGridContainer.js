@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import Swal from 'sweetalert2'
 
 import { connect } from 'react-redux'
-import { gridActions, userActions } from '../../actions'
+import { gridActions, submissionActions, userActions } from '../../actions'
 
 import CircularProgress from '@material-ui/core/CircularProgress'
 
@@ -116,11 +116,13 @@ UploadGridContainer.defaultProps = {
 
 const mapStateToProps = state => ({
   grid: state.upload.grid,
+  submissions: state.submissions,
   user: state.user,
 })
 
 const mapDispatchToProps = {
   ...gridActions,
+  ...submissionActions,
   ...userActions,
 }
 

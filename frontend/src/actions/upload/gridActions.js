@@ -25,40 +25,7 @@ import {
 } from '../helpers'
 
 import { Config } from '../../config.js'
-
-// Add a request interceptor
-axios.interceptors.request.use(
-  config => {
-    let token = sessionStorage.getItem('access_token')
-    if (token && !config.headers['Authorization']) {
-      config.headers['Authorization'] = `Bearer ${token}`
-    }
-
-    return config
-  },
-
-  error => {
-    return Promise.reject(error)
-  }
-)
-// Add a response interceptor
-axios.interceptors.response.use(
-  function (response) {
-    // Do something with response data
-    if (response.data.data) {
-      response.payload = response.data.data
-    }
-    return response
-  },
-  function (error) {
-    if (error.response) {
-      error.payload = error.response.data
-    }
-    // Do something with response error
-    return Promise.reject(error)
-  }
-)
-
+ 
 export const REGISTER_GRID_CHANGE = 'REGISTER_GRID_CHANGE'
 export const REGISTER_GRID_CHANGE_PRE_VALIDATE =
   'REGISTER_GRID_CHANGE_PRE_VALIDATE'
@@ -343,7 +310,7 @@ export function handlePatientId(rowIndex) {
         message: `${patientIdType.columnHeader}: ${patientIdType.error}`,
         rows: redactMRN(rows, rowIndex, '', '', ''),
       })
-    }else{
+    } else {
       normalizedPatientID = util.normalizePatientId(patientId, patientIdType, getState().user.username)
       return axios
         .post(Config.NODE_API_ROOT + '/upload/crdbId', {
@@ -368,7 +335,7 @@ export function handlePatientId(rowIndex) {
             rows: redactMRN(rows, rowIndex, '', '', ''),
           })
         })
-    
+
     }
   }
 }

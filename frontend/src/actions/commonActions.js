@@ -1,33 +1,45 @@
 import axios from 'axios'
 
 import { Config } from '../config.js'
+import { getCookie } from './helpers.js'
+
+axios.defaults.withCredentials = true;
 
 // Add a request interceptor
-axios.interceptors.request.use(
-  config => {
-    let token = sessionStorage.getItem('access_token')
-    if (token && !config.headers['Authorization']) {
-      config.headers['Authorization'] = `Bearer ${token}`
-    }
-
-    return config
-  },
-
-  error => {
-    return Promise.reject(error)
-  }
-)
+// axios.interceptors.request.use(
+//   config => {
+//     // config.withCredentials= true    
+//     return config
+//   }
+// )
 // Add a response interceptor
 axios.interceptors.response.use(
-  function(response) {
+  function (response) {
+    console.log("intercepted")
     // Do something with response data
+    if (response.data.data) {
+      response.payload = response.data.data
+    }
     return response
   },
-  function(error) {
+  function (error) {
+    console.log("error.response")
+    if (error.response) {
+      error.payload = error.response.data 
+      // console(error.payload)
+      if (error.response.status === 401) {
+      //   console.log("intercepted 401")
+        // Automatically redirect client to the login page
+        window.location.href = `${Config.LOGIN_PAGE_URL}/${Config.HOME_PAGE_PATH}`;
+      // } else {
+         
+        }
+    }
     // Do something with response error
     return Promise.reject(error)
   }
 )
+
 
 export const SERVER_ERROR = 'SERVER_ERROR'
 
