@@ -61,7 +61,7 @@ var app = express();
 
 app.use(cookieParser())
 const jwtInCookie = require("jwt-in-cookie");
-jwtInCookie.configure({secret: process.env.JWT_SECRET});
+jwtInCookie.configure({ secret: process.env.JWT_SECRET });
 
 // middleware
 app.use(bodyparser.urlencoded({ extended: true }));
@@ -83,22 +83,34 @@ if (process.env.NODE_ENV !== "test") {
 var apiRouter = require("./routes/api");
 var apiResponse = require("./util/apiResponse");
 
+
 app.use("/api/", apiRouter);
 
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
     res.sendFile(path.join(publicDir, "index.html"));
 });
-app.get("/favicon.ico", function(req, res) {
+app.get("/favicon.ico", function (req, res) {
     res.sendFile(path.join(publicDir, "favicon.ico"));
 });
 
-app.use((err, req, res, next) => {
-    if (err.name == "UnauthorizedError") {
-        return apiResponse.unauthorizedResponse(res, err.message);
-    }
-});
+// app.use((err, req, res, next) => {
+//     if (err.name == "UnauthorizedError") {
+//         return apiResponse.unauthorizedResponse(res, err.message);
+//     }
+//     console.log(req)
+//     console.log(req.user)
+// });
+
+// app.use((req, res, next) => {
+//     console.log(req)
+//     console.log(req.user)
+//     if (req.user){
+//         res.user = req.user
+//     }
+//     next()
+// });
 // throw 404 if URL not found
-app.all("*", function(req, res) {
+app.all("*", function (req, res) {
     return apiResponse.notFoundResponse(res, "Page not found");
 });
 

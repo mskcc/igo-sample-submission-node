@@ -256,7 +256,7 @@ exports.grid = [
                     )
                 }
                 let [columnsResult] = results
-                let gridPromise = util.generateGrid(columnsResult, req.user.role, formValues)
+                let gridPromise = util.generateGrid(columnsResult, res.user.role, formValues)
 
                 Promise.all([gridPromise]).then((results) => {
                     if (results.some(x => x.length == 0)) {
