@@ -144,16 +144,14 @@ export const updateRows = (formValues, grid) => {
 // generate data object to send to sample-rec-backend for
 // partial submission save or banked sample
 export const generateSubmitData = state => {
-  let data = {}
-
-  data.version = Config.VERSION
-  data.grid_values = rowsWithRowIndex(state.upload.grid.rows)
-  data.form_values = state.upload.grid.form
-
+  let data = { version: "", gridValues: "", formValues: "", transactionId: "" }
   let now = Date.now()
   let date = Math.floor(now / 1000)
 
-  data.transaction_id = date
+  data.version = Config.VERSION
+  data.gridValues = JSON.stringify(rowsWithRowIndex(state.upload.grid.rows))
+  data.formValues = JSON.stringify(state.upload.grid.form)
+  data.transactionId = date
 
   return data
 }
@@ -273,7 +271,7 @@ export const findIndexSeq = (grid, colIndex, rowIndex, indexId) => {
 
 }
 export const findSingleIndexSeq = (indexId) => {
-  if (indexId !== '' && indexId  in barcodes) {
+  if (indexId !== '' && indexId in barcodes) {
     return barcodes[indexId].barcodeTag
   } else {
     return ''

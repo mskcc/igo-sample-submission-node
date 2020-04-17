@@ -1,6 +1,6 @@
 
 import FileSaver from 'file-saver'
-import { submissionActions as ActionTypes } from '../../actions'
+import { submissionActions as ActionTypes } from "../../actions/"
 const initialState = {
     list: {},
     loading: false,

@@ -1,6 +1,6 @@
-import { formActions as ActionTypes } from '../../actions'
+import { formActions as ActionTypes } from "../../actions/"
 import { initialFormState } from './initialState'
-import { gridActions as GridActionTypes } from '../../actions'
+import { gridActions as GridActionTypes } from "../../actions/"
 
 export default function formReducer(state = initialFormState, action) {
   switch (action.type) {

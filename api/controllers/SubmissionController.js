@@ -60,7 +60,7 @@ exports.savePartial = [
     // body("submittedOn").isLength({ min: 1 }).trim().withMessage("submittedOn must be specified."),
     body("transactionId").isLength({ min: 1 }).trim().withMessage("transactionId must be specified."),
     function (req, res) {
-        
+
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(
@@ -71,26 +71,40 @@ exports.savePartial = [
         } else {
             let formValues = JSON.parse(req.body.formValues)
             let gridValues = JSON.parse(req.body.gridValues)
-            console.log(gridValues)    
-
-            Promise.all([materialsPromise]).then((results) => {
-                if (results.some(x => x.length == 0)) {
-                    return apiResponse.ErrorResponse(
-                        res,
-                        `Could not retrieve materials and species for '${recipe}'.`
-                    )
-                }
-                let [materialsResult] = results
-                let responseObject = {
-                    materials: materialsResult,
-                    species: speciesResult,
-                };
-                return apiResponse.successResponseWithData(
-                    res,
-                    "Operation success",
-                    responseObject
-                );
+            let submission = new SubmissionModel({
+                username: res.user.username,
+                transactionId: req.body.transactionId,
+                formValues: formValues,
+                gridValues: gridValues
             })
+            submission.save(function (err) {
+                if (err) {
+                    console.log(err)
+                    return apiResponse.errorResponse(res, "Submission could not be saved.");
+                }
+                return apiResponse.successResponse(res, 'Submission saved.')
+            })
+
+            // console.log(gridValues)
+
+            //     Promise.all([materialsPromise]).then((results) => {
+            //         if (results.some(x => x.length == 0)) {
+            //             return apiResponse.ErrorResponse(
+            //                 res,
+            //                 `Could not retrieve materials and species for '${recipe}'.`
+            //             )
+            //         }
+            //         let [materialsResult] = results
+            //         let responseObject = {
+            //             materials: materialsResult,
+            //             species: speciesResult,
+            //         };
+            //         return apiResponse.successResponseWithData(
+            //             res,
+            //             "Operation success",
+            //             responseObject
+            //         );
+            //     })
         }
     }
 

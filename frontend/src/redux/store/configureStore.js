@@ -6,7 +6,7 @@ import multi from 'redux-multi'
 import { persistStore } from 'redux-persist'
 import { createLogger } from 'redux-logger'
 import rootReducer from '../reducers/rootReducer'
-import DevTools from '../containers/DevTools'
+import DevTools from '../../containers/DevTools'
 
 const middleware = [thunk, multi]
 if (process.env.NODE_ENV === 'production') {

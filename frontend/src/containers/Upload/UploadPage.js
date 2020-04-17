@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import { withLocalize } from 'react-localize-redux'
 import { connect } from 'react-redux'
-import { gridActions, userActions } from '../../actions'
+import { gridActions, userActions } from "../../redux/actions/"
 import { Redirect } from 'react-router-dom'
 
 import { Dialog } from '../../components'

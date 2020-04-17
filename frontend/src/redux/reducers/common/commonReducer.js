@@ -1,11 +1,11 @@
-import {
-  commonActions,
-  userActions,
-  formActions,
-  gridActions as ActionTypes,
-} from '../../actions'
+// import {
+//   commonActions,
+//   userActions,
+//   formActions,
+//   gridActions as ActionTypes,
+// } from "../../redux/actions/"
 
-import * as swal from "../../redux/actions/swal"
+import * as swal from "../../swal"
 import Swal from 'sweetalert2'
 
 const initialState = {

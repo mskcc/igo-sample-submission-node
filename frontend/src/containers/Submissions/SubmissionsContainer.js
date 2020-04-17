@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { withLocalize } from 'react-localize-redux'
 import { connect } from 'react-redux'
 import Swal from 'sweetalert2'
-import { userActions, gridActions, submissionActions } from '../../actions'
+import { userActions, gridActions, submissionActions } from '../../redux/actions'
 import { resetErrorMessage } from '../../redux/actions/commonActions'
 
 import SubmissionsTable from '../../components/Submissions/SubmissionsTable'

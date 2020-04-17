@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import Swal from 'sweetalert2'
 
 import { connect } from 'react-redux'
-import { gridActions, submissionActions, userActions } from '../../actions'
+import { gridActions, submissionActions, userActions } from "../../redux/actions/"
 
 import CircularProgress from '@material-ui/core/CircularProgress'
 
@@ -71,6 +71,7 @@ class UploadGridContainer extends React.Component {
   }
 
   handleSave = () => {
+    // DUPLICATE CHECK
     this.props.savePartialSubmission(this.props.grid)
   }
 

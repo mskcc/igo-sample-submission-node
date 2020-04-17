@@ -6,7 +6,7 @@ import 'react-app-polyfill/ie11'
 import { LocalizeProvider } from 'react-localize-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 import { Provider } from 'react-redux'
-import { store, persistor } from './store/configureStore'
+import { store, persistor } from './redux/store/configureStore'
 
 import Root from './containers/Root'
 
