@@ -19,6 +19,10 @@
     "groupIdType_helptext": "Select Patient or Group ID Type",
     "groupIdType_label": "Patient or Group  ID Type*",
     "patientIdType_helptext": "Select Patient ID Type",
+    "isShared_label": "I want others to be able to edit or submit these samples on my behalf.",
+    "sharedWith_label": "Give permission to:",
+    "sharedWith_helptext": "Please enter MSK email addresses or zzPDLs separated by comma.\n No emails will be sent, this is only used for authorization.",
+
     "nothing_to_change": "Nothing to change.",
     "fill_me": "Please fill out this field.",
     "test_me_label": "test me label",

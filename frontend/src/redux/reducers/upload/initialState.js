@@ -24,6 +24,8 @@ export const initialFormState = {
     patientIdType: 'MSK Patients',
     groupingChecked: false,
     altServiceId: false,
+    isShared: false,
+    sharedWith: "",
   },
   // selected: {
   //   application: 'AmpliSeq',

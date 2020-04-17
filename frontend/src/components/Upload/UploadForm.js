@@ -7,6 +7,7 @@ import {
   FormControl,
   InputAdornment,
   Paper,
+  TextField,
   withStyles,
 } from '@material-ui/core'
 
@@ -28,6 +29,7 @@ class UploadForm extends React.Component {
         species: true,
         container: true,
         patientIdType: true,
+        sharedWith: true,
       },
     }
   }
@@ -78,11 +80,11 @@ class UploadForm extends React.Component {
     }
   }
 
-  handleGroupingCheck = name => () => {
+  handleCheckbox = name => () => {
     this.setState({
-      values: { ...this.state.values, groupingChecked: event.target.checked },
+      values: { ...this.state.values, [name]: event.target.checked },
     })
-    this.props.handleInputChange('groupingChecked', event.target.checked)
+    this.props.handleInputChange(name, event.target.checked)
   }
 
   handleSubmit = (e, handleParentSubmit) => {
@@ -99,12 +101,12 @@ class UploadForm extends React.Component {
 
   validate() {
     let formValid = this.state.formValid
-    let valid
     let error
     let isValidOption
     let values = this.props.form.selected
     for (let value in values) {
       switch (value) {
+
         case 'serviceId':
           if (values.altServiceId) {
             formValid[value] = true
@@ -117,7 +119,7 @@ class UploadForm extends React.Component {
           // validate whether selected value in dynamic fields is in controlled options
           // (could fail if user was extremely quick to select
           // invalid material/app combination)
-          isValidOption = this.props.form.filteredMaterials.some(function(el) {
+          isValidOption = this.props.form.filteredMaterials.some(function (el) {
             return el === values[value]
           })
 
@@ -125,7 +127,7 @@ class UploadForm extends React.Component {
           break
 
         case 'application':
-          isValidOption = this.props.form.filteredApplications.some(function(
+          isValidOption = this.props.form.filteredApplications.some(function (
             el
           ) {
             return el === values[value]
@@ -135,14 +137,14 @@ class UploadForm extends React.Component {
           break
 
         case 'container':
-          isValidOption = this.props.form.filteredContainers.some(function(el) {
+          isValidOption = this.props.form.filteredContainers.some(function (el) {
             return el === values[value]
           })
           formValid[value] = isValidOption && values[value].length > 0
           break
 
         case 'species':
-          isValidOption = this.props.form.filteredSpecies.some(function(el) {
+          isValidOption = this.props.form.filteredSpecies.some(function (el) {
             return el === values[value]
           })
           formValid[value] = isValidOption && values[value].length > 0
@@ -152,13 +154,31 @@ class UploadForm extends React.Component {
           // only validate if species mandates a format, else value will be disregarded anyway
           if (values.species == 'Human') {
             isValidOption = this.props.form.picklists.PatientIDTypes.some(
-              function(el) {
+              function (el) {
                 return el === values[value]
               }
             )
             formValid[value] = isValidOption && values[value].length > 0
             break
           } else {
+            formValid[value] = true
+            break
+          }
+
+        case 'sharedWith':
+          if (values.isShared) {
+            var emails = values[value].split(',')
+            var valid = true
+            var regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            for (var i = 0; i < emails.length; i++) {
+              if (emails[i] === "" || (!regex.test(emails[i].replace(/\s/g, "")) && !emails[i].includes("mskcc"))) {
+                valid = false;
+              }
+            }
+            formValid[value] = valid
+            break
+          }
+          else {
             formValid[value] = true
             break
           }
@@ -170,7 +190,7 @@ class UploadForm extends React.Component {
           break
       }
     }
-
+    console.log(formValid)
     this.setState({
       formValid: {
         ...formValid,
@@ -189,7 +209,8 @@ class UploadForm extends React.Component {
       this.state.formValid.numberOfSamples &&
       this.state.formValid.species &&
       this.state.formValid.container &&
-      this.state.formValid.patientIdType
+      this.state.formValid.patientIdType &&
+      this.state.formValid.sharedWith
     )
   }
 
@@ -269,38 +290,38 @@ class UploadForm extends React.Component {
                   dynamic
                 />
                 {values.species == 'Mouse' ||
-                values.species == 'Mouse_GeneticallyModified' ? (
-                  <Checkbox
-                    id="groupingCheckbox"
-                    checked={form.selected.groupingChecked}
-                    onChange={this.handleGroupingCheck}
-                  />
-                ) : null}
+                  values.species == 'Mouse_GeneticallyModified' ? (
+                    <Checkbox
+                      id="groupingCheckbox"
+                      checked={form.selected.groupingChecked}
+                      onChange={e => this.handleCheckbox("groupingChecked")}
+                    />
+                  ) : null}
               </FormControl>
 
               {// PatientID is needed when Human is selected or when Mouse* is selected and combined with species checkbox value
-              this.props.form.patientIDTypeNeedsFormatting &&
-              form.picklists.PatientIDTypes &&
-              (values.species == 'Human' && !this.state.groupingChecked) ? (
-                <Dropdown
-                  id={
-                    this.state.groupingChecked
-                      ? 'groupIdType'
-                      : 'patientIdType'
-                  }
-                  value={this.props.form.patientIDType}
-                  error={!formValid.patientIdType}
-                  onChange={this.handleDropdownChange}
-                  items={form.picklists.PatientIDTypes.map(option => ({
-                    value: option,
-                    label: option,
-                  }))}
-                  value={{
-                    value: form.selected.patientIdType,
-                    label: form.selected.patientIdType,
-                  }}
-                />
-              ) : null}
+                this.props.form.patientIDTypeNeedsFormatting &&
+                  form.picklists.PatientIDTypes &&
+                  (values.species == 'Human' && !this.state.groupingChecked) ? (
+                    <Dropdown
+                      id={
+                        this.state.groupingChecked
+                          ? 'groupIdType'
+                          : 'patientIdType'
+                      }
+                      value={this.props.form.patientIDType}
+                      error={!formValid.patientIdType}
+                      onChange={this.handleDropdownChange}
+                      items={form.picklists.PatientIDTypes.map(option => ({
+                        value: option,
+                        label: option,
+                      }))}
+                      value={{
+                        value: form.selected.patientIdType,
+                        label: form.selected.patientIdType,
+                      }}
+                    />
+                  ) : null}
 
               <Dropdown
                 id="container"
@@ -346,6 +367,22 @@ class UploadForm extends React.Component {
                   hasHelptext
                 />
               </FormControl>
+              <FormControl>
+                <Checkbox
+                  id="isShared"
+                  checked={form.selected.isShared}
+                  onChange={e => this.handleCheckbox("isShared")}
+                />
+                {form.selected.isShared &&
+                  <Input
+                    id="sharedWith"
+                    error={!formValid.sharedWith}
+                    // errorText="Please add valid emails separated by commas."
+                    type="text"
+                    onChange={this.handleChange}
+                  />}
+              </FormControl>
+
             </form>
             <div>
               <Button
@@ -401,12 +438,12 @@ UploadForm.defaultProps = {
       altServiceId: false,
     },
 
-    handleSubmit: () => {},
-    handleApplicationChange: () => {},
-    handleMaterialChange: () => {},
-    handleSpeciesChange: () => {},
-    gridIsLoading: () => {},
-    nothingToChange: () => {},
+    handleSubmit: () => { },
+    handleApplicationChange: () => { },
+    handleMaterialChange: () => { },
+    handleSpeciesChange: () => { },
+    gridIsLoading: () => { },
+    nothingToChange: () => { },
   },
 }
 
