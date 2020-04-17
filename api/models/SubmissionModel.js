@@ -20,8 +20,8 @@ var SubmissionSchema = new mongoose.Schema({
     formValues: [FormSchema],
     gridValues: { type: Object, required: true },
     version: { type: Number, required: true },
-    submitted: { type: Boolean, required: true },
-    submittedOn: { type: Date, required: true },
+    submitted: { type: Boolean, default: false },
+    submittedOn: { type: Date, required: false },
     transactionId: { type: Number, required: true },
 }, { timestamps: true });
 

@@ -49,18 +49,18 @@ exports.list = [
  */
 exports.savePartial = [
     // authenticate,
-    body("username").isLength({ min: 1 }).trim().withMessage("username must be specified."),
-    body("serviceId").isLength({ min: 1 }).trim().withMessage("serviceId must be specified."),
-    body("material").isLength({ min: 1 }).trim().withMessage("material must be specified."),
-    body("application").isLength({ min: 1 }).trim().withMessage("application must be specified."),
+    // body("username").isLength({ min: 1 }).trim().withMessage("username must be specified."),
+    // body("serviceId").isLength({ min: 1 }).trim().withMessage("serviceId must be specified."),
+    // body("material").isLength({ min: 1 }).trim().withMessage("material must be specified."),
+    // body("application").isLength({ min: 1 }).trim().withMessage("application must be specified."),
     body("formValues").isJSON().isLength({ min: 1 }).trim().withMessage("formValues must be JSON."),
+    // body("formValues").not().isEmpty().trim().withMessage("formValues must be specified."),
     body("gridValues").isJSON().isLength({ min: 1 }).trim().withMessage("gridValues must be JSON."),
-    body("submitted").isLength({ min: 1 }).trim().withMessage("submitted must be specified."),
-    body("submittedOn").isLength({ min: 1 }).trim().withMessage("submittedOn must be specified."),
+    // body("submitted").isLength({ min: 1 }).trim().withMessage("submitted must be specified."),
+    // body("submittedOn").isLength({ min: 1 }).trim().withMessage("submittedOn must be specified."),
     body("transactionId").isLength({ min: 1 }).trim().withMessage("transactionId must be specified."),
     function (req, res) {
-        console.log(req)
-
+        
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(
@@ -69,9 +69,9 @@ exports.savePartial = [
                 errors.array()
             );
         } else {
-            let recipe = req.query.recipe;
-            let speciesResult = util.getSpecies(recipe);
-            let materialsPromise = cache.get(recipe + "-Materials", () => service.getMaterials(recipe))
+            let formValues = JSON.parse(req.body.formValues)
+            let gridValues = JSON.parse(req.body.gridValues)
+            console.log(gridValues)    
 
             Promise.all([materialsPromise]).then((results) => {
                 if (results.some(x => x.length == 0)) {
