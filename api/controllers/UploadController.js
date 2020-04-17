@@ -30,7 +30,7 @@ exports.headerValues = [
 
         Promise.all([applicationsPromise, materialsPromise, speciesPromise]).then((results) => {
             if (results.some(x => x.length == 0)) {
-                return apiResponse.ErrorResponse(
+                return apiResponse.errorResponse(
                     res,
                     "Could not retrieve picklists from LIMS."
                 )
@@ -50,7 +50,7 @@ exports.headerValues = [
             );
 
         }).catch(error => {
-            return apiResponse.ErrorResponse(
+            return apiResponse.errorResponse(
                 error,
                 "Could not retrieve picklists from LIMS."
             )
@@ -86,7 +86,7 @@ exports.materialsAndSpecies = [
 
             Promise.all([materialsPromise]).then((results) => {
                 if (results.some(x => x.length == 0)) {
-                    return apiResponse.ErrorResponse(
+                    return apiResponse.errorResponse(
                         res,
                         `Could not retrieve materials and species for '${recipe}'.`
                     )
@@ -133,7 +133,7 @@ exports.applicationsAndContainers = [
 
                 Promise.all([applicationsPromise]).then((results) => {
                     if (results.some(x => x.length == 0)) {
-                        return apiResponse.ErrorResponse(
+                        return apiResponse.errorResponse(
                             res,
                             `Could not retrieve applications and containers for '${material}'.`
                         )
@@ -152,7 +152,7 @@ exports.applicationsAndContainers = [
 
             }
         } catch (err) {
-            return apiResponse.ErrorResponse(res, err);
+            return apiResponse.errorResponse(res, err);
         }
     }
 ];
@@ -181,7 +181,7 @@ exports.picklist = [
                             { listname: picklist, picklist: picklistResult }
                         );
                     } else {
-                        return apiResponse.ErrorResponse(
+                        return apiResponse.errorResponse(
                             res,
                             `Could not retrieve picklist '${picklist}'.`
                         );
@@ -189,7 +189,7 @@ exports.picklist = [
                 });
             }
         } catch (err) {
-            return apiResponse.ErrorResponse(res, err);
+            return apiResponse.errorResponse(res, err);
         }
     }
 ];
@@ -250,7 +250,7 @@ exports.grid = [
             let columnsPromise = cache.get(`${material}-${application}-Columns`, () => service.getColumns(material, application))
             Promise.all([columnsPromise]).then((results) => {
                 if (results.some(x => x.length == 0)) {
-                    return apiResponse.ErrorResponse(
+                    return apiResponse.errorResponse(
                         res,
                         `Could not retrieve grid for '${material}' and '${application}'.`
                     )
@@ -260,7 +260,7 @@ exports.grid = [
 
                 Promise.all([gridPromise]).then((results) => {
                     if (results.some(x => x.length == 0)) {
-                        return apiResponse.ErrorResponse(
+                        return apiResponse.errorResponse(
                             res,
                             `Could not retrieve grid for '${material}' and '${application}'.`
                         )
@@ -273,7 +273,7 @@ exports.grid = [
                     );
 
                 }).catch((reasons) => {
-                    return apiResponse.ErrorResponse(
+                    return apiResponse.errorResponse(
                         res,
                         reasons
                     )
@@ -304,7 +304,7 @@ exports.crdbId = [
 
                 Promise.all([patientIdPromise]).then((results) => {
                     if (results.some(x => x.length == 0)) {
-                        return apiResponse.ErrorResponse(
+                        return apiResponse.errorResponse(
                             res,
                             `Could not anonymize ID.`
                         )
@@ -321,7 +321,7 @@ exports.crdbId = [
                 })
             }
         } catch (err) {
-            return apiResponse.ErrorResponse(res, err);
+            return apiResponse.errorResponse(res, err);
         }
     }
 ];

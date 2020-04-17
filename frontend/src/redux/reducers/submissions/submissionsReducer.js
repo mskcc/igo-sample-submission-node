@@ -2,10 +2,9 @@
 import FileSaver from 'file-saver'
 import { submissionActions as ActionTypes } from "../../actions/"
 const initialState = {
-    list: {},
     loading: false,
     saved: false,
-    table: {},
+    grid: { columnHeaders: [], rows: [], columnFeatures: [] },
     isSaving: false,
 }
 
@@ -19,13 +18,12 @@ function submissionsReducer(state = initialState, action) {
                 loading: true,
             }
         case ActionTypes.GET_SUBMISSIONS_FAIL:
-            return { ...state, loading: false, error: action.error }
+            return { ...state, loading: false }
 
         case ActionTypes.GET_SUBMISSIONS_SUCCESS:
             return {
                 ...state,
-                table: action.payload.table,
-                list: action.payload.submissions,
+                grid: action.payload,
                 loading: false,
             }
 
@@ -43,8 +41,6 @@ function submissionsReducer(state = initialState, action) {
                 ...state,
                 isSaving: false,
                 saved: true,
-                table: action.payload.table,
-                list: action.payload.submissions,
             }
 
         case ActionTypes.EDIT_SUBMISSION:
@@ -74,8 +70,7 @@ function submissionsReducer(state = initialState, action) {
                 isSaving: false,
                 saved: true,
 
-                table: action.payload.table,
-                list: action.payload.submissions,
+                grid: action.payload.table,
             }
 
         case ActionTypes.BUTTON_RESET: {

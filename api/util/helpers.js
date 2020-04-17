@@ -3,7 +3,7 @@ import axios from "axios";
 const service = require("../services/services");
 var _ = require('lodash');
 const { constants } = require("./constants");
-const { constantColumns } = require("./columns");
+const { gridColumns, submissionColumns } = require("./columns");
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 const LIMS_AUTH = {
@@ -41,10 +41,10 @@ function cacheAllPicklists(limsColumns) {
         let picklistPromises = []
         let picklists = {}
         limsColumns.map((element) => {
-            if (!constantColumns[element[0]]){
+            if (!gridColumns[element[0]]) {
                 reject(`Column '${element[0]}' not found.`)
             }
-            let picklist = constantColumns[element[0]].picklistName
+            let picklist = gridColumns[element[0]].picklistName
 
             if (picklist != undefined) {
                 picklists[picklist] = []
@@ -92,42 +92,42 @@ function fillColumns(limsColumnList, userRole, formValues, picklists) {
         };
         limsColumnList.forEach((element, index) => {
             let columnName = element[0]
-            let colDef = constantColumns[columnName];
+            let colDef = gridColumns[columnName];
             if (!colDef) {
                 reject(`Column '${columnName}' not found.`)
             }
-                if (colDef.container && colDef.container !== formValues.container && formValues.application != 'Expanded_Genomics'
-                ) {
-                    colDef = overwriteContainer(formValues.container)
-                }
+            if (colDef.container && colDef.container !== formValues.container && formValues.application != 'Expanded_Genomics'
+            ) {
+                colDef = overwriteContainer(formValues.container)
+            }
 
-                if (colDef.data == 'patientId') {
-                    let formattingAdjustments = choosePatientIdValidator(
-                      formValues.patientIdType,
-                      formValues.species,
-                      formValues.groupingChecked
-                    )
-                    colDef = { ...colDef, ...formattingAdjustments }
-                }
-                if (colDef.picklistName && !colDef.source) {
-                    colDef.source = picklists[colDef.picklistName];
-                }
-            
-                colDef.error = colDef.error ? colDef.error : 'Invalid format.'
-                result.columnFeatures.push(colDef);
-                if (colDef.hiddenFrom && colDef.hiddenFrom === userRole) {
-                    result.hiddenColumns.push(
-                        result.columnFeatures.length
-                    );
-                }
-            
+            if (colDef.data == 'patientId') {
+                let formattingAdjustments = choosePatientIdValidator(
+                    formValues.patientIdType,
+                    formValues.species,
+                    formValues.groupingChecked
+                )
+                colDef = { ...colDef, ...formattingAdjustments }
+            }
+            if (colDef.picklistName && !colDef.source) {
+                colDef.source = picklists[colDef.picklistName];
+            }
+
+            colDef.error = colDef.error ? colDef.error : 'Invalid format.'
+            result.columnFeatures.push(colDef);
+            if (colDef.hiddenFrom && colDef.hiddenFrom === userRole) {
+                result.hiddenColumns.push(
+                    result.columnFeatures.length
+                );
+            }
+
             if (index == limsColumnList.length - 1) {
                 // if plate column present but not WellPos, add WellPos
                 if (
                     result.columnFeatures[0].data == 'plateId' &&
                     result.columnFeatures[1].data != 'wellPosition'
                 ) {
-                    result.columnFeatures.unshift(constantColumns["Well Position"])
+                    result.columnFeatures.unshift(gridColumns["Well Position"])
                 }
                 // if plate column not present but WellPos is, remove WellPos
                 if (
@@ -139,14 +139,14 @@ function fillColumns(limsColumnList, userRole, formValues, picklists) {
                 }
                 result.columnHeaders = result.columnFeatures.map(
                     a =>
-                      '<span class="' +
-                      a.className +
-                      '" title="' +
-                      a.tooltip +
-                      '">' +
-                      a.columnHeader +
-                      '</span>'
-                  )
+                        '<span class="' +
+                        a.className +
+                        '" title="' +
+                        a.tooltip +
+                        '">' +
+                        a.columnHeader +
+                        '</span>'
+                )
                 resolve(result)
             }
         })
@@ -160,16 +160,16 @@ const overwriteContainer = (userContainer) => {
     let newContainer
     switch (userContainer) {
         case 'Plates':
-            newContainer = constantColumns["Plate ID"]
+            newContainer = gridColumns["Plate ID"]
             break
         case 'Micronic Barcoded Tubes':
-            newContainer = constantColumns["Micronic Tube Barcode"]
+            newContainer = gridColumns["Micronic Tube Barcode"]
             break
         case 'Blocks/Slides/Tubes':
-            newContainer = constantColumns["Block/Slide/TubeID"]
+            newContainer = gridColumns["Block/Slide/TubeID"]
             break
         default:
-            return ( `Container '${userContainer}' not found.`)
+            return (`Container '${userContainer}' not found.`)
     }
     return (newContainer)
 }
@@ -296,50 +296,100 @@ const setWellPos = columns => {
 // patient id validation depends on user selected id type
 function choosePatientIdValidator(patientIDType, species, groupingChecked) {
     if (species == 'Mouse' || species == 'Mouse_GeneticallyModified') {
-      if (groupingChecked) {
-        return {
-          pattern: '[A-Za-z0-9\\,_-]{4,}',
-          columnHeader: 'Grouping ID',
-          error:
-            'Invalid format. Please use at least four alpha-numeric characters. Every 8 digit ID is considered a MRN.',
+        if (groupingChecked) {
+            return {
+                pattern: '[A-Za-z0-9\\,_-]{4,}',
+                columnHeader: 'Grouping ID',
+                error:
+                    'Invalid format. Please use at least four alpha-numeric characters. Every 8 digit ID is considered a MRN.',
+            }
+        } else {
+            return {
+                pattern: '[0-9a-zA-Z]{4,}',
+                columnHeader: 'Strain or Line Name',
+                error:
+                    'Invalid format. Please use at least four alpha-numeric characters. Every 8 digit ID is considered a MRN.',
+            }
         }
-      } else {
-        return {
-          pattern: '[0-9a-zA-Z]{4,}',
-          columnHeader: 'Strain or Line Name',
-          error:
-            'Invalid format. Please use at least four alpha-numeric characters. Every 8 digit ID is considered a MRN.',
-        }
-      }
     } else {
-      switch (patientIDType) {
-        case 'MSK-Patients (or derived from MSK Patients)':
-          return {
-            pattern: '^[0-9]{8}$',
-            columnHeader: 'MRN',
-            tooltip: "The patient's MRN.",
-            error:
-              'MRN is incorrectly formatted, please correct, or speak to a project manager if unsure.',
-            type: 'text',
-          }
-        case 'Non-MSK Patients':
-          return {
-            pattern: '[A-Za-z0-9\\,_-]{4,}',
-            columnHeader: 'Patient ID',
-            error:
-              'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
-          }
-        case 'Cell Lines, not from Patients':
-          return { columnHeader: 'Cell Line Name' }
-        case 'Both MSK-Patients and Non-MSK Patients':
-          return {
-            pattern: '[A-Za-z0-9\\,_-]{4,}|^[0-9]{8}$',
-            columnHeader: 'Patient ID',
-            error:
-              'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
-          }
-        default:
-          return { pattern: 'formatter not found' }
-      }
+        switch (patientIDType) {
+            case 'MSK-Patients (or derived from MSK Patients)':
+                return {
+                    pattern: '^[0-9]{8}$',
+                    columnHeader: 'MRN',
+                    tooltip: "The patient's MRN.",
+                    error:
+                        'MRN is incorrectly formatted, please correct, or speak to a project manager if unsure.',
+                    type: 'text',
+                }
+            case 'Non-MSK Patients':
+                return {
+                    pattern: '[A-Za-z0-9\\,_-]{4,}',
+                    columnHeader: 'Patient ID',
+                    error:
+                        'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
+                }
+            case 'Cell Lines, not from Patients':
+                return { columnHeader: 'Cell Line Name' }
+            case 'Both MSK-Patients and Non-MSK Patients':
+                return {
+                    pattern: '[A-Za-z0-9\\,_-]{4,}|^[0-9]{8}$',
+                    columnHeader: 'Patient ID',
+                    error:
+                        'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
+                }
+            default:
+                return { pattern: 'formatter not found' }
+        }
     }
-  }
+}
+
+
+
+
+export function generateSubmissionGrid(submissions) {
+
+    return new Promise((resolve, reject) => {
+        try {
+            let grid = { columnHeaders: [], rows: [], columnFeatures: [] }
+            grid.columnHeaders = Object.keys(submissionColumns).map(a  => submissionColumns[a].name)
+            grid.columnFeatures = Object.values(submissionColumns)
+            let rows = []
+            for (let i = 0; i < submissions.length; i++) {
+                let submission = submissions[i]
+                let serviceId = submission.formValues.serviceId
+                
+                let isSubmitted = submission.submitted
+                rows[i] = {
+                    serviceId: serviceId,
+                    transactionId: submission.transactionId,
+                    username: submission.username,
+                    sampleType: submission.formValues.material,
+                    application: submission.formValues.application,
+                    submitted: isSubmitted ? 'yes' : 'no',
+
+                    createdAt: submission.createdAt.toTimeString(),
+                    submittedAt: submission.submittedAt ?submission.submittedAt.toDateString()  : "",
+                    // available actions depend on submitted status
+                    edit: isSubmitted
+                        ? '<span  submitted="' + isSubmitted + '" service-id="' + serviceId + '" submission-id="' + submission.id + '" class="grid-action-disabled">edit</span>'
+                        : '<span submitted="' + isSubmitted + '" service-id="' + serviceId + '" submission-id="' + submission.id + '" class="grid-action">edit</span>',
+                    receipt: isSubmitted
+                        ? '<span submitted="' + isSubmitted + '" service-id="' + serviceId + '" submission-id="' + submission.id + '" class="grid-action grid-action">download</span>'
+                        : '<span submitted="' + isSubmitted + '" service-id="' + serviceId + '" submission-id="' + submission.id + '" class="grid-action-disabled">download</span>',
+                    delete: isSubmitted
+                        ? '<span submitted="' + isSubmitted + '" service-id="' + serviceId + '" submission-id="' + submission.id + '" class="grid-action-disabled">delete</span>'
+                        : '<span submitted="' + isSubmitted + '" service-id="' + serviceId + '" submission-id="' + submission.id + '" class="grid-action">delete</span>',
+                }
+                if (rows.length == submissions.length) {
+                    grid.rows = rows
+                    resolve(grid);
+                }
+
+            }
+
+        } catch (err) {
+            reject(err)
+        }
+    })
+}

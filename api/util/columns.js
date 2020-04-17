@@ -12,7 +12,7 @@ const validationPatterns = {
     // "nonMSKPatients": "[0-9a-zA-Z]{4,}",
     // "bothMSKAndNonMSKPatients": "[0-9a-zA-Z]{4,}|d{8}",
 }
-export const constantColumns = {
+export const gridColumns = {
     "Service ID": {
         name: "Service ID",
         columnHeader: "Service ID",
@@ -430,4 +430,70 @@ export const constantColumns = {
     }
 };
 
+
+export const submissionColumns = {
+    'Service ID': {
+        name: 'Service ID',
+        data: 'serviceId',
+        readOnly: 'true'
+    },
+    'User ID': {
+        name: 'User ID',
+        data: 'username',
+        readOnly: 'true'
+    },
+    'Sample Type': {
+        name: 'Sample Type',
+        data: 'sampleType',
+        readOnly: 'true'
+    },
+    'Application': {
+        name: 'Application',
+        data: 'application',
+        readOnly: 'true'
+    },
+
+    'Submitted to IGO?': {
+        name: 'Submitted to IGO?',
+        data: 'submitted',
+        readOnly: 'true',
+        renderer: 'html',
+    },
+    'Date Created': {
+        name: 'Date Created',
+        data: 'createdAt',
+        readOnly: 'true'
+    },
+    'Date Submitted': {
+        name: 'Date Submitted',
+        data: 'submittedOn',
+        readOnly: 'true'
+    },
+    'Transaction ID': {
+        name: 'Transaction ID',
+        data: 'transactionId',
+        readOnly: 'true'
+    },
+    // 'App Version': {
+    //     name: 'App Version',
+    //     data: 'version',
+    //     readOnly: 'true'
+    // },
+    'Edit': {
+        name: 'Edit',
+        data: 'edit',
+        renderer: 'html'
+    },
+    'Receipt': {
+        name: 'Receipt',
+        data: 'receipt',
+        renderer: 'html'
+    },
+    'Delete': {
+        name: 'Delete',
+        data: 'delete',
+        renderer: 'html'
+    },
+
+}
 

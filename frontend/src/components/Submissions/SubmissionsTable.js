@@ -20,7 +20,8 @@ class SubmissionsTable extends React.Component {
   }
 
   render() {
-    const { classes, handleClick, handleReceipt, handleDelete } = this.props
+    const { classes, handleClick, handleReceipt, handleDelete, grid } = this.props
+    console.log(grid)
     return (
       <div>
         <div>
@@ -28,12 +29,12 @@ class SubmissionsTable extends React.Component {
             licenseKey="non-commercial-and-evaluation"
             id="hot"
             ref={this.hotTableComponent}
-            data={this.props.user.submissionsTable.data}
-            colHeaders={this.props.user.submissionsTable.columnHeaders}
+            data={grid.rows}
+            colHeaders={grid.columnHeaders}
             rowHeaders={true}
             readOnly
             className="htCenter"
-            columns={this.props.user.submissionsTable.columnFeatures}
+            columns={grid.columnFeatures}
             stretchH="all"
             filters="true"
             columnSorting="true"

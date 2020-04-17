@@ -19,10 +19,11 @@ var SubmissionSchema = new mongoose.Schema({
     // application: { type: String, required: true },
     formValues: FormSchema,
     gridValues: { type: Array, required: true },
-    // version: { type: Number, required: true },
+    appVersion: { type: String,default: "2.5" },
     submitted: { type: Boolean, default: false },
-    submittedOn: { type: Date, required: false },
-    transactionId: { type: Number, required: true },
+    submittedAt: { type: Date, required: false },
+    transactionId: { type: Number, required: false },
+    
 }, { timestamps: true });
 
 module.exports = mongoose.model("Submission", SubmissionSchema);

@@ -143,15 +143,17 @@ export const updateRows = (formValues, grid) => {
 
 // generate data object to send to sample-rec-backend for
 // partial submission save or banked sample
-export const generateSubmitData = state => {
+export const generateSubmitData = (state, isPartial) => {
   let data = { version: "", gridValues: "", formValues: "", transactionId: "" }
+  if (!isPartial){
   let now = Date.now()
   let date = Math.floor(now / 1000)
-
+  data.transactionId = date  
+  }
   data.version = Config.VERSION
   data.gridValues = JSON.stringify(rowsWithRowIndex(state.upload.grid.rows))
   data.formValues = JSON.stringify(state.upload.grid.form)
-  data.transactionId = date
+  
 
   return data
 }
@@ -163,39 +165,6 @@ function rowsWithRowIndex(rows) {
   return rows
 }
 
-// edit: links back to /upload, onClick the grid_values of that row are fed into
-// the state (see SubmissionsTable for the onClick)
-export const generateSubmissionsGrid = response => {
-  let grid = { columnHeaders: [], data: [], columnFeatures: [] }
-
-  grid.columnHeaders = response.submission_columns.map(a => a.name)
-  grid.columnFeatures = response.submission_columns
-  for (let i = 0; i < response.submissions.length; i++) {
-    let submission = response.submissions[i]
-    grid.data[i] = {
-      service_id: submission.service_id,
-      transaction_id: submission.transaction_id,
-      username: submission.username,
-      sample_type: JSON.parse(submission.form_values).material,
-      application: JSON.parse(submission.form_values).application,
-      version: submission.version,
-      submitted: submission.submitted ? 'yes' : 'no',
-      created_on: submission.created_on,
-      submitted_on: submission.submitted_on,
-      // available actions depend on submitted status
-      edit: submission.submitted
-        ? '<span  submitted="' + submission.submitted + '" service-id="' + submission.service_id + '" submission-id="' + submission.id + '" class="grid-action-disabled">edit</span>'
-        : '<span submitted="' + submission.submitted + '" service-id="' + submission.service_id + '" submission-id="' + submission.id + '" class="grid-action">edit</span>',
-      receipt: submission.submitted
-        ? '<span submitted="' + submission.submitted + '" service-id="' + submission.service_id + '" submission-id="' + submission.id + '" class="grid-action grid-action">download</span>'
-        : '<span submitted="' + submission.submitted + '" service-id="' + submission.service_id + '" submission-id="' + submission.id + '" class="grid-action-disabled">download</span>',
-      delete: submission.submitted
-        ? '<span submitted="' + submission.submitted + '" service-id="' + submission.service_id + '" submission-id="' + submission.id + '" class="grid-action-disabled">delete</span>'
-        : '<span submitted="' + submission.submitted + '" service-id="' + submission.service_id + '" submission-id="' + submission.id + '" class="grid-action">delete</span>',
-    }
-  }
-  return grid
-}
 
 // find submission in user (or all if current user is member/super) submission
 export const findSubmission = (submissions, submissionId) => {

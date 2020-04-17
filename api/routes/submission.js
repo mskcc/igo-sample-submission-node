@@ -4,6 +4,7 @@ const SubmissionController = require("../controllers/SubmissionController");
 var router = express.Router();
 
 router.get("/list", SubmissionController.list);
+router.get("/grid", SubmissionController.grid);
 router.post("/savePartial", SubmissionController.savePartial);
 // router.get("/headerValues", UploadController.headerValues);
 // router.get("/materialsAndSpecies", UploadController.materialsAndSpecies);

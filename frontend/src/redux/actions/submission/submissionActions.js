@@ -12,25 +12,15 @@ export function getSubmissions() {
   return dispatch => {
     dispatch({ type: GET_SUBMISSIONS })
     return axios
-      .get(Config.NODE_API_ROOT + '/submission/list', {})
+      .get(Config.NODE_API_ROOT + '/submission/grid')
       .then(response => {
-        if (response.payload.submissions.length == 0) {
-          return dispatch({
-            type: GET_SUBMISSIONS_FAIL,
-            error: {
-              message: "Nothing submitted yet."
-            }
-          })
-        }
         return dispatch({
           type: GET_SUBMISSIONS_SUCCESS,
-          payload: {
-            submissions: response.payload.submissions,
-            table: response.payload.table,
-          },
+          payload: response.payload
         })
       })
       .catch(error => {
+        console.log(error)
         return dispatch({
           type: GET_SUBMISSIONS_FAIL,
           error: error,
@@ -47,10 +37,10 @@ export const SAVE_PARTIAL_SUBMISSION = 'SAVE_PARTIAL_SUBMISSION'
 export const SAVE_PARTIAL_SUBMISSION_CANCEL = 'SAVE_PARTIAL_SUBMISSION_CANCEL'
 export const SAVE_PARTIAL_SUBMISSION_FAIL = 'SAVE_PARTIAL_SUBMISSION_FAIL'
 export const SAVE_PARTIAL_SUBMISSION_SUCCESS = 'SAVE_PARTIAL_SUBMISSION_SUCCESS'
+export const BUTTON_RESET = 'BUTTON_RESET'
 export function savePartialSubmission(grid) {
 
   return (dispatch, getState) => {
-    console.log(util.generateSubmitData(getState()))
     let user = getState().user
     let submissions = getState().submissions
 
@@ -132,17 +122,12 @@ export function savePartialSubmission(grid) {
       // console.log("SAVESSAVESSAVESSAVESSAVESSAVESSAVESSAVESSAVESSAVES")
       return axios
         .post(Config.NODE_API_ROOT + '/submission/savePartial', {
-            ...util.generateSubmitData(getState()),
-            username: getState().user.username,
-        }, )
+          ...util.generateSubmitData(getState(), true),
+          username: getState().user.username,
+        })
         .then(response => {
-          // Handsontable binds to your data source (list of arrays or list of objects) by reference. Therefore, all the data entered in the grid will alter the original data source.
           dispatch({
             type: SAVE_PARTIAL_SUBMISSION_SUCCESS,
-            payload: {
-              submissions: response.payload.submissions,
-              table: util.generateSubmissionsGrid(response.payload),
-            },
             message: 'Saved!',
           })
           // used to reset saved! msg on button
@@ -151,6 +136,7 @@ export function savePartialSubmission(grid) {
           }, 2000)
         })
         .catch(error => {
+          console.log(error.status)
           dispatch({
             type: SAVE_PARTIAL_SUBMISSION_FAIL,
             error: error,

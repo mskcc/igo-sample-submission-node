@@ -47,8 +47,9 @@ export class SubmissionsPage extends Component {
   }
 
   render() {
-    return this.props.submissions.list > 0 ? (
-      <SubmissionsTable user={this.props.user} handleClick={this.handleClick} />
+    console.log(this.props.submissions.grid)
+    return this.props.submissions.grid.rows.length > 0 ? (
+      <SubmissionsTable grid={this.props.submissions.grid} user={this.props.user} handleClick={this.handleClick} />
     ) : (
       'You have not submitted anything since the launch of V2!'
     )

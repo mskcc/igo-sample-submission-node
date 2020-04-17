@@ -15,8 +15,11 @@ export const formGridMismatch = (match) => {
 
 
 export const apiValidationError = (msg, data) => {
-  let errors = ""
-  data.map(element => { errors += `${element.param}: ${element.msg}\n` })
+  console.log(data)
+  let errors = data || ""
+  if (data)
+  {errors = ""
+  data.map(element => { errors += `${element.param}: ${element.msg}\n` })}
   Swal.fire({
     title: msg,
     html: errors,

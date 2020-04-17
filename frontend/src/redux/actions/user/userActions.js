@@ -1,12 +1,5 @@
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import {
-  generateSubmitData,
-  generateSubmissionsGrid,
-  findSubmission,
-  submissionExists,
-  checkGridAndForm,
-} from '../helpers'
 
 import { Config } from '../../../config.js'
 

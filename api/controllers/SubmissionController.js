@@ -19,13 +19,12 @@ const SubmissionModel = require("../models/SubmissionModel");
 
 
 exports.list = [
-    // authenticate,
     function (req, res) {
         SubmissionModel.find({}, '')
             .exec(function (err, submissions) {
 
                 if (err) {
-                    return apiResponse.ErrorResponse(
+                    return apiResponse.errorResponse(
                         res,
                         'Could not retrieve submissions.'
                     )
@@ -41,6 +40,47 @@ exports.list = [
     }
 ]
 
+// table for all todo: table for users
+exports.grid = [
+    function (req, res) {
+        SubmissionModel.find({}, '')
+            .exec(function (err, submissions) {
+
+                if (err) {
+                    return apiResponse.errorResponse(
+                        res,
+                        'Could not retrieve submissions.'
+                    )
+                }
+                else {
+                    let submissionGridPromise = util.generateSubmissionGrid(submissions)
+
+                Promise.all([submissionGridPromise]).then((results) => {
+                    if (results.some(x => x.length == 0)) {
+                        return apiResponse.errorResponse(
+                            res,
+                            `Could not retrieve submission grid.`
+                        )
+                    }
+                    let [submissionGridResult] = results
+                    return apiResponse.successResponseWithData(
+                        res,
+                        "Operation success",
+                        submissionGridResult
+                    );
+
+                }).catch((reasons) => {
+                    console.log(reasons)
+                    return apiResponse.errorResponse(
+                        res,
+                        reasons
+                    )
+                })
+                }
+            });
+    }
+]
+
 
 /**
  * Saves partial submission.
@@ -48,7 +88,6 @@ exports.list = [
  * @returns {Object}
  */
 exports.savePartial = [
-    // authenticate,
     // body("username").isLength({ min: 1 }).trim().withMessage("username must be specified."),
     // body("serviceId").isLength({ min: 1 }).trim().withMessage("serviceId must be specified."),
     // body("material").isLength({ min: 1 }).trim().withMessage("material must be specified."),
@@ -58,7 +97,7 @@ exports.savePartial = [
     body("gridValues").isJSON().isLength({ min: 1 }).trim().withMessage("gridValues must be JSON."),
     // body("submitted").isLength({ min: 1 }).trim().withMessage("submitted must be specified."),
     // body("submittedOn").isLength({ min: 1 }).trim().withMessage("submittedOn must be specified."),
-    body("transactionId").isLength({ min: 1 }).trim().withMessage("transactionId must be specified."),
+    // body("transactionId").isLength({ min: 1 }).trim().withMessage("transactionId must be specified."),
     function (req, res) {
 
         const errors = validationResult(req);
@@ -73,9 +112,9 @@ exports.savePartial = [
             let gridValues = JSON.parse(req.body.gridValues)
             let submission = new SubmissionModel({
                 username: res.user.username,
-                transactionId: req.body.transactionId,
                 formValues: formValues,
-                gridValues: gridValues
+                gridValues: gridValues,
+                appVersion: "2.5"
             })
             submission.save(function (err) {
                 if (err) {
@@ -89,7 +128,7 @@ exports.savePartial = [
 
             //     Promise.all([materialsPromise]).then((results) => {
             //         if (results.some(x => x.length == 0)) {
-            //             return apiResponse.ErrorResponse(
+            //             return apiResponse.errorResponse(
             //                 res,
             //                 `Could not retrieve materials and species for '${recipe}'.`
             //             )
