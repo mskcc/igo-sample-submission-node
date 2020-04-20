@@ -13,6 +13,17 @@ export const formGridMismatch = (match) => {
 }
 
 
+export const altServiceIdNotice = () => {
+  Swal.fire({
+    title: 'Service Id',
+    html: "Please make sure to get an ID through iLabs. For now, we will use a placeholder, please write it down (it will also be on your receipt once you submitted.).",  
+    type: 'info',
+    animation: false,
+    confirmButtonText: 'Dismiss',
+  })
+}
+
+
 
 export const apiValidationError = (msg, data) => {
   console.log(data)

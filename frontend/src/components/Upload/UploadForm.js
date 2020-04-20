@@ -13,6 +13,8 @@ import {
 
 import { Button, Checkbox, Dropdown, Input } from '../index'
 
+import * as swal from '../../redux/swal'
+
 class UploadForm extends React.Component {
   constructor(props) {
     super(props)
@@ -74,6 +76,7 @@ class UploadForm extends React.Component {
     if (event.target.checked) {
       this.props.handleInputChange('serviceId', timestamp)
       this.props.handleInputChange('altServiceId', true)
+      swal.altServiceIdNotice()
     } else {
       this.props.handleInputChange('serviceId', '')
       this.props.handleInputChange('altServiceId', false)
@@ -364,24 +367,26 @@ class UploadForm extends React.Component {
                   id="altServiceId"
                   checked={form.selected.altServiceId}
                   onChange={this.handleServiceIdCheck}
-                  hasHelptext
                 />
               </FormControl>
-              <FormControl>
+
+              <FormControl component="fieldset" className={classes.lastItem}>
                 <Checkbox
                   id="isShared"
                   checked={form.selected.isShared}
                   onChange={e => this.handleCheckbox("isShared")}
                 />
-                {form.selected.isShared &&
+                {
+                  form.selected.isShared &&
                   <Input
                     id="sharedWith"
                     error={!formValid.sharedWith}
-                    // errorText="Please add valid emails separated by commas."
                     type="text"
                     onChange={this.handleChange}
-                  />}
+                  />
+                }
               </FormControl>
+
 
             </form>
             <div>
@@ -461,16 +466,19 @@ const styles = theme => ({
     display: 'grid',
     justifyItems: 'center',
     width: '80%',
-    maxWidth: '1200px',
+    maxWidth: '1700px',
     margin: '2em auto',
-    padding: '2em',
+    padding: '1em',
     marginBottom: '4em',
   },
   form: {
     display: 'flex',
     flexWrap: 'wrap',
+  },
 
-    // justifyContent: 'space-between',
+  lastItem: {
+    marginTop: '2em',
+    width: 310,
   },
 
   dense: {
