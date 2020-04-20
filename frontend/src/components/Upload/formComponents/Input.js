@@ -4,6 +4,7 @@ import { Translate } from 'react-localize-redux'
 import { withStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 
+
 const Input = ({ id, classes, type, value, onChange, inputProps, error, errorText }) => (
   <Translate>
     {({ translate }) => (

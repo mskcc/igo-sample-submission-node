@@ -18,6 +18,18 @@ exports.determineRole = groups => {
     else return "user";
 };
 
+exports.createSharedString = (shared, username) => {
+    let sharedSet = new Set()
+    let sharedArray = shared.split(",")
+  
+    sharedSet.add(...sharedArray)
+    sharedSet.add(`${username}@mskcc.org`)
+  
+    return Array.from(sharedSet).join(",")
+
+  
+}
+
 exports.getContainers = material => {
     if (material in constants.containersByMaterial) {
         return constants.containersByMaterial[material];
@@ -293,6 +305,8 @@ const setWellPos = columns => {
     return columns;
 };
 
+
+
 // patient id validation depends on user selected id type
 function choosePatientIdValidator(patientIDType, species, groupingChecked) {
     if (species == 'Mouse' || species == 'Mouse_GeneticallyModified') {
@@ -359,6 +373,7 @@ export function generateSubmissionGrid(submissions) {
                 let submission = submissions[i]
                 let serviceId = submission.formValues.serviceId
                 
+                console.log(typeof(submission.createdAt))
                 let isSubmitted = submission.submitted
                 rows[i] = {
                     serviceId: serviceId,
@@ -368,18 +383,18 @@ export function generateSubmissionGrid(submissions) {
                     application: submission.formValues.application,
                     submitted: isSubmitted ? 'yes' : 'no',
 
-                    createdAt: submission.createdAt.toTimeString(),
-                    submittedAt: submission.submittedAt ?submission.submittedAt.toDateString()  : "",
+                    createdAt: parseDate(submission.createdAt),
+                    submittedAt: submission.submittedAt ? parseDate(submission.submittedAt)  : "",
                     // available actions depend on submitted status
                     edit: isSubmitted
-                        ? '<span  submitted="' + isSubmitted + '" service-id="' + serviceId + '" submission-id="' + submission.id + '" class="grid-action-disabled">edit</span>'
-                        : '<span submitted="' + isSubmitted + '" service-id="' + serviceId + '" submission-id="' + submission.id + '" class="grid-action">edit</span>',
+                        ? `<span  submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="grid-action-disabled">edit</span>`
+                        : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="grid-action">edit</span>`,
                     receipt: isSubmitted
-                        ? '<span submitted="' + isSubmitted + '" service-id="' + serviceId + '" submission-id="' + submission.id + '" class="grid-action grid-action">download</span>'
-                        : '<span submitted="' + isSubmitted + '" service-id="' + serviceId + '" submission-id="' + submission.id + '" class="grid-action-disabled">download</span>',
+                        ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="grid-action grid-action">download</span>`
+                        : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="grid-action-disabled">download</span>`,
                     delete: isSubmitted
-                        ? '<span submitted="' + isSubmitted + '" service-id="' + serviceId + '" submission-id="' + submission.id + '" class="grid-action-disabled">delete</span>'
-                        : '<span submitted="' + isSubmitted + '" service-id="' + serviceId + '" submission-id="' + submission.id + '" class="grid-action">delete</span>',
+                        ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="grid-action-disabled">delete</span>`
+                        : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="grid-action">delete</span>`,
                 }
                 if (rows.length == submissions.length) {
                     grid.rows = rows
@@ -392,4 +407,11 @@ export function generateSubmissionGrid(submissions) {
             reject(err)
         }
     })
+}
+
+function parseDate(mongooseDate){
+    let date = new Date(mongooseDate*1000)
+    let humanReadable = `${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()} at ${date.getHours()}:${date.getMinutes()}`
+    return humanReadable
+
 }

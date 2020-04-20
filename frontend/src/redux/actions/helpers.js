@@ -145,15 +145,14 @@ export const updateRows = (formValues, grid) => {
 // partial submission save or banked sample
 export const generateSubmitData = (state, isPartial) => {
   let data = { version: "", gridValues: "", formValues: "", transactionId: "" }
-  if (!isPartial){
-  let now = Date.now()
-  let date = Math.floor(now / 1000)
-  data.transactionId = date  
+  if (!isPartial) {
+    let now = Date.now()
+    let date = Math.floor(now / 1000)
+    data.transactionId = date
   }
   data.version = Config.VERSION
   data.gridValues = JSON.stringify(rowsWithRowIndex(state.upload.grid.rows))
   data.formValues = JSON.stringify(state.upload.grid.form)
-  
 
   return data
 }

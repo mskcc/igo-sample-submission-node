@@ -61,16 +61,23 @@ export default function formReducer(state = initialFormState, action) {
         },
       }
     case ActionTypes.CLEAR:
-      return {
-        ...state,
-
-        selected: {
-          ...state.selected,
-          [action.payload.id]:
-            action.payload.id == 'grouping_checked' || 'alt_service_id'
-              ? false
-              : '',
-        },
+      if (action.payload.id == "groupingChecked" || action.payload.id == "altServiceId" || action.payload.id == "isShared") {
+        return {
+          ...state,
+          selected: {
+            ...state.selected,
+            [action.payload.id]: false
+          }
+        }
+      }
+      else {
+        return {
+          ...state,
+          selected: {
+            ...state.selected,
+            [action.payload.id]: ""
+          },
+        }
       }
 
     case ActionTypes.CLEAR_FORM:
@@ -102,19 +109,19 @@ export default function formReducer(state = initialFormState, action) {
     case ActionTypes.RECEIVE_DATA_FOR_APPLICATION_SUCCESS:
       return action.species.length > 0
         ? {
-            ...state,
-            formIsLoading: false,
-            filteredMaterials: action.materials,
-            filteredSpecies: action.species,
-            // does not update input value quite yet,so don't change to allow validation to pick it up
-            // selected: { ...state.selected, species: action.species[0].id },
-          }
+          ...state,
+          formIsLoading: false,
+          filteredMaterials: action.materials,
+          filteredSpecies: action.species,
+          // does not update input value quite yet,so don't change to allow validation to pick it up
+          // selected: { ...state.selected, species: action.species[0].id },
+        }
         : {
-            ...state,
-            formIsLoading: false,
-            filteredMaterials: action.materials,
-            filteredSpecies: state.allSpecies,
-          }
+          ...state,
+          formIsLoading: false,
+          filteredMaterials: action.materials,
+          filteredSpecies: state.allSpecies,
+        }
     case ActionTypes.RECEIVE_DATA_FOR_APPLICATION_FAIL:
       return {
         ...state,
@@ -130,19 +137,19 @@ export default function formReducer(state = initialFormState, action) {
     case ActionTypes.RECEIVE_APPLICATIONS_FOR_MATERIAL_SUCCESS:
       return action.containers.length > 0
         ? {
-            ...state,
-            formIsLoading: false,
-            filteredApplications: action.applications,
-            filteredContainers: action.containers,
-            // does not update input value quite yet,so don't change to allow validation to pick it up
-            // selected: { ...state.selected, container: action.containers[0].id },
-          }
+          ...state,
+          formIsLoading: false,
+          filteredApplications: action.applications,
+          filteredContainers: action.containers,
+          // does not update input value quite yet,so don't change to allow validation to pick it up
+          // selected: { ...state.selected, container: action.containers[0].id },
+        }
         : {
-            ...state,
-            formIsLoading: false,
-            filteredApplications: action.applications,
-            filteredContainers: state.allContainers,
-          }
+          ...state,
+          formIsLoading: false,
+          filteredApplications: action.applications,
+          filteredContainers: state.allContainers,
+        }
     case ActionTypes.RECEIVE_APPLICATIONS_FOR_MATERIAL_FAIL:
       return {
         ...state,

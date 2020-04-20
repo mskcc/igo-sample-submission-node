@@ -5,7 +5,7 @@ var router = express.Router();
 
 router.get("/list", SubmissionController.list);
 router.get("/grid", SubmissionController.grid);
-router.post("/savePartial", SubmissionController.savePartial);
+router.post("/save", SubmissionController.save);
 // router.get("/headerValues", UploadController.headerValues);
 // router.get("/materialsAndSpecies", UploadController.materialsAndSpecies);
 // router.get("/applicationsAndContainers", UploadController.applicationsAndContainers);

@@ -121,9 +121,9 @@ export function savePartialSubmission(grid) {
       // console.log(util.generateSubmitData(getState()))
       // console.log("SAVESSAVESSAVESSAVESSAVESSAVESSAVESSAVESSAVESSAVES")
       return axios
-        .post(Config.NODE_API_ROOT + '/submission/savePartial', {
+        .post(Config.NODE_API_ROOT + '/submission/save', {
           ...util.generateSubmitData(getState(), true),
-          username: getState().user.username,
+          id: undefined
         })
         .then(response => {
           dispatch({

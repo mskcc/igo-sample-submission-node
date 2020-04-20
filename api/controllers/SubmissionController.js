@@ -55,27 +55,27 @@ exports.grid = [
                 else {
                     let submissionGridPromise = util.generateSubmissionGrid(submissions)
 
-                Promise.all([submissionGridPromise]).then((results) => {
-                    if (results.some(x => x.length == 0)) {
+                    Promise.all([submissionGridPromise]).then((results) => {
+                        if (results.some(x => x.length == 0)) {
+                            return apiResponse.errorResponse(
+                                res,
+                                `Could not retrieve submission grid.`
+                            )
+                        }
+                        let [submissionGridResult] = results
+                        return apiResponse.successResponseWithData(
+                            res,
+                            "Operation success",
+                            submissionGridResult
+                        );
+
+                    }).catch((reasons) => {
+                        console.log(reasons)
                         return apiResponse.errorResponse(
                             res,
-                            `Could not retrieve submission grid.`
+                            reasons
                         )
-                    }
-                    let [submissionGridResult] = results
-                    return apiResponse.successResponseWithData(
-                        res,
-                        "Operation success",
-                        submissionGridResult
-                    );
-
-                }).catch((reasons) => {
-                    console.log(reasons)
-                    return apiResponse.errorResponse(
-                        res,
-                        reasons
-                    )
-                })
+                    })
                 }
             });
     }
@@ -87,11 +87,12 @@ exports.grid = [
  *
  * @returns {Object}
  */
-exports.savePartial = [
+exports.save = [
     // body("username").isLength({ min: 1 }).trim().withMessage("username must be specified."),
     // body("serviceId").isLength({ min: 1 }).trim().withMessage("serviceId must be specified."),
     // body("material").isLength({ min: 1 }).trim().withMessage("material must be specified."),
     // body("application").isLength({ min: 1 }).trim().withMessage("application must be specified."),
+    body("id").optional().isString().withMessage("id must be String."),
     body("formValues").isJSON().isLength({ min: 1 }).trim().withMessage("formValues must be JSON."),
     // body("formValues").not().isEmpty().trim().withMessage("formValues must be specified."),
     body("gridValues").isJSON().isLength({ min: 1 }).trim().withMessage("gridValues must be JSON."),
@@ -110,6 +111,12 @@ exports.savePartial = [
         } else {
             let formValues = JSON.parse(req.body.formValues)
             let gridValues = JSON.parse(req.body.gridValues)
+            //  add username to sharedWith since backend has user object in case someone else than og user edited
+            formValues.sharedWith = util.createSharedString(formValues.sharedWith, res.user.username)
+
+            // if (formValues.sharedWith){
+            //     formValues.sharedWith += `,${username}@mskcc.org`
+            // }
             let submission = new SubmissionModel({
                 username: res.user.username,
                 formValues: formValues,

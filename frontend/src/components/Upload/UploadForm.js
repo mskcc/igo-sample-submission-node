@@ -87,7 +87,12 @@ class UploadForm extends React.Component {
     this.setState({
       values: { ...this.state.values, [name]: event.target.checked },
     })
-    this.props.handleInputChange(name, event.target.checked)
+    if(event.target.checked)
+    {this.props.handleInputChange(name, event.target.checked)}
+    else{
+      this.props.handleInputChange(name, event.target.checked)
+      this.props.handleInputChange('sharedWith', "")
+    }
   }
 
   handleSubmit = (e, handleParentSubmit) => {
@@ -170,6 +175,12 @@ class UploadForm extends React.Component {
 
         case 'sharedWith':
           if (values.isShared) {
+            
+            if (values.sharedWith == ""){
+              formValid[value] = false
+              break
+            }
+            console.log(values[value]);
             var emails = values[value].split(',')
             var valid = true
             var regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -194,6 +205,7 @@ class UploadForm extends React.Component {
       }
     }
     console.log(formValid)
+    console.log(values)
     this.setState({
       formValid: {
         ...formValid,
@@ -380,6 +392,7 @@ class UploadForm extends React.Component {
                   form.selected.isShared &&
                   <Input
                     id="sharedWith"
+                    value={form.selected.sharedWith}
                     error={!formValid.sharedWith}
                     type="text"
                     onChange={this.handleChange}

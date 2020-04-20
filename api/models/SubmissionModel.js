@@ -1,6 +1,7 @@
 var mongoose = require("mongoose");
 
 var FormSchema = new mongoose.Schema({
+    sharedWith: { type: String, default: "" },
     altServiceId: { type: Boolean, required: true },
     application: { type: String, required: true },
     container: { type: String, required: true },
@@ -19,11 +20,12 @@ var SubmissionSchema = new mongoose.Schema({
     // application: { type: String, required: true },
     formValues: FormSchema,
     gridValues: { type: Array, required: true },
-    appVersion: { type: String,default: "2.5" },
     submitted: { type: Boolean, default: false },
     submittedAt: { type: Date, required: false },
     transactionId: { type: Number, required: false },
-    
-}, { timestamps: true });
+    appVersion: { type: String,default: "2.5" },
+    createdAt: Number,
+    updatedAt: Number,
+}, {  timestamps: { currentTime: () => Math.floor(Date.now() / 1000) }});
 
 module.exports = mongoose.model("Submission", SubmissionSchema);
