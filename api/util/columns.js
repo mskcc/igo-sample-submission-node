@@ -452,7 +452,11 @@ export const submissionColumns = {
         data: 'application',
         readOnly: 'true'
     },
-
+    '#Samples': {
+        name: '#Samples',
+        data: 'numberOfSamples',
+        readOnly: 'true'
+    },
     'Submitted to IGO?': {
         name: 'Submitted to IGO?',
         data: 'submitted',

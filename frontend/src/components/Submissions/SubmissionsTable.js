@@ -1,9 +1,8 @@
-import React from 'react'
-import { withStyles } from '@material-ui/core'
 import { HotTable } from '@handsontable/react'
-import Handsontable from 'handsontable'
-import 'handsontable/dist/handsontable.full.css'
+import { withStyles } from '@material-ui/core'
 import swal from '@sweetalert/with-react'
+import 'handsontable/dist/handsontable.full.css'
+import React from 'react'
 
 class SubmissionsTable extends React.Component {
   constructor(props) {
@@ -12,7 +11,7 @@ class SubmissionsTable extends React.Component {
   }
 
   getErrorMsg = () => {
-    for (let i = 0; i < numberToAdd; i++) {}
+    for (let i = 0; i < numberToAdd; i++) { }
   }
   showError = error => {
     console.log(error)
@@ -39,40 +38,21 @@ class SubmissionsTable extends React.Component {
             filters="true"
             columnSorting="true"
             dropdownMenu={['filter_by_value', 'filter_action_bar']}
+            // make actions clickable
             afterOnCellMouseDown={(event, coords, TD) => {
-              if (coords.row != -1) {
-                let service_id = 'test'
-                if (coords.col == '9') {
-                  let submitted = TD.firstElementChild.getAttribute('submitted')
-
-                  if (submitted == 'false') {
-                    let service_id = TD.firstElementChild.getAttribute(
-                      'service-id'
-                    )
-                    let id = TD.firstElementChild.getAttribute('submission-id')
-                    handleClick('edit', id, service_id)
-                  }
-                } else if (coords.col == '10') {
-                  let submitted = TD.firstElementChild.getAttribute('submitted')
-
-                  if (submitted == 'true') {
-                    let service_id = TD.firstElementChild.getAttribute(
-                      'service-id'
-                    )
-                    let id = TD.firstElementChild.getAttribute('submission-id')
-
-                    handleClick('receipt', id, service_id)
-                  }
-                } else if (coords.col == '11') {
-                  let submitted = TD.firstElementChild.getAttribute('submitted')
-
-                  if (submitted == 'false') {
-                    let service_id = TD.firstElementChild.getAttribute(
-                      'service-id'
-                    )
-                    let id = TD.firstElementChild.getAttribute('submission-id')
-                    handleClick('delete', id, service_id)
-                  }
+              if (coords.row != -1 && ([9,10,11].indexOf(coords.col) > -1)) {
+               
+                let actionElement = TD.firstElementChild || undefined
+                let submitted = actionElement ? actionElement.getAttribute('submitted') == "true" : undefined
+                let service_id = actionElement ? actionElement.getAttribute('service-id') : undefined
+                let id = actionElement ? actionElement.getAttribute('submission-id') : undefined
+             
+                if (coords.col === 9 && !submitted) {
+                  handleClick('edit', id, service_id)
+                } else if (coords.col === 10 && submitted) {
+                  handleClick('receipt', id, service_id)
+                } else if (coords.col === 11 && !submitted) {
+                  handleClick('delete', id, service_id)
                 }
               }
             }}

@@ -372,8 +372,7 @@ export function generateSubmissionGrid(submissions) {
             for (let i = 0; i < submissions.length; i++) {
                 let submission = submissions[i]
                 let serviceId = submission.formValues.serviceId
-                
-                console.log(typeof(submission.createdAt))
+            
                 let isSubmitted = submission.submitted
                 rows[i] = {
                     serviceId: serviceId,
@@ -381,20 +380,20 @@ export function generateSubmissionGrid(submissions) {
                     username: submission.username,
                     sampleType: submission.formValues.material,
                     application: submission.formValues.application,
+                    numberOfSamples: submission.formValues.numberOfSamples,
                     submitted: isSubmitted ? 'yes' : 'no',
-
                     createdAt: parseDate(submission.createdAt),
                     submittedAt: submission.submittedAt ? parseDate(submission.submittedAt)  : "",
                     // available actions depend on submitted status
                     edit: isSubmitted
-                        ? `<span  submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="grid-action-disabled">edit</span>`
-                        : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="grid-action">edit</span>`,
+                        ? `<span  submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">edit</span>`
+                        : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action">edit</span>`,
                     receipt: isSubmitted
-                        ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="grid-action grid-action">download</span>`
-                        : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="grid-action-disabled">download</span>`,
+                        ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action grid-action">cloud_download</span>`
+                        : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">cloud_download</span>`,
                     delete: isSubmitted
-                        ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="grid-action-disabled">delete</span>`
-                        : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="grid-action">delete</span>`,
+                        ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">delete</span>`
+                        : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action">delete</span>`,
                 }
                 if (rows.length == submissions.length) {
                     grid.rows = rows

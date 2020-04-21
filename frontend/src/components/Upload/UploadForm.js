@@ -35,8 +35,6 @@ class UploadForm extends React.Component {
       },
     }
   }
-  componentDidUpdate(prevProps, prevState) {
-  }
 
   handleDropdownChange = event => {
     this.setState({
@@ -204,8 +202,6 @@ class UploadForm extends React.Component {
           break
       }
     }
-    console.log(formValid)
-    console.log(values)
     this.setState({
       formValid: {
         ...formValid,
