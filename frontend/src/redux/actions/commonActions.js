@@ -14,17 +14,14 @@ axios.defaults.withCredentials = true;
 // Add a response interceptor
 axios.interceptors.response.use(
   function (response) {
-    
-    console.log("intercepted")
     // Do something with response data
     if (response.data.data) {
       response.payload = response.data.data
-      console.log(response.payload)
     }
     return response
   },
   function (error) {
-    console.log("error.response")
+    
     if (error.response) {
       error.payload = error.response.data 
       // console(error.payload)

@@ -1,11 +1,14 @@
 
 import FileSaver from 'file-saver'
 import { submissionActions as ActionTypes } from "../../actions/"
+import { gridActions as GridActionTypes } from "../../actions/"
+import { formActions as FormActionTypes } from "../../actions/"
 const initialState = {
     loading: false,
     saved: false,
     grid: { columnHeaders: [], rows: [], columnFeatures: [] },
     isSaving: false,
+    submissionToEdit: undefined
 }
 
 function submissionsReducer(state = initialState, action) {
@@ -33,7 +36,10 @@ function submissionsReducer(state = initialState, action) {
                 isSaving: true,
             }
         case ActionTypes.SAVE_PARTIAL_SUBMISSION_FAIL:
-            return { ...state, isSaving: false }
+            return {
+                ...state, isSaving: false,
+                submissionToEdit: undefined
+            }
         case ActionTypes.SAVE_PARTIAL_SUBMISSION_CANCEL:
             return { ...state, isSaving: false }
         case ActionTypes.SAVE_PARTIAL_SUBMISSION_SUCCESS:
@@ -41,20 +47,21 @@ function submissionsReducer(state = initialState, action) {
                 ...state,
                 isSaving: false,
                 saved: true,
+                submissionToEdit: action.payload.submission
             }
 
         case ActionTypes.EDIT_SUBMISSION:
             return {
                 ...state,
-                loading: true,
+                // loading: true,
             }
-        case ActionTypes.EDIT_SUBMISSION_FAIL:
-            return { ...state, loading: false }
+        case GridActionTypes.GET_SUBMISSION_FAIL:
+            return { ...state, submissionToEdit: undefined }
 
-        case ActionTypes.EDIT_SUBMISSION_SUCCESS:
+        case GridActionTypes.GET_SUBMISSION_SUCCESS:
             return {
                 ...state,
-                loading: false,
+                submissionToEdit: action.payload
             }
 
         case ActionTypes.DELETE_SUBMISSION:
@@ -77,6 +84,10 @@ function submissionsReducer(state = initialState, action) {
             return { ...state, submitted: false, saved: false }
         }
 
+        case FormActionTypes.CLEAR_FORM: {
+            return { ...state, submissionToEdit: undefined }
+        }
+            
         case ActionTypes.DOWNLOAD_RECEIPT:
             return {
                 ...state,

@@ -93,6 +93,10 @@ app.get("/favicon.ico", function (req, res) {
     res.sendFile(path.join(publicDir, "favicon.ico"));
 });
 
+app.use("*", function (req, res) {
+    return apiResponse.notFoundResponse(res, "Page not found");
+});
+
 // app.use((err, req, res, next) => {
 //     if (err.name == "UnauthorizedError") {
 //         return apiResponse.unauthorizedResponse(res, err.message);
@@ -109,10 +113,10 @@ app.get("/favicon.ico", function (req, res) {
 //     }
 //     next()
 // });
-// throw 404 if URL not found
-app.all("*", function (req, res) {
-    return apiResponse.notFoundResponse(res, "Page not found");
-});
+// // throw 404 if URL not found
+// app.all("*", function (req, res) {
+//     return apiResponse.notFoundResponse(res, "Page not found");
+// });
 
 const server = http.createServer(app);
 server.listen(port, hostname, () => {

@@ -241,7 +241,7 @@ export const gridColumns = {
         tooltip:
             "You must supply this in nanograms per microliter.  If you are unsure, please provide us with an approximation."
     },
-    "Quantity of Tubes": {
+    "Quantity": {
         name: "Quantity of Tubes",
         columnHeader: "Quantity of Tubes",
         data: "numTubes",
@@ -438,7 +438,7 @@ export const submissionColumns = {
         readOnly: 'true'
     },
     'User ID': {
-        name: 'User ID',
+        name: 'User',
         data: 'username',
         readOnly: 'true'
     },
@@ -464,12 +464,12 @@ export const submissionColumns = {
         renderer: 'html',
     },
     'Date Created': {
-        name: 'Date Created',
+        name: 'Created On',
         data: 'createdAt',
         readOnly: 'true'
     },
     'Date Submitted': {
-        name: 'Date Submitted',
+        name: 'Submitted On',
         data: 'submittedOn',
         readOnly: 'true'
     },

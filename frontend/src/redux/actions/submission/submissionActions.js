@@ -2,7 +2,7 @@ import axios from 'axios'
 import { Config } from '../../../config.js'
 import * as util from '../helpers'
 import * as swal from '../../swal'
-
+import Swal from 'sweetalert2'
 
 
 export const GET_SUBMISSIONS = 'GET_SUBMISSIONS'
@@ -51,99 +51,63 @@ export function savePartialSubmission(grid) {
       getState().upload.grid.form
     )
     if (!match.success) {
-      return swal.formGridMismatch()
+      return swal.formGridMismatch(match)
 
     } else {
-      // if (
-      //   util.submissionExists(
-      //     grid.form.service_id,
-      //     grid.form.material,
-      //     user.username,
-      //     submissions.list
-      //   )
-      // ) {
-      //   Swal.fire({
-      //     title: 'Duplicate found',
-      //     html:
-      //       'A request for ' +
-      //       grid.form.material +
-      //       ' with this Service ID and your username already exists. Are you sure you want to overwrite it?',
-      //     // footer:
-      //     //   'If you need to split up a large request into multiple smaller ones, we recommend you select "I don\'t have an iLabs ID" to avoid the duplicate check on "Save Table" and fill in the correct ID on submission.',
-      //     type: 'info',
-      //     animation: 'false',
+      if (submissions.submissionToEdit) {
+        Swal.fire({
+          title: 'Update this submission?',
+          html:
+            `Are you sure you want to update this submission?`,
+          // footer:
+          //   'If you need to split up a large request into multiple smaller ones, we recommend you select "I don\'t have an iLabs ID" to avoid the duplicate check on "Save Table" and fill in the correct ID on submission.',
+          type: 'info',
+          animation: 'false',
 
-      //     showCancelButton: true,
-      //     animation: false,
-      //     confirmButtonColor: '#df4602',
-      //     cancelButtonColor: '#007cba',
-      //     confirmButtonText: 'Overwrite',
-      //     cancelButtonText: 'Cancel',
-      //   }).then(result => {
-      //     if (result.value) {
-      //       return axios
-      //         .post(Config.NODE_API_ROOT + '/submission/savePartial', {
-      //           data: {
-      //             ...generateSubmitData(getState()),
-      //             username: getState().user.username,
-      //           },
-      //         })
-      //         .then(response => {
-      //           // Handsontable binds to your data source (list of arrays or list of objects) by reference. Therefore, all the data entered in the grid will alter the original data source.
-      //           dispatch({
-      //             type: SAVE_PARTIAL_SUBMISSION_SUCCESS,
-      //             payload: {
-      //               submissions: response.data.submissions,
-      //               table: generateSubmissionsGrid(response.data),
-      //             },
-      //             message: 'Saved!',
-      //           })
-      //           // used to reset saved! msg on button
-      //           return setTimeout(() => {
-      //             dispatch({ type: BUTTON_RESET })
-      //           }, 2000)
-      //         })
-      //         .catch(error => {
-      //           dispatch({
-      //             type: SAVE_PARTIAL_SUBMISSION_FAIL,
-      //             error: error,
-      //           })
-      //           return error
-      //         })
-      //     } else if (result.dismiss === Swal.DismissReason.cancel) {
-      //       return dispatch({
-      //         type: SAVE_PARTIAL_SUBMISSION_CANCEL,
-      //         message: 'Canceled!',
-      //       })
-      //     }
-      //   })
-      // } else {
-      // console.log(util.generateSubmitData(getState()))
-      // console.log("SAVESSAVESSAVESSAVESSAVESSAVESSAVESSAVESSAVESSAVES")
-      return axios
-        .post(Config.NODE_API_ROOT + '/submission/save', {
-          ...util.generateSubmitData(getState(), true),
-          id: undefined
+          showCancelButton: true,
+          animation: false,
+          confirmButtonColor: '#df4602',
+          cancelButtonColor: '#007cba',
+          confirmButtonText: 'Overwrite',
+          cancelButtonText: 'Cancel',
+        }).then(result => {
+          if (result.value) {
+            return axios
+              .post(Config.NODE_API_ROOT + '/submission/save', {
+                ...util.generateSubmitData(getState(), true),
+
+              })
+              .then(response => {
+                console.log(response)
+                dispatch({
+                  type: SAVE_PARTIAL_SUBMISSION_SUCCESS,
+                  message: 'Saved!',
+                  payload: response.payload.submission
+                })
+                // used to reset saved! msg on button
+                return setTimeout(() => {
+                  dispatch({ type: BUTTON_RESET })
+                }, 2000)
+              })
+              .catch(error => {
+                console.log(error.status)
+                dispatch({
+                  type: SAVE_PARTIAL_SUBMISSION_FAIL,
+                  error: error,
+                })
+                return error
+              })
+            // }
+
+
+          } else if (result.dismiss === Swal.DismissReason.cancel) {
+            return dispatch({
+              type: SAVE_PARTIAL_SUBMISSION_CANCEL,
+              message: 'Canceled!',
+            })
+          }
         })
-        .then(response => {
-          dispatch({
-            type: SAVE_PARTIAL_SUBMISSION_SUCCESS,
-            message: 'Saved!',
-          })
-          // used to reset saved! msg on button
-          return setTimeout(() => {
-            dispatch({ type: BUTTON_RESET })
-          }, 2000)
-        })
-        .catch(error => {
-          console.log(error.status)
-          dispatch({
-            type: SAVE_PARTIAL_SUBMISSION_FAIL,
-            error: error,
-          })
-          return error
-        })
-      // }
+      }
     }
   }
 }

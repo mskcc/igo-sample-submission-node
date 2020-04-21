@@ -126,10 +126,10 @@ function userReducer(state = initialState, action) {
     //     ...state,
     //     loading: true,
     //   }
-    // case ActionTypes.EDIT_SUBMISSION_FAIL:
+    // case ActionTypes.GET_SUBMISSION_FAIL:
     //   return { ...state, loading: false }
 
-    // case ActionTypes.EDIT_SUBMISSION_SUCCESS:
+    // case ActionTypes.GET_SUBMISSION_SUCCESS:
     //   return {
     //     ...state,
     //     loading: false,

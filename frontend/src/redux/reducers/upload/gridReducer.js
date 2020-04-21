@@ -1,5 +1,6 @@
 import { gridActions as ActionTypes } from "../../actions/"
 import { formActions as FormActionTypes } from "../../actions/"
+import { submissionActions as SubmissionActionTypes } from "../../actions/"
 import { initialGridState } from './initialState'
 
 export default function gridReducer(state = initialGridState, action) {
@@ -135,13 +136,13 @@ export default function gridReducer(state = initialGridState, action) {
         columnFeatures: action.columnFeatures,
       }
 
-   
 
-    case ActionTypes.EDIT_SUBMISSION_SUCCESS:
+
+    case ActionTypes.GET_SUBMISSION_SUCCESS:
       return {
         ...state,
-        rows: JSON.parse(action.payload.grid_values),
-        form: JSON.parse(action.payload.form_values),
+        rows: action.payload.gridValues,
+        form: action.payload.formValues,
       }
 
     case ActionTypes.ADD_GRID_TO_BANKED_SAMPLE:
@@ -157,19 +158,20 @@ export default function gridReducer(state = initialGridState, action) {
         ...initialGridState,
       }
 
+
     case FormActionTypes.CLEAR_FORM:
       return {
         ...initialGridState,
       }
 
     case FormActionTypes.SELECT:
-      if (action.payload.id == 'service_id') {
+      if (action.payload.id == 'serviceId') {
         return {
           ...state,
           gridIsLoading: false,
           form: {
             ...state.form,
-            service_id: 'IGO-' + action.payload.value,
+            serviceId: 'IGO-' + action.payload.value,
           },
         }
       } else {

@@ -4,6 +4,7 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 import { updateHeader } from './formActions'
 import * as util from '../helpers'
+import * as service from '../../services'
 import {
   diff,
   findSubmission,
@@ -25,7 +26,7 @@ import {
 } from '../helpers'
 
 import { Config } from '../../../config.js'
- 
+
 export const REGISTER_GRID_CHANGE = 'REGISTER_GRID_CHANGE'
 export const REGISTER_GRID_CHANGE_PRE_VALIDATE =
   'REGISTER_GRID_CHANGE_PRE_VALIDATE'
@@ -253,28 +254,56 @@ export function addGridToBankedSample(ownProps) {
 }
 
 export const EDIT_SUBMISSION = 'EDIT_SUBMISSION'
-export const EDIT_SUBMISSION_FAIL = 'EDIT_SUBMISSION_FAIL'
-export const EDIT_SUBMISSION_SUCCESS = 'EDIT_SUBMISSION_SUCCESS'
-export function editSubmission(submissionId, ownProps) {
+export const GET_SUBMISSION_FAIL = 'GET_SUBMISSION_FAIL'
+export const GET_SUBMISSION_SUCCESS = 'GET_SUBMISSION_SUCCESS'
+export function populateGridFromSubmission(submissionId, ownProps) {
   return (dispatch, getState) => {
     dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...' })
-    let submission = findSubmission(getState().user.submissions, submissionId)
-    if (submission) {
-      let formValues = JSON.parse(submission.form_values)
-      dispatch(getInitialColumns(formValues), getState().user.role).then(() => {
-        dispatch(updateHeader(formValues))
-        dispatch({
-          type: 'EDIT_SUBMISSION_SUCCESS',
-          payload: submission,
-          message: 'Loaded!',
-        })
+    service.getSubmission(submissionId)
+      .then((resp) => {
+        console.log(resp)
+        let submission = resp.payload.submission
+        dispatch(getInitialColumns(submission.formValues), getState().user.role)
+          .then(dispatch(updateHeader(submission.formValues))
+          )
+          .then(() => {
+            dispatch({
+              type: 'GET_SUBMISSION_SUCCESS',
+              payload: submission,
+              message: 'Loaded!',
+            })
+            return ownProps.history.push('upload')
+          })
         return ownProps.history.push('upload')
       })
-    } else {
-      return dispatch({
-        type: 'EDIT_SUBMISSION_FAIL',
+
+
+      .catch(error => {
+
+        return dispatch({
+          type: 'GET_SUBMISSION_FAIL',
+          error: error
+        })
       })
-    }
+
+      
+    // dispatch(getInitialColumns(submission.formValues), getState().user.role)).then(() => {
+    //   dispatch(updateHeader(submission.formValues))
+    //   dispatch({
+    //     type: 'GET_SUBMISSION_SUCCESS',
+    //     payload: submission,
+    //     message: 'Loaded!',
+    //   })
+    //   return ownProps.history.push('upload')
+    // }).catch(error => {
+    //   console.log(error)
+    //   return dispatch({
+    //     type: 'GET_SUBMISSION_FAIL',
+    //     message: error,
+    //   })
+    // })
+
+
   }
 }
 

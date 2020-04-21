@@ -381,7 +381,7 @@ class UploadForm extends React.Component {
               <FormControl component="fieldset" className={classes.lastItem}>
                 <Checkbox
                   id="isShared"
-                  checked={form.selected.isShared}
+                  checked={form.selected.isShared || false}
                   onChange={e => this.handleCheckbox("isShared")}
                 />
                 {
@@ -486,6 +486,7 @@ const styles = theme => ({
   },
 
   lastItem: {
+    flexBasis: '100%',
     marginTop: '2em',
     width: 310,
   },

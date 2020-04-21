@@ -80,7 +80,7 @@ const styles = theme => ({
     marginRight: 2 * theme.spacing(1),
     marginTop: -3 * theme.spacing(1),
 
-    minWidth: 350,
+    maxWidth: 310,
   },
   label: {
     fontSize: '.9em',

@@ -238,13 +238,13 @@ export default function formReducer(state = initialFormState, action) {
         formIsLoading: false,
       }
 
-    case GridActionTypes.EDIT_SUBMISSION_SUCCESS:
-      let form = JSON.parse(action.payload.form_values)
+    case GridActionTypes.GET_SUBMISSION_SUCCESS:
+      let form = action.payload.formValues
       return {
         ...state,
         selected: {
           ...form,
-          service_id: form.service_id.replace('IGO-', ''),
+          serviceId: form.serviceId.replace('IGO-', ''),
         },
       }
 

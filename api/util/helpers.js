@@ -103,6 +103,7 @@ function fillColumns(limsColumnList, userRole, formValues, picklists) {
             hiddenColumns: []
         };
         limsColumnList.forEach((element, index) => {
+        
             let columnName = element[0]
             let colDef = gridColumns[columnName];
             if (!colDef) {

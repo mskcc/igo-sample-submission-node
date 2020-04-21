@@ -1,12 +1,7 @@
 
 import CacheService from "../util/cache";
-import { resolve } from "dns";
-import { ContextRunnerImpl } from "express-validator/src/chain";
-// const { sanitizeBody } = require("express-validator");
 const apiResponse = require("../util/apiResponse");
 const { body, query, validationResult } = require("express-validator");
-const { sanitizeBody } = require("express-validator");
-const { authenticate, getUser } = require("../middlewares/jwt");
 const util = require("../util/helpers");
 var _ = require('lodash');
 const service = require("../services/services");
@@ -15,6 +10,8 @@ const cache = new CacheService(ttl); // Create a new cache service instance
 const { constants } = require("../util/constants");
 
 var mongoose = require("mongoose");
+var ObjectId = mongoose.Types.ObjectId;
+
 const SubmissionModel = require("../models/SubmissionModel");
 
 
@@ -34,6 +31,31 @@ exports.list = [
                         res,
                         "Operation success",
                         { submissions }
+                    );
+                }
+            });
+    }
+]
+
+
+exports.submission = [
+    query("id").isString().isLength({ max: 1 }).trim().withMessage("id must be String."),
+    function (req, res) {
+
+        SubmissionModel.findById(ObjectId(req.params.id))
+            .exec(function (err, submission) {
+                if (err) {
+                    return apiResponse.errorResponse(
+                        res,
+                        'Could not retrieve submission.'
+                    )
+                }
+                else {
+                    // submission.formValues.sharedWith = submission.formValues.sharedWith.replace(`${res.user.username}@mskcc.org`, '')
+                    return apiResponse.successResponseWithData(
+                        res,
+                        "Operation success",
+                        { submission }
                     );
                 }
             });
@@ -112,7 +134,11 @@ exports.save = [
             let formValues = JSON.parse(req.body.formValues)
             let gridValues = JSON.parse(req.body.gridValues)
             //  add username to sharedWith since backend has user object in case someone else than og user edited
-            formValues.sharedWith = util.createSharedString(formValues.sharedWith, res.user.username)
+            if (formValues.isShared) { 
+                formValues.sharedWith = util.createSharedString(formValues.sharedWith, res.user.username) 
+            }else{
+                formValues.sharedWith = ""
+            }
 
             // if (formValues.sharedWith){
             //     formValues.sharedWith += `,${username}@mskcc.org`
@@ -125,32 +151,13 @@ exports.save = [
             })
             submission.save(function (err) {
                 if (err) {
-                    console.log(err)
                     return apiResponse.errorResponse(res, "Submission could not be saved.");
                 }
-                return apiResponse.successResponse(res, 'Submission saved.')
+        
+                return apiResponse.successResponseWithData(res, 'Submission saved.', {submission: submission._doc})
             })
 
-            // console.log(gridValues)
-
-            //     Promise.all([materialsPromise]).then((results) => {
-            //         if (results.some(x => x.length == 0)) {
-            //             return apiResponse.errorResponse(
-            //                 res,
-            //                 `Could not retrieve materials and species for '${recipe}'.`
-            //             )
-            //         }
-            //         let [materialsResult] = results
-            //         let responseObject = {
-            //             materials: materialsResult,
-            //             species: speciesResult,
-            //         };
-            //         return apiResponse.successResponseWithData(
-            //             res,
-            //             "Operation success",
-            //             responseObject
-            //         );
-            //     })
+        
         }
     }
 
