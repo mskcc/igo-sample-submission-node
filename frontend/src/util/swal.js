@@ -16,10 +16,27 @@ export const formGridMismatch = (match) => {
 export const altServiceIdNotice = () => {
   Swal.fire({
     title: 'Service Id',
-    html: "Please make sure to get an ID through iLabs. For now, we will use a placeholder, please write it down (it will also be on your receipt once you submitted.).",  
+    html: "Please make sure to get an ID through iLabs. For now, we will use a placeholder, please write it down (it will also be on your receipt once you submitted.).",
     type: 'info',
     animation: false,
     confirmButtonText: 'Dismiss',
+  })
+}
+
+export const confirmDelete = () => {
+  return new Promise((resolve) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      type: 'warning',
+      showCancelButton: true,
+      animation: false,
+      confirmButtonColor: '#df4602',
+      cancelButtonColor: '#007cba',
+      confirmButtonText: 'Delete',
+    }).then(result => {
+      if (result.value) { resolve(true) }
+      else resolve(false)
+    })
   })
 }
 
@@ -28,9 +45,10 @@ export const altServiceIdNotice = () => {
 export const apiValidationError = (msg, data) => {
   console.log(data)
   let errors = data || ""
-  if (data)
-  {errors = ""
-  data.map(element => { errors += `${element.param}: ${element.msg}\n` })}
+  if (data) {
+    errors = ""
+    data.map(element => { errors += `${element.param}: ${element.msg}\n` })
+  }
   Swal.fire({
     title: msg,
     html: errors,

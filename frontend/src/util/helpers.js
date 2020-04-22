@@ -1,4 +1,4 @@
-import { Config } from '../../config.js'
+import { Config } from '../config.js'
 
 // generate rows depending on whether we need to add or substract rows, prefill some
 // SERVERSIDE, add trim or add clientside!

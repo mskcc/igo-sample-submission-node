@@ -9,7 +9,7 @@ import { commonActions, userActions } from '../redux/actions'
 import DevTools from './DevTools'
 
 import { LocalizeProvider, withLocalize } from 'react-localize-redux'
-import enTranslations from '../translations/en.json'
+import enTranslations from '../util/translations/en.json'
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import CircularProgress from '@material-ui/core/CircularProgress'

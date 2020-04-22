@@ -5,8 +5,7 @@
 //   gridActions as ActionTypes,
 // } from "../../redux/actions/"
 
-import * as swal from "../../swal"
-import Swal from 'sweetalert2'
+import { swal } from "../../../util"
 
 const initialState = {
   version: '2.0',
@@ -25,14 +24,14 @@ function commonReducer(state = initialState, action) {
       message: message,
     }
   }
-  else if(error && error.payload){
+  else if (error && error.payload) {
     console.log('common error');
     console.log(error.payload);
-    if (error.response.status === 400){
+    if (error.response.status === 400) {
       swal.apiValidationError(error.payload.message, error.payload.data)
-      return {...state}
+      return { ...state }
     }
-    return { 
+    return {
       ...state,
       message: error.payload.message,
     }

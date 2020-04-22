@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Config } from '../../../config.js'
-import * as util from '../helpers'
-import * as swal from '../../swal'
+import * as util from '../../../util/helpers'
+import * as swal from '../../../util/swal'
 import Swal from 'sweetalert2'
 
 

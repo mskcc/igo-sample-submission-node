@@ -13,7 +13,7 @@ import {
 
 import { Button, Checkbox, Dropdown, Input } from '../index'
 
-import * as swal from '../../redux/swal'
+import {swal} from '../../util'
 
 class UploadForm extends React.Component {
   constructor(props) {

@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { withLocalize } from 'react-localize-redux'
 import { connect } from 'react-redux'
 import Swal from 'sweetalert2'
+import {swal} from "../../util"
 import { userActions, gridActions, submissionActions } from '../../redux/actions'
 import { resetErrorMessage } from '../../redux/actions/commonActions'
 
@@ -22,16 +23,8 @@ export class SubmissionsPage extends Component {
         return this.props.downloadReceipt(submissionId, serviceId)
       }
       case 'delete': {
-        Swal.fire({
-          title: 'Are you sure?',
-          type: 'warning',
-          showCancelButton: true,
-          animation: false,
-          confirmButtonColor: '#df4602',
-          cancelButtonColor: '#007cba',
-          confirmButtonText: 'Delete',
-        }).then(result => {
-          if (result.value) {
+        swal.confirmDelete().then((decision) => {
+          if (decision) {
             this.props.deleteSubmission(submissionId, serviceId)
             return this.props.history.push('submissions')
           }

@@ -55,15 +55,7 @@ function submissionsReducer(state = initialState, action) {
                 ...state,
                 // loading: true,
             }
-        case GridActionTypes.GET_SUBMISSION_FAIL:
-            return { ...state, submissionToEdit: undefined }
-
-        case GridActionTypes.GET_SUBMISSION_SUCCESS:
-            return {
-                ...state,
-                submissionToEdit: action.payload
-            }
-
+   
         case ActionTypes.DELETE_SUBMISSION:
             return {
                 ...state,
@@ -71,6 +63,7 @@ function submissionsReducer(state = initialState, action) {
             }
         case ActionTypes.DELETE_SUBMISSION_FAIL:
             return { ...state, isSaving: false }
+
         case ActionTypes.DELETE_SUBMISSION_SUCCESS:
             return {
                 ...state,
@@ -84,9 +77,7 @@ function submissionsReducer(state = initialState, action) {
             return { ...state, submitted: false, saved: false }
         }
 
-        case FormActionTypes.CLEAR_FORM: {
-            return { ...state, submissionToEdit: undefined }
-        }
+      
             
         case ActionTypes.DOWNLOAD_RECEIPT:
             return {
@@ -109,6 +100,24 @@ function submissionsReducer(state = initialState, action) {
             return {
                 ...state,
             }
+
+        //  STRANGER DANGER
+        // These cases shouldn't be here and maybe one day they will be refactored to their forever homes
+        //  If Clear Form is clicked, the submissionToEdit needs to be cleared, too
+        case FormActionTypes.CLEAR_FORM: {
+            return { ...state, submissionToEdit: undefined }
+        }
+
+        //  SO many grid dispatchers are involved when a Submission is called for edit
+        case GridActionTypes.GET_SUBMISSION_FAIL:
+            return { ...state, submissionToEdit: undefined }
+
+        case GridActionTypes.GET_SUBMISSION_SUCCESS:
+            return {
+                ...state,
+                submissionToEdit: action.payload
+            }
+
 
         default:
             return state

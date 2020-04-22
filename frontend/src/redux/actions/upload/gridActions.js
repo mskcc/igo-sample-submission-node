@@ -3,8 +3,8 @@ import React from 'react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { updateHeader } from './formActions'
-import * as util from '../helpers'
-import * as service from '../../services'
+import * as util from '../../../util/helpers'
+import * as service from '../../../util/services'
 import {
   diff,
   findSubmission,
@@ -23,7 +23,7 @@ import {
   checkGridAndForm,
   submissionExists,
   addValidatorToRegexCols,
-} from '../helpers'
+} from '../../../util/helpers'
 
 import { Config } from '../../../config.js'
 
