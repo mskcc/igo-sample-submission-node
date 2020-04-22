@@ -2,9 +2,8 @@ import React, { Component } from 'react'
 
 import { withLocalize } from 'react-localize-redux'
 import { connect } from 'react-redux'
-import Swal from 'sweetalert2'
 import {swal} from "../../util"
-import { userActions, gridActions, submissionActions } from '../../redux/actions'
+import { gridActions, submissionActions } from '../../redux/actions'
 import { resetErrorMessage } from '../../redux/actions/commonActions'
 
 import SubmissionsTable from '../../components/Submissions/SubmissionsTable'
@@ -25,8 +24,8 @@ export class SubmissionsPage extends Component {
       case 'delete': {
         swal.confirmDelete().then((decision) => {
           if (decision) {
-            this.props.deleteSubmission(submissionId, serviceId)
-            return this.props.history.push('submissions')
+            this.props.deleteSubmission(submissionId, this.props)
+            // return this.props.getSubmissions()
           }
         })
       }
@@ -42,7 +41,7 @@ export class SubmissionsPage extends Component {
         handleClick={this.handleClick}
       />
     ) : (
-        'You have not submitted anything since the launch of V2!'
+        'No submissions available.'
       )
   }
 }

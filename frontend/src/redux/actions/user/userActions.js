@@ -148,67 +148,6 @@ export function logout() {
 //   }
 // }
 
-export const DELETE_SUBMISSION = 'DELETE_SUBMISSION'
-export const DELETE_SUBMISSION_FAIL = 'DELETE_SUBMISSION_FAIL'
-export const DELETE_SUBMISSION_SUCCESS = 'DELETE_SUBMISSION_SUCCESS'
-export function deleteSubmission(id, username) {
-  return dispatch => {
-    dispatch({ type: DELETE_SUBMISSION })
-    return axios
-      .post(Config.API_ROOT + '/deleteSubmission', {
-        data: { service_id: id, username: username },
-      })
-      .then(response => {
-        return dispatch({
-          type: DELETE_SUBMISSION_SUCCESS,
-          payload: {
-            submissions: response.data.submissions,
-            table: generateSubmissionsGrid(response.data),
-          },
-          message: 'Submission ' + id + ' successfully deleted.',
-        })
-      })
-      .catch(error => {
-        return dispatch({
-          type: DELETE_SUBMISSION_FAIL,
-          error: error,
-        })
-        return error
-      })
-  }
-}
-
-export const DOWNLOAD_RECEIPT = 'DOWNLOAD_RECEIPT'
-export const DOWNLOAD_RECEIPT_FAIL = 'DOWNLOAD_RECEIPT_FAIL'
-export const DOWNLOAD_RECEIPT_SUCCESS = 'DOWNLOAD_RECEIPT_SUCCESS'
-export function downloadReceipt(submissionId, serviceId, username) {
-  return dispatch => {
-    dispatch({ type: DOWNLOAD_RECEIPT })
-    return axios
-      .get(Config.API_ROOT + '/downloadById', {
-        params: { submissionId: submissionId },
-        responseType: 'blob',
-      })
-      .then(response => {
-        dispatch({
-          type: DOWNLOAD_RECEIPT_SUCCESS,
-          file: response.data,
-          filename: 'Receipt-' + serviceId, // payload: {
-          //   submissions: response.data.submissions,
-          //   table: generateSubmissionsGrid(response.data),
-          // },
-        })
-      })
-      .catch(error => {
-        return dispatch({
-          type: DOWNLOAD_RECEIPT_FAIL,
-          error: error,
-        })
-        return error
-      })
-  }
-}
-
 
 
 export const RESET_ERROR_MESSAGE = 'RESET_ERROR_MESSAGE'

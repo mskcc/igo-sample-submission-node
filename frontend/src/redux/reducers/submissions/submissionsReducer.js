@@ -69,8 +69,6 @@ function submissionsReducer(state = initialState, action) {
                 ...state,
                 isSaving: false,
                 saved: true,
-
-                grid: action.payload.table,
             }
 
         case ActionTypes.BUTTON_RESET: {

@@ -1,9 +1,3 @@
-// import {
-//   commonActions,
-//   userActions,
-//   formActions,
-//   gridActions as ActionTypes,
-// } from "../../redux/actions/"
 
 import { swal } from "../../../util"
 
