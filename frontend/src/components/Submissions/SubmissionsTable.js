@@ -11,7 +11,7 @@ class SubmissionsTable extends React.Component {
   }
 
   render() {
-    const { classes, handleClick, handleReceipt, handleDelete, grid } = this.props
+    const { classes, handleEdit, handleReceipt, handleDelete, grid } = this.props
     return (
       <div className={classes.container} >
         <HotTable
@@ -31,19 +31,19 @@ class SubmissionsTable extends React.Component {
           dropdownMenu={['filter_by_value', 'filter_action_bar']}
           // make actions clickable
           afterOnCellMouseDown={(event, coords, TD) => {
-            if (coords.row != -1 && ([9, 10, 11].indexOf(coords.col) > -1)) {
+            if (coords.row != -1 && ([10, 11, 12].indexOf(coords.col) > -1)) {
 
               let actionElement = TD.firstElementChild || undefined
               let submitted = actionElement ? actionElement.getAttribute('submitted') == "true" : undefined
               let id = actionElement ? actionElement.getAttribute('submission-id') : undefined
 
-              if (coords.col === 9 && !submitted) {
-                handleClick('edit', id)
-              } else if (coords.col === 10 && submitted) {
+              if (coords.col === 10 && !submitted) {
+                handleEdit(id)
+              } else if (coords.col === 11 && submitted) {
                 let service_id = actionElement ? actionElement.getAttribute('service-id') : undefined
-                handleClick('receipt', id, service_id)
-              } else if (coords.col === 11 && !submitted) {
-                handleClick('delete', id)
+                handleReceipt(id, service_id)
+              } else if (coords.col === 12 && !submitted) {
+                handleDelete(id)
               }
             }
           }}

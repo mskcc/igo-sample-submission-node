@@ -254,8 +254,8 @@ export function addGridToBankedSample(ownProps) {
 }
 
 export const EDIT_SUBMISSION = 'EDIT_SUBMISSION'
-export const GET_SUBMISSION_FAIL = 'GET_SUBMISSION_FAIL'
-export const GET_SUBMISSION_SUCCESS = 'GET_SUBMISSION_SUCCESS'
+export const GET_SUBMISSION_TO_EDIT_FAIL = 'GET_SUBMISSION_TO_EDIT_FAIL'
+export const GET_SUBMISSION_TO_EDIT_SUCCESS = 'GET_SUBMISSION_TO_EDIT_SUCCESS'
 export function populateGridFromSubmission(submissionId, ownProps) {
   return (dispatch, getState) => {
     dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...' })
@@ -268,7 +268,7 @@ export function populateGridFromSubmission(submissionId, ownProps) {
           )
           .then(() => {
             dispatch({
-              type: 'GET_SUBMISSION_SUCCESS',
+              type: 'GET_SUBMISSION_TO_EDIT_SUCCESS',
               payload: submission,
               message: 'Loaded!',
             })
@@ -281,7 +281,7 @@ export function populateGridFromSubmission(submissionId, ownProps) {
       .catch(error => {
 
         return dispatch({
-          type: 'GET_SUBMISSION_FAIL',
+          type: 'GET_SUBMISSION_TO_EDIT_FAIL',
           error: error
         })
       })
@@ -290,7 +290,7 @@ export function populateGridFromSubmission(submissionId, ownProps) {
     // dispatch(getInitialColumns(submission.formValues), getState().user.role)).then(() => {
     //   dispatch(updateHeader(submission.formValues))
     //   dispatch({
-    //     type: 'GET_SUBMISSION_SUCCESS',
+    //     type: 'GET_SUBMISSION_TO_EDIT_SUCCESS',
     //     payload: submission,
     //     message: 'Loaded!',
     //   })
@@ -298,7 +298,7 @@ export function populateGridFromSubmission(submissionId, ownProps) {
     // }).catch(error => {
     //   console.log(error)
     //   return dispatch({
-    //     type: 'GET_SUBMISSION_FAIL',
+    //     type: 'GET_SUBMISSION_TO_EDIT_FAIL',
     //     message: error,
     //   })
     // })

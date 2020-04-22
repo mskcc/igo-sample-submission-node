@@ -238,7 +238,7 @@ export default function formReducer(state = initialFormState, action) {
         formIsLoading: false,
       }
 
-    case GridActionTypes.GET_SUBMISSION_SUCCESS:
+    case GridActionTypes.GET_SUBMISSION_TO_EDIT_SUCCESS:
       let form = action.payload.formValues
       return {
         ...state,

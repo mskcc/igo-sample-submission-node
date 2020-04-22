@@ -478,11 +478,11 @@ export const submissionColumns = {
         data: 'transactionId',
         readOnly: 'true'
     },
-    // 'App Version': {
-    //     name: 'App Version',
-    //     data: 'version',
-    //     readOnly: 'true'
-    // },
+    '# Revisions': {
+        name: '# Revisions',
+        data: 'revisions',
+        readOnly: 'true'
+    },
     'Edit': {
         name: 'Edit',
         data: 'edit',

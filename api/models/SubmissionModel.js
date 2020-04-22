@@ -1,11 +1,14 @@
 var mongoose = require("mongoose");
+// Make Mongoose use `findOneAndUpdate()`. Note that this option is `true`
+// by default, you need to set it to false.
+mongoose.set('useFindAndModify', false);
 
 var FormSchema = new mongoose.Schema({
     sharedWith: { type: String, default: "" },
     altServiceId: { type: Boolean, required: true },
     application: { type: String, required: true },
     container: { type: String, required: true },
-    groupingChecked: { type: Boolean,  default:false },
+    groupingChecked: { type: Boolean, default: false },
     material: { type: String, required: true },
     numberOfSamples: { type: Number, required: true },
     patientIdType: { type: String, required: false },
@@ -23,9 +26,16 @@ var SubmissionSchema = new mongoose.Schema({
     submitted: { type: Boolean, default: false },
     submittedAt: { type: Date, required: false },
     transactionId: { type: Number, required: false },
-    appVersion: { type: String,default: "2.5" },
+    appVersion: { type: String, default: "2.5" },
     createdAt: Number,
     updatedAt: Number,
-}, {  timestamps: { currentTime: () => Math.floor(Date.now() / 1000) }});
+}, { timestamps: { currentTime: () => Math.floor(Date.now() / 1000) } });
+
+
+// increase version on update
+SubmissionSchema.pre('findOneAndUpdate', function( next ) {
+    this.update({}, { $inc: { __v: 1 } } )
+    next()
+  })
 
 module.exports = mongoose.model("Submission", SubmissionSchema);

@@ -383,6 +383,7 @@ export function generateSubmissionGrid(submissions) {
                     application: submission.formValues.application,
                     numberOfSamples: submission.formValues.numberOfSamples,
                     submitted: isSubmitted ? 'yes' : 'no',
+                    revisions: submission.__v,
                     createdAt: parseDate(submission.createdAt),
                     submittedAt: submission.submittedAt ? parseDate(submission.submittedAt)  : "",
                     // available actions depend on submitted status
@@ -411,7 +412,8 @@ export function generateSubmissionGrid(submissions) {
 
 function parseDate(mongooseDate){
     let date = new Date(mongooseDate*1000)
-    let humanReadable = `${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()} at ${date.getHours()}:${date.getMinutes()}`
+    let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes()
+    let humanReadable = `${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()} at ${date.getHours()}:${minutes}`
     return humanReadable
 
 }

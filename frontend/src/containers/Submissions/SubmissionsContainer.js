@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import { withLocalize } from 'react-localize-redux'
 import { connect } from 'react-redux'
-import {swal} from "../../util"
+import { swal } from "../../util"
 import { gridActions, submissionActions } from '../../redux/actions'
 import { resetErrorMessage } from '../../redux/actions/commonActions'
 
@@ -12,33 +12,27 @@ export class SubmissionsPage extends Component {
   componentDidMount() {
     this.props.getSubmissions()
   }
-
-  handleClick = (type, submissionId, serviceId = undefined) => {
-    switch (type) {
-      case 'edit': {
-        return this.props.populateGridFromSubmission(submissionId, this.props)
+  handleEdit = (submissionId) => {
+    return this.props.populateGridFromSubmission(submissionId, this.props)
+  }
+  handleReceipt = (submissionId, serviceId) => {
+    return this.props.downloadReceipt(submissionId, serviceId)
+  }
+  handleDelete = (submissionId) => {
+    swal.confirmDelete().then((decision) => {
+      if (decision) {
+        this.props.deleteSubmission(submissionId)
       }
-      case 'receipt': {
-        return this.props.downloadReceipt(submissionId, serviceId)
-      }
-      case 'delete': {
-        swal.confirmDelete().then((decision) => {
-          if (decision) {
-            this.props.deleteSubmission(submissionId, this.props)
-            // return this.props.getSubmissions()
-          }
-        })
-      }
-      default:
-        return null
-    }
+    })
   }
 
   render() {
     return this.props.submissions.grid.rows.length > 0 ? (
       <SubmissionsTable
         grid={this.props.submissions.grid}
-        handleClick={this.handleClick}
+        handleEdit={this.handleEdit}
+        handleReceipt={this.handleReceipt}
+        handleDelete={this.handleDelete}
       />
     ) : (
         'No submissions available.'

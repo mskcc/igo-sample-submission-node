@@ -30,25 +30,42 @@ function submissionsReducer(state = initialState, action) {
                 loading: false,
             }
 
-        case ActionTypes.SAVE_PARTIAL_SUBMISSION:
+        case ActionTypes.CREATE_PARTIAL_SUBMISSION:
             return {
                 ...state,
                 isSaving: true,
             }
-        case ActionTypes.SAVE_PARTIAL_SUBMISSION_FAIL:
+        case ActionTypes.CREATE_PARTIAL_SUBMISSION_FAIL:
             return {
                 ...state, isSaving: false,
                 submissionToEdit: undefined
             }
-        case ActionTypes.SAVE_PARTIAL_SUBMISSION_CANCEL:
-            return { ...state, isSaving: false }
-        case ActionTypes.SAVE_PARTIAL_SUBMISSION_SUCCESS:
+        
+        case ActionTypes.CREATE_PARTIAL_SUBMISSION_SUCCESS:
             return {
                 ...state,
                 isSaving: false,
                 saved: true,
-                submissionToEdit: action.payload.submission
+                submissionToEdit: action.payload._id
             }
+
+            case ActionTypes.UPDATE_PARTIAL_SUBMISSION:
+                return {
+                    ...state,
+                    isSaving: true,
+                }
+            case ActionTypes.UPDATE_PARTIAL_SUBMISSION_FAIL:
+                return {
+                    ...state, isSaving: false,
+                }
+            
+            case ActionTypes.UPDATE_PARTIAL_SUBMISSION_SUCCESS:
+                return {
+                    ...state,
+                    isSaving: false,
+                    saved: true,
+                    submissionToEdit: action.payload._id
+                }
 
         case ActionTypes.EDIT_SUBMISSION:
             return {
@@ -107,13 +124,14 @@ function submissionsReducer(state = initialState, action) {
         }
 
         //  SO many grid dispatchers are involved when a Submission is called for edit
-        case GridActionTypes.GET_SUBMISSION_FAIL:
+        case GridActionTypes.GET_SUBMISSION_TO_EDIT_FAIL:
             return { ...state, submissionToEdit: undefined }
 
-        case GridActionTypes.GET_SUBMISSION_SUCCESS:
+        case GridActionTypes.GET_SUBMISSION_TO_EDIT_SUCCESS:
+            console.log('submissio  caught');
             return {
                 ...state,
-                submissionToEdit: action.payload
+                submissionToEdit: action.payload._id
             }
 
 

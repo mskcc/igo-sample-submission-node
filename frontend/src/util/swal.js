@@ -41,6 +41,27 @@ export const confirmDelete = () => {
 }
 
 
+export const confirmUpdate = () => {
+  return new Promise((resolve) => {
+    Swal.fire({
+      title: 'Update?',
+      html: `You are editing an existing partial submission. Are you sure you want to update it?`,
+      type: 'info',
+      animation: 'false',
+      showCancelButton: true,
+      animation: false,
+      confirmButtonColor: '#df4602',
+      cancelButtonColor: '#007cba',
+      confirmButtonText: 'Overwrite',
+      cancelButtonText: 'Cancel',
+    }).then(result => {
+      if (result.value) { resolve(true) }
+      else resolve(false)
+    })
+  })
+}
+
+
 
 export const apiValidationError = (msg, data) => {
   console.log(data)

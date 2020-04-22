@@ -1,7 +1,7 @@
 
 import CacheService from "../util/cache";
 const apiResponse = require("../util/apiResponse");
-const { body, query, validationResult } = require("express-validator");
+const { body, param, validationResult } = require("express-validator");
 const util = require("../util/helpers");
 var _ = require('lodash');
 const service = require("../services/services");
@@ -36,8 +36,9 @@ exports.list = [
 
 
 exports.submission = [
-    query("id").isString().isLength({ min: 1 }).trim().withMessage("id must be String."),
+    param("id").exists().withMessage("id must be specified."),
     function (req, res) {
+        console.log(req)
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(
@@ -104,12 +105,11 @@ exports.grid = [
 
 
 /**
- * Saves partial submission.
+ * Creates partial submission.
  *
  * @returns {Object}
  */
-exports.save = [
-    body("id").optional().isString().withMessage("id must be String."),
+exports.create = [
     body("formValues").isJSON().isLength({ min: 1 }).trim().withMessage("formValues must be JSON."),
     body("gridValues").isJSON().isLength({ min: 1 }).trim().withMessage("gridValues must be JSON."),
     function (req, res) {
@@ -125,16 +125,7 @@ exports.save = [
 
         let formValues = JSON.parse(req.body.formValues)
         let gridValues = JSON.parse(req.body.gridValues)
-        //  add username to sharedWith since backend has user object in case someone else than og user edited
-        if (formValues.isShared) {
-            formValues.sharedWith = util.createSharedString(formValues.sharedWith, res.user.username)
-        } else {
-            formValues.sharedWith = ""
-        }
 
-        // if (formValues.sharedWith){
-        //     formValues.sharedWith += `,${username}@mskcc.org`
-        // }
         let submission = new SubmissionModel({
             username: res.user.username,
             formValues: formValues,
@@ -145,18 +136,54 @@ exports.save = [
             if (err) {
                 return apiResponse.errorResponse(res, "Submission could not be saved.");
             }
-
             return apiResponse.successResponseWithData(res, 'Submission saved.', { submission: submission._doc })
         })
-
-
-
     }
-
-
-
 ];
 
+
+/**
+ * Updates partial submission.
+ *
+ * @returns {Object}
+ */
+exports.update = [
+    body("id").isString().withMessage("id must be String."),
+    body("formValues").isJSON().isLength({ min: 1 }).trim().withMessage("formValues must be JSON."),
+    body("gridValues").isJSON().isLength({ min: 1 }).trim().withMessage("gridValues must be JSON."),
+    function (req, res) {
+        // console.log(req)
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(
+                res,
+                "Validation error.",
+                errors.array()
+            );
+        }
+
+        let formValues = JSON.parse(req.body.formValues)
+        let gridValues = JSON.parse(req.body.gridValues)
+        let id = req.body.id
+
+        SubmissionModel.findByIdAndUpdate(ObjectId(id), { formValues: formValues, gridValues: gridValues })
+            .exec(function (err, submission) {
+                if (err) {
+                    return apiResponse.errorResponse(
+                        res,
+                        'Could not update submission.'
+                    )
+                }
+                // submission.formValues.sharedWith = submission.formValues.sharedWith.replace(`${res.user.username}@mskcc.org`, '')
+                return apiResponse.successResponseWithData(
+                    res,
+                    "Operation success",
+                    { submission: submission._doc }
+                );
+            });
+
+    }
+];
 
 
 exports.delete = [

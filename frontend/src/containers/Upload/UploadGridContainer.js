@@ -5,7 +5,7 @@ import Swal from 'sweetalert2'
 
 import { connect } from 'react-redux'
 import { gridActions, submissionActions, userActions } from "../../redux/actions/"
-
+import { util, swal } from "../../util"
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { UploadGrid } from '../../components'
@@ -71,13 +71,34 @@ class UploadGridContainer extends React.Component {
   }
 
   handleSave = () => {
-    // DUPLICATE CHECK
-    this.props.savePartialSubmission(this.props.grid)
-  }
+    // Check if current form was the one used to generate grid
+    let match = util.checkGridAndForm(
+      this.props.form.selected,
+      this.props.grid.form
+    )
+    if (!match.success) {
+      return swal.formGridMismatch(match)
+    }
 
-  // if submission submitted and user role:
-  //  ask to unsubmit
-  // unsubmit
+    let submissionToEdit = this.props.submissions.submissionToEdit
+    if (submissionToEdit == undefined) {
+      this.props.createPartialSubmission(this.props.grid)
+    }
+    else {
+      swal.confirmUpdate().then((decision) => {
+        if (decision) {
+          this.props.updatePartialSubmission(this.props.updatePartialSubmission)
+        }
+      })
+
+    }
+
+
+
+
+
+
+  }
 
   render() {
     const { grid, user, handleSubmit } = this.props
@@ -104,19 +125,21 @@ class UploadGridContainer extends React.Component {
 UploadGridContainer.defaultProps = {
   grid: {},
   user: {},
-  handleMRN: () => {},
-  handleIndex: () => {},
-  handleAssay: () => {},
-  handleSubmit: () => {},
-  handleChange: () => {},
-  handleSave: () => {},
-  preValidate: () => {},
-  handlePatientId: () => {},
-  handleClear: () => {},
+  handleMRN: () => { },
+  handleIndex: () => { },
+  handleAssay: () => { },
+  handleSubmit: () => { },
+  handleChange: () => { },
+  handleSave: () => { },
+  preValidate: () => { },
+  handlePatientId: () => { },
+  handleClear: () => { },
 }
 
 const mapStateToProps = state => ({
   grid: state.upload.grid,
+  form: state.upload.form,
+
   submissions: state.submissions,
   user: state.user,
 })
