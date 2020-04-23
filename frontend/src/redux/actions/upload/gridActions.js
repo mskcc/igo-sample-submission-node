@@ -94,7 +94,7 @@ export function getColumns(formValues) {
     dispatch({ type: GET_COLUMNS })
 
     // no grid? get inital columns
-    if (getState().upload.grid.columns.length == 0) {
+    if (getState().upload.grid.columnFeatures.length == 0) {
       return dispatch(getInitialColumns(formValues, getState().user.role))
     } else {
       let diffValues = diff(getState().upload.grid.form, formValues)
@@ -164,7 +164,7 @@ export function getInitialColumns(formValues, userRole) {
         return dispatch({
           type: GET_COLUMNS_SUCCESS,
           columnHeaders: data.columnHeaders,
-          columnFeatures: util.addValidatorToRegexCols(data.columnFeatures),
+          columnFeatures: data.columnFeatures,
           hiddenColumns: data.hiddenColumns,
           rows: data.rowData,
           form: formValues,
@@ -261,7 +261,6 @@ export function populateGridFromSubmission(submissionId, ownProps) {
     dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...' })
     service.getSubmission(submissionId)
       .then((resp) => {
-        console.log(resp)
         let submission = resp.payload.submission
         dispatch(getInitialColumns(submission.formValues), getState().user.role)
           .then(dispatch( updateHeader(submission.formValues))
@@ -274,35 +273,13 @@ export function populateGridFromSubmission(submissionId, ownProps) {
             })
             return ownProps.history.push('upload')
           })
-
       })
-
-
       .catch(error => {
-
         return dispatch({
           type: 'GET_SUBMISSION_TO_EDIT_FAIL',
           error: error
         })
       })
-
-
-    // dispatch(getInitialColumns(submission.formValues), getState().user.role)).then(() => {
-    //   dispatch(updateHeader(submission.formValues))
-    //   dispatch({
-    //     type: 'GET_SUBMISSION_TO_EDIT_SUCCESS',
-    //     payload: submission,
-    //     message: 'Loaded!',
-    //   })
-    //   return ownProps.history.push('upload')
-    // }).catch(error => {
-    //   console.log(error)
-    //   return dispatch({
-    //     type: 'GET_SUBMISSION_TO_EDIT_FAIL',
-    //     message: error,
-    //   })
-    // })
-
 
   }
 }

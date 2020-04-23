@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 
-import PropTypes from 'prop-types'
-import Swal from 'sweetalert2'
-
+import { swal } from '../../util'
 import { connect } from 'react-redux'
 import { formActions } from "../../redux/actions/"
 
@@ -13,7 +11,7 @@ export class UploadFormContainer extends React.Component {
     super(props)
   }
 
-  componentDidUpdate(prevProps, prevState) {}
+  componentDidUpdate(prevProps, prevState) { }
 
   componentDidMount() {
     // todo wait for token refresh!
@@ -54,17 +52,8 @@ export class UploadFormContainer extends React.Component {
   }
 
   handleClear = () => {
-    Swal.fire({
-      title: 'Are you sure?',
-
-      type: 'warning',
-      showCancelButton: true,
-      animation: false,
-      confirmButtonColor: '#df4602',
-      cancelButtonColor: '#007cba',
-      confirmButtonText: 'Yes, clear it!',
-    }).then(result => {
-      if (result.value) {
+    swal.confirmClear().then((decision) => {
+      if (decision) {
         this.props.clearForm()
       }
     })
@@ -91,22 +80,22 @@ export class UploadFormContainer extends React.Component {
         handleClear={this.handleClear}
       />
     ) : (
-      <div />
-    )
+        <div />
+      )
   }
 }
 
 UploadFormContainer.defaultProps = {
-  getInitialState: () => {},
+  getInitialState: () => { },
   form: {},
   gridIsLoading: false,
   nothingToChange: false,
-  handleSubmit: () => {},
-  handleMaterialChange: () => {},
-  handleApplicationChange: () => {},
-  handleSpeciesChange: () => {},
-  handleInputChange: () => {},
-  handleClear: () => {},
+  handleSubmit: () => { },
+  handleMaterialChange: () => { },
+  handleApplicationChange: () => { },
+  handleSpeciesChange: () => { },
+  handleInputChange: () => { },
+  handleClear: () => { },
 }
 
 const mapStateToProps = state => ({

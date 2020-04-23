@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { LocalizeProvider, localizeReducer } from 'react-localize-redux'
+import { localizeReducer } from 'react-localize-redux'
 
 import uploadReducer from './upload/uploadReducer'
 import submissionsReducer from './submissions/submissionsReducer'
@@ -8,14 +8,12 @@ import userReducer from './user/userReducer'
 import { persistReducer } from 'redux-persist'
 // import storage from 'redux-persist/lib/storage' // defaults to localStorage for web and AsyncStorage for react-native
 import sessionStorage from 'redux-persist/lib/storage/session' // defaults to localStorage for web and AsyncStorage for react-native
-
-import { commonActions } from '../actions'
+import { Config } from '../../config.js'
 
 const persistConfig = {
   key: 'root',
   storage: sessionStorage,
   whitelist: ['upload', 'user', 'submissions'],
-  // whitelist: [ 'user'],
 }
 
 const appReducer = combineReducers({
@@ -23,32 +21,22 @@ const appReducer = combineReducers({
   common: commonReducer,
   user: userReducer,
   submissions: submissionsReducer,
-
-  // gridReducer,
-  // promoteReducer,
-  // receiptReducer,
-  // loginReducer,
   localize: localizeReducer,
 })
 
 const rootReducer = (state, action) => {
-  if (action.type === 'LOGOUT_SUCCESS') {
+  if (action.type === 'LOGOUT') {
     console.log('goodbye')
+    localStorage.clear()
     state = {
       upload: undefined,
       user: undefined,
       common: undefined,
       localize: state.localize,
     }
+    window.location.href = `${Config.LOGIN_PAGE_URL}/${Config.HOME_PAGE_PATH}`;
+    
   }
-  // if (action.type === 'CLEAR_FORM') {
-  //   state = {
-  //     ...state,
-  //     upload: {...state.upload, grid:undefined},
-      
-      
-  //   }
-  // }
 
   return appReducer(state, action)
 }

@@ -39,21 +39,16 @@ export const confirmDelete = () => {
     })
   })
 }
-
-
-export const confirmUpdate = () => {
+export const confirmClear = () => {
   return new Promise((resolve) => {
     Swal.fire({
-      title: 'Update?',
-      html: `You are editing an existing partial submission. Are you sure you want to update it?`,
-      type: 'info',
-      animation: 'false',
+      title: 'Are you sure?',
+      type: 'warning',
       showCancelButton: true,
       animation: false,
       confirmButtonColor: '#df4602',
       cancelButtonColor: '#007cba',
-      confirmButtonText: 'Overwrite',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: 'Delete',
     }).then(result => {
       if (result.value) { resolve(true) }
       else resolve(false)
@@ -63,8 +58,28 @@ export const confirmUpdate = () => {
 
 
 
+
+export const confirmUpdate = () => {
+  return new Promise((resolve) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      type: 'warning',
+      showCancelButton: true,
+      animation: false,
+      confirmButtonColor: '#df4602',
+      cancelButtonColor: '#007cba',
+      confirmButtonText: 'Yes, clear it!',
+    }).then(result => {
+      if (result.value) { resolve(true) }
+      else resolve(false)
+    })
+  })
+  
+}
+
+
+
 export const apiValidationError = (msg, data) => {
-  console.log(data)
   let errors = data || ""
   if (data) {
     errors = ""

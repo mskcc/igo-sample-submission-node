@@ -13,6 +13,7 @@ const initialState = {
 function commonReducer(state = initialState, action) {
   const { type, error, message, serverError } = action
   if (message) {
+    console.log(message)
     return {
       ...state,
       message: message,

@@ -24,7 +24,7 @@ export const gridColumns = {
         container: "Micronic Barcoded Tubes",
         columnHeader: "Micronic Tube Barcode",
         data: "micronicTubeBarcode",
-        pattern: "micronicTubeBarcode",
+        pattern: validationPatterns.micronicTubeBarcode,
         error: "Micronic tubes have a ten digit barcode.",
         tooltip:
             "The Micronic Tube Barcode has been provided to you in advance by the sample receiving team.  If you cannot find it, the Micronic Tube Barcode is located on the side of the tube, and the 2D barcode can be scanned by a reade"
@@ -44,8 +44,8 @@ export const gridColumns = {
         columnHeader: "Plate ID",
         data: "plateId",
         container: "Plates",
-        pattern: "userId",
-        error: "Only letters, digits and –, please.",
+        pattern: validationPatterns.userId,
+        error: "Only letters, digits and –, please. 2 char minimum.",
         tooltip:
             "The plate ID is the barcode on your plate.  Please scan, or carefully type, the barcode ID into this field for all samples on the plate"
     },
@@ -70,12 +70,13 @@ export const gridColumns = {
         name: "Sample ID",
         columnHeader: "Sample ID",
         data: "userId",
-        pattern: "userId",
+        pattern: validationPatterns.userId,
         tooltip:
             "The Sample ID stays with your sample for its lifetime. Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively.",
         error:
             "Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively.",
-        uniqueError: "Sample ID needs to be unique."
+        uniqueError: "Sample ID needs to be unique.",
+        containsSampleError: "Sample ID cannot contain the word 'sample'."
     },
     Species: {
         name: "Species",
@@ -242,6 +243,16 @@ export const gridColumns = {
             "You must supply this in nanograms per microliter.  If you are unsure, please provide us with an approximation."
     },
     "Quantity": {
+        name: "Quantity of Tubes",
+        columnHeader: "Quantity of Tubes",
+        data: "numTubes",
+        pattern: "number",
+        error: "Numbers only, please.",
+        //  "type": "number",
+        tooltip:
+            "Number of Tubes per sample.  If you are submitting slides, please use this field to tell us how many slides per sample you will submit."
+    },
+    "Quantity of Tubes": {
         name: "Quantity of Tubes",
         columnHeader: "Quantity of Tubes",
         data: "numTubes",

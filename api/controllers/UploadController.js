@@ -221,17 +221,11 @@ exports.grid = [
         .trim()
         .withMessage("Container must be present."),
     body("patientIdType")
-        .isLength({ min: 1 })
-        .trim()
-        .withMessage("PatientIdType must be present."),
+        .optional(),
     body("groupingChecked")
-        .isLength({ min: 1 })
-        .trim()
-        .withMessage("GroupingChecked must be present."),
+        .optional(),
     body("altServiceId")
-        .isLength({ min: 1 })
-        .trim()
-        .withMessage("AltServiceId must be present."),
+        .optional(),
     // sanitizeBody("*").escape(),
     async function (req, res) {
         // try {

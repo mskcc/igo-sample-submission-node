@@ -36,61 +36,11 @@ export function login(username, password) {
 
 
 
-export const LOGOUT_REQUEST = 'LOGOUT_REQUEST'
-export const LOGOUT_FAIL = 'LOGOUT_FAIL'
-export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS'
+export const LOGOUT = 'LOGOUT'
 export function logout() {
   return dispatch => {
-    dispatch({ type: LOGOUT_REQUEST })
-    sessionStorage.removeItem('persist:root')
+    dispatch({ type: LOGOUT })
 
-    let access_token = sessionStorage.getItem('access_token')
-    // let refresh_token = sessionStorage.getItem('refresh_token')
-
-    if (access_token) {
-      sessionStorage.removeItem('access_token')
-      return dispatch({
-        type: LOGOUT_SUCCESS,
-      })
-      // .get(Config.API_ROOT + '/logoutAccess', {})
-
-      // axios
-      //   .get(Config.API_ROOT + '/logout', {})
-      //   // .get(Config.API_ROOT + '/logoutAccess', {})
-      //   .then(response => {
-      //     sessionStorage.removeItem('access_token')
-      //   })
-      //   .catch(error => {
-      //     return dispatch({
-      //       type: LOGOUT_FAIL,
-      //       error: error,
-      //     })
-      //   })
-    }
-    // let token = sessionStorage.getItem('refresh_token')
-    // if (refresh_token) {
-    //   sessionStorage.removeItem('refresh_token')
-    //   axios
-    //     .get(
-    //       Config.API_ROOT + '/logoutRefresh',
-    //       { headers: { Authorization: `Bearer ${token}` } },
-    //       {}
-    //     )
-    //     .then(response => {
-    //       return dispatch({
-    //         type: LOGOUT_SUCCESS,
-    //       })
-    //     })
-    //     .catch(error => {
-    //       return dispatch({
-    //         type: LOGOUT_FAIL,
-    //         message: error.response.data.message,
-    //       })
-    //     })
-    // } else
-    //   return dispatch({
-    //     type: LOGOUT_SUCCESS,
-    //   })
   }
 }
 

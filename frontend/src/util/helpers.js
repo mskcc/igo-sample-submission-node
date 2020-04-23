@@ -428,6 +428,21 @@ export const validateGrid = (changes, grid) => {
       continue
     }
 
+    if ('pattern' in grid.columnFeatures[columnIndex]) {
+      let pattern = new RegExp(grid.columnFeatures[columnIndex].pattern)
+      if (!pattern.test(newValue)) {
+        errors.add(
+          grid.columnFeatures[columnIndex].name +
+          ': ' +
+          grid.columnFeatures[columnIndex].error
+        )
+        grid.rows[rowIndex][columnName] = ''
+      }
+      continue
+
+
+    }
+
     if ('source' in grid.columnFeatures[columnIndex]) {
       if (!grid.columnFeatures[columnIndex].source.includes(newValue)) {
         errors.add(
