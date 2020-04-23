@@ -41,6 +41,14 @@ const rootReducer = (state, action) => {
       localize: state.localize,
     }
   }
+  // if (action.type === 'CLEAR_FORM') {
+  //   state = {
+  //     ...state,
+  //     upload: {...state.upload, grid:undefined},
+      
+      
+  //   }
+  // }
 
   return appReducer(state, action)
 }

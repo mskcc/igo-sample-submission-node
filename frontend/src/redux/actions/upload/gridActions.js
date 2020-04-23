@@ -264,7 +264,7 @@ export function populateGridFromSubmission(submissionId, ownProps) {
         console.log(resp)
         let submission = resp.payload.submission
         dispatch(getInitialColumns(submission.formValues), getState().user.role)
-          .then(dispatch(updateHeader(submission.formValues))
+          .then(dispatch( updateHeader(submission.formValues))
           )
           .then(() => {
             dispatch({
@@ -274,7 +274,7 @@ export function populateGridFromSubmission(submissionId, ownProps) {
             })
             return ownProps.history.push('upload')
           })
-        return ownProps.history.push('upload')
+
       })
 
 
@@ -286,7 +286,7 @@ export function populateGridFromSubmission(submissionId, ownProps) {
         })
       })
 
-      
+
     // dispatch(getInitialColumns(submission.formValues), getState().user.role)).then(() => {
     //   dispatch(updateHeader(submission.formValues))
     //   dispatch({

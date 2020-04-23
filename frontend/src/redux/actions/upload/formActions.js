@@ -63,11 +63,11 @@ export const RECEIVE_DATA_FOR_APPLICATION_SUCCESS =
 export const RECEIVE_DATA_FOR_APPLICATION_FAIL =
   'RECEIVE_DATA_FOR_APPLICATION_FAIL'
 
-export function getMaterialsForApplication(selectedApplication) {
+export function getMaterialsForApplication(selectedApplication, checkForMismatch=true) {
   return dispatch => {
     dispatch({ type: SELECT_APPLICATION, selectedApplication })
     dispatch({ type: REQUEST_DATA_FOR_APPLICATION })
-    dispatch(checkForChange('application', selectedApplication))
+    checkForMismatch && dispatch(checkForChange('application', selectedApplication))
     axios
       .get(Config.NODE_API_ROOT + '/upload/materialsAndSpecies', {
         params: {
@@ -97,9 +97,9 @@ export const UPDATE_HEADER = 'UPDATE_HEADER'
 
 export function updateHeader(formValues) {
   return dispatch => {
-    dispatch(getApplicationsForMaterial(formValues.material))
-    dispatch(getMaterialsForApplication(formValues.application))
-    dispatch(getFormatterForSpecies(formValues.species))
+    dispatch(getApplicationsForMaterial(formValues.material, false))
+    dispatch(getMaterialsForApplication(formValues.application, false))
+    dispatch(getFormatterForSpecies(formValues.species, false))
   }
 }
 
@@ -149,7 +149,9 @@ export const CLEAR_FORM = 'CLEAR_FORM'
 export function clearForm() {
   return dispatch => {
     dispatch({ type: CLEAR_FORM })
-    dispatch(getInitialState())
+    dispatch(getInitialState()).then(() => {
+      location.reload()
+    })
   }
 }
 
@@ -166,11 +168,11 @@ export const RECEIVE_APPLICATIONS_FOR_MATERIAL_FAIL =
 
 // get applications that can be combined with material
 // SelectedMaterial impacts applications and containers, containers are filtered in FormContainer
-export function getApplicationsForMaterial(selectedMaterial) {
+export function getApplicationsForMaterial(selectedMaterial, checkForMismatch=true) {
   return (dispatch, getState) => {
     dispatch({ type: SELECT_MATERIAL, selectedMaterial })
     dispatch({ type: REQUEST_APPLICATIONS_FOR_MATERIAL })
-    dispatch(checkForChange('material', selectedMaterial))
+    checkForMismatch && dispatch(checkForChange('material', selectedMaterial))
     return axios
       .get(Config.NODE_API_ROOT + '/upload/applicationsAndContainers', {
         params: {
@@ -201,9 +203,9 @@ export const SELECT_SPECIES_WITH_ID_FORMATTER =
 export const SELECT_SPECIES_WITHOUT_ID_FORMATTER =
   'SELECT_SPECIES_WITHOUT_ID_FORMATTER'
 export const CLEAR_SPECIES = 'CLEAR_SPECIES'
-export function getFormatterForSpecies(selectedSpecies) {
+export function getFormatterForSpecies(selectedSpecies, checkForMismatch=true) {
   return dispatch => {
-    dispatch(checkForChange('species', selectedSpecies))
+    checkForMismatch && dispatch(checkForChange('species', selectedSpecies))
     if (PatientIDSpecies.includes(selectedSpecies.toLowerCase())) {
       let formatter = 'PatientIDTypes'
 

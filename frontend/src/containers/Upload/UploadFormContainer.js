@@ -66,8 +66,6 @@ export class UploadFormContainer extends React.Component {
     }).then(result => {
       if (result.value) {
         this.props.clearForm()
-        // it works!
-        location.reload()
       }
     })
   }
