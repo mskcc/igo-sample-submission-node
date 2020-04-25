@@ -3,8 +3,8 @@ import React from 'react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { updateHeader } from './formActions'
-import * as util from '../../../util/helpers'
-import * as service from '../../../util/services'
+import  {util, services, swal} from '../../../util'
+
 import {
   diff,
   findSubmission,
@@ -188,70 +188,6 @@ export function getInitialColumns(formValues, userRole) {
 
 }
 
-export const ADD_GRID_TO_BANKED_SAMPLE = 'ADD_GRID_TO_BANKED_SAMPLE'
-export const ADD_GRID_TO_BANKED_SAMPLE_FAIL = 'ADD_GRID_TO_BANKED_SAMPLE_FAIL'
-export const ADD_GRID_TO_BANKED_SAMPLE_SUCCESS =
-  'ADD_GRID_TO_BANKED_SAMPLE_SUCCESS'
-export const BUTTON_RESET = 'BUTTON_RESET'
-export function addGridToBankedSample(ownProps) {
-  return (dispatch, getState) => {
-    dispatch({ type: ADD_GRID_TO_BANKED_SAMPLE, message: 'Submitting...' })
-    let match = checkGridAndForm(
-      getState().upload.form.selected,
-      getState().upload.grid.form
-    )
-    if (!match.success) {
-      Swal.fire({
-        title: 'Header does not match grid',
-        html:
-          'Please make sure your current header values match the ones used to generate the table. <br>(Header value x Table value) <br>' +
-          match.message,
-        // footer: 'To avoid mistakes, invalid cells are cleared immediately.',
-        type: 'error',
-        animation: false,
-        confirmButtonText: 'Dismiss',
-        // customClass: { content: 'alert' },
-      })
-      return
-    } else {
-      return axios
-        .post(Config.API_ROOT + '/addBankedSamples', {
-          data: generateSubmitData(getState()),
-        })
-        .then(response => {
-          dispatch({
-            type: ADD_GRID_TO_BANKED_SAMPLE_SUCCESS,
-            message: 'reset',
-          })
-
-          Swal.fire({
-            title: 'Submitted!',
-            text: 'Download your Receipt under My Submissions.',
-            type: 'success',
-            showCancelButton: true,
-            animation: false,
-            confirmButtonColor: '#007cba',
-            cancelButtonColor: '#4c8b2b',
-            confirmButtonText: 'Dismiss',
-            cancelButtonText: 'To My Submissions',
-          }).then(result => {
-            if (result.value) {
-              return ownProps.history.push('upload')
-            } else {
-              return ownProps.history.push('submissions')
-            }
-          })
-        })
-        .catch(error => {
-          dispatch({
-            type: ADD_GRID_TO_BANKED_SAMPLE_FAIL,
-            error: error,
-          })
-          return error
-        })
-    }
-  }
-}
 
 export const EDIT_SUBMISSION = 'EDIT_SUBMISSION'
 export const GET_SUBMISSION_TO_EDIT_FAIL = 'GET_SUBMISSION_TO_EDIT_FAIL'
@@ -259,12 +195,11 @@ export const GET_SUBMISSION_TO_EDIT_SUCCESS = 'GET_SUBMISSION_TO_EDIT_SUCCESS'
 export function populateGridFromSubmission(submissionId, ownProps) {
   return (dispatch, getState) => {
     dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...' })
-    service.getSubmission(submissionId)
+    services.getSubmission(submissionId)
       .then((resp) => {
         let submission = resp.payload.submission
         dispatch(getInitialColumns(submission.formValues), getState().user.role)
-          .then(dispatch( updateHeader(submission.formValues))
-          )
+          .then(dispatch( updateHeader(submission.formValues)))
           .then(() => {
             dispatch({
               type: 'GET_SUBMISSION_TO_EDIT_SUCCESS',

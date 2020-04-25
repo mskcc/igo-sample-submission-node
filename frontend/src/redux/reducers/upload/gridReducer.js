@@ -145,21 +145,13 @@ export default function gridReducer(state = initialGridState, action) {
         form: action.payload.formValues,
       }
 
-    case ActionTypes.ADD_GRID_TO_BANKED_SAMPLE:
-      return {
-        ...state,
-      }
-    case ActionTypes.ADD_GRID_TO_BANKED_SAMPLE_FAIL:
-      return {
-        ...state,
-      }
-    case ActionTypes.ADD_GRID_TO_BANKED_SAMPLE_SUCCESS:
-      return {
-        ...initialGridState,
-      }
 
 
     case FormActionTypes.CLEAR_FORM:
+      return {
+        ...initialGridState,
+      }
+    case SubmissionActionTypes.SUBMIT_SUCCESS:
       return {
         ...initialGridState,
       }

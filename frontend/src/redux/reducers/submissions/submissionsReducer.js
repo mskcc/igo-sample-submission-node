@@ -40,7 +40,7 @@ function submissionsReducer(state = initialState, action) {
                 ...state, isSaving: false,
                 submissionToEdit: undefined
             }
-        
+
         case ActionTypes.CREATE_PARTIAL_SUBMISSION_SUCCESS:
             return {
                 ...state,
@@ -49,30 +49,45 @@ function submissionsReducer(state = initialState, action) {
                 submissionToEdit: action.payload._id
             }
 
-            case ActionTypes.UPDATE_PARTIAL_SUBMISSION:
-                return {
-                    ...state,
-                    isSaving: true,
-                }
-            case ActionTypes.UPDATE_PARTIAL_SUBMISSION_FAIL:
-                return {
-                    ...state, isSaving: false,
-                }
-            
-            case ActionTypes.UPDATE_PARTIAL_SUBMISSION_SUCCESS:
-                return {
-                    ...state,
-                    isSaving: false,
-                    saved: true,
-                    submissionToEdit: action.payload._id
-                }
+        case ActionTypes.UPDATE_PARTIAL_SUBMISSION:
+            return {
+                ...state,
+                isSaving: true,
+            }
+        case ActionTypes.UPDATE_PARTIAL_SUBMISSION_FAIL:
+            return {
+                ...state, isSaving: false,
+            }
+
+        case ActionTypes.UPDATE_PARTIAL_SUBMISSION_SUCCESS:
+            return {
+                ...state,
+                isSaving: false,
+                saved: true,
+                submissionToEdit: action.payload._id
+            }
+
+        case ActionTypes.SUBMIT:
+            return {
+                ...state,
+            }
+        case ActionTypes.SUBMIT_FAIL:
+            return {
+                ...state,
+            }
+        case ActionTypes.SUBMIT_SUCCESS:
+            return {
+                ...initialState,
+            }
+
+
 
         case ActionTypes.EDIT_SUBMISSION:
             return {
                 ...state,
                 // loading: true,
             }
-   
+
         case ActionTypes.DELETE_SUBMISSION:
             return {
                 ...state,
@@ -92,8 +107,8 @@ function submissionsReducer(state = initialState, action) {
             return { ...state, submitted: false, saved: false }
         }
 
-      
-            
+
+
         case ActionTypes.DOWNLOAD_RECEIPT:
             return {
                 ...state,

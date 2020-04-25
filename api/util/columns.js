@@ -221,14 +221,14 @@ export const gridColumns = {
         data: "cellCount",
         tooltip:
             "Please tell us the number of cells in your sorted population.  This number is important for us to provide you with the best extraction results.",
-        pattern: "number",
+        pattern: validationPatterns.number,
         error: "Numbers only, please."
     },
     "Volume (uL)": {
         name: "Volume (uL)",
         columnHeader: "Volume (uL)",
         data: "vol",
-        pattern: "number",
+        pattern: validationPatterns.number,
         error: "Numbers only, please.",
         tooltip:
             "Please provide us with the volume of sample in microliters.  Please note there are different requirements for each application, and if you have any questions, please contact IGO."
@@ -237,7 +237,7 @@ export const gridColumns = {
         name: "Concentration (ng/uL)",
         columnHeader: "Concentration (ng/uL)",
         data: "concentration",
-        pattern: "number",
+        pattern: validationPatterns.number,
         error: "Numbers only, please.",
         tooltip:
             "You must supply this in nanograms per microliter.  If you are unsure, please provide us with an approximation."
@@ -246,7 +246,7 @@ export const gridColumns = {
         name: "Quantity of Tubes",
         columnHeader: "Quantity of Tubes",
         data: "numTubes",
-        pattern: "number",
+        pattern: validationPatterns.number,
         error: "Numbers only, please.",
         //  "type": "number",
         tooltip:
@@ -256,7 +256,7 @@ export const gridColumns = {
         name: "Quantity of Tubes",
         columnHeader: "Quantity of Tubes",
         data: "numTubes",
-        pattern: "number",
+        pattern: validationPatterns.number,
         error: "Numbers only, please.",
         //  "type": "number",
         tooltip:
@@ -402,40 +402,40 @@ export const gridColumns = {
     "Sample Type": {
         name: "Sample Type",
         columnHeader: "Sample Type",
-        headerCellClass: "optional",
-        optional: "true",
+        // headerCellClass: "optional",
+        // optional: "true",
         data: "sampleType",
         pattern: validationPatterns.alphanum,
     },
     Recipe: {
         name: "Recipe",
         columnHeader: "Recipe",
-        headerCellClass: "optional",
-        optional: "true",
+        // headerCellClass: "optional",
+        // optional: "true",
         data: "recipe",
         pattern: validationPatterns.alphanum,
     },
     "CMO Sample Type": {
         name: "CMO Sample Type",
         columnHeader: "CMO Sample Type",
-        headerCellClass: "optional",
-        optional: "true",
+        // headerCellClass: "optional",
+        // optional: "true",
         data: "specimenType",
         pattern: validationPatterns.alphanum,
     },
     "Spike In Genes": {
         name: "Spike In Genes",
         columnHeader: "Spike In Genes",
-        headerCellClass: "optional",
-        optional: "true",
+        // headerCellClass: "optional",
+        // optional: "true",
         data: "spikeInGenes",
         pattern: validationPatterns.alphanum,
     },
     Platform: {
         name: "Platform",
         columnHeader: "Platform",
-        headerCellClass: "optional",
-        optional: "true",
+        // headerCellClass: "optional",
+        // optional: "true",
         pattern: validationPatterns.alphanum,
         data: "platform"
     }
@@ -481,7 +481,7 @@ export const submissionColumns = {
     },
     'Date Submitted': {
         name: 'Submitted On',
-        data: 'submittedOn',
+        data: 'submittedAt',
         readOnly: 'true'
     },
     'Transaction ID': {
@@ -497,6 +497,11 @@ export const submissionColumns = {
     'Edit': {
         name: 'Edit',
         data: 'edit',
+        renderer: 'html'
+    },
+    'Unsubmit': {
+        name: 'Unsubmit',
+        data: 'unsubmit',
         renderer: 'html'
     },
     'Receipt': {

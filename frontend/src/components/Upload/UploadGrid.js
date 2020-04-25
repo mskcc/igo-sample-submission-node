@@ -23,48 +23,6 @@ class UploadGrid extends React.Component {
     }
   }
 
-  handleSave = () => {
-    this.props.handleSave()
-  }
-  handleClear = () => {
-    this.props.handleClear()
-  }
-
-  handleSubmit = () => {
-    const { columnFeatures, hiddenColumns, rows } = this.props.grid
-    // run through grid required columns
-    let emptyColumns = new Set()
-
-    for (let i = 0; i < columnFeatures.length; i++) {
-      for (let j = 0; j < rows.length; j++) {
-        if (
-          hiddenColumns.columns &&
-          (columnFeatures[i].columnHeader == 'CMO Patient Id' ||
-            columnFeatures[i].columnHeader == 'Normalized Patient Id')
-        ) {
-          continue
-        } else if (
-          columnFeatures[i].optional == false &&
-          !rows[j][columnFeatures[i].data]
-        ) {
-          emptyColumns.add(columnFeatures[i].columnHeader)
-        }
-      }
-    }
-
-    if (emptyColumns.size > 0) {
-      Swal.fire({
-        title: 'Required Fields',
-        html: [...emptyColumns].join('<br> '),
-        type: 'error',
-        animation: false,
-        confirmButtonText: 'Dismiss',
-      })
-    } else {
-      this.props.handleSubmit()
-    }
-  }
-
   showRowWarning = count => {
     Swal.fire({
       title: 'Too many rows.',
@@ -94,14 +52,14 @@ class UploadGrid extends React.Component {
           <div className={classes.buttons}>
             <GridButton
               id="gridSubmit"
-              onClick={this.handleSubmit}
+              onClick={this.props.handleSubmit}
               isLoading={false}
               nothingToSubmit={false}
               color="primary"
             />
             <GridButton
               id="gridSave"
-              onClick={this.handleSave}
+              onClick={this.props.handleSave}
               isLoading={user.isSaving}
               done={user.saved}
               // msg={'Saved!'}
@@ -109,7 +67,7 @@ class UploadGrid extends React.Component {
             />{' '}
             <GridButton
               id="gridClear"
-              onClick={this.handleClear}
+              onClick={this.props.handleClear}
               isLoading={false}
               nothingToSubmit={false}
               color="secondary"

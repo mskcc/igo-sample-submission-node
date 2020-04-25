@@ -36,9 +36,8 @@ exports.list = [
 
 
 exports.submission = [
-    param("id").exists().withMessage("id must be specified."),
+    param("id").isMongoId().withMessage("id must be valid MongoDB ID."),
     function (req, res) {
-        console.log(req)
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(
@@ -49,6 +48,38 @@ exports.submission = [
         }
 
         SubmissionModel.findById(ObjectId(req.params.id))
+            .exec(function (err, submission) {
+                if (err) {
+                    return apiResponse.errorResponse(
+                        res,
+                        'Could not retrieve submission.'
+                    )
+                }
+                // submission.formValues.sharedWith = submission.formValues.sharedWith.replace(`${res.user.username}@mskcc.org`, '')
+                return apiResponse.successResponseWithData(
+                    res,
+                    "Operation success",
+                    { submission }
+                );
+            });
+    }
+]
+
+
+exports.unsubmit = [
+    body("id").isMongoId().withMessage("id must be valid MongoDB ID."),
+    function (req, res) {
+        console.log(req);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(
+                res,
+                "Validation error.",
+                errors.array()
+            );
+        }
+
+        SubmissionModel.findByIdAndUpdate(ObjectId(req.body.id), { submitted: false })
             .exec(function (err, submission) {
                 if (err) {
                     return apiResponse.errorResponse(
@@ -77,7 +108,7 @@ exports.grid = [
                         'Could not retrieve submissions.'
                     )
                 }
-                let submissionGridPromise = util.generateSubmissionGrid(submissions)
+                let submissionGridPromise = util.generateSubmissionGrid(submissions, res.user.role)
                 Promise.all([submissionGridPromise]).then((results) => {
                     if (results.some(x => x.length == 0)) {
                         return apiResponse.errorResponse(
@@ -182,6 +213,80 @@ exports.update = [
                 );
             });
 
+    }
+];
+
+
+/**
+ * Submits to LIMS Banked Samples
+ *
+ * @returns {Object}
+ */
+exports.submit = [
+    body("id").optional().isMongoId().withMessage("id must be valid MongoDB ID."),
+    body("transactionId").isInt().withMessage("id must be Int."),
+    body("formValues").isJSON().isLength({ min: 1 }).trim().withMessage("formValues must be JSON."),
+    body("gridValues").isJSON().isLength({ min: 1 }).trim().withMessage("gridValues must be JSON."),
+    function (req, res) {
+        // console.log(req.body)
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(
+                res,
+                "Validation error.",
+                errors.array()
+            );
+        }
+
+        let formValues = JSON.parse(req.body.formValues)
+        let gridValues = JSON.parse(req.body.gridValues)
+        let transactionId = req.body.transactionId
+        let id = req.body.id || undefined
+
+        let findOrCreateSubPromise = SubmissionModel.findOrCreateSub(id, res.user.username)
+
+        Promise.all([findOrCreateSubPromise]).then((results) => {
+            let [submissionToSubmit] = results
+            submissionToSubmit.formValues = formValues
+            submissionToSubmit.gridValues = gridValues
+
+            //  save pre LIMS submit so data is safe
+            submissionToSubmit.save(function (err) {
+                if (err) {
+                    return apiResponse.errorResponse(res, "Submission could not be saved.");
+                }
+            })
+            let submissionPromise = util.submit(submissionToSubmit, res.user, transactionId)
+            Promise.all([submissionPromise]).then((results) => {
+                if (results.some(x => x.length == 0)) {
+                    return apiResponse.errorResponse(
+                        res,
+                        `Could not submit.`
+                    )
+                }
+                let [submissionResult] = results
+                submissionToSubmit.submitted = true
+                submissionToSubmit.transactionId = transactionId
+                submissionToSubmit.submittedAt = transactionId
+                submissionToSubmit.save(function (err) {
+                    if (err) {
+                        return apiResponse.errorResponse(res, "Submission could not be saved on this site but was submitted to IGO.");
+                    }
+                })
+                return apiResponse.successResponseWithData(
+                    res,
+                    "Operation success",
+                    submissionResult
+                );
+
+
+            })
+        }).catch((reasons) => {
+            return apiResponse.errorResponse(
+                res,
+                reasons
+            )
+        })
     }
 ];
 

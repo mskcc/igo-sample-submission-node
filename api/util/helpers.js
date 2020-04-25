@@ -1,16 +1,12 @@
 import CacheService from "./cache";
-import axios from "axios";
-const service = require("../services/services");
-var _ = require('lodash');
+const services = require("../services/services");
+const { logger } = require("../util/winston");
 const { constants } = require("./constants");
 const { gridColumns, submissionColumns } = require("./columns");
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
-const LIMS_AUTH = {
-    username: process.env.LIMS_USER,
-    password: process.env.LIMS_PASSWORD
-};
-const LIMS_URL = process.env.LIMS_URL;
+
+
 
 exports.determineRole = groups => {
     if (groups.includes(process.env.LAB_GROUP)) return "lab_member";
@@ -21,13 +17,13 @@ exports.determineRole = groups => {
 exports.createSharedString = (shared, username) => {
     let sharedSet = new Set()
     let sharedArray = shared.split(",")
-  
+
     sharedSet.add(...sharedArray)
     sharedSet.add(`${username}@mskcc.org`)
-  
+
     return Array.from(sharedSet).join(",")
 
-  
+
 }
 
 exports.getContainers = material => {
@@ -61,9 +57,9 @@ function cacheAllPicklists(limsColumns) {
             if (picklist != undefined) {
                 picklists[picklist] = []
                 if (picklist === "tumorType") {
-                    picklistPromises.push(cache.get(picklist + "-Picklist", () => service.getOnco()))
+                    picklistPromises.push(cache.get(picklist + "-Picklist", () => services.getOnco()))
 
-                } else { picklistPromises.push(cache.get(picklist + "-Picklist", () => service.getPicklist(picklist))) }
+                } else { picklistPromises.push(cache.get(picklist + "-Picklist", () => services.getPicklist(picklist))) }
             }
         })
         Promise.all(picklistPromises).then((results) => {
@@ -81,7 +77,7 @@ function cacheAllPicklists(limsColumns) {
 export function generateGrid(limsColumnList, userRole, formValues) {
 
     return new Promise((resolve, reject) => {
-
+        if (!limsColumnList) { PromiseRejectionEvent("Invalid Combination.") }
         cacheAllPicklists(limsColumnList)
             .then((picklists) => fillColumns(limsColumnList, userRole, formValues, picklists))
             .then((columns) => fillData(columns, formValues)).catch((reasons) => reject(reasons))
@@ -102,8 +98,14 @@ function fillColumns(limsColumnList, userRole, formValues, picklists) {
             columnHeaders: [],
             hiddenColumns: []
         };
+        let requiredColumns = []
+        limsColumnList.map(item => {
+            if (item.includes('Required')) {
+                requiredColumns.push(item[0])
+            }
+        })
         limsColumnList.forEach((element, index) => {
-        
+
             let columnName = element[0]
             let colDef = gridColumns[columnName];
             if (!colDef) {
@@ -133,6 +135,11 @@ function fillColumns(limsColumnList, userRole, formValues, picklists) {
                     result.columnFeatures.length
                 );
             }
+            colDef.optional = requiredColumns.includes(columnName) ? false : true
+            colDef.allowEmpty = colDef.optional
+            colDef.className = colDef.optional
+                ? 'optional'
+                : 'required'
 
             if (index == limsColumnList.length - 1) {
                 // if plate column present but not WellPos, add WellPos
@@ -362,18 +369,23 @@ function choosePatientIdValidator(patientIDType, species, groupingChecked) {
 
 
 
-export function generateSubmissionGrid(submissions) {
+export function generateSubmissionGrid(submissions, userRole) {
 
     return new Promise((resolve, reject) => {
         try {
             let grid = { columnHeaders: [], rows: [], columnFeatures: [] }
-            grid.columnHeaders = Object.keys(submissionColumns).map(a  => submissionColumns[a].name)
+            grid.columnHeaders = Object.keys(submissionColumns).map(a => submissionColumns[a].name)
             grid.columnFeatures = Object.values(submissionColumns)
+
+            if (userRole == "user"){
+                grid.columnHeaders.filter((element) => {return element != "Unsubmit"})
+                grid.columnFeatures.filter((element) => {return element.columnHeader != "Unsubmit"})
+            }
             let rows = []
             for (let i = 0; i < submissions.length; i++) {
                 let submission = submissions[i]
                 let serviceId = submission.formValues.serviceId
-            
+
                 let isSubmitted = submission.submitted
                 rows[i] = {
                     serviceId: serviceId,
@@ -385,7 +397,7 @@ export function generateSubmissionGrid(submissions) {
                     submitted: isSubmitted ? 'yes' : 'no',
                     revisions: submission.__v,
                     createdAt: parseDate(submission.createdAt),
-                    submittedAt: submission.submittedAt ? parseDate(submission.submittedAt)  : "",
+                    submittedAt: submission.submittedAt ? parseDate(submission.submittedAt) : "",
                     // available actions depend on submitted status
                     edit: isSubmitted
                         ? `<span  submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">edit</span>`
@@ -397,6 +409,12 @@ export function generateSubmissionGrid(submissions) {
                         ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">delete</span>`
                         : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action">delete</span>`,
                 }
+                if (userRole !== "user") {
+                    rows[i].unsubmit = !isSubmitted 
+                    ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">undo</span>` 
+                    : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action">undo</span>`
+                }
+
                 if (rows.length == submissions.length) {
                     grid.rows = rows
                     resolve(grid);
@@ -410,10 +428,69 @@ export function generateSubmissionGrid(submissions) {
     })
 }
 
-function parseDate(mongooseDate){
-    let date = new Date(mongooseDate*1000)
+function parseDate(mongooseDate) {
+    let date = new Date(mongooseDate * 1000)
     let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes()
-    let humanReadable = `${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()} at ${date.getHours()}:${minutes}`
+    let humanReadable = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} at ${date.getHours()}:${minutes}`
     return humanReadable
 
+}
+
+//  Submits submission to BankedSample. Returns array of created recordIds
+export function submit(submission, user, transactionId) {
+
+    return new Promise((resolve, reject) => {
+
+        let serviceId = submission.formValues.serviceId
+        let recipe = submission.formValues.application
+        let sampleType = submission.formValues.material
+        let samples = submission.gridValues
+        let submittedSamples = []
+        // prep banked sample record
+        for (let i = 0; i < samples.length; i++) {
+            let bankedSample = Object.assign({}, samples[i])
+            bankedSample.serviceId = serviceId
+            bankedSample.recipe = recipe
+            bankedSample.sampleType = sampleType
+            bankedSample.transactionId = transactionId
+            bankedSample.igoUser = user.username
+            bankedSample.investigator = submission.username
+            bankedSample.user = process.env.API_USER
+            bankedSample.concentrationUnits = "ng/uL"
+
+            if ("wellPosition" in bankedSample) {
+                var match = /([A-Za-z]+)(\d+)/.exec(bankedSample.wellPosition);
+                if (!match) {
+                    reject("Invalid Well Position.")
+                } else {
+                    bankedSample.rowPos = match[1]
+                    bankedSample.colPos = match[2]
+                    delete bankedSample.wellPosition
+                }
+            }
+            //  not needed in LIMS, only displayed for users' convenience
+            if ("indexSequence" in bankedSample) {
+                delete bankedSample.indexSequence
+            }
+
+            // delete empty fields
+            Object.keys(bankedSample).map(element => {
+                if (bankedSample[element] == "") { delete bankedSample[element] }
+            })
+
+            services.submit(bankedSample)
+                .then((response) => {
+                    logger.log("info", `Submitted ${bankedSample.userId}.`)
+                    submittedSamples.push(response)
+                    if (submittedSamples.length == samples.length) {
+                        resolve(submittedSamples)
+                    }
+                })
+                .catch(err => reject(`Submit failed at sample ${bankedSample.userId}, index ${bankedSample.rowIndex}. ${err}`))
+
+
+
+
+        }
+    })
 }

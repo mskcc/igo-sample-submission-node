@@ -141,17 +141,43 @@ export const updateRows = (formValues, grid) => {
   return setWellPos(rows)
 }
 
+export const checkEmptyColumns = (columnFeatures, rows, hiddenColumns) => {
+  let emptyColumns = new Set()
+
+    for (let i = 0; i < columnFeatures.length; i++) {
+      for (let j = 0; j < rows.length; j++) {
+        if (
+          hiddenColumns.columns &&
+          (columnFeatures[i].columnHeader == 'CMO Patient Id' ||
+            columnFeatures[i].columnHeader == 'Normalized Patient Id')
+        ) {
+          continue
+        } else if (
+          columnFeatures[i].optional == false &&
+          !rows[j][columnFeatures[i].data]
+        ) {
+          emptyColumns.add(columnFeatures[i].columnHeader)
+        }
+      }
+    }
+
+    return emptyColumns.size > 0
+}
+
 // generate data object to send to sample-rec-backend for
 // partial submission save or banked sample
-export const generateSubmitData = (state, isPartial) => {
-  let data = { version: "", gridValues: "", formValues: "", transactionId: "" }
+export const generateSubmitData = (state, isPartial = false) => {
+  let data = { version: "", gridValues: "", formValues: "", transactionId: "", id: "" }
   if (!isPartial) {
     let now = Date.now()
     let date = Math.floor(now / 1000)
     data.transactionId = date
+    data.id = state.submissions.submissionToEdit
   }
   data.version = Config.VERSION
-  data.gridValues = JSON.stringify(rowsWithRowIndex(state.upload.grid.rows))
+  let rowsWithIndex = rowsWithRowIndex(state.upload.grid.rows)
+  
+  data.gridValues = JSON.stringify(rowsWithIndex)
   data.formValues = JSON.stringify(state.upload.grid.form)
 
   return data

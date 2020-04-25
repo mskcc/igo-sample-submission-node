@@ -6,15 +6,23 @@ import { swal } from "../../util"
 import { gridActions, submissionActions } from '../../redux/actions'
 import { resetErrorMessage } from '../../redux/actions/commonActions'
 
-import SubmissionsTable from '../../components/Submissions/SubmissionsTable'
+import SubmissionsGrid from '../../components/Submissions/SubmissionsGrid'
 
 export class SubmissionsPage extends Component {
   componentDidMount() {
     this.props.getSubmissions()
   }
+
+
   handleEdit = (submissionId) => {
     return this.props.populateGridFromSubmission(submissionId, this.props)
   }
+
+  handleUnsubmit = (submissionId) => {
+    
+    return this.props.unsubmit(submissionId)
+  }
+
   handleReceipt = (submissionId, serviceId) => {
     return this.props.downloadReceipt(submissionId, serviceId)
   }
@@ -28,9 +36,10 @@ export class SubmissionsPage extends Component {
 
   render() {
     return this.props.submissions.grid.rows.length > 0 ? (
-      <SubmissionsTable
+      <SubmissionsGrid
         grid={this.props.submissions.grid}
         handleEdit={this.handleEdit}
+        handleUnsubmit={this.handleUnsubmit}
         handleReceipt={this.handleReceipt}
         handleDelete={this.handleDelete}
       />

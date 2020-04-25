@@ -15,21 +15,6 @@ class UploadGridContainer extends React.Component {
     super(props)
   }
 
-  // while grid is open, refresh token every ten minutes
-  // not too risky since refresh token is set to expire after few hours
-  // componentDidMount() {
-  //   setInterval(async () => {
-  //     this.props.refreshToken()
-  //   }, 600000)
-  // }
-
-  // componentDidMount(prevProps, prevState) {
-  // console.log('prevState')
-  // console.log(prevState)
-  // console.log('state')
-  // console.log(this.state)
-  // }
-
   handleChange = changes => {
     this.props.registerGridChange(changes)
   }
@@ -61,13 +46,9 @@ class UploadGridContainer extends React.Component {
     }).then(result => {
       if (result.value) {
         this.props.handleClear()
-        // this.hotTableComponent.current.hotInstance.clear()
+        // this.hotTableComponent.current.hotInstance.clear()
       }
     })
-  }
-
-  handleSubmit = () => {
-    this.props.handleSubmit()
   }
 
   handleSave = () => {
@@ -90,18 +71,33 @@ class UploadGridContainer extends React.Component {
           this.props.updatePartialSubmission(this.props.updatePartialSubmission)
         }
       })
-
     }
+  }
 
+  handleSubmit = () => {
+    const { columnFeatures, hiddenColumns, rows } = this.props.grid
+    let match = util.checkGridAndForm(
+      this.props.form.selected,
+      this.props.grid.form
+    )
+    if (!match.success) {
+      return swal.formGridMismatch(match)
+    }
+    let hasEmptyColumns = util.checkEmptyColumns(columnFeatures, rows, hiddenColumns)
 
-
-
-
+    if (hasEmptyColumns) {
+      swal.emptyFieldsError(emptyColumns)
+      return
+    } else {
+      this.props.submitSubmission() }
 
   }
 
+
+
+
   render() {
-    const { grid, user, handleSubmit } = this.props
+    const { grid, user } = this.props
 
     return grid.rows.length > 0 ? (
       <UploadGrid

@@ -2,7 +2,7 @@ import Swal from 'sweetalert2'
 
 export const formGridMismatch = (match) => {
   Swal.fire({
-    title: 'Header does not match grid',
+    title: 'Header does not match Grid',
     html:
       'Please make sure your current header values match the ones used to generate the table. <br>(Header value x Table value) <br>' +
       match.message,
@@ -55,6 +55,23 @@ export const confirmClear = () => {
     })
   })
 }
+export const confirmGridClear = () => {
+  return new Promise((resolve) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this unless you have a saved partial submission.",
+      type: 'warning',
+      showCancelButton: true,
+      animation: false,
+      confirmButtonColor: '#df4602',
+      cancelButtonColor: '#007cba',
+      confirmButtonText: 'Delete',
+    }).then(result => {
+      if (result.value) { resolve(true) }
+      else resolve(false)
+    })
+  })
+}
 
 
 
@@ -62,20 +79,23 @@ export const confirmClear = () => {
 export const confirmUpdate = () => {
   return new Promise((resolve) => {
     Swal.fire({
-      title: 'Are you sure?',
-      type: 'warning',
+      title: 'Update?',
+      html: `You are editing an existing partial submission. Are you sure you want to update it?`,
+      type: 'info',
+      animation: 'false',
       showCancelButton: true,
       animation: false,
       confirmButtonColor: '#df4602',
       cancelButtonColor: '#007cba',
-      confirmButtonText: 'Yes, clear it!',
+      confirmButtonText: 'Overwrite',
+      cancelButtonText: 'Cancel',
     }).then(result => {
       if (result.value) { resolve(true) }
       else resolve(false)
     })
   })
-  
 }
+
 
 
 
@@ -93,3 +113,33 @@ export const apiValidationError = (msg, data) => {
     confirmButtonText: 'Dismiss',
   })
 }
+export const emptyFieldsError = (emptyColumns) => {
+  Swal.fire({
+    title: 'Required Fields',
+    html: [...emptyColumns].join('<br> '),
+    type: 'error',
+    animation: false,
+    confirmButtonText: 'Dismiss',
+  })
+}
+
+export const submitSuccess = () => {
+  return new Promise((resolve) => {
+
+    Swal.fire({
+      title: 'Submitted!',
+      text: 'Download your Receipt under My Submissions.',
+      type: 'success',
+      showCancelButton: true,
+      animation: false,
+      confirmButtonColor: '#007cba',
+      cancelButtonColor: '#4c8b2b',
+      confirmButtonText: 'Dismiss',
+      cancelButtonText: 'To My Submissions',
+    }).then(result =>
+      (result.value) ? resolve('upload') : resolve('submissions')
+    )
+  })
+
+}
+

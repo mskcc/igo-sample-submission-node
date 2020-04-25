@@ -94,7 +94,7 @@ exports.getPicklist = listname => {
             return resp;
         }).catch((error) => {
             logger.log("info", `Error retrieving response from ${url}`)
-            return error
+            throw error
         }).then((resp) => { return formatData(resp) })
 
 }
@@ -108,12 +108,11 @@ exports.getMaterials = (application) => {
             httpsAgent: agent
         })
         .then((resp) => {
-
             logger.log("info", `Successfully retrieved response from ${url}`);
             return resp;
         }).catch((error) => {
             logger.log("info", `Error retrieving response from ${url}`)
-            return error
+            throw error
         }).then((resp) => { return formatDataMaterialsOrApps(resp) })
 
 }
@@ -131,7 +130,7 @@ exports.getApplications = (material) => {
             return resp;
         }).catch((error) => {
             logger.log("info", `Error retrieving response from ${url}`)
-            return error
+            throw error
         }).then((resp) => { return formatDataMaterialsOrApps(resp) })
 
 }
@@ -148,9 +147,28 @@ exports.getColumns = (material, application) => {
             return resp;
         }).catch((error) => {
             logger.log("info", `Error retrieving response from ${url}`)
-            return error
+            throw error
         }).then((resp) => { return formatData(resp) })
 
+}
+exports.submit = (bankedSample) => {
+    const url = `${LIMS_URL}/setBankedSample`
+    logger.log("info", `Sending request to ${url}`)
+    return axios.post(url,
+        {},
+        {
+            auth: { ...LIMS_AUTH },
+            httpsAgent: agent,
+            params: {...bankedSample}
+        },)
+        .then((resp) => {
+            logger.log("info", `Successfully retrieved response from ${url}`);
+            return resp;
+        }).catch((error) => {
+            // console.log(error)
+            logger.log("info", `Error retrieving response from ${url}`)
+            throw error
+        }).then((resp) => { return formatData(resp) })
 }
 
 
@@ -163,7 +181,7 @@ exports.getOnco = () => {
             return resp;
         }).catch((error) => {
             logger.log("info", "Error retrieving response from OncoTree")
-            return error
+            throw error
         }).then((resp) => { return formatOncoData(resp) })
 
 }
@@ -187,7 +205,7 @@ exports.getCrdbId = (patientId) => {
             return resp;
         }).catch((error) => {
             logger.log("info", "Error retrieving response from CRDB")
-            return error
+            throw error
         }).then((resp) => { return formatCrdb(resp) })
 
 

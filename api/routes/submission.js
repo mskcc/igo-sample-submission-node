@@ -9,5 +9,8 @@ router.get("/:id", SubmissionController.submission);
 router.post("/create", SubmissionController.create);
 router.post("/update", SubmissionController.update);
 router.post("/delete", SubmissionController.delete);
+router.post("/submit", SubmissionController.submit);
+router.post("/unsubmit", SubmissionController.unsubmit);
+
 
 module.exports = router;
