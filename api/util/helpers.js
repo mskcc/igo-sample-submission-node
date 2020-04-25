@@ -377,9 +377,10 @@ export function generateSubmissionGrid(submissions, userRole) {
             grid.columnHeaders = Object.keys(submissionColumns).map(a => submissionColumns[a].name)
             grid.columnFeatures = Object.values(submissionColumns)
 
-            if (userRole == "user"){
-                grid.columnHeaders.filter((element) => {return element != "Unsubmit"})
-                grid.columnFeatures.filter((element) => {return element.columnHeader != "Unsubmit"})
+            if (userRole === "user") {
+                grid.columnHeaders = grid.columnHeaders.filter((element) => { return element !== "Unsubmit" })
+                grid.columnFeatures = grid.columnFeatures.filter((element) => { return element.name != "Unsubmit" })
+                
             }
             let rows = []
             for (let i = 0; i < submissions.length; i++) {
@@ -410,16 +411,15 @@ export function generateSubmissionGrid(submissions, userRole) {
                         : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action">delete</span>`,
                 }
                 if (userRole !== "user") {
-                    rows[i].unsubmit = !isSubmitted 
-                    ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">undo</span>` 
-                    : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action">undo</span>`
+                    rows[i].unsubmit = !isSubmitted
+                        ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">undo</span>`
+                        : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action">undo</span>`
                 }
 
                 if (rows.length == submissions.length) {
                     grid.rows = rows
                     resolve(grid);
                 }
-
             }
 
         } catch (err) {
@@ -487,10 +487,6 @@ export function submit(submission, user, transactionId) {
                     }
                 })
                 .catch(err => reject(`Submit failed at sample ${bankedSample.userId}, index ${bankedSample.rowIndex}. ${err}`))
-
-
-
-
         }
     })
 }

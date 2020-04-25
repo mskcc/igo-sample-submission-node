@@ -69,7 +69,6 @@ exports.submission = [
 exports.unsubmit = [
     body("id").isMongoId().withMessage("id must be valid MongoDB ID."),
     function (req, res) {
-        console.log(req);
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(

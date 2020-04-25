@@ -13,13 +13,24 @@ export class SubmissionsPage extends Component {
     this.props.getSubmissions()
   }
 
-
+  handleClick= (coords, submitted, id, serviceId) => {
+    let column = this.props.submissions.grid.columnFeatures[coords.col].data
+    if (column === 'edit' && !submitted) {
+      this.handleEdit(id)
+    } else if (column === 'unsubmit' && submitted) {
+      this.handleUnsubmit(id)
+    } else if (column === 'receipt' && submitted) {
+      this.handleReceipt(id, serviceId)
+    } else if (column === 'delete' && !submitted) {
+      this.handleDelete(id)
+    }
+  }
+  
   handleEdit = (submissionId) => {
     return this.props.populateGridFromSubmission(submissionId, this.props)
   }
 
   handleUnsubmit = (submissionId) => {
-    
     return this.props.unsubmit(submissionId)
   }
 
@@ -38,10 +49,7 @@ export class SubmissionsPage extends Component {
     return this.props.submissions.grid.rows.length > 0 ? (
       <SubmissionsGrid
         grid={this.props.submissions.grid}
-        handleEdit={this.handleEdit}
-        handleUnsubmit={this.handleUnsubmit}
-        handleReceipt={this.handleReceipt}
-        handleDelete={this.handleDelete}
+        handleClick={this.handleClick}
       />
     ) : (
         'No submissions available.'
