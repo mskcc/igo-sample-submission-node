@@ -11,9 +11,15 @@ import SubmissionsGrid from '../../components/Submissions/SubmissionsGrid'
 export class SubmissionsPage extends Component {
   componentDidMount() {
     this.props.getSubmissions()
+    // TODO make submissionsSince default once subs are imported
   }
 
-  handleClick= (coords, submitted, id, serviceId) => {
+  handleFilterClick = (unit, time, all = false) => {
+    if (all) { return this.props.getSubmissions() }
+    this.props.getSubmissionsSince(unit, time)
+  }
+
+  handleClick = (coords, submitted, id, serviceId) => {
     let column = this.props.submissions.grid.columnFeatures[coords.col].data
     if (column === 'edit' && !submitted) {
       this.handleEdit(id)
@@ -25,7 +31,7 @@ export class SubmissionsPage extends Component {
       this.handleDelete(id)
     }
   }
-  
+
   handleEdit = (submissionId) => {
     return this.props.populateGridFromSubmission(submissionId, this.props)
   }
@@ -47,10 +53,13 @@ export class SubmissionsPage extends Component {
 
   render() {
     return this.props.submissions.grid.rows.length > 0 ? (
+
       <SubmissionsGrid
         grid={this.props.submissions.grid}
-        handleClick={this.handleClick}
+        handleGridClick={this.handleGridClick}
+        handleFilterClick={this.handleFilterClick}
       />
+
     ) : (
         'No submissions available.'
       )

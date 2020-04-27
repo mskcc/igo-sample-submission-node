@@ -1,5 +1,7 @@
 import { Config } from '../config.js'
 
+export const maybeSingularize = (count, noun) =>
+  count === 1 ? `${noun.replace('s','')}` : `${count} ${noun}`
 // generate rows depending on whether we need to add or substract rows, prefill some
 // SERVERSIDE, add trim or add clientside!
 export const generateRows = (columns, formValues, numberToAdd) => {

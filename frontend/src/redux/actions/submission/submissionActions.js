@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { Config } from '../../../config.js'
 import { util, swal, services, excel } from '../../../util'
+import moment from 'moment'
 
-import Swal from 'sweetalert2'
 
 
 export const GET_SUBMISSIONS = 'GET_SUBMISSIONS'
@@ -16,12 +16,40 @@ export function getSubmissions() {
       .then(response => {
         return dispatch({
           type: GET_SUBMISSIONS_SUCCESS,
-          payload: response.payload
+          payload: response.payload,
+          message: `Displaying all ${response.payload.rows.length} submissions.`
         })
       })
       .catch(error => {
         return dispatch({
           type: GET_SUBMISSIONS_FAIL,
+          error: error,
+        })
+      })
+  }
+}
+
+
+
+export const GET_SUBMISSIONS_SINCE = 'GET_SUBMISSIONS_SINCE'
+export const GET_SUBMISSIONS_SINCE_FAIL = 'GET_SUBMISSIONS_SINCE_FAIL'
+export const GET_SUBMISSIONS_SINCE_SUCCESS = 'GET_SUBMISSIONS_SINCE_SUCCESS'
+export function getSubmissionsSince(unit, time) {
+  return dispatch => {
+    dispatch({ type: GET_SUBMISSIONS_SINCE })
+    let limit = moment().subtract(unit, time).unix()
+    services.getSubmissionsSince(limit)
+
+      .then(response => {
+        return dispatch({
+          type: GET_SUBMISSIONS_SINCE_SUCCESS,
+          payload: response.payload,
+          message: `Displaying submissions created during last ${util.maybeSingularize(time, unit)}.`
+        })
+      })
+      .catch(error => {
+        return dispatch({
+          type: GET_SUBMISSIONS_SINCE_FAIL,
           error: error,
         })
         return error
@@ -98,8 +126,8 @@ export const UNSUBMIT_SUCCESS =
   'UNSUBMIT_SUCCESS'
 export function unsubmit(id) {
   return (dispatch) => {
-    dispatch({ type: UNSUBMIT})
-    
+    dispatch({ type: UNSUBMIT })
+
     services.unsubmitSubmission(id)
       .then(() => {
         dispatch({
@@ -107,11 +135,11 @@ export function unsubmit(id) {
         })
         return location.reload()
       }).catch(error => {
-      return  dispatch({
+        return dispatch({
           type: UNSUBMIT_FAIL,
           error: error,
         })
-      
+
 
 
       })
@@ -123,13 +151,13 @@ export const DOWNLOAD_RECEIPT_SUCCESS = 'DOWNLOAD_RECEIPT_SUCCESS'
 export function downloadReceipt(submissionId, serviceId, username) {
   return dispatch => {
     dispatch({ type: DOWNLOAD_RECEIPT })
-    
-      services.downloadSubmission(submissionId).then(response => {
-        excel.downloadExcel(response.payload.excelData, response.payload.fileName)
-        return dispatch({
-          type: DOWNLOAD_RECEIPT_SUCCESS,
-        })
+
+    services.downloadSubmission(submissionId).then(response => {
+      excel.downloadExcel(response.payload.excelData, response.payload.fileName)
+      return dispatch({
+        type: DOWNLOAD_RECEIPT_SUCCESS,
       })
+    })
       .catch(error => {
         return dispatch({
           type: DOWNLOAD_RECEIPT_FAIL,
@@ -147,7 +175,7 @@ export const SUBMIT_SUCCESS =
 export function submitSubmission() {
   return (dispatch, getState) => {
     dispatch({ type: SUBMIT, message: 'Submitting...' })
-    
+
     let data = util.generateSubmitData(getState())
     services.submitSubmission(data)
       .then(() => {
@@ -196,3 +224,4 @@ export function deleteSubmission(id) {
       })
   }
 }
+

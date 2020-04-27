@@ -2,7 +2,12 @@ import { HotTable } from '@handsontable/react'
 
 import 'handsontable/dist/handsontable.full.css'
 import React from 'react'
-import { withStyles } from '@material-ui/core'
+import {
+  ButtonGroup,
+  Button,
+  withStyles,
+} from '@material-ui/core'
+
 
 class SubmissionsGrid extends React.Component {
   constructor(props) {
@@ -11,9 +16,17 @@ class SubmissionsGrid extends React.Component {
   }
 
   render() {
-    const { classes, handleClick, grid } = this.props
+    const { classes, handleGridClick, handleFilterClick, grid } = this.props
     return (
       <div className={classes.container} >
+        <ButtonGroup color="primary" size="small" aria-label="small outlined primary button group">
+          <Button onClick={() => handleFilterClick("months", 1)}>Last Month</Button>
+          <Button onClick={() => handleFilterClick("months", 3)}>Last 3 Months</Button>
+          <Button onClick={() => handleFilterClick("years", 1)}>Last Year</Button>
+          <Button onClick={() => handleFilterClick("years", 2)}>Last 2 Years</Button>
+          <Button onClick={() => handleFilterClick("", 0, true)}>All</Button>‰
+        </ButtonGroup>
+
         <HotTable
           licenseKey="non-commercial-and-evaluation"
           id="hot"
@@ -38,7 +51,7 @@ class SubmissionsGrid extends React.Component {
               let submitted = actionElement ? actionElement.getAttribute('submitted') == "true" : undefined
               let service_id = actionElement ? actionElement.getAttribute('service-id') : undefined
               let id = actionElement ? actionElement.getAttribute('submission-id') : undefined
-              handleClick(coords, submitted, id, service_id)
+              handleGridClick(coords, submitted, id, service_id)
 
             }
           }}

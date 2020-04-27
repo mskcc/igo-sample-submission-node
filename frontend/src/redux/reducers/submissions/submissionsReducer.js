@@ -30,6 +30,21 @@ function submissionsReducer(state = initialState, action) {
                 loading: false,
             }
 
+        case ActionTypes.GET_SUBMISSIONS_SINCE:
+            return {
+                ...state,
+                loading: true,
+            }
+        case ActionTypes.GET_SUBMISSIONS_SINCE_FAIL:
+            return { ...state, loading: false }
+
+        case ActionTypes.GET_SUBMISSIONS_SINCE_SUCCESS:
+            return {
+                ...state,
+                grid: action.payload,
+                loading: false,
+            }
+
         case ActionTypes.CREATE_PARTIAL_SUBMISSION:
             return {
                 ...state,

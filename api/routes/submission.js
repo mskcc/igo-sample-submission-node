@@ -5,6 +5,7 @@ var router = express.Router();
 
 router.get("/list", SubmissionController.list);
 router.get("/grid", SubmissionController.grid);
+router.get("/since/:time", SubmissionController.since);
 router.get("/:id", SubmissionController.submission);
 router.get("/download/:id", SubmissionController.download);
 router.post("/create", SubmissionController.create);

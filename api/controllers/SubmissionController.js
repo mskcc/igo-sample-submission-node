@@ -1,7 +1,7 @@
 const apiResponse = require("../util/apiResponse");
 const { body, param, validationResult } = require("express-validator");
 const util = require("../util/helpers");
-
+var _ = require('lodash');
 var mongoose = require("mongoose");
 var ObjectId = mongoose.Types.ObjectId;
 
@@ -92,6 +92,54 @@ exports.grid = [
         SubmissionModel.find({}, '')
             .exec(function (err, submissions) {
                 if (err) {
+                    return apiResponse.errorResponse(
+                        res,
+                        'Could not retrieve submissions.'
+                    )
+                }
+                let submissionGridPromise = util.generateSubmissionGrid(submissions, res.user.role)
+                Promise.all([submissionGridPromise]).then((results) => {
+                    if (results.some(x => x.length == 0)) {
+                        return apiResponse.errorResponse(
+                            res,
+                            `Could not retrieve submission grid.`
+                        )
+                    }
+                    let [submissionGridResult] = results
+                    return apiResponse.successResponseWithData(
+                        res,
+                        "Operation success",
+                        submissionGridResult
+                    );
+
+                }).catch((reasons) => {
+                    return apiResponse.errorResponse(
+                        res,
+                        reasons
+                    )
+                })
+
+            });
+    }
+]
+
+
+// table for all todo: table for users
+exports.since = [
+    param("time").exists().isInt().withMessage("time limit must be specified."),
+    function (req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(
+                res,
+                "Validation error.",
+                errors.array()
+            );
+        }
+        let time = req.params.time
+        SubmissionModel.find({ createdAt: { $gt: time } }, '')
+            .exec(function (err, submissions) {
+                if (err || _.isEmpty(submissions)) {
                     return apiResponse.errorResponse(
                         res,
                         'Could not retrieve submissions.'
@@ -331,11 +379,11 @@ exports.download = [
                     )
                 }
                 let excelData = util.generateExcel(submission)
-              
+
                 return apiResponse.successResponseWithData(
                     res,
                     "Operation success",
-                     {excelData, fileName: `Receipt-${submission.formValues.serviceId}-${submission.username}` }
+                    { excelData, fileName: `Receipt-${submission.formValues.serviceId}-${submission.username}` }
                 );
             });
     }
