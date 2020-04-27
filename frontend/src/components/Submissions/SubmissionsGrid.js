@@ -44,14 +44,14 @@ class SubmissionsGrid extends React.Component {
           dropdownMenu={['filter_by_value', 'filter_action_bar']}
           // make actions clickable
           afterOnCellMouseDown={(event, coords, TD) => {
-            console.log(coords)
-            if (coords.row != -1 && ([10, 11, 12, 13].indexOf(coords.col) > -1)) {
-              console.log(coords)
+            if (coords.row != -1) {
               let actionElement = TD.firstElementChild || undefined
-              let submitted = actionElement ? actionElement.getAttribute('submitted') == "true" : undefined
-              let service_id = actionElement ? actionElement.getAttribute('service-id') : undefined
-              let id = actionElement ? actionElement.getAttribute('submission-id') : undefined
-              handleGridClick(coords, submitted, id, service_id)
+              if (actionElement) {
+                let submitted = actionElement.getAttribute('submitted') == "true" || undefined
+                let service_id = actionElement.getAttribute('service-id') || undefined
+                let id = actionElement.getAttribute('submission-id') || undefined
+                handleGridClick(coords, submitted, id, service_id)
+              }
 
             }
           }}

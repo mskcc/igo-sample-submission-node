@@ -19,7 +19,7 @@ export class SubmissionsPage extends Component {
     this.props.getSubmissionsSince(unit, time)
   }
 
-  handleClick = (coords, submitted, id, serviceId) => {
+  handleGridClick = (coords, submitted, id, serviceId) => {
     let column = this.props.submissions.grid.columnFeatures[coords.col].data
     if (column === 'edit' && !submitted) {
       this.handleEdit(id)

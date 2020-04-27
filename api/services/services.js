@@ -26,6 +26,14 @@ const formatData = function (resp) {
     const data = resp.data || [];
     return data;
 };
+const formatBarcodes = function (resp) {
+    const data = resp.data || [];
+    let barcodes = {}
+    data.map((element) => {
+    barcodes[element.barcodId.toLowerCase()] = element.barcodeTag
+    })
+    return barcodes
+};
 
 const formatDataMaterialsOrApps = function (resp) {
     const data = resp.data[0] || [];
@@ -99,6 +107,26 @@ exports.getPicklist = listname => {
 
 }
 
+
+
+exports.getBarcodes = () => {
+    const url = `${LIMS_URL}/getBarcodeList?user=${process.env.API_USER}`;
+    logger.log("info", `Sending request to ${url}`);
+    return axios.get(url,
+        {
+            auth: { ...LIMS_AUTH },
+            httpsAgent: agent
+        })
+        .then((resp) => {
+            logger.log("info", `Successfully retrieved response from ${url}`);
+            return resp;
+        }).catch((error) => {
+            logger.log("info", `Error retrieving response from ${url}`)
+            throw error
+        }).then((resp) => { return formatBarcodes(resp) })
+
+}
+
 exports.getMaterials = (application) => {
     const url = `${LIMS_URL}/getIntakeTerms?recipe=${application.replace("/", "_PIPI_SLASH_")}`;
     logger.log("info", `Sending request to ${url}`);
@@ -159,8 +187,8 @@ exports.submit = (bankedSample) => {
         {
             auth: { ...LIMS_AUTH },
             httpsAgent: agent,
-            params: {...bankedSample}
-        },)
+            params: { ...bankedSample }
+        })
         .then((resp) => {
             logger.log("info", `Successfully retrieved response from ${url}`);
             return resp;

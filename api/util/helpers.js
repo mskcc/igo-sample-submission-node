@@ -54,9 +54,12 @@ function cacheAllPicklists(limsColumns) {
             }
             let picklist = columns.gridColumns[element[0]].picklistName
 
+
             if (picklist != undefined) {
                 picklists[picklist] = []
-                if (picklist === "tumorType") {
+                if (picklist === "barcodes") {
+                    picklistPromises.push(cache.get(picklist + "-Picklist", () => services.getBarcodes()))
+                } else if (picklist === "tumorType") {
                     picklistPromises.push(cache.get(picklist + "-Picklist", () => services.getOnco()))
 
                 } else { picklistPromises.push(cache.get(picklist + "-Picklist", () => services.getPicklist(picklist))) }
@@ -125,7 +128,10 @@ function fillColumns(limsColumnList, userRole, formValues, picklists) {
                 colDef = { ...colDef, ...formattingAdjustments }
             }
             if (colDef.picklistName && !colDef.source) {
-                colDef.source = picklists[colDef.picklistName];
+                if (colDef.data == "index") {
+                    colDef.barcodeHash = picklists[colDef.picklistName]
+                } else { colDef.source = picklists[colDef.picklistName] }
+
             }
 
             colDef.error = colDef.error ? colDef.error : 'Invalid format.'

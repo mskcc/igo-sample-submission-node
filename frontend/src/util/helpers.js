@@ -255,9 +255,8 @@ export const findIndexSeq = (grid, colIndex, rowIndex, indexId) => {
     grid.rows[rowIndex].indexSequence = ''
     return { success: true, rows: grid.rows }
   }
-  if (indexId in barcodes) {
-    let indexSeq = barcodes[indexId].barcodeTag
-
+  if (indexId in barcodes) {    
+    let indexSeq = barcodes[indexId]
     grid.rows[rowIndex].indexSequence = indexSeq
     return { success: true, rows: grid.rows }
   } else {

@@ -180,6 +180,7 @@ export const gridColumns = {
         name: "Index",
         columnHeader: "Index",
         data: "index",
+        picklistName: "barcodes",
         pattern: validationPatterns.alphanum,
         error: "Index ID is not known to IGO.",
         tooltip:
