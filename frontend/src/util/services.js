@@ -48,6 +48,20 @@ export const getSubmission = id => {
 
 }
 
+
+export const downloadSubmission = id => {
+    const url = `${Config.NODE_API_ROOT}/submission/download/${id}`;
+    return axios.get(url)
+        .then((resp) => {
+            console.log(resp)
+            return resp;
+        }).catch((error) => {
+            console.log(error)
+            throw error
+        }).then((resp) => { return resp })
+
+}
+
 export const createSubmission = data => {
     const url = `${Config.NODE_API_ROOT}/submission/create`;
     return axios.post(url, { ...data })

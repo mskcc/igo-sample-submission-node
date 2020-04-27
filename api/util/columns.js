@@ -517,3 +517,53 @@ export const submissionColumns = {
 
 }
 
+export const formColumns = {
+    sharedWith: {
+        data: "sharedWith",
+        columnHeader: "Submission Shared With",
+    },
+    groupingChecked: {
+        data: "groupingChecked",
+        columnHeader: "Is Grouping",
+    },
+    application: {
+        data: "application",
+        columnHeader: "Application",
+    },
+    material: {
+        data: "material",
+        columnHeader: "Material",
+    },
+    serviceId: {
+        data: "serviceId",
+        columnHeader: "Service Id",
+    },
+    numberOfSamples: {
+        data: "numberOfSamples",
+        columnHeader: "#Samples",
+    },
+    species: {
+        data: "species",
+        columnHeader: "Species",
+    },
+    container: {
+        data: "container",
+        columnHeader: "Container",
+    },
+    patientIdType: {
+        data: "patientIdType",
+        columnHeader: "Patient ID Type",
+    },
+    altServiceId: {
+        data: "altServiceId",
+        columnHeader: "Alt. Service ID",
+    },
+}
+
+export const noShowColumns = [
+    "rowIndex", "_id", "altServiceId", "groupingChecked"
+]
+
+export const noShowEmptyColumns = [
+    "patientIdType", "sharedWith"
+]

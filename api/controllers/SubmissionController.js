@@ -1,19 +1,11 @@
-
-import CacheService from "../util/cache";
 const apiResponse = require("../util/apiResponse");
 const { body, param, validationResult } = require("express-validator");
 const util = require("../util/helpers");
-var _ = require('lodash');
-const service = require("../services/services");
-const ttl = 60 * 60 * 1; // cache for 1 Hour
-const cache = new CacheService(ttl); // Create a new cache service instance
-const { constants } = require("../util/constants");
 
 var mongoose = require("mongoose");
 var ObjectId = mongoose.Types.ObjectId;
 
 const SubmissionModel = require("../models/SubmissionModel");
-
 
 exports.list = [
     function (req, res) {
@@ -55,7 +47,6 @@ exports.submission = [
                         'Could not retrieve submission.'
                     )
                 }
-                // submission.formValues.sharedWith = submission.formValues.sharedWith.replace(`${res.user.username}@mskcc.org`, '')
                 return apiResponse.successResponseWithData(
                     res,
                     "Operation success",
@@ -86,7 +77,6 @@ exports.unsubmit = [
                         'Could not retrieve submission.'
                     )
                 }
-                // submission.formValues.sharedWith = submission.formValues.sharedWith.replace(`${res.user.username}@mskcc.org`, '')
                 return apiResponse.successResponseWithData(
                     res,
                     "Operation success",
@@ -196,7 +186,7 @@ exports.update = [
         let gridValues = JSON.parse(req.body.gridValues)
         let id = req.body.id
 
-        SubmissionModel.findByIdAndUpdate(ObjectId(id), { formValues: formValues, gridValues: gridValues })
+        SubmissionModel.findByIdAndUpdate(ObjectId(id), { formValues: formValues, gridValues: gridValues }).lean()
             .exec(function (err, submission) {
                 if (err) {
                     return apiResponse.errorResponse(
@@ -204,11 +194,10 @@ exports.update = [
                         'Could not update submission.'
                     )
                 }
-                // submission.formValues.sharedWith = submission.formValues.sharedWith.replace(`${res.user.username}@mskcc.org`, '')
                 return apiResponse.successResponseWithData(
                     res,
                     "Operation success",
-                    { submission: submission._doc }
+                    { submission: submission }
                 );
             });
 
@@ -291,7 +280,7 @@ exports.submit = [
 
 
 exports.delete = [
-    body("id").isLength({ min: 1 }).trim().withMessage("submission id must be specified."),
+    body("id").isMongoId().trim().withMessage("id must be valid MongoDB id."),
     function (req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -316,5 +305,38 @@ exports.delete = [
 
                 )
             })
+    }
+]
+
+
+
+exports.download = [
+    param("id").isMongoId().trim().withMessage("id must be valid MongoDB id."),
+    function (req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(
+                res,
+                "Validation error.",
+                errors.array()
+            );
+        }
+        let id = req.params.id
+        SubmissionModel.findById(ObjectId(id)).lean()
+            .exec(function (err, submission) {
+                if (err) {
+                    return apiResponse.errorResponse(
+                        res,
+                        'Could not retrieve submission.'
+                    )
+                }
+                let excelData = util.generateExcel(submission)
+              
+                return apiResponse.successResponseWithData(
+                    res,
+                    "Operation success",
+                     {excelData, fileName: `Receipt-${submission.formValues.serviceId}-${submission.username}` }
+                );
+            });
     }
 ]

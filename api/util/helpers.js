@@ -2,7 +2,7 @@ import CacheService from "./cache";
 const services = require("../services/services");
 const { logger } = require("../util/winston");
 const { constants } = require("./constants");
-const { gridColumns, submissionColumns } = require("./columns");
+const columns = require("./columns");
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 
@@ -49,10 +49,10 @@ function cacheAllPicklists(limsColumns) {
         let picklistPromises = []
         let picklists = {}
         limsColumns.map((element) => {
-            if (!gridColumns[element[0]]) {
+            if (!columns.gridColumns[element[0]]) {
                 reject(`Column '${element[0]}' not found.`)
             }
-            let picklist = gridColumns[element[0]].picklistName
+            let picklist = columns.gridColumns[element[0]].picklistName
 
             if (picklist != undefined) {
                 picklists[picklist] = []
@@ -107,7 +107,7 @@ function fillColumns(limsColumnList, userRole, formValues, picklists) {
         limsColumnList.forEach((element, index) => {
 
             let columnName = element[0]
-            let colDef = gridColumns[columnName];
+            let colDef = columns.gridColumns[columnName];
             if (!colDef) {
                 reject(`Column '${columnName}' not found.`)
             }
@@ -147,7 +147,7 @@ function fillColumns(limsColumnList, userRole, formValues, picklists) {
                     result.columnFeatures[0].data == 'plateId' &&
                     result.columnFeatures[1].data != 'wellPosition'
                 ) {
-                    result.columnFeatures.unshift(gridColumns["Well Position"])
+                    result.columnFeatures.unshift(columns.gridColumns["Well Position"])
                 }
                 // if plate column not present but WellPos is, remove WellPos
                 if (
@@ -180,13 +180,13 @@ const overwriteContainer = (userContainer) => {
     let newContainer
     switch (userContainer) {
         case 'Plates':
-            newContainer = gridColumns["Plate ID"]
+            newContainer = columns.gridColumns["Plate ID"]
             break
         case 'Micronic Barcoded Tubes':
-            newContainer = gridColumns["Micronic Tube Barcode"]
+            newContainer = columns.gridColumns["Micronic Tube Barcode"]
             break
         case 'Blocks/Slides/Tubes':
-            newContainer = gridColumns["Block/Slide/TubeID"]
+            newContainer = columns.gridColumns["Block/Slide/TubeID"]
             break
         default:
             return (`Container '${userContainer}' not found.`)
@@ -374,13 +374,13 @@ export function generateSubmissionGrid(submissions, userRole) {
     return new Promise((resolve, reject) => {
         try {
             let grid = { columnHeaders: [], rows: [], columnFeatures: [] }
-            grid.columnHeaders = Object.keys(submissionColumns).map(a => submissionColumns[a].name)
-            grid.columnFeatures = Object.values(submissionColumns)
+            grid.columnHeaders = Object.keys(columns.submissionColumns).map(a => columns.submissionColumns[a].name)
+            grid.columnFeatures = Object.values(columns.submissionColumns)
 
             if (userRole === "user") {
                 grid.columnHeaders = grid.columnHeaders.filter((element) => { return element !== "Unsubmit" })
                 grid.columnFeatures = grid.columnFeatures.filter((element) => { return element.name != "Unsubmit" })
-                
+
             }
             let rows = []
             for (let i = 0; i < submissions.length; i++) {
@@ -489,4 +489,44 @@ export function submit(submission, user, transactionId) {
                 .catch(err => reject(`Submit failed at sample ${bankedSample.userId}, index ${bankedSample.rowIndex}. ${err}`))
         }
     })
+}
+
+// Generate excel from mongoose submission model. 
+// Replaces keys with column names and filters noShow columns.
+export function generateExcel(submission) {
+
+    let sheetData = []
+    let sheetFormData = {}
+    // replace form keys with column names and filter out noShow columns
+    Object.keys(submission.formValues).map((element) => {
+        let colDef = columns.formColumns[element] || ""
+        let isNoShowCol = columns.noShowColumns.includes(element)
+        let isNoShowEmptyCol = columns.noShowEmptyColumns.includes(element) && submission.formValues[element] == ""
+        if (!isNoShowCol && !isNoShowEmptyCol) {
+            let colName = colDef.columnHeader || element
+            sheetFormData[colName] = submission.formValues[element]
+        }
+    })
+
+    submission.gridValues.map((element, index) => {
+        let gridRow = submission.gridValues[index]
+        let sheetGridRow = []
+        Object.keys(gridRow).map((element) => {
+            let colDef = element
+            let isNoShowCol = columns.noShowColumns.includes(element)
+            // find columnHeader for this element in object of objects
+            if (!isNoShowCol) {
+                for (let key in columns.gridColumns) {
+
+                    if (columns.gridColumns[key].data == element) {
+                        colDef = columns.gridColumns[key].columnHeader
+                        break
+                    }
+                }
+                sheetGridRow[colDef] = gridRow[element]
+            }
+        })
+        sheetData.push({ ...sheetFormData, ...sheetGridRow })
+    })
+    return sheetData
 }

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Config } from '../../../config.js'
-import { util, swal, services } from '../../../util'
+import { util, swal, services, excel } from '../../../util'
 
 import Swal from 'sweetalert2'
 
@@ -123,16 +123,11 @@ export const DOWNLOAD_RECEIPT_SUCCESS = 'DOWNLOAD_RECEIPT_SUCCESS'
 export function downloadReceipt(submissionId, serviceId, username) {
   return dispatch => {
     dispatch({ type: DOWNLOAD_RECEIPT })
-    return axios
-      .get(Config.API_ROOT + '/downloadById', {
-        params: { submissionId: submissionId },
-        responseType: 'blob',
-      })
-      .then(response => {
-        dispatch({
+    
+      services.downloadSubmission(submissionId).then(response => {
+        excel.downloadExcel(response.payload.excelData, response.payload.fileName)
+        return dispatch({
           type: DOWNLOAD_RECEIPT_SUCCESS,
-          file: response.data,
-          filename: 'Receipt-' + serviceId,
         })
       })
       .catch(error => {

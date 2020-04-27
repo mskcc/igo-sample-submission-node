@@ -119,13 +119,13 @@ function submissionsReducer(state = initialState, action) {
                 ...state,
             }
         case ActionTypes.DOWNLOAD_RECEIPT_SUCCESS:
-            FileSaver.saveAs(
-                new Blob([action.file], {
-                    type:
-                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                }),
-                action.filename + '.xlsx'
-            )
+            // FileSaver.saveAs(
+            //     new Blob([action.file], {
+            //         // type:
+            //         //     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            //     }),
+            //     action.filename + '.xlsx'
+            // )
 
             return {
                 ...state,
