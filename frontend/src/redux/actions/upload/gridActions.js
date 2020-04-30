@@ -3,7 +3,7 @@ import React from 'react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { updateHeader } from './formActions'
-import  {util, services, swal} from '../../../util'
+import { util, services, swal } from '../../../util'
 
 import {
   diff,
@@ -188,6 +188,52 @@ export function getInitialColumns(formValues, userRole) {
 
 }
 
+export const DECREASE_ROW_NUMBER_SUCCESS = 'DECREASE_NUMBER_SUCCESS'
+export function decreaseRowNumber(change, newRowNumber) {
+  return (dispatch, getState) => {
+    let newRows = util.decreaseRowNumber(getState().upload.grid.rows, change)
+
+    return dispatch({
+      type: DECREASE_ROW_NUMBER_SUCCESS,
+      rows: newRows,
+      rowNumber: newRowNumber
+
+    })
+  }
+}
+
+export const INCREASE_ROW_NUMBER_REQUEST = 'INCREASE_ROW_NUMBER_REQUEST'
+export const INCREASE_ROW_NUMBER_FAIL = 'INCREASE_ROW_NUMBER_FAIL'
+export const INCREASE_ROW_NUMBER_SUCCESS = 'INCREASE_ROW_NUMBER_SUCCESS'
+export function increaseRowNumber(prevRowNumber, newRowNumber) {
+  return (dispatch, getState) => {
+    let columnFeaturesJson = JSON.stringify(getState().upload.grid.columnFeatures)
+    let formValuesJson = JSON.stringify(getState().upload.form.selected)
+    services.getAdditionalRows({
+      columnFeatures: columnFeaturesJson,
+      formValues: formValuesJson,
+      prevRowNumber: prevRowNumber,
+    })
+      .then((resp) => {
+        return dispatch({
+          type: INCREASE_ROW_NUMBER_SUCCESS,
+          additionalRows: resp.payload.additionalRows,
+          rowNumber: newRowNumber,
+          message: 'Loaded!',
+        })
+
+      })
+      .catch(error => {
+        return dispatch({
+          type: INCREASE_ROW_NUMBER_FAIL,
+          error: error
+        })
+      })
+
+  }
+}
+
+
 
 export const EDIT_SUBMISSION = 'EDIT_SUBMISSION'
 export const GET_SUBMISSION_TO_EDIT_FAIL = 'GET_SUBMISSION_TO_EDIT_FAIL'
@@ -199,7 +245,7 @@ export function populateGridFromSubmission(submissionId, ownProps) {
       .then((resp) => {
         let submission = resp.payload.submission
         dispatch(getInitialColumns(submission.formValues), getState().user.role)
-          .then(dispatch( updateHeader(submission.formValues)))
+          .then(dispatch(updateHeader(submission.formValues)))
           .then(() => {
             dispatch({
               type: 'GET_SUBMISSION_TO_EDIT_SUCCESS',

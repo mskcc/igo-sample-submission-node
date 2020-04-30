@@ -7,13 +7,13 @@ import {
   FormControl,
   InputAdornment,
   Paper,
-  TextField,
+  Grow,
   withStyles,
 } from '@material-ui/core'
 
 import { Button, Checkbox, Dropdown, Input } from '../index'
 
-import {swal} from '../../util'
+import { swal } from '../../util'
 
 class UploadForm extends React.Component {
   constructor(props) {
@@ -81,13 +81,13 @@ class UploadForm extends React.Component {
     }
   }
 
+  
   handleCheckbox = name => () => {
     this.setState({
       values: { ...this.state.values, [name]: event.target.checked },
     })
-    if(event.target.checked)
-    {this.props.handleInputChange(name, event.target.checked)}
-    else{
+    if (event.target.checked) { this.props.handleInputChange(name, event.target.checked) }
+    else {
       this.props.handleInputChange(name, event.target.checked)
       this.props.handleInputChange('sharedWith', "")
     }
@@ -173,8 +173,8 @@ class UploadForm extends React.Component {
 
         case 'sharedWith':
           if (values.isShared) {
-            
-            if (values.sharedWith == ""){
+
+            if (values.sharedWith == "") {
               formValid[value] = false
               break
             }
@@ -235,6 +235,8 @@ class UploadForm extends React.Component {
       handleSpeciesChange,
       gridIsLoading,
       nothingToChange,
+      gridNumberOfSamples,
+      submitRowNumberUpdate
     } = this.props
     const { formValid, values } = this.state
     const buttonClassname = classNames({
@@ -354,7 +356,7 @@ class UploadForm extends React.Component {
                 error={!formValid.numberOfSamples}
                 onChange={this.handleChange}
                 inputProps={{
-                  inputProps: { min: 0 },
+                  inputProps: { min: 1 },
                 }}
                 value={form.selected.numberOfSamples}
               />
@@ -399,6 +401,18 @@ class UploadForm extends React.Component {
 
             </form>
             <div>
+
+
+              {form.selected.numberOfSamples != gridNumberOfSamples && gridNumberOfSamples > 0 &&
+                <Button
+                  color="secondary"
+                  id="updateNumberOfRows"
+                  onClick={submitRowNumberUpdate}
+                  isLoading={false}
+                  nothingToSubmit={false}
+                />
+              }
+
               <Button
                 color="primary"
                 id="formSubmit"
@@ -406,7 +420,6 @@ class UploadForm extends React.Component {
                 isLoading={gridIsLoading}
                 nothingToSubmit={nothingToChange}
               />
-
               <Button
                 color="secondary"
                 id="formClear"
@@ -414,6 +427,8 @@ class UploadForm extends React.Component {
                 isLoading={false}
                 nothingToSubmit={false}
               />
+
+
             </div>
           </Paper>
         )}

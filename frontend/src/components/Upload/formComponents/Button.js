@@ -2,6 +2,7 @@ import React from 'react'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import MuiButton from '@material-ui/core/Button'
 import Fade from '@material-ui/core/Fade'
+import Grow from '@material-ui/core/Grow';
 
 import classNames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
@@ -17,38 +18,40 @@ const Button = ({
   classes,
   onClick,
 }) => (
-  <Translate>
-    {({ translate }) => (
-      <React.Fragment>
-        <MuiButton
-          variant="contained"
-          type="submit"
-          form={formId}
-          className={classes.button}
-          color={color}
-          disabled={isLoading}
-          onClick={onClick}
-        >
-          {translate('upload.' + id + '_label')}
+    <Translate>
+      {({ translate }) => (
+        <React.Fragment>
+          {/* <Grow in={true}> */}
+            <MuiButton
+              variant="contained"
+              type="submit"
+              form={formId}
+              className={classes.button}
+              color={color}
+              disabled={isLoading}
+              onClick={onClick}
+            >
+              {translate('upload.' + id + '_label')}
 
-          {isLoading && (
-            <CircularProgress
-              color="inherit"
-              size={24}
-              className={classes.buttonProgress}
-            />
-          )}
-        </MuiButton>
+              {isLoading && (
+                <CircularProgress
+                  color="inherit"
+                  size={24}
+                  className={classes.buttonProgress}
+                />
+              )}
+            </MuiButton>
+          {/* </Grow> */}
+          <Fade in={nothingToSubmit}>
+            <div className={classes.nothingToSubmit}>
+              {translate('upload.form.nothing_to_change')}
+            </div>
+          </Fade>
+          </React.Fragment>
 
-        <Fade in={nothingToSubmit}>
-          <div className={classes.nothingToSubmit}>
-            {translate('upload.form.nothing_to_change')}
-          </div>
-        </Fade>
-      </React.Fragment>
-    )}
-  </Translate>
-)
+      )}
+    </Translate>
+  )
 
 const styles = theme => ({
   button: {

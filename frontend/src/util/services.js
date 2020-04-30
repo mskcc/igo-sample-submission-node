@@ -37,6 +37,16 @@ axios.interceptors.response.use(
 )
 
 
+export const getAdditionalRows = (data) => {
+    const url = `${Config.NODE_API_ROOT}/upload/additionalRows`;
+    return axios.post(url, { ...data })
+        .then((resp) => {
+            return resp;
+        }).catch((error) => {
+            throw error
+        }).then((resp) => { return resp })
+
+}
 export const getSubmission = id => {
     const url = `${Config.NODE_API_ROOT}/submission/${id}`;
     return axios.get(url)

@@ -9,10 +9,6 @@ router.get("/applicationsAndContainers", UploadController.applicationsAndContain
 router.get("/picklist", UploadController.picklist);
 router.post("/grid", UploadController.grid);
 router.post("/crdbId", UploadController.crdbId);
-
-// router.get("/:id", BookController.bookDetail);
-// router.post("/", BookController.bookStore);
-// router.put("/:id", BookController.bookUpdate);
-// router.delete("/:id", BookController.bookDelete);
+router.post("/additionalRows", UploadController.additionalRows);
 
 module.exports = router;

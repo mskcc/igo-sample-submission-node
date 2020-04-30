@@ -2,7 +2,7 @@ import CacheService from "./cache";
 const services = require("../services/services");
 const { logger } = require("../util/winston");
 const { constants } = require("./constants");
-const columns = require("./columns");
+const columnsConstants = require("./columns");
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 
@@ -48,11 +48,14 @@ function cacheAllPicklists(limsColumns) {
     return new Promise((resolve, reject) => {
         let picklistPromises = []
         let picklists = {}
+        
         limsColumns.map((element) => {
-            if (!columns.gridColumns[element[0]]) {
+            
+           
+            if (!columnsConstants.gridColumns[element[0]]) {
                 reject(`Column '${element[0]}' not found.`)
             }
-            let picklist = columns.gridColumns[element[0]].picklistName
+            let picklist = columnsConstants.gridColumns[element[0]].picklistName
 
 
             if (picklist != undefined) {
@@ -80,9 +83,18 @@ function cacheAllPicklists(limsColumns) {
 export function generateGrid(limsColumnList, userRole, formValues) {
 
     return new Promise((resolve, reject) => {
+        let columns = {
+            columnFeatures: [],
+            rowData: [],
+            columnHeaders: [],
+            hiddenColumns: []
+        };
+
         if (!limsColumnList) { PromiseRejectionEvent("Invalid Combination.") }
+        // combinations with no optional columns return an empty element we need to filter out
+        limsColumnList = limsColumnList.filter(element => element[0] != '')
         cacheAllPicklists(limsColumnList)
-            .then((picklists) => fillColumns(limsColumnList, userRole, formValues, picklists))
+            .then((picklists) => fillColumns(columns, limsColumnList, userRole, formValues, picklists))
             .then((columns) => fillData(columns, formValues)).catch((reasons) => reject(reasons))
             .then((columns) => {
                 if (columns.columnFeatures.some((x) => x.data == "wellPosition")) {
@@ -93,14 +105,9 @@ export function generateGrid(limsColumnList, userRole, formValues) {
     })
 }
 
-function fillColumns(limsColumnList, userRole, formValues, picklists) {
+function fillColumns(columns, limsColumnList, userRole, formValues, picklists) {
     return new Promise((resolve, reject) => {
-        let result = {
-            columnFeatures: [],
-            rowData: [],
-            columnHeaders: [],
-            hiddenColumns: []
-        };
+
         let requiredColumns = []
         limsColumnList.map(item => {
             if (item.includes('Required')) {
@@ -110,12 +117,13 @@ function fillColumns(limsColumnList, userRole, formValues, picklists) {
         limsColumnList.forEach((element, index) => {
 
             let columnName = element[0]
-            let colDef = columns.gridColumns[columnName];
+            let colDef = columnsConstants.gridColumns[columnName];
             if (!colDef) {
                 reject(`Column '${columnName}' not found.`)
             }
             if (colDef.container && colDef.container !== formValues.container && formValues.application != 'Expanded_Genomics'
             ) {
+                
                 colDef = overwriteContainer(formValues.container)
             }
 
@@ -135,10 +143,10 @@ function fillColumns(limsColumnList, userRole, formValues, picklists) {
             }
 
             colDef.error = colDef.error ? colDef.error : 'Invalid format.'
-            result.columnFeatures.push(colDef);
+            columns.columnFeatures.push(colDef);
             if (colDef.hiddenFrom && colDef.hiddenFrom === userRole) {
-                result.hiddenColumns.push(
-                    result.columnFeatures.length
+                columns.hiddenColumns.push(
+                    columns.columnFeatures.length
                 );
             }
             colDef.optional = requiredColumns.includes(columnName) ? false : true
@@ -150,20 +158,20 @@ function fillColumns(limsColumnList, userRole, formValues, picklists) {
             if (index == limsColumnList.length - 1) {
                 // if plate column present but not WellPos, add WellPos
                 if (
-                    result.columnFeatures[0].data == 'plateId' &&
-                    result.columnFeatures[1].data != 'wellPosition'
+                    columns.columnFeatures[0].data == 'plateId' &&
+                    columns.columnFeatures[1].data != 'wellPosition'
                 ) {
-                    result.columnFeatures.unshift(columns.gridColumns["Well Position"])
+                    columns.columnFeatures.unshift(columnsConstants.gridColumns["Well Position"])
                 }
                 // if plate column not present but WellPos is, remove WellPos
                 if (
                     formValues.container != 'Plates' &&
-                    result.columnFeatures[1].data == 'wellPosition'
+                    columns.columnFeatures[1].data == 'wellPosition'
                 ) {
-                    result.columnFeatures[1] = result.columnFeatures[0]
-                    result.columnFeatures.shift()
+                    columns.columnFeatures[1] = columns.columnFeatures[0]
+                    columns.columnFeatures.shift()
                 }
-                result.columnHeaders = result.columnFeatures.map(
+                columns.columnHeaders = columns.columnFeatures.map(
                     a =>
                         '<span class="' +
                         a.className +
@@ -173,7 +181,7 @@ function fillColumns(limsColumnList, userRole, formValues, picklists) {
                         a.columnHeader +
                         '</span>'
                 )
-                resolve(result)
+                resolve(columns)
             }
         })
 
@@ -185,14 +193,15 @@ function fillColumns(limsColumnList, userRole, formValues, picklists) {
 const overwriteContainer = (userContainer) => {
     let newContainer
     switch (userContainer) {
+        
         case 'Plates':
-            newContainer = columns.gridColumns["Plate ID"]
+            newContainer = columnsConstants.gridColumns["Plate ID"]
             break
         case 'Micronic Barcoded Tubes':
-            newContainer = columns.gridColumns["Micronic Tube Barcode"]
+            newContainer = columnsConstants.gridColumns["Micronic Tube Barcode"]
             break
         case 'Blocks/Slides/Tubes':
-            newContainer = columns.gridColumns["Block/Slide/TubeID"]
+            newContainer = columnsConstants.gridColumns["Block/Slide/TubeID"]
             break
         default:
             return (`Container '${userContainer}' not found.`)
@@ -200,7 +209,26 @@ const overwriteContainer = (userContainer) => {
     return (newContainer)
 }
 
+// generate rows with same autofilled and consecutive wellPos values, only return the additional rows
+export const generateAdditionalRows = (columnFeatures, formValues, prevRowNumber) => {
+    return new Promise((resolve) => {
+        let columns = { columnFeatures: columnFeatures, formValues: formValues }
+        fillData(columns, formValues).then((columns) => {
 
+            if (columns.columnFeatures.some((x) => x.data == "wellPosition")) {
+                (columns = setWellPos(columns))
+            }
+
+            for (let i = 0; i < prevRowNumber; i++) {
+                columns.rowData.pop()
+            }
+            //delete all old rows
+
+            resolve(columns.rowData)
+        })
+    })
+
+}
 
 // Lots of autofilling happening here
 const fillData = (columns, formValues) => {
@@ -380,8 +408,8 @@ export function generateSubmissionGrid(submissions, userRole) {
     return new Promise((resolve, reject) => {
         try {
             let grid = { columnHeaders: [], rows: [], columnFeatures: [] }
-            grid.columnHeaders = Object.keys(columns.submissionColumns).map(a => columns.submissionColumns[a].name)
-            grid.columnFeatures = Object.values(columns.submissionColumns)
+            grid.columnHeaders = Object.keys(columnsConstants.submissionColumns).map(a => columnsConstants.submissionColumns[a].name)
+            grid.columnFeatures = Object.values(columnsConstants.submissionColumns)
 
             if (userRole === "user") {
                 grid.columnHeaders = grid.columnHeaders.filter((element) => { return element !== "Unsubmit" })
@@ -505,9 +533,9 @@ export function generateExcel(submission) {
     let sheetFormData = {}
     // replace form keys with column names and filter out noShow columns
     Object.keys(submission.formValues).map((element) => {
-        let colDef = columns.formColumns[element] || ""
-        let isNoShowCol = columns.noShowColumns.includes(element)
-        let isNoShowEmptyCol = columns.noShowEmptyColumns.includes(element) && submission.formValues[element] == ""
+        let colDef = columnsConstants.formColumns[element] || ""
+        let isNoShowCol = columnsConstants.noShowColumns.includes(element)
+        let isNoShowEmptyCol = columnsConstants.noShowEmptyColumns.includes(element) && submission.formValues[element] == ""
         if (!isNoShowCol && !isNoShowEmptyCol) {
             let colName = colDef.columnHeader || element
             sheetFormData[colName] = submission.formValues[element]
@@ -519,13 +547,13 @@ export function generateExcel(submission) {
         let sheetGridRow = []
         Object.keys(gridRow).map((element) => {
             let colDef = element
-            let isNoShowCol = columns.noShowColumns.includes(element)
+            let isNoShowCol = columnsConstants.noShowColumns.includes(element)
             // find columnHeader for this element in object of objects
             if (!isNoShowCol) {
-                for (let key in columns.gridColumns) {
+                for (let key in columnsConstants.gridColumns) {
 
-                    if (columns.gridColumns[key].data == element) {
-                        colDef = columns.gridColumns[key].columnHeader
+                    if (columnsConstants.gridColumns[key].data == element) {
+                        colDef = columnsConstants.gridColumns[key].columnHeader
                         break
                     }
                 }

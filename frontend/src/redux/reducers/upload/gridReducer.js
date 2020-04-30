@@ -86,6 +86,26 @@ export default function gridReducer(state = initialGridState, action) {
         // action.application,
       }
 
+    case ActionTypes.DECREASE_ROW_NUMBER_SUCCESS:
+      return {
+        ...state,
+        rows: action.rows,
+        form: {
+          ...state.form,
+          numberOfSamples: action.rowNumber,
+        },
+      }
+
+    case ActionTypes.INCREASE_ROW_NUMBER_SUCCESS:
+      return {
+        ...state,
+        rows: state.rows.concat(action.additionalRows),
+        form: {
+          ...state.form,
+          numberOfSamples: action.rowNumber,
+        },
+      }
+
     case ActionTypes.HANDLE_MRN_SUCCESS:
       return {
         ...state,

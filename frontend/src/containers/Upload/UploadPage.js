@@ -18,8 +18,15 @@ export class UploadPage extends Component {
     this.props.addGridToBankedSample(this.props)
   }
 
-  componentDidMount() {
-    // this.props.refreshToken()
+  submitRowNumberUpdate = () => {
+    let newRowNumber = this.props.form.selected.numberOfSamples
+    let prevRowNumber = this.props.grid.form.numberOfSamples
+    let change = (newRowNumber - prevRowNumber)
+    if (change < 0)
+    {return this.props.decreaseRowNumber(change, newRowNumber)}
+    if (change > 0){
+      return this.props.increaseRowNumber(prevRowNumber, newRowNumber)
+    }
   }
 
   render() {
@@ -27,8 +34,10 @@ export class UploadPage extends Component {
       <React.Fragment>
         <UploadFormContainer
           handleSubmit={this.handleFormSubmit}
+          submitRowNumberUpdate={this.submitRowNumberUpdate}
           gridIsLoading={this.props.grid.gridIsLoading}
           nothingToChange={this.props.grid.nothingToChange}
+          gridNumberOfSamples={this.props.grid.form.numberOfSamples}
         />
 
         {this.props.grid.rows.length > 0 && (
@@ -45,6 +54,7 @@ UploadPage.defaultProps = {
 
 const mapStateToProps = state => ({
   grid: state.upload.grid,
+  form: state.upload.form,
 })
 
 export default withLocalize(

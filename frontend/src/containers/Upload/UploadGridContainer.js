@@ -83,18 +83,15 @@ class UploadGridContainer extends React.Component {
     if (!match.success) {
       return swal.formGridMismatch(match)
     }
-    let hasEmptyColumns = util.checkEmptyColumns(columnFeatures, rows, hiddenColumns)
+    let emptyColumns = util.checkEmptyColumns(columnFeatures, rows, hiddenColumns)
 
-    if (hasEmptyColumns) {
+    if (emptyColumns.size > 0) {
       swal.emptyFieldsError(emptyColumns)
       return
     } else {
       this.props.submitSubmission() }
 
   }
-
-
-
 
   render() {
     const { grid, user } = this.props
@@ -106,6 +103,7 @@ class UploadGridContainer extends React.Component {
         handleMRN={this.handleMRN}
         handleIndex={this.handleIndex}
         handleAssay={this.handleAssay}
+        handleRowNumberUpdate={this.handleRowNumberUpdate}
         handleTumorType={this.handleTumorType}
         handleSubmit={this.handleSubmit}
         handleChange={this.handleChange}

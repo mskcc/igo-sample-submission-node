@@ -320,4 +320,48 @@ exports.crdbId = [
     }
 ];
 
+exports.additionalRows = [
+    body("formValues").isJSON().isLength({ min: 1 }).trim().withMessage("formValues must be JSON."),
+    body("columnFeatures").isJSON().isLength({ min: 1 }).trim().withMessage("columnFeatures must be JSON."),
+    body("prevRowNumber").isInt().isLength({ min: 1 }).trim().withMessage("prevRowNumber must be int."),
+function (req, res) {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(
+                res,
+                "Validation error.",
+                errors.array()
+            );
+        } else {
+            let columnFeatures = JSON.parse(req.body.columnFeatures)
+            let formValues = JSON.parse(req.body.formValues)
+            let prevRowNumber = JSON.parse(req.body.prevRowNumber)
+
+            let rowPromise =  util.generateAdditionalRows(columnFeatures, formValues, prevRowNumber)
+
+            Promise.all([rowPromise]).then((results) => {
+                if (results.some(x => x.length == 0)) {
+                    return apiResponse.errorResponse(
+                        res,
+                        `Could not retrieve autofilled row.`
+                    )
+                }
+                let [additionalRows] = results
+                let responseObject = {
+                    additionalRows
+                };
+                return apiResponse.successResponseWithData(
+                    res,
+                    "Operation success",
+                    responseObject
+                );
+            })
+        }
+    } catch (err) {
+        return apiResponse.errorResponse(res, err);
+    }
+}
+];
+
 

@@ -1,7 +1,7 @@
 import { Config } from '../config.js'
 
 export const maybeSingularize = (count, noun) =>
-  count === 1 ? `${noun.replace('s','')}` : `${count} ${noun}`
+  count === 1 ? `${noun.replace('s', '')}` : `${count} ${noun}`
 // generate rows depending on whether we need to add or substract rows, prefill some
 // SERVERSIDE, add trim or add clientside!
 export const generateRows = (columns, formValues, numberToAdd) => {
@@ -146,24 +146,24 @@ export const updateRows = (formValues, grid) => {
 export const checkEmptyColumns = (columnFeatures, rows, hiddenColumns) => {
   let emptyColumns = new Set()
 
-    for (let i = 0; i < columnFeatures.length; i++) {
-      for (let j = 0; j < rows.length; j++) {
-        if (
-          hiddenColumns.columns &&
-          (columnFeatures[i].columnHeader == 'CMO Patient Id' ||
-            columnFeatures[i].columnHeader == 'Normalized Patient Id')
-        ) {
-          continue
-        } else if (
-          columnFeatures[i].optional == false &&
-          !rows[j][columnFeatures[i].data]
-        ) {
-          emptyColumns.add(columnFeatures[i].columnHeader)
-        }
+  for (let i = 0; i < columnFeatures.length; i++) {
+    for (let j = 0; j < rows.length; j++) {
+      if (
+        hiddenColumns.columns &&
+        (columnFeatures[i].columnHeader == 'CMO Patient Id' ||
+          columnFeatures[i].columnHeader == 'Normalized Patient Id')
+      ) {
+        continue
+      } else if (
+        columnFeatures[i].optional == false &&
+        !rows[j][columnFeatures[i].data]
+      ) {
+        emptyColumns.add(columnFeatures[i].columnHeader)
       }
     }
+  }
 
-    return emptyColumns.size > 0
+  return emptyColumns
 }
 
 // generate data object to send to sample-rec-backend for
@@ -178,7 +178,7 @@ export const generateSubmitData = (state, isPartial = false) => {
   }
   data.version = Config.VERSION
   let rowsWithIndex = rowsWithRowIndex(state.upload.grid.rows)
-  
+
   data.gridValues = JSON.stringify(rowsWithIndex)
   data.formValues = JSON.stringify(state.upload.grid.form)
 
@@ -215,6 +215,15 @@ export const submissionExists = (
       e.material === material
   )
 }
+
+// ROW NUMBER  DECREASE (INCREASE HANDLED IN API)
+export const decreaseRowNumber = (rows, change) => {
+  for (let i = 0; i > change; i--) {
+    rows.pop()
+  }
+  return rows
+}
+
 
 /*------------ PATIENT ID HANDLING ------------*/
 // make sure MRNs are always redacted and all depending fields handled accordingly
@@ -255,7 +264,7 @@ export const findIndexSeq = (grid, colIndex, rowIndex, indexId) => {
     grid.rows[rowIndex].indexSequence = ''
     return { success: true, rows: grid.rows }
   }
-  if (indexId in barcodes) {    
+  if (indexId in barcodes) {
     let indexSeq = barcodes[indexId]
     grid.rows[rowIndex].indexSequence = indexSeq
     return { success: true, rows: grid.rows }
