@@ -3,7 +3,7 @@ import React from 'react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { updateHeader } from './formActions'
-import { util, services, swal } from '../../../util'
+import { util, swal, services, excel } from '../../../util'
 
 import {
   diff,
@@ -441,9 +441,41 @@ export function handleIndex(colIndex, rowIndex, newValue) {
   }
 }
 
+export const DOWNLOAD_GRID = 'DOWNLOAD_GRID'
+export const DOWNLOAD_GRID_FAIL = 'DOWNLOAD_GRID_FAIL'
+export const DOWNLOAD_GRID_SUCCESS = 'DOWNLOAD_GRID_SUCCESS'
+export function downloadGrid() {
+  return (dispatch, getState) => {
+    dispatch({ type: DOWNLOAD_GRID })
+    let gridJson = JSON.stringify(getState().upload.grid.rows)
+    let material = getState().upload.grid.form.material
+    let application = getState().upload.grid.form.application
+    let data = {
+      grid: gridJson,
+      material: material,
+      application: application,
+    }
+    services.downloadGrid(data).then(response => {
+      excel.downloadExcel(response.payload.excelData, response.payload.fileName)
+      return dispatch({
+        type: DOWNLOAD_GRID_SUCCESS,
+      })
+    })
+      .catch(error => {
+        return dispatch({
+          type: DOWNLOAD_GRID_FAIL,
+          error: error,
+        })
+      })
+  }
+}
+
+
 export const RESET_GRID_ERROR_MESSAGE = 'RESET_GRID_ERROR_MESSAGE'
 
 // Resets the currently visible error message.
 export const resetGridErrorMessage = () => ({
   type: RESET_GRID_ERROR_MESSAGE,
 })
+
+

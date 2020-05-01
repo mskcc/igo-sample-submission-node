@@ -1,12 +1,7 @@
 
 import CacheService from "../util/cache";
-import { resolve } from "dns";
-import { ContextRunnerImpl } from "express-validator/src/chain";
-// const { sanitizeBody } = require("express-validator");
 const apiResponse = require("../util/apiResponse");
 const { body, query, validationResult } = require("express-validator");
-const { sanitizeBody } = require("express-validator");
-const { authenticate, getUser } = require("../middlewares/jwt");
 const util = require("../util/helpers");
 var _ = require('lodash');
 const service = require("../services/services");
@@ -21,9 +16,7 @@ const { constants } = require("../util/constants");
  */
 exports.headerValues = [
     function (req, res) {
-
         let containers = constants.containers
-
         let applicationsPromise = cache.get("Recipe-Picklist", () => service.getPicklist("Recipe"))
         let materialsPromise = cache.get("Exemplar+Sample+Types", () => service.getPicklist("Exemplar+Sample+Types"))
         let speciesPromise = cache.get("Species", () => service.getPicklist("Species"))
@@ -117,7 +110,7 @@ exports.applicationsAndContainers = [
         .trim()
         .withMessage("Material must be specified."),
     function (req, res) {
-        
+
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -195,7 +188,6 @@ exports.picklist = [
 ];
 
 exports.grid = [
-    authenticate,
     body("application")
         .isLength({ min: 1 })
         .trim()
@@ -293,8 +285,8 @@ exports.crdbId = [
                 );
             } else {
                 // remove leading and trailing whitespaces just in case
-                let patientId = req.body.patientId.replace(/^\s+|\s+$/g, '') 
-                let patientIdPromise =  service.getCrdbId(patientId)
+                let patientId = req.body.patientId.replace(/^\s+|\s+$/g, '')
+                let patientIdPromise = service.getCrdbId(patientId)
 
                 Promise.all([patientIdPromise]).then((results) => {
                     if (results.some(x => x.length == 0)) {
@@ -324,8 +316,53 @@ exports.additionalRows = [
     body("formValues").isJSON().isLength({ min: 1 }).trim().withMessage("formValues must be JSON."),
     body("columnFeatures").isJSON().isLength({ min: 1 }).trim().withMessage("columnFeatures must be JSON."),
     body("prevRowNumber").isInt().isLength({ min: 1 }).trim().withMessage("prevRowNumber must be int."),
-function (req, res) {
-    try {
+    function (req, res) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return apiResponse.validationErrorWithData(
+                    res,
+                    "Validation error.",
+                    errors.array()
+                );
+            } else {
+                let columnFeatures = JSON.parse(req.body.columnFeatures)
+                let formValues = JSON.parse(req.body.formValues)
+                let prevRowNumber = JSON.parse(req.body.prevRowNumber)
+
+                let rowPromise = util.generateAdditionalRows(columnFeatures, formValues, prevRowNumber)
+
+                Promise.all([rowPromise]).then((results) => {
+                    if (results.some(x => x.length == 0)) {
+                        return apiResponse.errorResponse(
+                            res,
+                            `Could not retrieve autofilled row.`
+                        )
+                    }
+                    let [additionalRows] = results
+                    let responseObject = {
+                        additionalRows
+                    };
+                    return apiResponse.successResponseWithData(
+                        res,
+                        "Operation success",
+                        responseObject
+                    );
+                })
+            }
+        } catch (err) {
+            return apiResponse.errorResponse(res, err);
+        }
+    }
+];
+
+
+
+exports.export = [
+    body("grid").isJSON().isLength({ min: 1 }).trim().withMessage("grid must be JSON."),
+    body("application").isLength({ min: 1 }).trim().withMessage("Application must be present."),
+    body("material").isLength({ min: 1 }).trim().withMessage("Material must be present."),
+    function (req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(
@@ -333,35 +370,16 @@ function (req, res) {
                 "Validation error.",
                 errors.array()
             );
-        } else {
-            let columnFeatures = JSON.parse(req.body.columnFeatures)
-            let formValues = JSON.parse(req.body.formValues)
-            let prevRowNumber = JSON.parse(req.body.prevRowNumber)
-
-            let rowPromise =  util.generateAdditionalRows(columnFeatures, formValues, prevRowNumber)
-
-            Promise.all([rowPromise]).then((results) => {
-                if (results.some(x => x.length == 0)) {
-                    return apiResponse.errorResponse(
-                        res,
-                        `Could not retrieve autofilled row.`
-                    )
-                }
-                let [additionalRows] = results
-                let responseObject = {
-                    additionalRows
-                };
-                return apiResponse.successResponseWithData(
-                    res,
-                    "Operation success",
-                    responseObject
-                );
-            })
         }
-    } catch (err) {
-        return apiResponse.errorResponse(res, err);
+        let grid = JSON.parse(req.body.grid)
+        let material= req.body.material
+        let application= req.body.application
+        let excelData = util.generateGridExcel(grid,res.user.role)
+
+        return apiResponse.successResponseWithData(
+            res,
+            "Operation success",
+            { excelData, fileName: `${res.user.username}-Submission-Grid-${material}-${application}` }
+        )
     }
-}
-];
-
-
+]

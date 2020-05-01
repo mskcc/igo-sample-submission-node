@@ -10,5 +10,6 @@ router.get("/picklist", UploadController.picklist);
 router.post("/grid", UploadController.grid);
 router.post("/crdbId", UploadController.crdbId);
 router.post("/additionalRows", UploadController.additionalRows);
+router.post("/export", UploadController.export);
 
 module.exports = router;

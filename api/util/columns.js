@@ -562,7 +562,7 @@ export const formColumns = {
 }
 
 export const noShowColumns = [
-    "rowIndex", "_id", "altServiceId", "groupingChecked"
+    "rowIndex", "_id", "altServiceId", "groupingChecked", "cmoPatientId", "normalizedPatientId"
 ]
 
 export const noShowEmptyColumns = [

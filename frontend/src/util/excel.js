@@ -2,7 +2,6 @@ import XLSX from "xlsx";
 import FileSaver from "file-saver";
 
 export const downloadExcel = (data, fileName) => {
-    console.log(data)
     const xlsxData = Object.assign([], data);
     const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
     const fileExtension = ".xlsx";

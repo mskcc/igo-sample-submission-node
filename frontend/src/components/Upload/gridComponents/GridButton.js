@@ -18,6 +18,7 @@ const Button = ({ id, onClick, isLoading, done, title, classes, color }) => (
           type="submit"
           onClick={onClick}
           className={classes.button}
+          id={id}
           color={color}
           disabled={isLoading}
         >
@@ -44,7 +45,8 @@ const styles = theme => ({
     margin: theme.spacing(1),
     // height: 50,
     // display: 'inline-block',
-    width: 150,
+    minWidth: 150,
+    maxWidth: 250,
   },
   wrapper: {
     margin: theme.spacing(1),

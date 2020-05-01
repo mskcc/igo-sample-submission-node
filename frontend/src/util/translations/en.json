@@ -29,7 +29,7 @@
     "test_me_helptext": "test me helptext"
   },
   "upload": {
-
+    "gridExport_label": "Export to Excel",
     "formSubmit_label": "Generate Table",
     "updateNumberOfRows_label": "Update #Samples",
     "formClear_label": "Clear Form",

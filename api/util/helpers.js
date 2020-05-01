@@ -48,10 +48,10 @@ function cacheAllPicklists(limsColumns) {
     return new Promise((resolve, reject) => {
         let picklistPromises = []
         let picklists = {}
-        
+
         limsColumns.map((element) => {
-            
-           
+
+
             if (!columnsConstants.gridColumns[element[0]]) {
                 reject(`Column '${element[0]}' not found.`)
             }
@@ -123,7 +123,7 @@ function fillColumns(columns, limsColumnList, userRole, formValues, picklists) {
             }
             if (colDef.container && colDef.container !== formValues.container && formValues.application != 'Expanded_Genomics'
             ) {
-                
+
                 colDef = overwriteContainer(formValues.container)
             }
 
@@ -193,7 +193,7 @@ function fillColumns(columns, limsColumnList, userRole, formValues, picklists) {
 const overwriteContainer = (userContainer) => {
     let newContainer
     switch (userContainer) {
-        
+
         case 'Plates':
             newContainer = columnsConstants.gridColumns["Plate ID"]
             break
@@ -527,15 +527,15 @@ export function submit(submission, user, transactionId) {
 
 // Generate excel from mongoose submission model. 
 // Replaces keys with column names and filters noShow columns.
-export function generateExcel(submission) {
-
+export function generateSubmissionExcel(submission, role) {
+    let isUser = (role == "user")
     let sheetData = []
     let sheetFormData = {}
     // replace form keys with column names and filter out noShow columns
     Object.keys(submission.formValues).map((element) => {
         let colDef = columnsConstants.formColumns[element] || ""
-        let isNoShowCol = columnsConstants.noShowColumns.includes(element)
-        let isNoShowEmptyCol = columnsConstants.noShowEmptyColumns.includes(element) && submission.formValues[element] == ""
+        let isNoShowCol = (isUser && columnsConstants.noShowColumns.includes(element))
+        let isNoShowEmptyCol = (isUser && columnsConstants.noShowEmptyColumns.includes(element) && submission.formValues[element] == "")
         if (!isNoShowCol && !isNoShowEmptyCol) {
             let colName = colDef.columnHeader || element
             sheetFormData[colName] = submission.formValues[element]
@@ -547,7 +547,36 @@ export function generateExcel(submission) {
         let sheetGridRow = []
         Object.keys(gridRow).map((element) => {
             let colDef = element
-            let isNoShowCol = columnsConstants.noShowColumns.includes(element)
+            let isNoShowCol = (isUser && columnsConstants.noShowColumns.includes(element))
+            // find columnHeader for this element in object of objects
+            if (!isNoShowCol) {
+                for (let key in columnsConstants.gridColumns) {
+
+                    if (columnsConstants.gridColumns[key].data == element) {
+                        colDef = columnsConstants.gridColumns[key].columnHeader
+                        break
+                    }
+                }
+                sheetGridRow[colDef] = gridRow[element]
+            }
+        })
+        sheetData.push({ ...sheetFormData, ...sheetGridRow })
+    })
+    return sheetData
+}
+
+export function generateGridExcel(grid, role) {
+    let isUser = (role == "user")
+    let sheetData = []
+    let sheetFormData = {}
+
+
+    grid.map((element, index) => {
+        let gridRow = grid[index]
+        let sheetGridRow = []
+        Object.keys(gridRow).map((element) => {
+            let colDef = element
+            let isNoShowCol = (isUser && columnsConstants.noShowColumns.includes(element))
             // find columnHeader for this element in object of objects
             if (!isNoShowCol) {
                 for (let key in columnsConstants.gridColumns) {

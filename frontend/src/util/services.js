@@ -47,6 +47,21 @@ export const getAdditionalRows = (data) => {
         }).then((resp) => { return resp })
 
 }
+
+export const downloadGrid = data => {
+    const url = `${Config.NODE_API_ROOT}/upload/export`;
+    return axios.post(url, {...data})
+        .then((resp) => {
+            console.log(resp)
+            return resp;
+        }).catch((error) => {
+            console.log(error)
+            throw error
+        }).then((resp) => { return resp })
+
+}
+
+
 export const getSubmission = id => {
     const url = `${Config.NODE_API_ROOT}/submission/${id}`;
     return axios.get(url)
@@ -68,6 +83,7 @@ export const getSubmissionsSince = time => {
         }).then((resp) => { return resp })
 
 }
+
 
 
 export const downloadSubmission = id => {

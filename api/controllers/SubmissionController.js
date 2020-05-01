@@ -378,7 +378,7 @@ exports.download = [
                         'Could not retrieve submission.'
                     )
                 }
-                let excelData = util.generateExcel(submission)
+                let excelData = util.generateSubmissionExcel(submission, res.user.role)
 
                 return apiResponse.successResponseWithData(
                     res,

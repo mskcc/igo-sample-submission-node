@@ -93,6 +93,10 @@ class UploadGridContainer extends React.Component {
 
   }
 
+  handleDownload = () => {
+    return this.props.downloadGrid()
+  }
+
   render() {
     const { grid, user } = this.props
 
@@ -108,6 +112,7 @@ class UploadGridContainer extends React.Component {
         handleSubmit={this.handleSubmit}
         handleChange={this.handleChange}
         handleSave={this.handleSave}
+        handleDownload={this.handleDownload}
         preValidate={this.props.preValidate}
         handlePatientId={this.props.handlePatientId}
         handleClear={this.handleClear}

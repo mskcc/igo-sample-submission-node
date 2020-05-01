@@ -66,12 +66,20 @@ class UploadGrid extends React.Component {
               color="primary"
             />{' '}
             <GridButton
+              id="gridExport"
+              onClick={this.props.handleDownload}
+              isLoading={false}
+              nothingToSubmit={false}
+              color="primary"
+            />
+            <GridButton
               id="gridClear"
               onClick={this.props.handleClear}
               isLoading={false}
               nothingToSubmit={false}
               color="secondary"
             />
+             
           </div>
           <HotTable
             licenseKey="non-commercial-and-evaluation"
