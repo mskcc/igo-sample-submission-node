@@ -44,8 +44,6 @@ export class UploadFormContainer extends React.Component {
     } else this.props.clearSpecies()
   }
   handleInputChange = (id, value) => {
-    console.log(id);
-    console.log(value);
     if (value) {
       this.props.select(id, value)
     } else this.props.clear(id)

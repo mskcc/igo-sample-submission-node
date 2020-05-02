@@ -23,6 +23,17 @@ export const altServiceIdNotice = () => {
   })
 }
 
+export const tooManyRowsPasteAlert = () => {
+Swal.fire({
+  title: 'Too many rows.',
+  html:
+    'We adjusted the grid for you now, please paste one more time. (Additional rows need to be added before pasting to apply all autofilling logic.)',
+  type: 'warning',
+  animation: false,
+  confirmButtonText: 'Dismiss',
+})
+}
+
 export const confirmDelete = () => {
   return new Promise((resolve) => {
     Swal.fire({

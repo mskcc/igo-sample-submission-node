@@ -178,7 +178,6 @@ class UploadForm extends React.Component {
               formValid[value] = false
               break
             }
-            console.log(values[value]);
             var emails = values[value].split(',')
             var valid = true
             var regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

@@ -2,7 +2,6 @@ import React from 'react'
 import { withStyles } from '@material-ui/core'
 import { HotTable } from '@handsontable/react'
 import 'handsontable/dist/handsontable.full.css'
-import Swal from 'sweetalert2'
 
 import { GridButton } from '../index'
 
@@ -23,24 +22,14 @@ class UploadGrid extends React.Component {
     }
   }
 
-  showRowWarning = count => {
-    Swal.fire({
-      title: 'Too many rows.',
-      text:
-        'Please increase the number of samples in the header to at least ' +
-        count +
-        ' and re-generate the grid before you paste this data. Make sure you paste starting at the first cell if you want to paste the full grid.',
-      type: 'warning',
-      animation: false,
-      confirmButtonText: 'Dismiss',
-    })
-  }
+  
 
   render() {
     const {
       classes,
       grid,
       handleChange,
+      pasteTooMany,
       user,
       handleAssay,
       handleTumorType,
@@ -96,8 +85,9 @@ class UploadGrid extends React.Component {
             beforeChange={(changes, source) => {
               // only do something if rows can fit the changes/if
               // last changes[] element's row index is <= rows
-              if (changes[changes.length - 1][0] > grid.rows.length) {
-                this.showRowWarning(changes[changes.length - 1][0])
+              if (changes[changes.length - 1][0] + 1 > grid.rows.length) {
+                let numOfPastedRows = changes[changes.length-1][0] + 1
+                pasteTooMany(numOfPastedRows)
                 return false
               }
               if (changes.length > 50) {

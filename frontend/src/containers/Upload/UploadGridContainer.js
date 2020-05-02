@@ -33,21 +33,8 @@ class UploadGridContainer extends React.Component {
   }
 
   handleClear = () => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text:
-        "You won't be able to revert this unless you have a saved partial submission.",
-      type: 'warning',
-      showCancelButton: true,
-      animation: false,
-      confirmButtonColor: '#df4602',
-      cancelButtonColor: '#007cba',
-      confirmButtonText: 'Yes, delete it!',
-    }).then(result => {
-      if (result.value) {
-        this.props.handleClear()
-        // this.hotTableComponent.current.hotInstance.clear()
-      }
+    swal.confirmGridClear().then(decision => {
+      decision && this.props.handleClear()
     })
   }
 
@@ -89,7 +76,8 @@ class UploadGridContainer extends React.Component {
       swal.emptyFieldsError(emptyColumns)
       return
     } else {
-      this.props.submitSubmission() }
+      this.props.submitSubmission()
+    }
 
   }
 
@@ -116,6 +104,7 @@ class UploadGridContainer extends React.Component {
         preValidate={this.props.preValidate}
         handlePatientId={this.props.handlePatientId}
         handleClear={this.handleClear}
+        pasteTooMany={this.props.pasteTooMany}
       />
     ) : null
   }

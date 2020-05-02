@@ -4,9 +4,7 @@ import PropTypes from 'prop-types'
 import { withLocalize } from 'react-localize-redux'
 import { connect } from 'react-redux'
 import { gridActions, userActions } from "../../redux/actions/"
-import { Redirect } from 'react-router-dom'
-
-import { Dialog } from '../../components'
+import { swal } from "../../util"
 import UploadFormContainer from './UploadFormContainer'
 import UploadGridContainer from './UploadGridContainer'
 
@@ -18,6 +16,12 @@ export class UploadPage extends Component {
     this.props.addGridToBankedSample(this.props)
   }
 
+
+  pasteTooMany = newRowNumber => {
+    let prevRowNumber = this.props.grid.form.numberOfSamples
+    this.props.increaseRowNumber(prevRowNumber, newRowNumber)
+    swal.tooManyRowsPasteAlert()
+  }
   submitRowNumberUpdate = () => {
     let newRowNumber = this.props.form.selected.numberOfSamples
     let prevRowNumber = this.props.grid.form.numberOfSamples
@@ -41,7 +45,7 @@ export class UploadPage extends Component {
         />
 
         {this.props.grid.rows.length > 0 && (
-          <UploadGridContainer handleSubmit={this.handleGridSubmit} />
+          <UploadGridContainer handleSubmit={this.handleGridSubmit} pasteTooMany={this.pasteTooMany}/>
         )}
       </React.Fragment>
     )

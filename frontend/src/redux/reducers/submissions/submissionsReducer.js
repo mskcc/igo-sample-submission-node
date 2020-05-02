@@ -158,7 +158,6 @@ function submissionsReducer(state = initialState, action) {
             return { ...state, submissionToEdit: undefined }
 
         case GridActionTypes.GET_SUBMISSION_TO_EDIT_SUCCESS:
-            console.log('submissio  caught');
             return {
                 ...state,
                 submissionToEdit: action.payload._id

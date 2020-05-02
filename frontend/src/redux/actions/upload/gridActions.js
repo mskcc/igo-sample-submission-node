@@ -213,6 +213,7 @@ export function increaseRowNumber(prevRowNumber, newRowNumber) {
       columnFeatures: columnFeaturesJson,
       formValues: formValuesJson,
       prevRowNumber: prevRowNumber,
+      newRowNumber: newRowNumber,
     })
       .then((resp) => {
         return dispatch({

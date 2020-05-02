@@ -98,7 +98,7 @@ export function generateGrid(limsColumnList, userRole, formValues) {
             .then((columns) => fillData(columns, formValues)).catch((reasons) => reject(reasons))
             .then((columns) => {
                 if (columns.columnFeatures.some((x) => x.data == "wellPosition")) {
-                    resolve(setWellPos(columns))
+                    setWellPos(columns).then(resolve(columns))
                 } else { resolve(columns) }
             })
             .catch((reasons) => reject(reasons))
@@ -210,24 +210,34 @@ const overwriteContainer = (userContainer) => {
 }
 
 // generate rows with same autofilled and consecutive wellPos values, only return the additional rows
-export const generateAdditionalRows = (columnFeatures, formValues, prevRowNumber) => {
+export const generateAdditionalRows = (columnFeatures, formValues, prevRowNumber, newRowNumber) => {
     return new Promise((resolve) => {
+        // making sure the formValue sample number is the most recent one
+        //  important for changing the row number on paste rather than through form select
+        formValues.numberOfSamples = newRowNumber
         let columns = { columnFeatures: columnFeatures, formValues: formValues }
-        fillData(columns, formValues).then((columns) => {
-
-            if (columns.columnFeatures.some((x) => x.data == "wellPosition")) {
-                (columns = setWellPos(columns))
-            }
-
-            for (let i = 0; i < prevRowNumber; i++) {
-                columns.rowData.pop()
-            }
+        fillAdditionalRows(columns, formValues).then((columns) => {
             //delete all old rows
-
-            resolve(columns.rowData)
+            for (let i = 0; i < prevRowNumber; i++) {
+                columns.rowData.shift()
+                if (i + 1 == prevRowNumber) {
+                    resolve(columns.rowData)
+                }
+            }
         })
     })
+}
 
+const fillAdditionalRows = (columns, formValues) => {
+    return new Promise((resolve) => {
+        fillData(columns, formValues).then((columns) => {
+            if (columns.columnFeatures.some((x) => x.data == "wellPosition")) {
+                columns = setWellPos(columns).then((columns) => {
+                    resolve(columns)
+                })
+            } else resolve(columns)
+        })
+    })
 }
 
 // Lots of autofilling happening here
@@ -307,44 +317,46 @@ const fillData = (columns, formValues) => {
 // i = counter indicating how often I stepped through A-H
 // plateColIndex = plate column
 const setWellPos = columns => {
-    let rows = columns.rowData
-    let plateRows = ["A", "B", "C", "D", "E", "F", "G", "H"];
-    let numPlates = Math.ceil(rows.length / plateRows.length);
-    let i = 0;
+    return new Promise((resolve, reject) => {
+        let rows = columns.rowData
+        let plateRows = ["A", "B", "C", "D", "E", "F", "G", "H"];
+        let numPlates = Math.ceil(rows.length / plateRows.length);
+        let i = 0;
 
-    // multiply available plateRows by how many plates will be filled in this submission
-    for (let k = 0; k < numPlates; k++) {
-        plateRows = plateRows.concat(["A", "B", "C", "D", "E", "F", "G", "H"]);
-    }
-    let plateColIndex = 1;
-    let rowCounter = 0;
-    //  step through as many plates as you have to
-    while (i < numPlates) {
-        // fill rows first
-        for (let j = 0; j < plateRows.length; j++) {
-            // if rows A-H have been filled, flip colIndex
-            if (rowCounter == 8) {
-                rowCounter = 0;
-                plateColIndex += 1;
-            }
-            // if colIndes reaches 13, all wells have been filled, colIndex flips back to 1 and a new plate is filled
-            if (plateColIndex == 13) {
-                plateColIndex = 1;
-            }
-            if (rows[j + plateRows.length * i]) {
-                // fill row at position plateRows * number of plates you did this with already
-                rows[j + plateRows.length * i].wellPosition =
-                    plateRows[j] + plateColIndex;
-            } else {
-                break;
-            }
-            rowCounter++;
+        // multiply available plateRows by how many plates will be filled in this submission
+        for (let k = 0; k < numPlates; k++) {
+            plateRows = plateRows.concat(["A", "B", "C", "D", "E", "F", "G", "H"]);
         }
-        plateColIndex++;
-        i++;
-    }
-    columns.rows = rows
-    return columns;
+        let plateColIndex = 1;
+        let rowCounter = 0;
+        //  step through as many plates as you have to
+        while (i < numPlates) {
+            // fill rows first
+            for (let j = 0; j < plateRows.length; j++) {
+                // if rows A-H have been filled, flip colIndex
+                if (rowCounter == 8) {
+                    rowCounter = 0;
+                    plateColIndex += 1;
+                }
+                // if colIndes reaches 13, all wells have been filled, colIndex flips back to 1 and a new plate is filled
+                if (plateColIndex == 13) {
+                    plateColIndex = 1;
+                }
+                if (rows[j + plateRows.length * i]) {
+                    // fill row at position plateRows * number of plates you did this with already
+                    rows[j + plateRows.length * i].wellPosition =
+                        plateRows[j] + plateColIndex;
+                } else {
+                    break;
+                }
+                rowCounter++;
+            }
+            plateColIndex++;
+            i++;
+        }
+        columns.rows = rows
+        resolve(columns);
+    })
 };
 
 
@@ -551,7 +563,6 @@ export function generateSubmissionExcel(submission, role) {
             // find columnHeader for this element in object of objects
             if (!isNoShowCol) {
                 for (let key in columnsConstants.gridColumns) {
-
                     if (columnsConstants.gridColumns[key].data == element) {
                         colDef = columnsConstants.gridColumns[key].columnHeader
                         break

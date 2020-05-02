@@ -316,6 +316,7 @@ exports.additionalRows = [
     body("formValues").isJSON().isLength({ min: 1 }).trim().withMessage("formValues must be JSON."),
     body("columnFeatures").isJSON().isLength({ min: 1 }).trim().withMessage("columnFeatures must be JSON."),
     body("prevRowNumber").isInt().isLength({ min: 1 }).trim().withMessage("prevRowNumber must be int."),
+    body("newRowNumber").isInt().isLength({ min: 1 }).trim().withMessage("newRowNumber must be int."),
     function (req, res) {
         try {
             const errors = validationResult(req);
@@ -328,9 +329,10 @@ exports.additionalRows = [
             } else {
                 let columnFeatures = JSON.parse(req.body.columnFeatures)
                 let formValues = JSON.parse(req.body.formValues)
-                let prevRowNumber = JSON.parse(req.body.prevRowNumber)
+                let prevRowNumber = req.body.prevRowNumber
+                let newRowNumber = req.body.newRowNumber
 
-                let rowPromise = util.generateAdditionalRows(columnFeatures, formValues, prevRowNumber)
+                let rowPromise = util.generateAdditionalRows(columnFeatures, formValues, prevRowNumber, newRowNumber)
 
                 Promise.all([rowPromise]).then((results) => {
                     if (results.some(x => x.length == 0)) {

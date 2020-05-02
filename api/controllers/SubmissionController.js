@@ -314,8 +314,6 @@ exports.submit = [
                     "Operation success",
                     submissionResult
                 );
-
-
             })
         }).catch((reasons) => {
             return apiResponse.errorResponse(

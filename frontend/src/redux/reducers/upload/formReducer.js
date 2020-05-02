@@ -237,7 +237,14 @@ export default function formReducer(state = initialFormState, action) {
         ...state,
         formIsLoading: false,
       }
-
+    case GridActionTypes.INCREASE_ROW_NUMBER_SUCCESS:
+      return {
+        ...state,
+        selected: {
+          ...state.selected,
+          numberOfSamples: action.rowNumber,
+        },
+      }
     case GridActionTypes.GET_SUBMISSION_TO_EDIT_SUCCESS:
       let form = action.payload.formValues
       return {
