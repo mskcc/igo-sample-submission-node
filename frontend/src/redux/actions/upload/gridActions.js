@@ -207,14 +207,10 @@ export const INCREASE_ROW_NUMBER_FAIL = 'INCREASE_ROW_NUMBER_FAIL'
 export const INCREASE_ROW_NUMBER_SUCCESS = 'INCREASE_ROW_NUMBER_SUCCESS'
 export function increaseRowNumber(prevRowNumber, newRowNumber) {
   return (dispatch, getState) => {
-    let columnFeaturesJson = JSON.stringify(getState().upload.grid.columnFeatures)
-    let formValuesJson = JSON.stringify(getState().upload.form.selected)
-    services.getAdditionalRows({
-      columnFeatures: columnFeaturesJson,
-      formValues: formValuesJson,
-      prevRowNumber: prevRowNumber,
-      newRowNumber: newRowNumber,
-    })
+    let columnFeatures = getState().upload.grid.columnFeatures
+    let formValues = getState().upload.form.selected
+    let data = util.generateAdditionalRowData(columnFeatures, formValues, prevRowNumber, newRowNumber)
+    services.getAdditionalRows(data)
       .then((resp) => {
         return dispatch({
           type: INCREASE_ROW_NUMBER_SUCCESS,

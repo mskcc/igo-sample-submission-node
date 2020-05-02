@@ -297,7 +297,7 @@ const fillData = (columns, formValues) => {
                     }
                 }
                 if (
-                    entry.rowData == "patientId" &&
+                    entry.data == "patientId" &&
                     entry.columnHeader == "Cell Line Name"
                 ) {
                     rowData[i] = { ...rowData[i], specimenType: "CellLine" };

@@ -166,6 +166,25 @@ export const checkEmptyColumns = (columnFeatures, rows, hiddenColumns) => {
   return emptyColumns
 }
 
+export const generateAdditionalRowData = (columnFeatures, formValues, prevRowNumber, newRowNumber) => {
+  let columnFeaturesCopy = []
+  columnFeatures.map((element, index) => {
+    columnFeaturesCopy[index] = { data: "", columnHeader: "" }
+    columnFeaturesCopy[index].data = element.data
+    columnFeaturesCopy[index].columnHeader = element.columnHeader
+  })
+  // send only data and columnHeader values to api
+  let columnFeaturesJson = JSON.stringify(columnFeaturesCopy)
+  let formValuesJson = JSON.stringify(formValues)
+  let data = {
+    columnFeatures: columnFeaturesJson,
+    formValues: formValuesJson,
+    prevRowNumber: prevRowNumber,
+    newRowNumber: newRowNumber,
+  }
+  return data 
+}
+
 // generate data object to send to sample-rec-backend for
 // partial submission save or banked sample
 export const generateSubmitData = (state, isPartial = false) => {

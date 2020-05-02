@@ -36,7 +36,6 @@ axios.interceptors.response.use(
     }
 )
 
-
 export const getAdditionalRows = (data) => {
     const url = `${Config.NODE_API_ROOT}/upload/additionalRows`;
     return axios.post(url, { ...data })
@@ -45,7 +44,6 @@ export const getAdditionalRows = (data) => {
         }).catch((error) => {
             throw error
         }).then((resp) => { return resp })
-
 }
 
 export const downloadGrid = data => {
