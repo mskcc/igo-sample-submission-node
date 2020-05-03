@@ -36,7 +36,7 @@ export const constants = {
 
     humanOrMouseApplications: ["wholeexomesequencing"],
 
-    logger: "sample-sub"
+    logger: "sample-sub",
 
-
+    
 };

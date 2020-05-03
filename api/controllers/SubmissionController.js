@@ -1,6 +1,7 @@
 const apiResponse = require("../util/apiResponse");
 const { body, param, validationResult } = require("express-validator");
 const util = require("../util/helpers");
+const mailer = require("../util/mailer");
 var _ = require('lodash');
 var mongoose = require("mongoose");
 var ObjectId = mongoose.Types.ObjectId;
@@ -308,12 +309,17 @@ exports.submit = [
                     if (err) {
                         return apiResponse.errorResponse(res, "Submission could not be saved on this site but was submitted to IGO.");
                     }
+
+                    else {
+                        mailer.sendNotification(submissionToSubmit)
+                        return apiResponse.successResponseWithData(
+                            res,
+                            "Operation success",
+                            submissionResult
+                        );
+                    }
                 })
-                return apiResponse.successResponseWithData(
-                    res,
-                    "Operation success",
-                    submissionResult
-                );
+
             })
         }).catch((reasons) => {
             return apiResponse.errorResponse(
