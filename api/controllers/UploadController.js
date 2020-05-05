@@ -1,10 +1,10 @@
 
-import CacheService from "../util/cache";
 const apiResponse = require("../util/apiResponse");
 const { body, query, validationResult } = require("express-validator");
 const util = require("../util/helpers");
 var _ = require('lodash');
-const service = require("../services/services");
+const services = require("../services/services");
+import CacheService from "../util/cache";
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 const { constants } = require("../util/constants");
@@ -17,9 +17,9 @@ const { constants } = require("../util/constants");
 exports.headerValues = [
     function (req, res) {
         let containers = constants.containers
-        let applicationsPromise = cache.get("Recipe-Picklist", () => service.getPicklist("Recipe"))
-        let materialsPromise = cache.get("Exemplar+Sample+Types", () => service.getPicklist("Exemplar+Sample+Types"))
-        let speciesPromise = cache.get("Species", () => service.getPicklist("Species"))
+        let applicationsPromise = cache.get("Recipe-Picklist", () => services.getPicklist("Recipe"))
+        let materialsPromise = cache.get("Exemplar+Sample+Types", () => services.getPicklist("Exemplar+Sample+Types"))
+        let speciesPromise = cache.get("Species", () => services.getPicklist("Species"))
 
         Promise.all([applicationsPromise, materialsPromise, speciesPromise]).then((results) => {
             if (results.some(x => x.length == 0)) {
@@ -75,7 +75,7 @@ exports.materialsAndSpecies = [
         } else {
             let recipe = req.query.recipe;
             let speciesResult = util.getSpecies(recipe);
-            let materialsPromise = cache.get(recipe + "-Materials", () => service.getMaterials(recipe))
+            let materialsPromise = cache.get(recipe + "-Materials", () => services.getMaterials(recipe))
 
             Promise.all([materialsPromise]).then((results) => {
                 if (results.some(x => x.length == 0)) {
@@ -122,7 +122,7 @@ exports.applicationsAndContainers = [
             } else {
                 let material = req.query.material;
                 let containersResult = util.getContainers(material);
-                let applicationsPromise = cache.get(material + "-Applications", () => service.getApplications(material))
+                let applicationsPromise = cache.get(material + "-Applications", () => services.getApplications(material))
 
                 Promise.all([applicationsPromise]).then((results) => {
                     if (results.some(x => x.length == 0)) {
@@ -166,7 +166,7 @@ exports.picklist = [
                 );
             } else {
                 let picklist = req.query.picklist;
-                cache.get(picklist + "-Picklist", () => service.getPicklist(picklist)).then(picklistResult => {
+                cache.get(picklist + "-Picklist", () => services.getPicklist(picklist)).then(picklistResult => {
                     if (picklistResult) {
                         return apiResponse.successResponseWithData(
                             res,
@@ -233,7 +233,7 @@ exports.grid = [
             let material = formValues.material
             let application = formValues.application
 
-            let columnsPromise = cache.get(`${material}-${application}-Columns`, () => service.getColumns(material, application))
+            let columnsPromise = cache.get(`${material}-${application}-Columns`, () => services.getColumns(material, application))
             Promise.all([columnsPromise]).then((results) => {
                 if (results.some(x => x.length == 0)) {
                     return apiResponse.errorResponse(
@@ -286,7 +286,7 @@ exports.crdbId = [
             } else {
                 // remove leading and trailing whitespaces just in case
                 let patientId = req.body.patientId.replace(/^\s+|\s+$/g, '')
-                let patientIdPromise = service.getCrdbId(patientId)
+                let patientIdPromise = services.getCrdbId(patientId)
 
                 Promise.all([patientIdPromise]).then((results) => {
                     if (results.some(x => x.length == 0)) {

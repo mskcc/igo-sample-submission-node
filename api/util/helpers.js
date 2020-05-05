@@ -1,8 +1,8 @@
-import CacheService from "./cache";
 const services = require("../services/services");
 const { logger } = require("../util/winston");
 const { constants } = require("./constants");
-const columnsConstants = require("./columns");
+const allColumns = require("./columns");
+import CacheService from "./cache";
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 
@@ -49,13 +49,13 @@ function cacheAllPicklists(limsColumns) {
         let picklistPromises = []
         let picklists = {}
 
-        limsColumns.map((element) => {
+        limsColumns.map((columnName) => {
 
 
-            if (!columnsConstants.gridColumns[element[0]]) {
-                reject(`Column '${element[0]}' not found.`)
+            if (!allColumns.gridColumns[columnName]) {
+                reject(`Column '${columnName}' not found.`)
             }
-            let picklist = columnsConstants.gridColumns[element[0]].picklistName
+            let picklist = allColumns.gridColumns[columnName].picklistName
 
 
             if (picklist != undefined) {
@@ -93,7 +93,9 @@ export function generateGrid(limsColumnList, userRole, formValues) {
         if (!limsColumnList) { PromiseRejectionEvent("Invalid Combination.") }
         // combinations with no optional columns return an empty element we need to filter out
         limsColumnList = limsColumnList.filter(element => element[0] != '')
-        cacheAllPicklists(limsColumnList)
+        let columnNamesOnly = limsColumnList.map(element => { return element[0] })
+
+        cacheAllPicklists(columnNamesOnly)
             .then((picklists) => fillColumns(columns, limsColumnList, userRole, formValues, picklists))
             .then((columns) => fillData(columns, formValues)).catch((reasons) => reject(reasons))
             .then((columns) => {
@@ -105,7 +107,7 @@ export function generateGrid(limsColumnList, userRole, formValues) {
     })
 }
 
-function fillColumns(columns, limsColumnList, userRole, formValues, picklists) {
+function fillColumns(columns, limsColumnList, userRole, formValues = {}, picklists) {
     return new Promise((resolve, reject) => {
 
         let requiredColumns = []
@@ -117,7 +119,7 @@ function fillColumns(columns, limsColumnList, userRole, formValues, picklists) {
         limsColumnList.forEach((element, index) => {
 
             let columnName = element[0]
-            let colDef = columnsConstants.gridColumns[columnName];
+            let colDef = allColumns.gridColumns[columnName];
             if (!colDef) {
                 reject(`Column '${columnName}' not found.`)
             }
@@ -161,7 +163,7 @@ function fillColumns(columns, limsColumnList, userRole, formValues, picklists) {
                     columns.columnFeatures[0].data == 'plateId' &&
                     columns.columnFeatures[1].data != 'wellPosition'
                 ) {
-                    columns.columnFeatures.unshift(columnsConstants.gridColumns["Well Position"])
+                    columns.columnFeatures.unshift(allColumns.gridColumns["Well Position"])
                 }
                 // if plate column not present but WellPos is, remove WellPos
                 if (
@@ -195,13 +197,13 @@ const overwriteContainer = (userContainer) => {
     switch (userContainer) {
 
         case 'Plates':
-            newContainer = columnsConstants.gridColumns["Plate ID"]
+            newContainer = allColumns.gridColumns["Plate ID"]
             break
         case 'Micronic Barcoded Tubes':
-            newContainer = columnsConstants.gridColumns["Micronic Tube Barcode"]
+            newContainer = allColumns.gridColumns["Micronic Tube Barcode"]
             break
         case 'Blocks/Slides/Tubes':
-            newContainer = columnsConstants.gridColumns["Block/Slide/TubeID"]
+            newContainer = allColumns.gridColumns["Block/Slide/TubeID"]
             break
         default:
             return (`Container '${userContainer}' not found.`)
@@ -420,8 +422,8 @@ export function generateSubmissionGrid(submissions, userRole) {
     return new Promise((resolve, reject) => {
         try {
             let grid = { columnHeaders: [], rows: [], columnFeatures: [] }
-            grid.columnHeaders = Object.keys(columnsConstants.submissionColumns).map(a => columnsConstants.submissionColumns[a].name)
-            grid.columnFeatures = Object.values(columnsConstants.submissionColumns)
+            grid.columnHeaders = Object.keys(allColumns.submissionColumns).map(a => allColumns.submissionColumns[a].name)
+            grid.columnFeatures = Object.values(allColumns.submissionColumns)
 
             if (userRole === "user") {
                 grid.columnHeaders = grid.columnHeaders.filter((element) => { return element !== "Unsubmit" })
@@ -545,9 +547,9 @@ export function generateSubmissionExcel(submission, role) {
     let sheetFormData = {}
     // replace form keys with column names and filter out noShow columns
     Object.keys(submission.formValues).map((element) => {
-        let colDef = columnsConstants.formColumns[element] || ""
-        let isNoShowCol = (isUser && columnsConstants.noShowColumns.includes(element))
-        let isNoShowEmptyCol = (isUser && columnsConstants.noShowEmptyColumns.includes(element) && submission.formValues[element] == "")
+        let colDef = allColumns.formColumns[element] || ""
+        let isNoShowCol = (isUser && allColumns.noShowColumns.includes(element))
+        let isNoShowEmptyCol = (isUser && allColumns.noShowEmptyColumns.includes(element) && submission.formValues[element] == "")
         if (!isNoShowCol && !isNoShowEmptyCol) {
             let colName = colDef.columnHeader || element
             sheetFormData[colName] = submission.formValues[element]
@@ -559,12 +561,12 @@ export function generateSubmissionExcel(submission, role) {
         let sheetGridRow = []
         Object.keys(gridRow).map((element) => {
             let colDef = element
-            let isNoShowCol = (isUser && columnsConstants.noShowColumns.includes(element))
+            let isNoShowCol = (isUser && allColumns.noShowColumns.includes(element))
             // find columnHeader for this element in object of objects
             if (!isNoShowCol) {
-                for (let key in columnsConstants.gridColumns) {
-                    if (columnsConstants.gridColumns[key].data == element) {
-                        colDef = columnsConstants.gridColumns[key].columnHeader
+                for (let key in allColumns.gridColumns) {
+                    if (allColumns.gridColumns[key].data == element) {
+                        colDef = allColumns.gridColumns[key].columnHeader
                         break
                     }
                 }
@@ -587,13 +589,13 @@ export function generateGridExcel(grid, role) {
         let sheetGridRow = []
         Object.keys(gridRow).map((element) => {
             let colDef = element
-            let isNoShowCol = (isUser && columnsConstants.noShowColumns.includes(element))
+            let isNoShowCol = (isUser && allColumns.noShowColumns.includes(element))
             // find columnHeader for this element in object of objects
             if (!isNoShowCol) {
-                for (let key in columnsConstants.gridColumns) {
+                for (let key in allColumns.gridColumns) {
 
-                    if (columnsConstants.gridColumns[key].data == element) {
-                        colDef = columnsConstants.gridColumns[key].columnHeader
+                    if (allColumns.gridColumns[key].data == element) {
+                        colDef = allColumns.gridColumns[key].columnHeader
                         break
                     }
                 }
@@ -604,3 +606,101 @@ export function generateGridExcel(grid, role) {
     })
     return sheetData
 }
+
+
+
+
+// PROMOTE
+
+// CLEAN THIS UP
+
+export function generatePromoteGrid(limsColumnOrdering) {
+    return new Promise((resolve, reject) => {
+        let grid = {
+            columnFeatures: [],
+            columnHeaders: [],
+            rowData: []
+        };
+        let picklistCols = []
+        // lims returns these columns as ["Integer:String","Integer:String",...]
+        limsColumnOrdering.map(element => {
+
+            let promoteColFeature = {}
+            let columnName = element.split(":")[1]
+            // If we recognize the column, attach the feature and add it to the list used for picklist generation
+            if (columnName in allColumns.gridColumns) {
+                promoteColFeature = Object.assign({}, allColumns.gridColumns[columnName])
+                if ("picklistName" in promoteColFeature) {
+                    picklistCols.push(columnName)
+                }
+            } else {
+                logger.log("info", `${columnName} not found`)
+                promoteColFeature = { "name": columnName, "data": camelize(columnName), "columnHeader": columnName }
+            }
+            grid.columnFeatures.push(promoteColFeature)
+
+        })
+        // console.log(columnNamesOnly)
+        cacheAllPicklists(picklistCols)
+            .then((picklists) => {
+                grid.columnFeatures.map(promoteColFeature => {
+                    if (promoteColFeature.picklistName && !promoteColFeature.source) {
+                        if (promoteColFeature.data == "index") {
+                            promoteColFeature.barcodeHash = picklists[promoteColFeature.picklistName]
+                        } else { promoteColFeature.source = picklists[promoteColFeature.picklistName] }
+                    }
+                    promoteColFeature.optional = true
+                    promoteColFeature.allowEmpty = true
+                    promoteColFeature.className = 'optional'
+                    promoteColFeature.error = promoteColFeature.error ? promoteColFeature.error : 'Invalid format.'
+                })
+                grid.columnHeaders = grid.columnFeatures.map(
+                    a =>
+                        '<span class="' +
+                        a.className +
+                        '" title="' +
+                        a.tooltip +
+                        '">' +
+                        a.columnHeader +
+                        '</span>'
+                )
+                resolve(grid)
+            })
+    })
+}
+function camelize(str) {
+    return str.replace(/(?:^\w|[A-Z]|\b\w)/g, function (word, index) {
+        return index === 0 ? word.toLowerCase() : word.toUpperCase();
+    }).replace(/\s+/g, '');
+}
+
+// @upload.route('/allColumnsPromote', methods=['GET'])
+// def get_all_columns_promote_json():
+//     columns = get_all_columns_promote()
+//     return jsonify(columnDefs=columns)
+
+// def get_all_columns_promote():
+//     ordering = get_picklist("ReceiptPromote+Ordering")
+// #    colDefs = copy.deepcopy(list(possible_fields.values()))
+//     all_columns = []    
+// #    for column in colDefs:
+//     for column_index in ordering:
+//         (_,column_name) = column_index['id'].split(":")
+//         try:
+//             column = copy.deepcopy(possible_fields[column_name])
+//         except:            
+//             column = {"name":column_name, "width":150,"field": make_it_camel_case(column_name), "editableCellTemplate": editableCellTemplate, "displayName": column_name}         
+//         column['headerCellClass']='optional'
+//         #pull dropdowns from LIMS API and inject into column definition, unless already filled out
+//         if column['editableCellTemplate'] in ['uiSelect', 'uiMultiSelect', 'uiTagSelect', 'ui-grid/dropdownEditor']:
+//             if 'editDropdownOptionsArray' not in column:
+//                 column['editDropdownOptionsArray']=get_picklist(column['picklistName'])
+//         if column['field'] == 'investigator':
+//             column["cellEditableCondition"] = False
+//         all_columns.append(column)
+//     return all_columns
+
+
+
+
+// PROMOTE END

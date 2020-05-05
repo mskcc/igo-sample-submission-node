@@ -153,3 +153,14 @@ export const deleteSubmission = id => {
 
 }
 
+export const promoteGrid = () => {
+    const url = `${Config.NODE_API_ROOT}/promote/grid`;
+    return axios.get(url)
+        .then((resp) => {
+            return resp;
+        }).catch((error) => {
+            throw error
+        }).then((resp) => { return resp })
+
+}
+

@@ -211,6 +211,24 @@ function rowsWithRowIndex(rows) {
   return rows
 }
 
+// PROMOTE
+
+export const generatePromoteGridData = responseColumns => {
+  let grid = { columnFeatures: [], columnHeaders: [], rows: [] }
+  grid.columnFeatures = generatePromoteColumnFeatures(responseColumns)
+  grid.columnHeaders = grid.columnFeatures.map(a => a.columnHeader)
+
+  grid.rows = generatePromoteRows(grid.columnFeatures, 10)
+
+  // grid.hiddenColumns = hideColumns(grid.columnFeatures, userRole)
+
+  return grid
+}
+
+
+
+
+// PROMOTE END
 
 // find submission in user (or all if current user is member/super) submission
 export const findSubmission = (submissions, submissionId) => {
@@ -277,7 +295,7 @@ export const createPatientId = (rows, index, crdbId, normalizedPatientID) => {
 //  barcode hash is saved in colFeatures.index when index is part of the getCols response
 export const findIndexSeq = (grid, colIndex, rowIndex, indexId) => {
   let result = { success: false, rows: '' }
-  indexId = indexId.toLowerCase()
+  // indexId = indexId.toLowerCase()
   let barcodes = grid.columnFeatures[colIndex].barcodeHash
   if (indexId == '') {
     grid.rows[rowIndex].indexSequence = ''

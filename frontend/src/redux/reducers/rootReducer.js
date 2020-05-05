@@ -3,6 +3,7 @@ import { localizeReducer } from 'react-localize-redux'
 
 import uploadReducer from './upload/uploadReducer'
 import submissionsReducer from './submissions/submissionsReducer'
+import promoteReducer from './promote/promoteReducer'
 import commonReducer from './common/commonReducer'
 import userReducer from './user/userReducer'
 import { persistReducer } from 'redux-persist'
@@ -21,10 +22,18 @@ const appReducer = combineReducers({
   common: commonReducer,
   user: userReducer,
   submissions: submissionsReducer,
+  promote: promoteReducer,
   localize: localizeReducer,
 })
 
 const rootReducer = (state, action) => {
+  if (action.user) {
+    state = {
+      ...state,
+      user: { ...action.user }
+    }
+  }
+
   if (action.type === 'LOGOUT') {
     console.log('goodbye')
     localStorage.clear()
@@ -35,7 +44,7 @@ const rootReducer = (state, action) => {
       localize: state.localize,
     }
     window.location.href = `${Config.LOGIN_PAGE_URL}/${Config.HOME_PAGE_PATH}`;
-    
+
   }
 
   return appReducer(state, action)

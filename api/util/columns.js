@@ -277,6 +277,20 @@ export const gridColumns = {
         allowInvalid: true,
         allowEmpty: true
     },
+    "Assay": {
+        name: "Assay(s)",
+        columnHeader: "Assay(s)",
+        data: "assay",
+        type: "dropdown",
+        error: "Only dropdown options are permitted as values",
+        strict: true,
+        tooltip:
+            "This field is multi-select.  If you are submitting one sample for multiple assays, please select the first, followed by the second, than the third, in the order of priority.",
+        editableCellTemplate: "uiMultiSelect",
+        picklistName: "ddPCR+Assay",
+        allowInvalid: true,
+        allowEmpty: true
+    },
     "Estimated % Tumor": {
         name: "Estimated % Tumor",
         columnHeader: "Estimated % Tumor",

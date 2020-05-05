@@ -12,7 +12,7 @@ import {
 import classNames from 'classnames'
 import image from './msk.png'
 
-const Header = ({ classes, loggedIn }) => (
+const Header = ({ classes, loggedIn, role }) => (
   // <div className={classes.mskccHeader}>
   <AppBar position="static" title={image} className={classes.header}>
     <Toolbar>
@@ -21,57 +21,58 @@ const Header = ({ classes, loggedIn }) => (
       <Typography color="inherit" variant="h6" className={classes.title}>
         IGO SampleSubmission
       </Typography>
-      {loggedIn ? (
-        <React.Fragment>
-          <Button>
-            <NavLink
-              to="/upload"
-              activeClassName={classes.active}
-              className={classes.navlink}
-            >
-              <Typography color="inherit" variant="h6">
-                Upload
-              </Typography>
-            </NavLink>
-          </Button>
-          
-          <Button>
-            <NavLink
-              to="/submissions"
-              activeClassName={classes.active}
-              className={classes.navlink}
-            >
-              <Typography color="inherit" variant="h6">
-                My Submissions
-              </Typography>
-            </NavLink>
-          </Button>
 
-          <Button>
-            <NavLink
-              to="/logout"
-              activeClassName={classes.active}
-              className={classes.navlink}
-            >
-              <Typography color="inherit" variant="h6">
-                Logout
-              </Typography>
-            </NavLink>
-          </Button>
-        </React.Fragment>
-      ) : (
+      <React.Fragment>
         <Button>
           <NavLink
-            to="/login"
+            to="/upload"
             activeClassName={classes.active}
             className={classes.navlink}
           >
             <Typography color="inherit" variant="h6">
-              Login
-            </Typography>
+              Upload
+              </Typography>
           </NavLink>
         </Button>
-      )}
+
+        <Button>
+          <NavLink
+            to="/submissions"
+            activeClassName={classes.active}
+            className={classes.navlink}
+          >
+            <Typography color="inherit" variant="h6">
+              My Submissions
+              </Typography>
+          </NavLink>
+        </Button>
+        {role !== '' && role !== 'user' && (
+          <Button>
+            <NavLink
+              to="/promote"
+              activeClassName={classes.active}
+              className={classes.navlink}
+            >
+              <Typography color="inherit" variant="h6">
+                Promote
+                </Typography>
+            </NavLink>
+          </Button>
+        )}
+        <Button>
+          <NavLink
+            to="/logout"
+            activeClassName={classes.active}
+            className={classes.navlink}
+          >
+            <Typography color="inherit" variant="h6">
+              Logout
+              </Typography>
+          </NavLink>
+        </Button>
+      </React.Fragment>
+
+
     </Toolbar>
   </AppBar>
 

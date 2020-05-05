@@ -74,3 +74,11 @@ export const initialGridState = {
   isSaving: false,
   nothingToChange: false,
 }
+
+
+export const initialPromoteState = {
+  columnHeaders: [],
+  rows: [],
+
+  initialFetched: false,
+}

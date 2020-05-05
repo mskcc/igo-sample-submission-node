@@ -26,7 +26,11 @@
     "nothing_to_change": "Nothing to change.",
     "fill_me": "Please fill out this field.",
     "test_me_label": "test me label",
-    "test_me_helptext": "test me helptext"
+    "test_me_helptext": "test me helptext",
+    "limsProjectId_label": "LIMS Project ID",
+    "limsRequestId_label": "LIMS Request ID",
+    "limsProjectId_helptext": "e.g.: 12345 -> 12345_H",
+    "limsRequestId_helptext": "e.g.: Adds samples to 12345_H"
   },
   "upload": {
     "gridExport_label": "Export to Excel",
@@ -36,6 +40,9 @@
     "gridSubmit_label": "Submit",
     "gridSave_label": "Save Table",
     "gridSave_msg": "Save Table",
-    "gridClear_label": "Clear Table"
+    "gridClear_label": "Clear Table",
+    "loadBanked_label": "Load Banked Samples",
+    "promoteAll_label": "Promote All",
+    "promoteSelected_label": "Promote Selected"
   }
 }

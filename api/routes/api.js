@@ -1,6 +1,7 @@
 var express = require("express");
 var uploadRouter = require("./upload");
 var submissionRouter = require("./submission");
+var promoteRouter = require("./promote");
 const { authenticate } = require("../middlewares/jwt");
 var apiResponse = require("../util/apiResponse");
 var app = express();
@@ -10,5 +11,6 @@ var app = express();
 
 app.use("/upload/", authenticate, uploadRouter);
 app.use("/submission/",authenticate, submissionRouter);
+app.use("/promote/",authenticate, promoteRouter);
 
 module.exports = app;
