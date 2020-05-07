@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core'
-import PropTypes from 'prop-types'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import { HotTable } from '@handsontable/react'
 import {
   GridButton,
@@ -83,7 +83,7 @@ class Promote extends Component {
     const { classes } = this.props
     return (
       <React.Fragment>
-        {this.props.promote.initialFetched && (
+        {this.props.promote.initialFetched ? (
           <div className={classes.container}>
             <div className={classes.buttons}>
               <FormControl component="fieldset">
@@ -102,27 +102,7 @@ class Promote extends Component {
                 nothingToSubmit={false}
                 color="primary"
               />
-            </div>
-            <HotTable
-              licenseKey="non-commercial-and-evaluation"
-              id="hot"
-              data={this.props.promote.rows}
-              colHeaders={this.props.promote.columns}
-              columns={this.props.promote.columnFeatures}
-              rowHeaders={true}
-              hiddenColumns={this.props.promote.hiddenColumns}
-              headerTooltips={true}
-              manualColumnResize={true}
-              comments={true}
-              ref={this.hotTableComponent}
-              width="95%"
-              stretchH="all"
-              selectionMode="multiple"
-              outsideClickDeselects={false}
-              // height="10%"
-              height="500"
-            />
-            <div className={classes.buttons}>
+
               <FormControl component="fieldset">
                 <Input
                   id="limsProjectId"
@@ -156,8 +136,27 @@ class Promote extends Component {
                 color="secondary"
               />
             </div>
+            <HotTable
+              licenseKey="non-commercial-and-evaluation"
+              id="hot"
+              data={this.props.promote.rows}
+              colHeaders={this.props.promote.columns}
+              columns={this.props.promote.columnFeatures}
+              rowHeaders={true}
+              hiddenColumns={this.props.promote.hiddenColumns}
+              headerTooltips={true}
+              manualColumnResize={true}
+              comments={true}
+              ref={this.hotTableComponent}
+              // width="95%"
+              // stretchH="all"
+              selectionMode="multiple"
+              outsideClickDeselects={false}
+              
+            />
+
           </div>
-        )}
+        ) : <CircularProgress color="secondary" size={35} />}
       </React.Fragment>
     )
   }
@@ -180,7 +179,7 @@ const styles = theme => ({
     width: '95vw',
     // maxHeight: 600,
     overflow: 'hidden',
-    marginBottom: '5em',
+    // marginBottom: '5em',
   },
   buttons: { width: '90vw' },
   tooltipCell: {
