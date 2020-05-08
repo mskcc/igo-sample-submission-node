@@ -32,7 +32,7 @@
     "limsProjectId_helptext": "e.g.: 12345 -> 12345_H",
     "limsRequestId_helptext": "e.g.: Adds samples to 12345_H"
   },
-  "upload": {
+  "buttons": {
     "gridExport_label": "Export to Excel",
     "formSubmit_label": "Generate Table",
     "updateNumberOfRows_label": "Update #Samples",

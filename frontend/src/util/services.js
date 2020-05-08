@@ -164,3 +164,14 @@ export const promoteGrid = () => {
 
 }
 
+
+export const loadBankedSamples = (queryType, query) => {
+    const url = `${Config.NODE_API_ROOT}/promote/load`;
+    return axios.post(url, { queryType, query })
+        .then((resp) => {
+            return resp;
+        }).catch((error) => {
+            throw error
+        }).then((resp) => { return resp })
+
+}

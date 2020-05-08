@@ -14,7 +14,7 @@ import { Config } from '../../config.js'
 const persistConfig = {
   key: 'root',
   storage: sessionStorage,
-  whitelist: ['upload', 'user', 'submissions'],
+  whitelist: ['upload', 'user', 'submissions', 'promote'],
 }
 
 const appReducer = combineReducers({

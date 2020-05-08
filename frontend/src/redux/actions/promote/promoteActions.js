@@ -20,20 +20,17 @@ export function getInitialState() {
       dispatch({ type: REQUEST_INITIAL_STATE_PROMOTE })
       services.promoteGrid()
         .then(response => {
-          console.log(response)
-          let grid = response.payload
-          dispatch({
+          return dispatch({
             type: RECEIVE_INITIAL_STATE_PROMOTE_SUCCESS,
-            grid: grid,
+            grid: response.payload,
           })
-          return response
         })
-        .catch(error =>
-          dispatch({
+        .catch(error => {
+          return dispatch({
             type: RECEIVE_INITIAL_STATE_PROMOTE_FAIL,
             error: error,
           })
-        )
+        })
     }
   }
 }
@@ -45,17 +42,16 @@ export const RECEIVE_BANKED_SAMPLES_SUCCESS = 'RECEIVE_BANKED_SAMPLES_SUCCESS'
 export const RECEIVE_BANKED_SAMPLES_FAIL = 'RECEIVE_BANKED_SAMPLES_FAIL'
 export const BANKED_SAMPLES_RETRIEVED = 'BANKED_SAMPLES_RETRIEVED'
 
-export function loadBankedSamples(serviceId) {
+export function loadBankedSamples(queryType, query) {
   return (dispatch, getState) => {
     dispatch({ type: REQUEST_BANKED_SAMPLES })
-    return axios
-      .get(Config.API_ROOT + '/getSamples', {
-        params: { serviceId: serviceId },
-      })
+
+    services.loadBankedSamples(queryType, query)
       .then(response => {
         console.log(response)
-        var rows = response.data.map(a => Object.assign({}, a))
-        var rowsBackup = response.data.map(a => Object.assign({}, a))
+        let samples = response.payload.samples
+        let rows = samples.map(a => Object.assign({}, a))
+        let rowsBackup = samples.map(a => Object.assign({}, a))
         dispatch({
           type: RECEIVE_BANKED_SAMPLES_SUCCESS,
           rows: rows,

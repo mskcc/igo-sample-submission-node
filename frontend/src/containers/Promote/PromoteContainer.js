@@ -1,15 +1,7 @@
 import React, { Component } from 'react'
-import { withStyles } from '@material-ui/core'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { HotTable } from '@handsontable/react'
-import {
-  GridButton,
-  Input,
-} from '../../components/index.js'
+import { PromoteGrid, } from '../../components'
 import 'handsontable/dist/handsontable.full.css'
-import {
-  FormControl
-} from '@material-ui/core'
 
 import { connect } from 'react-redux'
 import { promoteActions } from '../../redux/actions'
@@ -73,89 +65,18 @@ class Promote extends Component {
     // }
     this.props.promoteAll(this.state.limsProjectId, this.state.limsRequestId)
   }
-  handleSubmit = () => {
-    if (this.state.service_id) {
-      this.props.loadBankedSamples(this.state.service_id)
-    }
+  handleLoad = (queryType, query) => {
+    console.log(queryType)
+    console.log(query)
+      this.props.loadBankedSamples(queryType, query)
+    
   }
 
   render() {
-    const { classes } = this.props
     return (
       <React.Fragment>
         {this.props.promote.initialFetched ? (
-          <div className={classes.container}>
-            <div className={classes.buttons}>
-              <FormControl component="fieldset">
-                <Input
-                  id="serviceId"
-                  value={this.state.service_id}
-                  // error={!formValid.service_id}
-                  onChange={this.handleChange}
-                  type="text"
-                />{' '}
-              </FormControl>
-              <GridButton
-                id="loadBanked"
-                onClick={this.handleSubmit}
-                isLoading={false}
-                nothingToSubmit={false}
-                color="primary"
-              />
-
-              <FormControl component="fieldset">
-                <Input
-                  id="limsProjectId"
-                  value={this.state.limsProjectId}
-                  // error={!formValid.service_id}
-                  onChange={this.handleChange}
-                  type="text"
-                />{' '}
-              </FormControl>
-              <FormControl component="fieldset">
-                <Input
-                  id="limsRequestId"
-                  value={this.state.limsRequestId}
-                  // error={!formValid.service_id}
-                  onChange={this.handleChange}
-                  type="text"
-                />{' '}
-              </FormControl>
-              <GridButton
-                id="promoteAll"
-                onClick={this.promoteAll}
-                isLoading={this.props.promote.promoteIsLoading}
-                nothingToSubmit={false}
-                color="primary"
-              />
-              <GridButton
-                id="promoteSelected"
-                onClick={e => alert('Im not ready!')}
-                isLoading={false}
-                nothingToSubmit={false}
-                color="secondary"
-              />
-            </div>
-            <HotTable
-              licenseKey="non-commercial-and-evaluation"
-              id="hot"
-              data={this.props.promote.rows}
-              colHeaders={this.props.promote.columns}
-              columns={this.props.promote.columnFeatures}
-              rowHeaders={true}
-              hiddenColumns={this.props.promote.hiddenColumns}
-              headerTooltips={true}
-              manualColumnResize={true}
-              comments={true}
-              ref={this.hotTableComponent}
-              // width="95%"
-              // stretchH="all"
-              selectionMode="multiple"
-              outsideClickDeselects={false}
-              
-            />
-
-          </div>
+          <PromoteGrid promote={this.props.promote} handleLoad={this.handleLoad} />
         ) : <CircularProgress color="secondary" size={35} />}
       </React.Fragment>
     )
@@ -170,29 +91,8 @@ const mapDispatchToProps = {
   ...promoteActions,
 }
 
-const styles = theme => ({
-  container: {
-    // borderRight: '1px solid gray',
-    display: 'grid',
-    justifyItems: 'center',
-    marginLeft: theme.spacing(2),
-    width: '95vw',
-    // maxHeight: 600,
-    overflow: 'hidden',
-    // marginBottom: '5em',
-  },
-  buttons: { width: '90vw' },
-  tooltipCell: {
-    fontSize: '.8em',
-    color: 'black !important',
-    backgroundColor: '#cfd8dc !important',
-  },
-  submit: {
-    width: '30px',
-  },
-})
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(Promote))
+)(Promote)

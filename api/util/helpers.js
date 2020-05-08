@@ -630,7 +630,7 @@ export function generatePromoteGrid(limsColumnOrdering) {
             // If we recognize the column, attach the feature and add it to the list used for picklist generation
             if (columnName in allColumns.gridColumns) {
                 promoteColFeature = Object.assign({}, allColumns.gridColumns[columnName])
-                if ("picklistName" in promoteColFeature) {
+                if ("picklistName" in promoteColFeature && promoteColFeature.data != 'index') {
                     picklistCols.push(columnName)
                 }
             } else {
@@ -674,33 +674,16 @@ function camelize(str) {
     }).replace(/\s+/g, '');
 }
 
-// @upload.route('/allColumnsPromote', methods=['GET'])
-// def get_all_columns_promote_json():
-//     columns = get_all_columns_promote()
-//     return jsonify(columnDefs=columns)
+export function loadBankedSamples(queryType, query) {
 
-// def get_all_columns_promote():
-//     ordering = get_picklist("ReceiptPromote+Ordering")
-// #    colDefs = copy.deepcopy(list(possible_fields.values()))
-//     all_columns = []    
-// #    for column in colDefs:
-//     for column_index in ordering:
-//         (_,column_name) = column_index['id'].split(":")
-//         try:
-//             column = copy.deepcopy(possible_fields[column_name])
-//         except:            
-//             column = {"name":column_name, "width":150,"field": make_it_camel_case(column_name), "editableCellTemplate": editableCellTemplate, "displayName": column_name}         
-//         column['headerCellClass']='optional'
-//         #pull dropdowns from LIMS API and inject into column definition, unless already filled out
-//         if column['editableCellTemplate'] in ['uiSelect', 'uiMultiSelect', 'uiTagSelect', 'ui-grid/dropdownEditor']:
-//             if 'editDropdownOptionsArray' not in column:
-//                 column['editDropdownOptionsArray']=get_picklist(column['picklistName'])
-//         if column['field'] == 'investigator':
-//             column["cellEditableCondition"] = False
-//         all_columns.append(column)
-//     return all_columns
+    return new Promise((resolve, reject) => {
+        services.loadBankedSamples(queryType, query).then(response => {
+            console.log(response)
+            resolve(response)
+        })
+    })
 
-
+}
 
 
 // PROMOTE END

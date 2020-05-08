@@ -17,14 +17,14 @@ const Button = ({ id, onClick, isLoading, done, title, classes, color }) => (
           variant="contained"
           type="submit"
           onClick={onClick}
-          className={classes.button}
+          className={id.includes('promote') ? classes.promoteButton: classes.button}
           id={id}
           color={color}
           disabled={isLoading}
         >
           {done
-            ? translate('upload.' + id + '_msg')
-            : translate('upload.' + id + '_label')}
+            ? translate('buttons.' + id + '_msg')
+            : translate('buttons.' + id + '_label')}
         </MuiButton>
         {isLoading && (
           <CircularProgress
@@ -43,10 +43,13 @@ const Button = ({ id, onClick, isLoading, done, title, classes, color }) => (
 const styles = theme => ({
   button: {
     margin: theme.spacing(1),
-    // height: 50,
-    // display: 'inline-block',
-    minWidth: 150,
+    minWidth: 250,
     maxWidth: 250,
+  },
+  promoteButton: {
+    margin: theme.spacing(1),
+    minWidth: 310,
+    maxWidth: 310,
   },
   wrapper: {
     margin: theme.spacing(1),

@@ -30,7 +30,7 @@ const formatBarcodes = function (resp) {
     const data = resp.data || [];
     let barcodes = {}
     data.map((element) => {
-    barcodes[element.barcodId.toLowerCase()] = element.barcodeTag
+        barcodes[element.barcodId.toLowerCase()] = element.barcodeTag
     })
     return barcodes
 };
@@ -240,3 +240,21 @@ exports.getCrdbId = (patientId) => {
 
 }
 
+
+exports.loadBankedSamples = (queryType, query) => {
+    const url = `${LIMS_URL}/getBankedSamples?${queryType}=${query}`;
+    logger.log("info", `Sending request to ${url}`);
+    return axios.get(url,
+        {
+            auth: { ...LIMS_AUTH },
+            httpsAgent: agent
+        })
+        .then((resp) => {
+            logger.log("info", `Successfully retrieved response from ${url}`);
+            return resp;
+        }).catch((error) => {
+            logger.log("info", `Error retrieving response from ${url}`)
+            throw error
+        }).then((resp) => { return formatData(resp) })
+
+}

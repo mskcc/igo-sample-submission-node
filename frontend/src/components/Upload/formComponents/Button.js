@@ -31,7 +31,7 @@ const Button = ({
               disabled={isLoading}
               onClick={onClick}
             >
-              {translate('upload.' + id + '_label')}
+              {translate('buttons.' + id + '_label')}
 
               {isLoading && (
                 <CircularProgress
@@ -44,7 +44,7 @@ const Button = ({
           {/* </Grow> */}
           <Fade in={nothingToSubmit}>
             <div className={classes.nothingToSubmit}>
-              {translate('upload.form.nothing_to_change')}
+              {translate('buttons.form.nothing_to_change')}
             </div>
           </Fade>
           </React.Fragment>
