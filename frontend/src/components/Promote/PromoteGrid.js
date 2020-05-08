@@ -14,10 +14,11 @@ import {
 class PromoteGrid extends Component {
     constructor(props) {
         super(props)
-
         this.state = {
             serviceId: '',
             investigator: '',
+            requestId: '',
+            projectId: '',
         }
         this.hotTableComponent = React.createRef()
     }
@@ -42,40 +43,24 @@ class PromoteGrid extends Component {
     promoteSelected = () => {
         var selected = this.hotTableComponent.current.hotInstance.getSelected()
         if (selected) {
-            var data = []
+            var selectedRows = []
+            selected.map(element => {
+                var row = this.hotTableComponent.current.hotInstance.getDataAtRow(element[0])
+                selectedRows.push(row)
+            })
+            this.props.promoteSamples(this.state.projectId, this.state.requestId, selectedRows)
 
-            for (var i = 0; i < selected.length; i += 1) {
-                var item = selected[i]
-                data.push(
-                    this.hotTableComponent.current.hotInstance.getData.apply(
-                        this.hotTableComponent.current.hotInstance,
-                        item
-                    )
-                )
-            }
-            console.log(data)
         }
     }
 
     promoteAll = () => {
-        // if (!this.state.limsProjectId || this.state.limsRequestId) {
-        //   Swal.fire({
-        //     title: 'Required Fields',
-        //     html: 'Please add a project or request id',
-        //     // footer: 'To avoid mistakes, invalid cells are cleared immediately.',
-        //     type: 'error',
-        //     animation: false,
-        //     confirmButtonText: 'Dismiss',
-        //     // customClass: { content: 'alert' },
-        //   })
-        // }
-        promoteAll(this.state.limsProjectId, this.state.limsRequestId)
+        this.props.promoteSamples(
+            this.state.projectId,
+            this.state.requestId,
+            this.props.promote.rows
+        )
     }
-    // handleSubmit = () => {
-    //     if (this.state.serviceId) {
-    //         this.props.loadBankedSamples(this.state.serviceId)
-    //     }
-    // }
+
 
     render() {
         const { classes, promote } = this.props
@@ -101,7 +86,6 @@ class PromoteGrid extends Component {
                                 className={classes.iconButton}
                                 onClick={e => this.handleLoad("serviceId")}
                                 aria-label="search"
-                            // disabled={!values.serviceId.length > 0}
                             >
                                 <SearchIcon />
                             </IconButton>
@@ -124,7 +108,6 @@ class PromoteGrid extends Component {
                                 className={classes.iconButton}
                                 onClick={e => this.handleLoad("investigator")}
                                 aria-label="search"
-                            // disabled={!values.serviceId.length > 0}
                             >
                                 <SearchIcon />
                             </IconButton>
@@ -135,16 +118,16 @@ class PromoteGrid extends Component {
                         <div>
                             <FormControl component="fieldset">
                                 <Input
-                                    id="limsProjectId"
-                                    value={this.state.limsProjectId}
+                                    id="projectId"
+                                    value={this.state.projectId}
                                     onChange={this.handleChange}
                                     type="text"
                                 />
                             </FormControl>
                             <FormControl component="fieldset">
                                 <Input
-                                    id="limsRequestId"
-                                    value={this.state.limsRequestId}
+                                    id="requestId"
+                                    value={this.state.requestId}
                                     onChange={this.handleChange}
                                     type="text"
                                 />
@@ -153,7 +136,7 @@ class PromoteGrid extends Component {
                         <div>
                             <GridButton
                                 id="promoteSelected"
-                                onClick={e => alert('Im not ready!')}
+                                onClick={this.promoteSelected}
                                 isLoading={false}
                                 nothingToSubmit={false}
                                 color="secondary"
@@ -169,31 +152,35 @@ class PromoteGrid extends Component {
                     </div>
                 </div>
                 <div className={classes.grid}>
-                    <HotTable
-                        licenseKey="non-commercial-and-evaluation"
-                        id="hot"
-                        data={promote.rows}
-                        colHeaders={promote.columns}
-                        columns={promote.columnFeatures}
-                        rowHeaders={true}
-                        hiddenColumns={promote.hiddenColumns}
-                        headerTooltips={true}
-                        manualColumnResize={true}
-                        comments={true}
-                        ref={this.hotTableComponent}
-                        // width="95%"
-                        // stretchH="all"
-                        selectionMode="multiple"
-                        outsideClickDeselects={false}
-                        height={() => {
-                            if (promote.rows.length >= 25) return '700'
-                            else if (promote.rows.length >= 20) return '510'
-                            else if (promote.rows.length >= 15) return '650'
-                            else if (promote.rows.length >= 10) return '550'
-                            else if (promote.rows.length >= 5) return '450'
-                            else if (promote.rows.length < 5) return '350'
-                        }}
-                    />
+                    {promote.rows &&
+                        <HotTable
+                            licenseKey="non-commercial-and-evaluation"
+                            id="hot"
+                            filters="true"
+                            columnSorting="true"
+                            dropdownMenu={['filter_by_value', 'filter_action_bar']}
+                            data={promote.rows}
+                            colHeaders={promote.columns}
+                            columns={promote.columnFeatures}
+                            rowHeaders={true}
+                            hiddenColumns={promote.hiddenColumns}
+                            headerTooltips={true}
+                            manualColumnResize={true}
+                            comments={true}
+                            ref={this.hotTableComponent}
+                            // width="95%"
+                            // stretchH="all"
+                            selectionMode="multiple"
+                            outsideClickDeselects={false}
+                            height={() => {
+                                if (promote.rows.length >= 25) return '700'
+                                else if (promote.rows.length >= 20) return '510'
+                                else if (promote.rows.length >= 15) return '650'
+                                else if (promote.rows.length >= 10) return '550'
+                                else if (promote.rows.length >= 5) return '450'
+                                else if (promote.rows.length < 5) return '350'
+                            }}
+                        />}
                 </div>
             </div>
         )

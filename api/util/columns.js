@@ -376,7 +376,6 @@ export const gridColumns = {
         data: "normalizedPatientId",
         hiddenFrom: "user",
         readOnly: true,
-        cellEditableCondition: false,
         tooltip: "Normalized Patient Id that is sent to CMO service"
     },
     "CMO Patient Id": {
@@ -385,7 +384,6 @@ export const gridColumns = {
         data: "cmoPatientId",
         hiddenFrom: "user",
         readOnly: true,
-        cellEditableCondition: false,
         tooltip: "CMO anonymized patient id"
     },
     Sex: {

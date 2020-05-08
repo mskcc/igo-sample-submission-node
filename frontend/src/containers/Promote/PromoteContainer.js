@@ -2,9 +2,10 @@ import React, { Component } from 'react'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { PromoteGrid, } from '../../components'
 import 'handsontable/dist/handsontable.full.css'
-
+import { swal } from '../../util'
 import { connect } from 'react-redux'
 import { promoteActions } from '../../redux/actions'
+import { isEqual } from '../../util/helpers'
 
 class Promote extends Component {
   constructor(props) {
@@ -24,59 +25,40 @@ class Promote extends Component {
     }
   }
 
-  handleChange = () => {
-    this.setState({
-      ...this.state,
-      [event.target.id]: event.target.value,
-    })
-  }
 
-  promoteSelected = () => {
-    var selected = this.hotTableComponent.current.hotInstance.getSelected()
-    if (selected) {
-      var data = []
+  // promoteSelected = (selectedRows) => {
+  //   console.log(selectedRows)
+  //   // this.props.promoteSelected(selectedRows)
 
-      for (var i = 0; i < selected.length; i += 1) {
-        var item = selected[i]
-
-        data.push(
-          this.hotTableComponent.current.hotInstance.getData.apply(
-            this.hotTableComponent.current.hotInstance,
-            item
-          )
-        )
-      }
-
-      console.log(data)
+  // }
+  promoteSamples = (projectId, requestId, rows) => {
+    // let rows = getState().promote.rows
+    let rowsBackup = this.props.promote.rowsBackup
+    if (!isEqual(rows, rowsBackup)) { console.log('needs update first') }
+    else {
+      console.log("good to go")
     }
+    // this.props.promote(projectId, requestId, rows)
   }
 
-  promoteAll = () => {
-    // if (!this.state.limsProjectId || this.state.limsRequestId) {
-    //   Swal.fire({
-    //     title: 'Required Fields',
-    //     html: 'Please add a project or request id',
-    //     // footer: 'To avoid mistakes, invalid cells are cleared immediately.',
-    //     type: 'error',
-    //     animation: false,
-    //     confirmButtonText: 'Dismiss',
-    //     // customClass: { content: 'alert' },
-    //   })
-    // }
-    this.props.promoteAll(this.state.limsProjectId, this.state.limsRequestId)
-  }
+  // promoteAll = (projectId, requestId, rows) => {
+  //   this.props.promote(projectId, requestId, rows)
+  // }
   handleLoad = (queryType, query) => {
-    console.log(queryType)
-    console.log(query)
-      this.props.loadBankedSamples(queryType, query)
-    
+    if (!query) { return swal.alertEmptyLoad(queryType) }
+    this.props.loadBankedSamples(queryType, query)
+
   }
 
   render() {
     return (
       <React.Fragment>
         {this.props.promote.initialFetched ? (
-          <PromoteGrid promote={this.props.promote} handleLoad={this.handleLoad} />
+          <PromoteGrid
+            promote={this.props.promote}
+            handleLoad={this.handleLoad}
+            promoteSamples={this.promoteSamples}
+          />
         ) : <CircularProgress color="secondary" size={35} />}
       </React.Fragment>
     )

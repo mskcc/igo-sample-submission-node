@@ -15,7 +15,7 @@ export default function uploadFormReducer(state = initialPromoteState, action) {
         hiddenColumns: action.grid.hiddenColumns,
         columnFeatures: action.grid.columnFeatures,
         promoteIsLoading: false,
-        rows: action.grid.rows,
+        rows: action.grid.rowData,
         initialFetched: true,
         // patientIdFormats: action.data.patientIdFormats,
       }

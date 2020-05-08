@@ -48,7 +48,6 @@ export function loadBankedSamples(queryType, query) {
 
     services.loadBankedSamples(queryType, query)
       .then(response => {
-        console.log(response)
         let samples = response.payload.samples
         let rows = samples.map(a => Object.assign({}, a))
         let rowsBackup = samples.map(a => Object.assign({}, a))
@@ -87,13 +86,9 @@ export const RECEIVE_PROMOTE_FORREAL_SUCCESS = 'RECEIVE_PROMOTE_FORREAL_SUCCESS'
 
 export const RECEIVE_PROMOTE_FORREAL_FAIL = 'RECEIVE_PROMOTE_FORREAL_FAIL'
 
-export function promoteAll(projectId, requestId) {
+export function promoteSamples(projectId, requestId, rows) {
   return (dispatch, getState) => {
-    let rows = getState().promote.rows
-    let rowsBackup = getState().promote.rowsBackup
-    console.log(rows)
-    console.log(rowsBackup)
-    console.log(isEqual(rows, rowsBackup))
+
     dispatch({ type: REQUEST_PROMOTE_DRYRUN })
     if (!isEqual(rows, rowsBackup)) {
       axios
@@ -122,39 +117,21 @@ export function promoteAll(projectId, requestId) {
     } else {
       return dispatch(promoteForReal(projectId, requestId))
     }
-    // return axios
-    //   .get(Config.API_ROOT + '/getSamples', {
-    //     params: { serviceId: serviceId },
-    //   })
-    //   .then(response => {
-    //     console.log(response)
 
-    //     dispatch({
-    //       type: RECEIVE_PROMOTE_ALL_SUCCESS,
-    //       rows: response.data,
-    //     })
-    //     return response
-    //   })
-    //   .catch(error =>
-    //     dispatch({
-    //       type: RECEIVE_PROMOTE_ALL_FAIL,
-    //       error: error,
-    //     })
-    //   )
   }
 }
 
-export function promoteForReal(projectId, requestId) {
+export function promoteForReal(projectId = '', requestId = '', rows, serviceId) {
   return (dispatch, getState) => {
-    let rows = getState().promote.rows
+    // let rows = getState().promote.rows
     let bankedId = []
     bankedId = rows.map(elem => {
       return elem.recordId
     })
     let data = {
-      projectId: projectId ? projectId : '',
-      requestId: requestId ? requestId : '',
-      serviceId: rows[0].serviceId,
+      projectId: projectId,
+      requestId: requestId,
+      serviceId: serviceId,
       bankedId: bankedId,
       dryrun: true,
     }
@@ -167,8 +144,6 @@ export function promoteForReal(projectId, requestId) {
         dispatch({ type: RECEIVE_PROMOTE_DRYRUN_SUCCESS })
         Swal.fire({
           title: response.data + '?',
-          // html: response.data,
-          // footer: 'To avoid mistakes, invalid cells are cleared immediately.',
           type: 'info',
           animation: false,
           showCancelButton: true,
@@ -258,61 +233,4 @@ export function promoteForReal(projectId, requestId) {
   }
 }
 
-const isEqual = function (value, other) {
-  // Get the value type
-  var type = Object.prototype.toString.call(value)
 
-  // If the two objects are not the same type, return false
-  if (type !== Object.prototype.toString.call(other)) return false
-
-  // If items are not an object or array, return false
-  if (['[object Array]', '[object Object]'].indexOf(type) < 0) return false
-
-  // Compare the length of the length of the two items
-  var valueLen =
-    type === '[object Array]' ? value.length : Object.keys(value).length
-  var otherLen =
-    type === '[object Array]' ? other.length : Object.keys(other).length
-  if (valueLen !== otherLen) return false
-
-  // Compare two items
-  var compare = function (item1, item2) {
-    // Get the object type
-    var itemType = Object.prototype.toString.call(item1)
-
-    // If an object or array, compare recursively
-    if (['[object Array]', '[object Object]'].indexOf(itemType) >= 0) {
-      if (!isEqual(item1, item2)) return false
-    }
-
-    // Otherwise, do a simple comparison
-    else {
-      // If the two items are not the same type, return false
-      if (itemType !== Object.prototype.toString.call(item2)) return false
-
-      // Else if it's a function, convert to a string and compare
-      // Otherwise, just compare
-      if (itemType === '[object Function]') {
-        if (item1.toString() !== item2.toString()) return false
-      } else {
-        if (item1 !== item2) return false
-      }
-    }
-  }
-
-  // Compare properties
-  if (type === '[object Array]') {
-    for (var i = 0; i < valueLen; i++) {
-      if (compare(value[i], other[i]) === false) return false
-    }
-  } else {
-    for (var key in value) {
-      if (value.hasOwnProperty(key)) {
-        if (compare(value[key], other[key]) === false) return false
-      }
-    }
-  }
-
-  // If nothing failed, return true
-  return true
-}

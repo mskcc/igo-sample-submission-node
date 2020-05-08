@@ -619,7 +619,7 @@ export function generatePromoteGrid(limsColumnOrdering) {
         let grid = {
             columnFeatures: [],
             columnHeaders: [],
-            rowData: []
+            rowData: [{}]
         };
         let picklistCols = []
         // lims returns these columns as ["Integer:String","Integer:String",...]
@@ -652,7 +652,9 @@ export function generatePromoteGrid(limsColumnOrdering) {
                     promoteColFeature.optional = true
                     promoteColFeature.allowEmpty = true
                     promoteColFeature.className = 'optional'
+                    promoteColFeature.readOnly = promoteColFeature.data == "investigator" ? true : false
                     promoteColFeature.error = promoteColFeature.error ? promoteColFeature.error : 'Invalid format.'
+                    grid.rowData[0][promoteColFeature.data] = ''
                 })
                 grid.columnHeaders = grid.columnFeatures.map(
                     a =>
@@ -675,14 +677,12 @@ function camelize(str) {
 }
 
 export function loadBankedSamples(queryType, query) {
-
     return new Promise((resolve, reject) => {
         services.loadBankedSamples(queryType, query).then(response => {
-            console.log(response)
+            // TODO: Clean out some data like in old rex?
             resolve(response)
         })
     })
-
 }
 
 

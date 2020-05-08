@@ -154,3 +154,18 @@ export const submitSuccess = () => {
 
 }
 
+
+//  PROMOTE
+export const alertEmptyLoad = (queryType) => {
+  Swal.fire({
+    title: 'Required',
+    text: `Please fill enter a value for ${queryType}.`,
+    type: 'error',
+    animation: false,
+    confirmButtonText: 'Dismiss',
+  })
+}
+
+// PROMOTE END 
+
+
