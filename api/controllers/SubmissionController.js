@@ -311,7 +311,8 @@ exports.submit = [
                     }
 
                     else {
-                        mailer.sendNotification(submissionToSubmit)
+                        let sendEmail = mailer.sendToPms(submissionToSubmit.formValues)
+                        if (sendEmail) { mailer.sendNotification(submissionToSubmit) }
                         return apiResponse.successResponseWithData(
                             res,
                             "Operation success",

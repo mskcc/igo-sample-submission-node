@@ -38,5 +38,5 @@ export const constants = {
 
     logger: "sample-sub",
 
-    
+    cmoPmEmailApplications: ["Archer-HemePanel", "Archer-SolidTumorPanel", "Archer-Immunoverse", "HemePACT_v4", "HumanWholeGenome", "IMPACT410", "IMPACT468", "MSK-ACCESS_v1", "RNASeq_PolyA", "RNASeq_RiboDeplete", "RNASeq", "ShallowWGS", "WholeExomeSequencing", "TCRSeq", "(Multiple of the Above)"]
 };
