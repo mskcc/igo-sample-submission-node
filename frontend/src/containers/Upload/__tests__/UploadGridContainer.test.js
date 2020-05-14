@@ -1,21 +1,21 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
-import configureStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
-import multi from 'redux-multi'
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import multi from 'redux-multi';
 
-import renderer from 'react-test-renderer'
-import { mount } from 'enzyme'
-import TestUploadGridContainer from '../UploadGridContainer'
+import renderer from 'react-test-renderer';
+import { mount } from 'enzyme';
+import TestUploadGridContainer from '../UploadGridContainer';
 
-import { Provider } from 'react-redux'
+import { Provider } from 'react-redux';
 
-import { initialFullStateMock, gridMock } from '../../../mocks'
+import { initialFullStateMock, gridMock } from '../../../mocks';
 
 // const formTestStore = initialFormStateMock
 
-const middlewares = [thunk, multi]
-const mockStore = configureStore(middlewares)
+const middlewares = [thunk, multi];
+const mockStore = configureStore(middlewares);
 
 const gridTestStore = mockStore({
   ...initialFullStateMock,
@@ -27,32 +27,32 @@ const gridTestStore = mockStore({
       columns: gridMock.columnHeaders,
     },
   },
-})
+});
 
-const UploadGridContainer = props => (
+const UploadGridContainer = (props) => (
   <Provider store={props.store}>
     <TestUploadGridContainer />
   </Provider>
-)
+);
 
 describe('Render UploadGridContainer', () => {
   it('renders UploadGridContainer correctly', () => {
     const UploadGridContainerComponent = renderer
       .create(<UploadGridContainer store={mockStore(initialFullStateMock)} />)
-      .toJSON()
-    expect(UploadGridContainerComponent).toMatchSnapshot()
-  })
-})
+      .toJSON();
+    expect(UploadGridContainerComponent).toMatchSnapshot();
+  });
+});
 
 describe('renders UploadGridContainer', () => {
   it('renders when rows are not empty', () => {
-    let container = document.createElement('DIV')
-    container.id = 'hotContainer'
-    document.body.appendChild(container)
+    let container = document.createElement('DIV');
+    container.id = 'hotContainer';
+    document.body.appendChild(container);
     const wrapper = mount(<UploadGridContainer store={gridTestStore} />, {
       attachTo: document.getElementById('hotContainer'),
-    })
+    });
 
-    expect(wrapper.find('HotTable').exists()).toBe(true)
-  })
-})
+    expect(wrapper.find('HotTable').exists()).toBe(true);
+  });
+});

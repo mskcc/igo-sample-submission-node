@@ -27,7 +27,7 @@ export const initialFormStateMock = {
     grouping_checked: false,
     alt_service_id: false,
   },
-}
+};
 
 export const initialGridStateMock = {
   columns: [],
@@ -36,7 +36,7 @@ export const initialGridStateMock = {
   form: [],
   gridIsLoading: false,
   nothingToChange: false,
-}
+};
 
 export const filledGridStateMock = {
   upload: {
@@ -74,7 +74,7 @@ export const filledGridStateMock = {
       ],
     },
   },
-}
+};
 
 export const initialFullStateMock = {
   upload: {
@@ -135,7 +135,7 @@ export const initialFullStateMock = {
     isSaving: false,
     role: '',
   },
-}
+};
 
 export const filledFullStateMock = {
   upload: {
@@ -170,7 +170,10 @@ export const filledFullStateMock = {
     },
     grid: {
       columns: ['Block/Slide/TubeID', 'Sample ID'],
-      rows: [{ tubeId: '', userId: '' }, { tubeId: '', userId: '' }],
+      rows: [
+        { tubeId: '', userId: '' },
+        { tubeId: '', userId: '' },
+      ],
       error: '',
       form: {
         material: 'Tissue',
@@ -216,7 +219,7 @@ export const filledFullStateMock = {
     submissionsTable: {},
     isSaving: false,
   },
-}
+};
 
 export const formValuesMock = {
   application: 'AmpliSeq',
@@ -228,7 +231,7 @@ export const formValuesMock = {
   patient_id_type: '',
   grouping_checked: false,
   alt_service_id: false,
-}
+};
 
 export const columnDefsResponseMock = {
   columnDefs: [
@@ -288,7 +291,7 @@ export const columnDefsResponseMock = {
       trimDropdown: false,
     },
   ],
-}
+};
 
 export const gridMock = {
   // form: {
@@ -309,7 +312,7 @@ export const gridMock = {
 
       data: 'tubeId',
       error: 'Invalid format.',
-      editableCellTemplate: `<div><form name="inputForm"><input class="form-control inputheight" type="INPUT_TYPE" ng-class="'colt' + col.uid" ui-grid-editor ng-model="MODEL_COL_FIELD" ng-paste="grid.appScope.handleCellPaste($event)"></form></div>`,
+      editableCellTemplate: '<div><form name="inputForm"><input class="form-control inputheight" type="INPUT_TYPE" ng-class="\'colt\' + col.uid" ui-grid-editor ng-model="MODEL_COL_FIELD" ng-paste="grid.appScope.handleCellPaste($event)"></form></div>',
       headerCellClass: 'required',
       tooltip:
         'The identifier on your tube, block or slide.  You can paste in directly from excel, and there are no formatting rules.  Please be as correct as possible, and ensure your tubes, blocks and slides are labeled clearly.',
@@ -320,7 +323,7 @@ export const gridMock = {
 
       data: 'userId',
       error: 'Invalid format.',
-      editableCellTemplate: `<div><form name="inputForm"><input class="form-control inputheight" type="INPUT_TYPE" ng-class="'colt' + col.uid" ui-grid-editor ng-model="MODEL_COL_FIELD" ng-paste="grid.appScope.handleCellPaste($event)"></form></div>`,
+      editableCellTemplate: '<div><form name="inputForm"><input class="form-control inputheight" type="INPUT_TYPE" ng-class="\'colt\' + col.uid" ui-grid-editor ng-model="MODEL_COL_FIELD" ng-paste="grid.appScope.handleCellPaste($event)"></form></div>',
       headerCellClass: 'required',
       tooltip:
         'The Sample ID stays with your sample for its lifetime. Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively.',
@@ -378,4 +381,4 @@ export const gridMock = {
       organism: 'Mouse',
     },
   ],
-}
+};

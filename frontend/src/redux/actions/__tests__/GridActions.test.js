@@ -1,11 +1,11 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
-import configureStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
-import multi from 'redux-multi'
-import moxios from 'moxios'
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import multi from 'redux-multi';
+import moxios from 'moxios';
 
-import { gridActions } from '../../redux/actions/'
+import { gridActions } from '../../redux/actions/';
 
 import {
   initialFullStateMock,
@@ -13,37 +13,37 @@ import {
   gridMock,
   columnDefsResponseMock,
   filledGridStateMock,
-} from '../../mocks'
+} from '../../mocks';
 
-const gridTestStore = initialFullStateMock
+const gridTestStore = initialFullStateMock;
 
-const middlewares = [thunk, multi]
-const mockStore = configureStore(middlewares)
+const middlewares = [thunk, multi];
+const mockStore = configureStore(middlewares);
 
-let API_ROOT = 'http://localhost:9004'
+let API_ROOT = 'http://localhost:9004';
 if (process.env.NODE_ENV === 'production') {
-  API_ROOT = 'https://delphi.mskcc.org/sample-receiving-backend/'
+  API_ROOT = 'https://delphi.mskcc.org/sample-receiving-backend/';
   // API_ROOT = 'https://rex.mskcc.org/apps/auth/'
 }
 
 describe('upload grid actions', () => {
-  beforeEach(function() {
-    moxios.install()
-  })
+  beforeEach(function () {
+    moxios.install();
+  });
 
-  afterEach(function() {
-    moxios.uninstall()
-  })
+  afterEach(function () {
+    moxios.uninstall();
+  });
 
   it('should execute getColumns and getInitialColumns', () => {
-    const store = mockStore(gridTestStore)
+    const store = mockStore(gridTestStore);
     moxios.wait(() => {
-      const request = moxios.requests.mostRecent()
+      const request = moxios.requests.mostRecent();
       request.respondWith({
         status: 200,
         response: columnDefsResponseMock,
-      })
-    })
+      });
+    });
     const expectedActions = [
       {
         type: 'GET_COLUMNS',
@@ -53,31 +53,30 @@ describe('upload grid actions', () => {
       },
       {
         type: 'GET_COLUMNS_SUCCESS',
-        message: 'Grid generated for DNA and AmpliSeq. Green columns are optional.',
+        message:
+          'Grid generated for DNA and AmpliSeq. Green columns are optional.',
         grid: gridMock,
         form: formValuesMock,
       },
-    ]
+    ];
 
-    return store
-      .dispatch(gridActions.getColumns(formValuesMock))
-      .then(() => {
-        const actions = store.getActions()
-        expect(actions).toEqual(expectedActions)
-      })
-  })
+    return store.dispatch(gridActions.getColumns(formValuesMock)).then(() => {
+      const actions = store.getActions();
+      expect(actions).toEqual(expectedActions);
+    });
+  });
 
   it('should execute getInitialColumns fail actions', () => {
-    const store = mockStore(gridTestStore)
+    const store = mockStore(gridTestStore);
     const errResp = {
       status: 400,
       response: { message: 'problem' },
-    }
+    };
 
     moxios.wait(() => {
-      const request = moxios.requests.mostRecent()
-      request.reject(errResp)
-    })
+      const request = moxios.requests.mostRecent();
+      request.reject(errResp);
+    });
     const expectedActions = [
       {
         type: 'GET_INITIAL_COLUMNS',
@@ -88,7 +87,7 @@ describe('upload grid actions', () => {
         application: 'AmpliSeq',
         error: errResp,
       },
-    ]
+    ];
 
     return store
       .dispatch(
@@ -98,17 +97,17 @@ describe('upload grid actions', () => {
         })
       )
       .then(() => {
-        const actions = store.getActions()
-        expect(actions).toEqual(expectedActions)
-      })
-  })
+        const actions = store.getActions();
+        expect(actions).toEqual(expectedActions);
+      });
+  });
 
   it('should handle row number updates', () => {
     // const oldNumber = filledGridStateMock.upload.grid.rows.length
     // const newNumber = formValuesMock.number_of_samples
-    const store = mockStore(filledGridStateMock)
-    let rows = []
-    let formValues = formValuesMock
+    const store = mockStore(filledGridStateMock);
+    let rows = [];
+    let formValues = formValuesMock;
     const expectedActions = [
       {
         type: 'GET_COLUMNS',
@@ -118,17 +117,20 @@ describe('upload grid actions', () => {
       },
       {
         type: 'UPDATE_NUM_OF_ROWS_SUCCESS',
-        rows: [{ tubeId: '', userId: '', wellPosition: 'A1' }, { tubeId: '', userId: '', wellPosition: 'B1' }],
+        rows: [
+          { tubeId: '', userId: '', wellPosition: 'A1' },
+          { tubeId: '', userId: '', wellPosition: 'B1' },
+        ],
         form: formValuesMock,
         message: 'Number of rows updated.',
       },
-    ]
+    ];
     // expect(store.getState().upload.grid.rows.length).toEqual(
     //   parseInt(oldNumber)
     // )
-    store.dispatch(gridActions.getColumns(formValuesMock))
+    store.dispatch(gridActions.getColumns(formValuesMock));
 
-    const actions = store.getActions()
+    const actions = store.getActions();
 
     // TODO integration test
     // console.log(newNumber)
@@ -137,6 +139,6 @@ describe('upload grid actions', () => {
     // expect(store.getState().upload.grid.rows.length).toEqual(
     //   parseInt(newNumber)
     // )
-    expect(actions).toEqual(expectedActions)
-  })
-})
+    expect(actions).toEqual(expectedActions);
+  });
+});

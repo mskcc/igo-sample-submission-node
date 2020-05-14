@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { NavLink } from 'react-router-dom'
+import React, { Component } from 'react';
+import { NavLink } from 'react-router-dom';
 import {
   Avatar,
   AppBar,
@@ -7,10 +7,10 @@ import {
   Button,
   Typography,
   withStyles,
-} from '@material-ui/core'
+} from '@material-ui/core';
 
-import classNames from 'classnames'
-import image from './msk.png'
+import classNames from 'classnames';
+import image from './msk.png';
 
 const Header = ({ classes, loggedIn, role }) => (
   // <div className={classes.mskccHeader}>
@@ -31,7 +31,7 @@ const Header = ({ classes, loggedIn, role }) => (
           >
             <Typography color="inherit" variant="h6">
               Upload
-              </Typography>
+            </Typography>
           </NavLink>
         </Button>
 
@@ -43,7 +43,7 @@ const Header = ({ classes, loggedIn, role }) => (
           >
             <Typography color="inherit" variant="h6">
               My Submissions
-              </Typography>
+            </Typography>
           </NavLink>
         </Button>
         {role !== '' && role !== 'user' && (
@@ -55,7 +55,7 @@ const Header = ({ classes, loggedIn, role }) => (
             >
               <Typography color="inherit" variant="h6">
                 Promote
-                </Typography>
+              </Typography>
             </NavLink>
           </Button>
         )}
@@ -67,19 +67,17 @@ const Header = ({ classes, loggedIn, role }) => (
           >
             <Typography color="inherit" variant="h6">
               Logout
-              </Typography>
+            </Typography>
           </NavLink>
         </Button>
       </React.Fragment>
-
-
     </Toolbar>
   </AppBar>
 
   // </div>
-)
+);
 
-const styles = theme => ({
+const styles = (theme) => ({
   header: {
     backgroundColor: theme.palette.primary.logo,
     color: 'white',
@@ -98,6 +96,6 @@ const styles = theme => ({
     color: 'white',
     fontSize: '1em',
   },
-})
+});
 
-export default withStyles(styles)(Header)
+export default withStyles(styles)(Header);

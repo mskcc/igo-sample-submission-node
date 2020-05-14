@@ -3,24 +3,21 @@
 // - single validation error
 // - expired token error
 
-import React from 'react'
-import PropTypes from 'prop-types'
-import classNames from 'classnames'
+import React from 'react';
+import PropTypes from 'prop-types';
 
-import { withStyles } from '@material-ui/core/styles'
-import Button from '@material-ui/core/Button'
-import Snackbar from '@material-ui/core/Snackbar'
-import SnackbarContent from '@material-ui/core/SnackbarContent'
+import { withStyles } from '@material-ui/core/styles';
+import Snackbar from '@material-ui/core/Snackbar';
 
-import IconButton from '@material-ui/core/IconButton'
-import CloseIcon from '@material-ui/icons/Close'
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 const styles = theme => ({
   close: {
     padding: 0,
     top: 0,
     right: 0,
-    position: 'absolute',
+    position: 'absolute'
   },
   // error: {
   //   color: theme.palette.textSecondary,
@@ -29,45 +26,45 @@ const styles = theme => ({
   success: {
     backgroundColor: theme.palette.primary.light,
     fontSize: '1em',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   error: {
     backgroundColor: theme.palette.error.dark,
     fontSize: '1em',
 
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   info: {
     backgroundColor: theme.palette.primary.dark,
     fontSize: '1em',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   warning: {
     fontSize: '1em',
     fontWeight: 'bold',
-    backgroundColor: theme.palette.secondary.dark,
-  },
-})
+    backgroundColor: theme.palette.secondary.dark
+  }
+});
 
 class SimpleSnackbar extends React.Component {
   state = {
-    open: true,
-  }
+    open: true
+  };
 
   handleClose = (event, reason) => {
     if (reason === 'clickaway') {
-      return
+      return;
     }
 
-    this.setState({ open: false })
-    this.props.handleClose()
-  }
+    this.setState({ open: false });
+    this.props.handleClose();
+  };
   componentDidMount() {
-    this.setState({ open: true })
+    this.setState({ open: true });
   }
 
   render() {
-    const { type, message, classes, handleClose, variant } = this.props
+    const { type, message, classes, handleClose, variant } = this.props;
     return (
       <Snackbar
         open={this.state.open}
@@ -75,7 +72,7 @@ class SimpleSnackbar extends React.Component {
         onClose={this.handleClose}
         ContentProps={{
           'aria-describedby': 'message-id',
-          className: variant ? classes[variant] : classes.info,
+          className: variant ? classes[variant] : classes.info
         }}
         message={<span id="message-id">{message}</span>}
         action={[
@@ -87,15 +84,15 @@ class SimpleSnackbar extends React.Component {
             onClick={this.handleClose}
           >
             <CloseIcon />
-          </IconButton>,
+          </IconButton>
         ]}
       />
-    )
+    );
   }
 }
 
 SimpleSnackbar.propTypes = {
-  classes: PropTypes.object.isRequired,
-}
+  classes: PropTypes.object.isRequired
+};
 
-export default withStyles(styles)(SimpleSnackbar)
+export default withStyles(styles)(SimpleSnackbar);

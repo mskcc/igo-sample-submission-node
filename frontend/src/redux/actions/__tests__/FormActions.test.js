@@ -1,28 +1,28 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
-import configureStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
-import multi from 'redux-multi'
-import moxios from 'moxios'
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import multi from 'redux-multi';
+import moxios from 'moxios';
 
-import { formActions } from '../../redux/actions/'
-import { getChoicesForDNALibraryMock, initialFullStateMock } from '../../mocks'
+import { formActions } from '../../redux/actions/';
+import { getChoicesForDNALibraryMock, initialFullStateMock } from '../../mocks';
 
-const formTestStore = initialFullStateMock
+const formTestStore = initialFullStateMock;
 
-const middlewares = [thunk, multi]
-const mockStore = configureStore(middlewares)
+const middlewares = [thunk, multi];
+const mockStore = configureStore(middlewares);
 
 describe('upload form actions', () => {
-  beforeEach(function() {
-    moxios.install()
-  })
+  beforeEach(function () {
+    moxios.install();
+  });
 
-  afterEach(function() {
-    moxios.uninstall()
-  })
+  afterEach(function () {
+    moxios.uninstall();
+  });
   it('should execute clearMaterial', () => {
-    const store = mockStore(formTestStore)
+    const store = mockStore(formTestStore);
 
     const expectedActions = [
       {
@@ -31,24 +31,24 @@ describe('upload form actions', () => {
       {
         type: 'CLEARED',
       },
-    ]
-    store.dispatch(formActions.clearMaterial())
-    const actions = store.getActions()
-    expect(actions).toEqual(expectedActions)
-  })
+    ];
+    store.dispatch(formActions.clearMaterial());
+    const actions = store.getActions();
+    expect(actions).toEqual(expectedActions);
+  });
 
   it('creates actions for Species selection with formatter', () => {
-    const store = mockStore(formTestStore)
-    const species = 'human'
-    const data = { listname: {}, picklist: {} }
+    const store = mockStore(formTestStore);
+    const species = 'human';
+    const data = { listname: {}, picklist: {} };
 
     moxios.wait(() => {
-      const request = moxios.requests.mostRecent()
+      const request = moxios.requests.mostRecent();
       request.respondWith({
         status: 200,
         response: { data: { data: data } },
-      })
-    })
+      });
+    });
 
     const expectedActions = [
       {
@@ -64,35 +64,34 @@ describe('upload form actions', () => {
         picklist: undefined,
         listname: undefined,
       },
-    ]
+    ];
     return store
       .dispatch(formActions.getFormatterForSpecies(species))
       .then(() => {
-        const actions = store.getActions()
-        expect(actions).toEqual(expectedActions)
-      })
-  })
-
+        const actions = store.getActions();
+        expect(actions).toEqual(expectedActions);
+      });
+  });
 
   it('creates actions for Species selection without formatter', () => {
-    const store = mockStore(formTestStore)
-    const species = 'RNA'
+    const store = mockStore(formTestStore);
+    const species = 'RNA';
 
     const expectedActions = [
       {
         type: 'SELECT_SPECIES_WITHOUT_ID_FORMATTER',
       },
-    ]
-    store.dispatch(formActions.getFormatterForSpecies(species))
-    const actions = store.getActions()
-    expect(actions).toEqual(expectedActions)
-  })
+    ];
+    store.dispatch(formActions.getFormatterForSpecies(species));
+    const actions = store.getActions();
+    expect(actions).toEqual(expectedActions);
+  });
 
   it('creates GET_APPLICATIONS_FOR_MATERIALS_SUCCESS when getApplicationsForMaterial returns choices', () => {
-    const store = mockStore(formTestStore)
-    const data = ['HemePACT_v4', 'M-IMPACT_v1']
+    const store = mockStore(formTestStore);
+    const data = ['HemePACT_v4', 'M-IMPACT_v1'];
     moxios.wait(() => {
-      const request = moxios.requests.mostRecent()
+      const request = moxios.requests.mostRecent();
       request.respondWith({
         status: 200,
         response: {
@@ -101,10 +100,10 @@ describe('upload form actions', () => {
             containers: [],
           },
         },
-      })
-    })
+      });
+    });
 
-    const material = 'DNA Library'
+    const material = 'DNA Library';
 
     const expectedActions = [
       {
@@ -119,14 +118,14 @@ describe('upload form actions', () => {
         applications: data,
         containers: [],
       },
-    ]
+    ];
     return store
       .dispatch(formActions.getApplicationsForMaterial(material))
       .then(() => {
-        const actions = store.getActions()
-        expect(actions).toEqual(expectedActions)
-      })
-  })
+        const actions = store.getActions();
+        expect(actions).toEqual(expectedActions);
+      });
+  });
 
   // it('creates GET_APPLICATIONS_FOR_MATERIAL_FAIL when getApplicationsForMaterial fails', async () => {
   //   const store = mockStore(formTestStore)
@@ -190,4 +189,4 @@ describe('upload form actions', () => {
   //       expect(actions).toEqual(expectedActions)
   //     })
   // })
-})
+});

@@ -1,7 +1,17 @@
 {
-  "extends": ["prettier"],
+  "extends": ["react-app", "prettier"],
   "plugins": ["prettier"],
-  "rules": {},
+  "rules": {
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ]
+
+  },
   "globals": {
     "window": true,
     "document": true,

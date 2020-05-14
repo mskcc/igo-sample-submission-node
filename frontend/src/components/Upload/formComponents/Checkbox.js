@@ -1,23 +1,23 @@
-import React from 'react'
-import { Translate } from 'react-localize-redux'
-import PropTypes from 'prop-types'
+import React from 'react';
+import { Translate } from 'react-localize-redux';
+import PropTypes from 'prop-types';
 
-import classNames from 'classnames'
-import { withStyles } from '@material-ui/core/styles'
+import classNames from 'classnames';
+import { withStyles } from '@material-ui/core/styles';
 
-import Checkbox from '@material-ui/core/Checkbox'
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
-import CheckBoxIcon from '@material-ui/icons/CheckBox'
+import Checkbox from '@material-ui/core/Checkbox';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
 
-import FormHelperText from '@material-ui/core/FormHelperText'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormControl from '@material-ui/core/FormControl'
-import CardContent from '@material-ui/core/CardContent'
-import Card from '@material-ui/core/Card'
-import Typography from '@material-ui/core/Typography'
-import Popover from '@material-ui/core/Popover'
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import CardContent from '@material-ui/core/CardContent';
+import Card from '@material-ui/core/Card';
+import Typography from '@material-ui/core/Typography';
+import Popover from '@material-ui/core/Popover';
 
-import Fade from '@material-ui/core/Fade'
+import Fade from '@material-ui/core/Fade';
 
 const CheckboxComponent = ({
   id,
@@ -61,19 +61,19 @@ const CheckboxComponent = ({
       </div>
     )}
   </Translate>
-)
+);
 
 CheckboxComponent.propTypes = {
   id: PropTypes.string.isRequired,
   checked: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
-}
+};
 
 CheckboxComponent.defaultProps = {
   id: 'checkbox',
-}
+};
 
-const styles = theme => ({
+const styles = (theme) => ({
   container: {
     color: theme.palette.text.secondary,
     marginLeft: 2 * theme.spacing(1),
@@ -92,6 +92,6 @@ const styles = theme => ({
     fontSize: '.6em',
     padding: '5px !important',
   },
-})
+});
 
-export default withStyles(styles)(CheckboxComponent)
+export default withStyles(styles)(CheckboxComponent);

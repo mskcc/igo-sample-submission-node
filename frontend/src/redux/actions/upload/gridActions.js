@@ -1,9 +1,9 @@
 // actions should not have this much BL, will change once it gets too convoluted
-import React from 'react'
-import axios from 'axios'
-import Swal from 'sweetalert2'
-import { updateHeader } from './formActions'
-import { util, swal, services, excel } from '../../../util'
+import React from 'react';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import { updateHeader } from './formActions';
+import { util, swal, services, excel } from '../../../util';
 
 import {
   diff,
@@ -22,21 +22,21 @@ import {
   validateGrid,
   checkGridAndForm,
   submissionExists,
-  addValidatorToRegexCols,
-} from '../../../util/helpers'
+  addValidatorToRegexCols
+} from '../../../util/helpers';
 
-import { Config } from '../../../config.js'
+import { Config } from '../../../config.js';
 
-export const REGISTER_GRID_CHANGE = 'REGISTER_GRID_CHANGE'
+export const REGISTER_GRID_CHANGE = 'REGISTER_GRID_CHANGE';
 export const REGISTER_GRID_CHANGE_PRE_VALIDATE =
-  'REGISTER_GRID_CHANGE_PRE_VALIDATE'
+  'REGISTER_GRID_CHANGE_PRE_VALIDATE';
 
 export const REGISTER_GRID_CHANGE_POST_VALIDATE =
-  'REGISTER_GRID_CHANGE_POST_VALIDATE'
-export const RESET_MESSAGE = 'RESET_MESSAGE'
+  'REGISTER_GRID_CHANGE_POST_VALIDATE';
+export const RESET_MESSAGE = 'RESET_MESSAGE';
 export const registerGridChange = changes => {
   return (dispatch, getState) => {
-    let result = validateGrid(changes, getState().upload.grid)
+    let result = validateGrid(changes, getState().upload.grid);
     // dispatch({ type: RESET_MESSAGE })
     // would prefer to have this in reducer
     if (result.numErrors > 1) {
@@ -48,69 +48,69 @@ export const registerGridChange = changes => {
         animation: false,
         confirmButtonText: 'Dismiss',
         confirmButtonColor: '#007cba',
-        customClass: { content: 'alert' },
-      })
+        customClass: { content: 'alert' }
+      });
       return dispatch({
         type: REGISTER_GRID_CHANGE_POST_VALIDATE,
         payload: result,
-        message: 'reset',
-      })
+        message: 'reset'
+      });
     } else {
       return dispatch({
         type: REGISTER_GRID_CHANGE_POST_VALIDATE,
         payload: result,
-        message: result.errorMessage.replace(/<br>/g, ''),
-      })
+        message: result.errorMessage.replace(/<br>/g, '')
+      });
     }
-  }
-}
+  };
+};
 
 export const preValidate = () => {
   return dispatch => {
     dispatch({
       type: REGISTER_GRID_CHANGE_PRE_VALIDATE,
-      message: 'Pasting large set, please be patient.',
-    })
-  }
-}
+      message: 'Pasting large set, please be patient.'
+    });
+  };
+};
 
-export const GET_COLUMNS = 'GET_COLUMNS'
-export const GET_INITIAL_COLUMNS = 'GET_INITIAL_COLUMNS'
+export const GET_COLUMNS = 'GET_COLUMNS';
+export const GET_INITIAL_COLUMNS = 'GET_INITIAL_COLUMNS';
 
-export const NO_CHANGE = 'NO_CHANGE'
-export const NO_CHANGE_RESET = 'NO_CHANGE_RESET'
+export const NO_CHANGE = 'NO_CHANGE';
+export const NO_CHANGE_RESET = 'NO_CHANGE_RESET';
 
-export const UPDATE_NUM_OF_ROWS = 'UPDATE_NUM_OF_ROWS'
-export const UPDATE_NUM_OF_ROWS_SUCCESS = 'UPDATE_NUM_OF_ROWS_SUCCESS'
+export const UPDATE_NUM_OF_ROWS = 'UPDATE_NUM_OF_ROWS';
+export const UPDATE_NUM_OF_ROWS_SUCCESS = 'UPDATE_NUM_OF_ROWS_SUCCESS';
 
-export const GET_COLUMNS_FROM_CACHE = 'GET_COLUMNS_FROM_CACHE'
-export const GET_COLUMNS_SUCCESS = 'GET_COLUMNS_SUCCESS'
+export const GET_COLUMNS_FROM_CACHE = 'GET_COLUMNS_FROM_CACHE';
+export const GET_COLUMNS_SUCCESS = 'GET_COLUMNS_SUCCESS';
 // export const GET_COLUMNS_INVALID_COMBINATION = 'GET_COLUMNS_INVALID_COMBINATION'
-export const GET_COLUMNS_FAIL = 'GET_COLUMNS_FAIL'
+export const GET_COLUMNS_FAIL = 'GET_COLUMNS_FAIL';
 
 export function getColumns(formValues) {
   return (dispatch, getState) => {
     // let formValues = getState().upload.form.selected
-    dispatch({ type: GET_COLUMNS })
+    dispatch({ type: GET_COLUMNS });
 
     // no grid? get inital columns
-    if (getState().upload.grid.columnFeatures.length == 0) {
-      return dispatch(getInitialColumns(formValues, getState().user.role))
+    if (getState().upload.grid.columnFeatures.length === 0) {
+      return dispatch(getInitialColumns(formValues, getState().user.role));
     } else {
-      let diffValues = diff(getState().upload.grid.form, formValues)
+      let diffValues = diff(getState().upload.grid.form, formValues);
       if (!diffValues || Object.entries(diffValues).length === 0) {
         Swal.fire({
           title: 'Nothing to change.',
           type: 'info',
           animation: false,
           confirmButtonColor: '#007cba',
-          confirmButtonText: 'Dismiss',
-        })
+          confirmButtonText: 'Dismiss'
+        });
 
-        dispatch({ type: NO_CHANGE })
+        dispatch({ type: NO_CHANGE });
         return setTimeout(() => {
-          dispatch({ type: NO_CHANGE_RESET })
-        }, 1000)
+          dispatch({ type: NO_CHANGE_RESET });
+        }, 1000);
       }
 
       //#samples -> #number rows, rest same, only update rows number
@@ -118,15 +118,15 @@ export function getColumns(formValues) {
         Object.entries(diffValues).length === 1 &&
         'number_of_samples' in diffValues
       ) {
-        dispatch({ type: UPDATE_NUM_OF_ROWS })
+        dispatch({ type: UPDATE_NUM_OF_ROWS });
 
-        let rows = updateRows(formValues, getState().upload.grid)
+        let rows = updateRows(formValues, getState().upload.grid);
         return dispatch({
           type: UPDATE_NUM_OF_ROWS_SUCCESS,
           message: 'Number of rows updated.',
           rows: rows,
-          form: formValues,
-        })
+          form: formValues
+        });
       } else {
         Swal.fire({
           title: 'Are you sure?',
@@ -137,30 +137,32 @@ export function getColumns(formValues) {
           animation: false,
           confirmButtonColor: '#df4602',
           cancelButtonColor: '#007cba',
-          confirmButtonText: 'Yes, re-generate!',
+          confirmButtonText: 'Yes, re-generate!'
         }).then(result => {
           if (result.value) {
-            return dispatch(getInitialColumns(formValues, getState().user.role))
+            return dispatch(
+              getInitialColumns(formValues, getState().user.role)
+            );
           } else {
-            return dispatch({ type: NO_CHANGE_RESET })
+            return dispatch({ type: NO_CHANGE_RESET });
           }
-        })
+        });
       }
     }
-  }
+  };
 }
 
 export function getInitialColumns(formValues, userRole) {
   return dispatch => {
-    dispatch({ type: GET_INITIAL_COLUMNS })
-    let material = formValues.material
-    let application = formValues.application
+    dispatch({ type: GET_INITIAL_COLUMNS });
+    let material = formValues.material;
+    let application = formValues.application;
     return axios
       .post(Config.NODE_API_ROOT + '/upload/grid', {
-        ...formValues,
+        ...formValues
       })
       .then(response => {
-        let data = response.payload
+        let data = response.payload;
         return dispatch({
           type: GET_COLUMNS_SUCCESS,
           columnHeaders: data.columnHeaders,
@@ -173,132 +175,136 @@ export function getInitialColumns(formValues, userRole) {
             material +
             ' and ' +
             application +
-            '. Green columns are optional.',
-        })
+            '. Green columns are optional.'
+        });
       })
       .catch(error => {
         return dispatch({
           type: GET_COLUMNS_FAIL,
           error: error,
           application: application,
-          material: material,
-        })
-      })
-  }
-
+          material: material
+        });
+      });
+  };
 }
 
-export const DECREASE_ROW_NUMBER_SUCCESS = 'DECREASE_NUMBER_SUCCESS'
+export const DECREASE_ROW_NUMBER_SUCCESS = 'DECREASE_NUMBER_SUCCESS';
 export function decreaseRowNumber(change, newRowNumber) {
   return (dispatch, getState) => {
-    let newRows = util.decreaseRowNumber(getState().upload.grid.rows, change)
+    let newRows = util.decreaseRowNumber(getState().upload.grid.rows, change);
 
     return dispatch({
       type: DECREASE_ROW_NUMBER_SUCCESS,
       rows: newRows,
       rowNumber: newRowNumber
-
-    })
-  }
+    });
+  };
 }
 
-export const INCREASE_ROW_NUMBER_REQUEST = 'INCREASE_ROW_NUMBER_REQUEST'
-export const INCREASE_ROW_NUMBER_FAIL = 'INCREASE_ROW_NUMBER_FAIL'
-export const INCREASE_ROW_NUMBER_SUCCESS = 'INCREASE_ROW_NUMBER_SUCCESS'
+export const INCREASE_ROW_NUMBER_REQUEST = 'INCREASE_ROW_NUMBER_REQUEST';
+export const INCREASE_ROW_NUMBER_FAIL = 'INCREASE_ROW_NUMBER_FAIL';
+export const INCREASE_ROW_NUMBER_SUCCESS = 'INCREASE_ROW_NUMBER_SUCCESS';
 export function increaseRowNumber(prevRowNumber, newRowNumber) {
   return (dispatch, getState) => {
-    let columnFeatures = getState().upload.grid.columnFeatures
-    let formValues = getState().upload.form.selected
-    let data = util.generateAdditionalRowData(columnFeatures, formValues, prevRowNumber, newRowNumber)
-    services.getAdditionalRows(data)
-      .then((resp) => {
+    let columnFeatures = getState().upload.grid.columnFeatures;
+    let formValues = getState().upload.form.selected;
+    let data = util.generateAdditionalRowData(
+      columnFeatures,
+      formValues,
+      prevRowNumber,
+      newRowNumber
+    );
+    services
+      .getAdditionalRows(data)
+      .then(resp => {
         return dispatch({
           type: INCREASE_ROW_NUMBER_SUCCESS,
           additionalRows: resp.payload.additionalRows,
           rowNumber: newRowNumber,
-          message: 'Loaded!',
-        })
-
+          message: 'Loaded!'
+        });
       })
       .catch(error => {
         return dispatch({
           type: INCREASE_ROW_NUMBER_FAIL,
           error: error
-        })
-      })
-
-  }
+        });
+      });
+  };
 }
 
-
-
-export const EDIT_SUBMISSION = 'EDIT_SUBMISSION'
-export const GET_SUBMISSION_TO_EDIT_FAIL = 'GET_SUBMISSION_TO_EDIT_FAIL'
-export const GET_SUBMISSION_TO_EDIT_SUCCESS = 'GET_SUBMISSION_TO_EDIT_SUCCESS'
+export const EDIT_SUBMISSION = 'EDIT_SUBMISSION';
+export const GET_SUBMISSION_TO_EDIT_FAIL = 'GET_SUBMISSION_TO_EDIT_FAIL';
+export const GET_SUBMISSION_TO_EDIT_SUCCESS = 'GET_SUBMISSION_TO_EDIT_SUCCESS';
 export function populateGridFromSubmission(submissionId, ownProps) {
   return (dispatch, getState) => {
-    dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...' })
-    services.getSubmission(submissionId)
-      .then((resp) => {
-        let submission = resp.payload.submission
+    dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...' });
+    services
+      .getSubmission(submissionId)
+      .then(resp => {
+        let submission = resp.payload.submission;
         dispatch(getInitialColumns(submission.formValues), getState().user.role)
           .then(dispatch(updateHeader(submission.formValues)))
           .then(() => {
             dispatch({
               type: 'GET_SUBMISSION_TO_EDIT_SUCCESS',
               payload: submission,
-              message: 'Loaded!',
-            })
-            return ownProps.history.push('upload')
-          })
+              message: 'Loaded!'
+            });
+            return ownProps.history.push('upload');
+          });
       })
       .catch(error => {
         return dispatch({
           type: 'GET_SUBMISSION_TO_EDIT_FAIL',
           error: error
-        })
-      })
-
-  }
+        });
+      });
+  };
 }
 
-export const HANDLE_PATIENT_ID = 'HANDLE_PATIENT_ID'
-export const HANDLE_PATIENT_ID_FAIL = 'HANDLE_PATIENT_ID_FAIL'
-export const HANDLE_PATIENT_ID_SUCCESS = 'HANDLE_PATIENT_ID_SUCCESS'
+export const HANDLE_PATIENT_ID = 'HANDLE_PATIENT_ID';
+export const HANDLE_PATIENT_ID_FAIL = 'HANDLE_PATIENT_ID_FAIL';
+export const HANDLE_PATIENT_ID_SUCCESS = 'HANDLE_PATIENT_ID_SUCCESS';
 export function handlePatientId(rowIndex) {
   return (dispatch, getState) => {
-    let patientId = getState().upload.grid.rows[rowIndex].patientId
-    let normalizedPatientID = ''
-    let rows = getState().upload.grid.rows
+    let patientId = getState().upload.grid.rows[rowIndex].patientId;
+    let normalizedPatientID = '';
+    let rows = getState().upload.grid.rows;
     let patientIdType = getState().upload.grid.columnFeatures.find(
-      element => element.data == 'patientId'
-    )
-    dispatch({ type: 'HANDLE_PATIENT_ID' })
-    if (patientId == '') {
+      element => element.data === 'patientId'
+    );
+    dispatch({ type: 'HANDLE_PATIENT_ID' });
+    if (patientId === '') {
       return dispatch({
         type: HANDLE_PATIENT_ID_SUCCESS,
-        rows: redactMRN(rows, rowIndex, '', '', ''),
-      })
+        rows: redactMRN(rows, rowIndex, '', '', '')
+      });
     }
     // handle as MRN whenever 8 digit id is entered
     if (/^[0-9]{8}$/.test(patientId.trim())) {
-      return dispatch(handleMRN(rowIndex, patientId.trim()))
+      return dispatch(handleMRN(rowIndex, patientId.trim()));
     }
     // validation necessary because this fct is triggered before any handsontable validation would be
-    let regex = new RegExp(patientIdType.pattern)
-    let isValidId = regex.test(patientId)
+    let regex = new RegExp(patientIdType.pattern);
+    let isValidId = regex.test(patientId);
 
     if (!isValidId) {
       dispatch({
         type: HANDLE_PATIENT_ID_FAIL,
         message: `${patientIdType.columnHeader}: ${patientIdType.error}`,
-        rows: redactMRN(rows, rowIndex, '', '', ''),
-      })
+        rows: redactMRN(rows, rowIndex, '', '', '')
+      });
     } else {
-      normalizedPatientID = util.normalizePatientId(patientId, patientIdType, getState().user.username)
+      normalizedPatientID = util.normalizePatientId(
+        patientId,
+        patientIdType,
+        getState().user.username
+      );
       return axios
         .post(Config.NODE_API_ROOT + '/upload/crdbId', {
-          patientId: normalizedPatientID,
+          patientId: normalizedPatientID
         })
         .then(response => {
           dispatch({
@@ -308,35 +314,34 @@ export function handlePatientId(rowIndex) {
               rowIndex,
               response.payload.patientId,
               normalizedPatientID
-            ),
-          })
-          dispatch({ type: REGISTER_GRID_CHANGE })
+            )
+          });
+          dispatch({ type: REGISTER_GRID_CHANGE });
         })
         .catch(error => {
           dispatch({
             type: HANDLE_PATIENT_ID_FAIL,
             error: error,
-            rows: redactMRN(rows, rowIndex, '', '', ''),
-          })
-        })
-
+            rows: redactMRN(rows, rowIndex, '', '', '')
+          });
+        });
     }
-  }
+  };
 }
 
-export const HANDLE_MRN = 'HANDLE_MRN'
-export const HANDLE_MRN_FAIL = 'HANDLE_MRN_FAIL'
-export const HANDLE_MRN_SUCCESS = 'HANDLE_MRN_SUCCESS'
+export const HANDLE_MRN = 'HANDLE_MRN';
+export const HANDLE_MRN_FAIL = 'HANDLE_MRN_FAIL';
+export const HANDLE_MRN_SUCCESS = 'HANDLE_MRN_SUCCESS';
 export function handleMRN(rowIndex, patientId) {
   return (dispatch, getState) => {
-    dispatch({ type: 'HANDLE_MRN' })
-    let rows = getState().upload.grid.rows
+    dispatch({ type: 'HANDLE_MRN' });
+    let rows = getState().upload.grid.rows;
     return axios
       .post(Config.NODE_API_ROOT + '/upload/crdbId', {
-        patientId: patientId,
+        patientId: patientId
       })
       .then(response => {
-        console.log(response)
+        console.log(response);
         dispatch({
           type: HANDLE_MRN_SUCCESS,
           message: 'MRN redacted.',
@@ -346,24 +351,24 @@ export function handleMRN(rowIndex, patientId) {
             response.payload.patientId,
             'MRN REDACTED',
             response.payload.sex
-          ),
-        })
-        dispatch({ type: REGISTER_GRID_CHANGE })
+          )
+        });
+        dispatch({ type: REGISTER_GRID_CHANGE });
       })
       .catch(error => {
         dispatch({
           type: HANDLE_MRN_FAIL,
           error: error,
-          rows: redactMRN(rows, rowIndex, '', '', ''),
-        })
-        return error
-      })
-  }
+          rows: redactMRN(rows, rowIndex, '', '', '')
+        });
+        return error;
+      });
+  };
 }
 
-export const HANDLE_ASSAY = 'HANDLE_ASSAY'
-export const HANDLE_ASSAY_FAIL = 'HANDLE_ASSAY_FAIL'
-export const HANDLE_ASSAY_SUCCESS = 'HANDLE_ASSAY_SUCCESS'
+export const HANDLE_ASSAY = 'HANDLE_ASSAY';
+export const HANDLE_ASSAY_FAIL = 'HANDLE_ASSAY_FAIL';
+export const HANDLE_ASSAY_SUCCESS = 'HANDLE_ASSAY_SUCCESS';
 export function handleAssay(rowIndex, colIndex, oldValue, newValue) {
   return (dispatch, getState) => {
     return dispatch({
@@ -374,14 +379,14 @@ export function handleAssay(rowIndex, colIndex, oldValue, newValue) {
         oldValue,
         newValue,
         getState().upload.grid.columnFeatures[colIndex].source
-      ),
-    })
-  }
+      )
+    });
+  };
 }
 
-export const HANDLE_TUMOR_TYPE = 'HANDLE_TUMOR_TYPE'
-export const HANDLE_TUMOR_TYPE_FAIL = 'HANDLE_TUMOR_TYPE_FAIL'
-export const HANDLE_TUMOR_TYPE_SUCCESS = 'HANDLE_TUMOR_TYPE_SUCCESS'
+export const HANDLE_TUMOR_TYPE = 'HANDLE_TUMOR_TYPE';
+export const HANDLE_TUMOR_TYPE_FAIL = 'HANDLE_TUMOR_TYPE_FAIL';
+export const HANDLE_TUMOR_TYPE_SUCCESS = 'HANDLE_TUMOR_TYPE_SUCCESS';
 export function handleTumorType(rowIndex, colIndex, oldValue, newValue) {
   return (dispatch, getState) => {
     return dispatch({
@@ -392,14 +397,14 @@ export function handleTumorType(rowIndex, colIndex, oldValue, newValue) {
         rowIndex,
         oldValue,
         newValue
-      ),
-    })
-  }
+      )
+    });
+  };
 }
 
 // export const HANDLE_CLEAR = 'HANDLE_CLEAR'
 // export const HANDLE_CLEAR_FAIL = 'HANDLE_CLEAR_FAIL'
-export const HANDLE_CLEAR_SUCCESS = 'HANDLE_CLEAR_SUCCESS'
+export const HANDLE_CLEAR_SUCCESS = 'HANDLE_CLEAR_SUCCESS';
 export function handleClear() {
   return (dispatch, getState) => {
     return dispatch({
@@ -408,13 +413,13 @@ export function handleClear() {
         getState().upload.grid.columnFeatures,
         getState().upload.grid.form,
         getState().upload.grid.rows.length
-      ),
-    })
-  }
+      )
+    });
+  };
 }
 
-export const HANDLE_INDEX_SUCCESS = 'HANDLE_INDEX_SUCCESS'
-export const HANDLE_INDEX_FAIL = 'HANDLE_INDEX_FAIL'
+export const HANDLE_INDEX_SUCCESS = 'HANDLE_INDEX_SUCCESS';
+export const HANDLE_INDEX_FAIL = 'HANDLE_INDEX_FAIL';
 export function handleIndex(colIndex, rowIndex, newValue) {
   return (dispatch, getState) => {
     let indexSeq = findIndexSeq(
@@ -422,57 +427,59 @@ export function handleIndex(colIndex, rowIndex, newValue) {
       colIndex,
       rowIndex,
       newValue
-    )
+    );
     if (indexSeq.success) {
       return dispatch({
         type: HANDLE_INDEX_SUCCESS,
-        rows: indexSeq.rows,
-      })
+        rows: indexSeq.rows
+      });
     } else {
       return dispatch({
         type: HANDLE_INDEX_FAIL,
         message:
-          'Index Sequence could not be found. Are you sure the Index ID is correct?',
-      })
+          'Index Sequence could not be found. Are you sure the Index ID is correct?'
+      });
     }
-  }
+  };
 }
 
-export const DOWNLOAD_GRID = 'DOWNLOAD_GRID'
-export const DOWNLOAD_GRID_FAIL = 'DOWNLOAD_GRID_FAIL'
-export const DOWNLOAD_GRID_SUCCESS = 'DOWNLOAD_GRID_SUCCESS'
+export const DOWNLOAD_GRID = 'DOWNLOAD_GRID';
+export const DOWNLOAD_GRID_FAIL = 'DOWNLOAD_GRID_FAIL';
+export const DOWNLOAD_GRID_SUCCESS = 'DOWNLOAD_GRID_SUCCESS';
 export function downloadGrid() {
   return (dispatch, getState) => {
-    dispatch({ type: DOWNLOAD_GRID })
-    let gridJson = JSON.stringify(getState().upload.grid.rows)
-    let material = getState().upload.grid.form.material
-    let application = getState().upload.grid.form.application
+    dispatch({ type: DOWNLOAD_GRID });
+    let gridJson = JSON.stringify(getState().upload.grid.rows);
+    let material = getState().upload.grid.form.material;
+    let application = getState().upload.grid.form.application;
     let data = {
       grid: gridJson,
       material: material,
-      application: application,
-    }
-    services.downloadGrid(data).then(response => {
-      excel.downloadExcel(response.payload.excelData, response.payload.fileName)
-      return dispatch({
-        type: DOWNLOAD_GRID_SUCCESS,
+      application: application
+    };
+    services
+      .downloadGrid(data)
+      .then(response => {
+        excel.downloadExcel(
+          response.payload.excelData,
+          response.payload.fileName
+        );
+        return dispatch({
+          type: DOWNLOAD_GRID_SUCCESS
+        });
       })
-    })
       .catch(error => {
         return dispatch({
           type: DOWNLOAD_GRID_FAIL,
-          error: error,
-        })
-      })
-  }
+          error: error
+        });
+      });
+  };
 }
 
-
-export const RESET_GRID_ERROR_MESSAGE = 'RESET_GRID_ERROR_MESSAGE'
+export const RESET_GRID_ERROR_MESSAGE = 'RESET_GRID_ERROR_MESSAGE';
 
 // Resets the currently visible error message.
 export const resetGridErrorMessage = () => ({
-  type: RESET_GRID_ERROR_MESSAGE,
-})
-
-
+  type: RESET_GRID_ERROR_MESSAGE
+});

@@ -1,14 +1,14 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import { commonActions } from '../redux/actions'
-import { Redirect } from 'react-router-dom'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import Message from '../components/Shared/Message'
+import React from 'react';
+import { connect } from 'react-redux';
+import { commonActions } from '../redux/actions';
+import { Redirect } from 'react-router-dom';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Message from '../components/Shared/Message';
 
 class ErrorPage extends React.Component {
   render() {
     if (!this.props.error) {
-      return <Redirect to="/upload" />
+      return <Redirect to="/upload" />;
     }
     return (
       <React.Fragment>
@@ -16,17 +16,14 @@ class ErrorPage extends React.Component {
 
         {this.props.loading && <CircularProgress color="secondary" size={24} />}
       </React.Fragment>
-    )
+    );
   }
 }
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   ...state.common,
-})
+});
 const mapDispatchToProps = {
   ...commonActions,
-}
+};
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ErrorPage)
+export default connect(mapStateToProps, mapDispatchToProps)(ErrorPage);

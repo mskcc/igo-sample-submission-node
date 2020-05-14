@@ -1,27 +1,25 @@
-import React from 'react'
-import { Translate } from 'react-localize-redux'
-import PropTypes from 'prop-types'
+import React from 'react';
+import { Translate } from 'react-localize-redux';
+import PropTypes from 'prop-types';
 
-import classNames from 'classnames'
 import {
   FormControl,
   InputAdornment,
   Paper,
-  Grow,
-  withStyles,
-} from '@material-ui/core'
+  withStyles
+} from '@material-ui/core';
 
-import { Button, Checkbox, Dropdown, Input } from '../index'
+import { Button, Checkbox, Dropdown, Input } from '../index';
 
-import { swal } from '../../util'
+import { swal } from '../../util';
 
 class UploadForm extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       values: {
-        ...this.props.form.selected,
+        ...this.props.form.selected
       },
       formValid: {
         material: true,
@@ -31,183 +29,183 @@ class UploadForm extends React.Component {
         species: true,
         container: true,
         patientIdType: true,
-        sharedWith: true,
-      },
-    }
+        sharedWith: true
+      }
+    };
   }
 
   handleDropdownChange = event => {
     this.setState({
       values: {
         ...this.state.values,
-        [event.id]: event.value,
+        [event.id]: event.value
       },
-      formValid: { ...this.state.formValid, [event.id]: true },
-    })
-    this.props.handleInputChange(event.id, event.value)
-  }
+      formValid: { ...this.state.formValid, [event.id]: true }
+    });
+    this.props.handleInputChange(event.id, event.value);
+  };
 
-  handleChange = () => {
+  handleChange = event => {
     this.setState({
       values: {
         ...this.state.values,
-        [event.target.id]: event.target.value,
+        [event.target.id]: event.target.value
       },
-      formValid: { ...this.state.formValid, [event.target.id]: true },
-    })
-    this.props.handleInputChange(event.target.id, event.target.value)
-  }
+      formValid: { ...this.state.formValid, [event.target.id]: true }
+    });
+    this.props.handleInputChange(event.target.id, event.target.value);
+  };
 
-  handleServiceIdCheck = name => () => {
-    var date = new Date()
-    var timestamp = date.getTime()
+  handleServiceIdCheck = name => event => {
+    var date = new Date();
+    var timestamp = date.getTime();
 
     this.setState({
       values: {
         ...this.state.values,
         serviceId: timestamp,
-        [name]: event.target.checked,
+        [name]: event.target.checked
       },
 
-      formValid: { ...this.state.formValid, serviceId: true },
-    })
+      formValid: { ...this.state.formValid, serviceId: true }
+    });
     if (event.target.checked) {
-      this.props.handleInputChange('serviceId', timestamp)
-      this.props.handleInputChange('altServiceId', true)
-      swal.altServiceIdNotice()
+      this.props.handleInputChange('serviceId', timestamp);
+      this.props.handleInputChange('altServiceId', true);
+      swal.altServiceIdNotice();
     } else {
-      this.props.handleInputChange('serviceId', '')
-      this.props.handleInputChange('altServiceId', false)
+      this.props.handleInputChange('serviceId', '');
+      this.props.handleInputChange('altServiceId', false);
     }
-  }
+  };
 
-  
-  handleCheckbox = name => () => {
+  handleCheckbox = name => event => {
     this.setState({
-      values: { ...this.state.values, [name]: event.target.checked },
-    })
-    if (event.target.checked) { this.props.handleInputChange(name, event.target.checked) }
-    else {
-      this.props.handleInputChange(name, event.target.checked)
-      this.props.handleInputChange('sharedWith', "")
+      values: { ...this.state.values, [name]: event.target.checked }
+    });
+    if (event.target.checked) {
+      this.props.handleInputChange(name, event.target.checked);
+    } else {
+      this.props.handleInputChange(name, event.target.checked);
+      this.props.handleInputChange('sharedWith', '');
     }
-  }
+  };
 
   handleSubmit = (e, handleParentSubmit) => {
-    e.preventDefault()
-    e.stopPropagation()
+    e.preventDefault();
+    e.stopPropagation();
     if (this.validate()) {
       handleParentSubmit({
         ...this.state.values,
 
-        serviceId: 'IGO-' + this.state.values.serviceId.toString(),
-      })
+        serviceId: 'IGO-' + this.state.values.serviceId.toString()
+      });
     }
-  }
+  };
 
   validate() {
-    let formValid = this.state.formValid
-    let error
-    let isValidOption
-    let values = this.props.form.selected
+    let formValid = this.state.formValid;
+    let isValidOption;
+    let values = this.props.form.selected;
     for (let value in values) {
       switch (value) {
-
         case 'serviceId':
           if (values.altServiceId) {
-            formValid[value] = true
+            formValid[value] = true;
           } else {
             formValid[value] =
-              /\d{6}/g.test(values[value]) && values[value].length === 6
+              /\d{6}/g.test(values[value]) && values[value].length === 6;
           }
-          break
+          break;
         case 'material':
           // validate whether selected value in dynamic fields is in controlled options
           // (could fail if user was extremely quick to select
           // invalid material/app combination)
-          isValidOption = this.props.form.filteredMaterials.some(function (el) {
-            return el === values[value]
-          })
+          isValidOption = this.props.form.filteredMaterials.some(function(el) {
+            return el === values[value];
+          });
 
-          formValid[value] = isValidOption && values[value].length > 0
-          break
+          formValid[value] = isValidOption && values[value].length > 0;
+          break;
 
         case 'application':
-          isValidOption = this.props.form.filteredApplications.some(function (
+          isValidOption = this.props.form.filteredApplications.some(function(
             el
           ) {
-            return el === values[value]
-          })
+            return el === values[value];
+          });
 
-          formValid[value] = isValidOption && values[value].length > 0
-          break
+          formValid[value] = isValidOption && values[value].length > 0;
+          break;
 
         case 'container':
-          isValidOption = this.props.form.filteredContainers.some(function (el) {
-            return el === values[value]
-          })
-          formValid[value] = isValidOption && values[value].length > 0
-          break
+          isValidOption = this.props.form.filteredContainers.some(function(el) {
+            return el === values[value];
+          });
+          formValid[value] = isValidOption && values[value].length > 0;
+          break;
 
         case 'species':
-          isValidOption = this.props.form.filteredSpecies.some(function (el) {
-            return el === values[value]
-          })
-          formValid[value] = isValidOption && values[value].length > 0
-          break
+          isValidOption = this.props.form.filteredSpecies.some(function(el) {
+            return el === values[value];
+          });
+          formValid[value] = isValidOption && values[value].length > 0;
+          break;
 
         case 'patientIdType':
           // only validate if species mandates a format, else value will be disregarded anyway
-          if (values.species == 'Human') {
+          if (values.species === 'Human') {
             isValidOption = this.props.form.picklists.PatientIDTypes.some(
-              function (el) {
-                return el === values[value]
+              function(el) {
+                return el === values[value];
               }
-            )
-            formValid[value] = isValidOption && values[value].length > 0
-            break
+            );
+            formValid[value] = isValidOption && values[value].length > 0;
+            break;
           } else {
-            formValid[value] = true
-            break
+            formValid[value] = true;
+            break;
           }
 
         case 'sharedWith':
           if (values.isShared) {
-
-            if (values.sharedWith == "") {
-              formValid[value] = false
-              break
+            if (values.sharedWith === '') {
+              formValid[value] = false;
+              break;
             }
-            var emails = values[value].split(',')
-            var valid = true
-            var regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            var emails = values[value].split(',');
+            var valid = true;
+            var regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             for (var i = 0; i < emails.length; i++) {
-              if (emails[i] === "" || (!regex.test(emails[i].replace(/\s/g, "")) && !emails[i].includes("mskcc"))) {
+              if (
+                emails[i] === '' ||
+                (!regex.test(emails[i].replace(/\s/g, '')) &&
+                  !emails[i].includes('mskcc'))
+              ) {
                 valid = false;
               }
             }
-            formValid[value] = valid
-            break
-          }
-          else {
-            formValid[value] = true
-            break
+            formValid[value] = valid;
+            break;
+          } else {
+            formValid[value] = true;
+            break;
           }
 
         case 'numberOfSamples':
-          formValid[value] = values[value] > 0
-          break
+          formValid[value] = values[value] > 0;
+          break;
         default:
-          break
+          break;
       }
     }
     this.setState({
       formValid: {
-        ...formValid,
-      },
-    })
+        ...formValid
+      }
+    });
     // checked all fields, now check form
-    return this.validateForm()
+    return this.validateForm();
   }
 
   validateForm() {
@@ -221,7 +219,7 @@ class UploadForm extends React.Component {
       this.state.formValid.container &&
       this.state.formValid.patientIdType &&
       this.state.formValid.sharedWith
-    )
+    );
   }
 
   render() {
@@ -236,11 +234,9 @@ class UploadForm extends React.Component {
       nothingToChange,
       gridNumberOfSamples,
       submitRowNumberUpdate
-    } = this.props
-    const { formValid, values } = this.state
-    const buttonClassname = classNames({
-      [classes.buttonSuccess]: !this.props.gridIsLoading,
-    })
+    } = this.props;
+    const { formValid, values } = this.state;
+
     return (
       <Translate>
         {({ translate }) => (
@@ -258,13 +254,13 @@ class UploadForm extends React.Component {
                 autofocus={true}
                 items={form.filteredMaterials.map(option => ({
                   value: option,
-                  label: option,
+                  label: option
                 }))}
                 loading={form.formIsLoading}
                 dynamic
                 value={{
                   value: form.selected.material,
-                  label: form.selected.material,
+                  label: form.selected.material
                 }}
               />
 
@@ -275,13 +271,13 @@ class UploadForm extends React.Component {
                 onChange={this.handleDropdownChange}
                 items={form.filteredApplications.map(option => ({
                   value: option,
-                  label: option,
+                  label: option
                 }))}
                 loading={form.formIsLoading}
                 dynamic
                 value={{
                   value: form.selected.application,
-                  label: form.selected.application,
+                  label: form.selected.application
                 }}
               />
               <FormControl component="fieldset">
@@ -293,47 +289,46 @@ class UploadForm extends React.Component {
                   loading={form.formIsLoading}
                   items={form.filteredSpecies.map(option => ({
                     value: option,
-                    label: option,
+                    label: option
                   }))}
                   value={{
                     value: form.selected.species,
-                    label: form.selected.species,
+                    label: form.selected.species
                   }}
                   dynamic
                 />
-                {values.species == 'Mouse' ||
-                  values.species == 'Mouse_GeneticallyModified' ? (
-                    <Checkbox
-                      id="groupingCheckbox"
-                      checked={form.selected.groupingChecked}
-                      onChange={e => this.handleCheckbox("groupingChecked")}
-                    />
-                  ) : null}
+                {values.species === 'Mouse' ||
+                values.species === 'Mouse_GeneticallyModified' ? (
+                  <Checkbox
+                    id="groupingCheckbox"
+                    checked={form.selected.groupingChecked}
+                    onChange={e => this.handleCheckbox('groupingChecked')}
+                  />
+                ) : null}
               </FormControl>
 
               {// PatientID is needed when Human is selected or when Mouse* is selected and combined with species checkbox value
-                this.props.form.patientIDTypeNeedsFormatting &&
-                  form.picklists.PatientIDTypes &&
-                  (values.species == 'Human' && !this.state.groupingChecked) ? (
-                    <Dropdown
-                      id={
-                        this.state.groupingChecked
-                          ? 'groupIdType'
-                          : 'patientIdType'
-                      }
-                      value={this.props.form.patientIDType}
-                      error={!formValid.patientIdType}
-                      onChange={this.handleDropdownChange}
-                      items={form.picklists.PatientIDTypes.map(option => ({
-                        value: option,
-                        label: option,
-                      }))}
-                      value={{
-                        value: form.selected.patientIdType,
-                        label: form.selected.patientIdType,
-                      }}
-                    />
-                  ) : null}
+              this.props.form.patientIDTypeNeedsFormatting &&
+              form.picklists.PatientIDTypes &&
+              values.species === 'Human' &&
+              !this.state.groupingChecked ? (
+                <Dropdown
+                  id={
+                    this.state.groupingChecked ? 'groupIdType' : 'patientIdType'
+                  }
+                  // value={this.props.form.patientIDType}
+                  error={!formValid.patientIdType}
+                  onChange={this.handleDropdownChange}
+                  items={form.picklists.PatientIDTypes.map(option => ({
+                    value: option,
+                    label: option
+                  }))}
+                  value={{
+                    value: form.selected.patientIdType,
+                    label: form.selected.patientIdType
+                  }}
+                />
+              ) : null}
 
               <Dropdown
                 id="container"
@@ -341,12 +336,12 @@ class UploadForm extends React.Component {
                 onChange={this.handleDropdownChange}
                 items={form.filteredContainers.map(option => ({
                   value: option,
-                  label: option,
+                  label: option
                 }))}
                 loading={form.formIsLoading}
                 value={{
                   value: form.selected.container,
-                  label: form.selected.container,
+                  label: form.selected.container
                 }}
               />
 
@@ -355,7 +350,7 @@ class UploadForm extends React.Component {
                 error={!formValid.numberOfSamples}
                 onChange={this.handleChange}
                 inputProps={{
-                  inputProps: { min: 1 },
+                  inputProps: { min: 1 }
                 }}
                 value={form.selected.numberOfSamples}
               />
@@ -369,7 +364,7 @@ class UploadForm extends React.Component {
                     disabled: form.selected.altServiceId,
                     startAdornment: (
                       <InputAdornment position="start">IGO-</InputAdornment>
-                    ),
+                    )
                   }}
                 />
                 <Checkbox
@@ -383,10 +378,9 @@ class UploadForm extends React.Component {
                 <Checkbox
                   id="isShared"
                   checked={form.selected.isShared || false}
-                  onChange={e => this.handleCheckbox("isShared")}
+                  onChange={e => this.handleCheckbox('isShared')}
                 />
-                {
-                  form.selected.isShared &&
+                {form.selected.isShared && (
                   <Input
                     id="sharedWith"
                     value={form.selected.sharedWith}
@@ -394,23 +388,20 @@ class UploadForm extends React.Component {
                     type="text"
                     onChange={this.handleChange}
                   />
-                }
+                )}
               </FormControl>
-
-
             </form>
             <div>
-
-
-              {form.selected.numberOfSamples != gridNumberOfSamples && gridNumberOfSamples > 0 &&
-                <Button
-                  color="secondary"
-                  id="updateNumberOfRows"
-                  onClick={submitRowNumberUpdate}
-                  isLoading={false}
-                  nothingToSubmit={false}
-                />
-              }
+              {form.selected.numberOfSamples !== gridNumberOfSamples &&
+                gridNumberOfSamples > 0 && (
+                  <Button
+                    color="secondary"
+                    id="updateNumberOfRows"
+                    onClick={submitRowNumberUpdate}
+                    isLoading={false}
+                    nothingToSubmit={false}
+                  />
+                )}
 
               <Button
                 color="primary"
@@ -426,13 +417,11 @@ class UploadForm extends React.Component {
                 isLoading={false}
                 nothingToSubmit={false}
               />
-
-
             </div>
           </Paper>
         )}
       </Translate>
-    )
+    );
   }
 }
 
@@ -449,7 +438,7 @@ UploadForm.defaultProps = {
     formIsLoading: false,
     filteredContainers: [
       { id: 'Plates', value: 'Plates' },
-      { id: 'Micronic Barcoded Tubes', value: 'Micronic Barcoded Tubes' },
+      { id: 'Micronic Barcoded Tubes', value: 'Micronic Barcoded Tubes' }
     ],
 
     allSpecies: [{ id: 'test', value: 'test' }],
@@ -463,24 +452,24 @@ UploadForm.defaultProps = {
       container: '',
       patientIdType: '',
       groupingChecked: false,
-      altServiceId: false,
+      altServiceId: false
     },
 
-    handleSubmit: () => { },
-    handleApplicationChange: () => { },
-    handleMaterialChange: () => { },
-    handleSpeciesChange: () => { },
-    gridIsLoading: () => { },
-    nothingToChange: () => { },
-  },
-}
+    handleSubmit: () => {},
+    handleApplicationChange: () => {},
+    handleMaterialChange: () => {},
+    handleSpeciesChange: () => {},
+    gridIsLoading: () => {},
+    nothingToChange: () => {}
+  }
+};
 
 UploadForm.propTypes = {
   form: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func,
   handleApplicationChange: PropTypes.func,
-  handleMaterialChange: PropTypes.func,
-}
+  handleMaterialChange: PropTypes.func
+};
 
 const styles = theme => ({
   container: {
@@ -492,24 +481,24 @@ const styles = theme => ({
     maxWidth: '1700px',
     margin: '2em auto',
     padding: '1em',
-    marginBottom: '4em',
+    marginBottom: '4em'
   },
   form: {
     display: 'flex',
-    flexWrap: 'wrap',
+    flexWrap: 'wrap'
   },
 
   lastItem: {
     flexBasis: '100%',
     marginTop: '2em',
-    width: 310,
+    width: 310
   },
 
   dense: {
-    marginTop: 19,
+    marginTop: 19
   },
   menu: {
-    width: 200,
+    width: 200
   },
 
   buttonProgress: {
@@ -517,15 +506,15 @@ const styles = theme => ({
     top: '50%',
     left: '50%',
     marginTop: -12,
-    marginLeft: -12,
+    marginLeft: -12
   },
   nothingToChange: {
     position: 'absolute',
     top: '50%',
     left: '50%',
     marginTop: -53,
-    marginLeft: -65,
-  },
-})
+    marginLeft: -65
+  }
+});
 
-export default withStyles(styles)(UploadForm)
+export default withStyles(styles)(UploadForm);

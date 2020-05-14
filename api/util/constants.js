@@ -1,42 +1,52 @@
 export const constants = {
+  containers: ['Plates', 'Micronic Barcoded Tubes', 'Blocks/Slides/Tubes'],
 
-    containers: [
-        "Plates",
-        "Micronic Barcoded Tubes",
-        "Blocks/Slides/Tubes"
-    ],
+  containersByMaterial: {
+    Tissue: ['Blocks/Slides/Tubes'],
+    Cells: ['Plates', 'Blocks/Slides/Tubes'],
+    'Blocks/Slides': ['Blocks/Slides/Tubes'],
+    Blood: ['Blocks/Slides/Tubes'],
+    'Buffy Coat': ['Micronic Barcoded Tubes', 'Blocks/Slides/Tubes'],
+    RNA: ['Plates'],
+    DNA: ['Plates', 'Micronic Barcoded Tubes'],
+    cfDNA: ['Plates', 'Micronic Barcoded Tubes'],
+    'DNA Library': ['Plates', 'Micronic Barcoded Tubes'],
+    'Pooled Library': ['Micronic Barcoded Tubes'],
+    cDNA: ['Plates'],
+    'cDNA Library': ['Plates'],
+    other: ['Plates', 'Micronic Barcoded Tubes', 'Blocks/Slides/Tubes'],
+  },
 
+  humanApplications: [
+    'expanded_genomics ',
+    'msk-access',
+    'hemepact',
+    'archer',
+    'impact4',
+    'humanwholegenome',
+  ],
 
-    containersByMaterial: {
-        Tissue: ["Blocks/Slides/Tubes"],
-        Cells: ["Plates", "Blocks/Slides/Tubes"],
-        "Blocks/Slides": ["Blocks/Slides/Tubes"],
-        Blood: ["Blocks/Slides/Tubes"],
-        "Buffy Coat": ["Micronic Barcoded Tubes", "Blocks/Slides/Tubes"],
-        RNA: ["Plates"],
-        DNA: ["Plates", "Micronic Barcoded Tubes"],
-        cfDNA: ["Plates", "Micronic Barcoded Tubes"],
-        "DNA Library": ["Plates", "Micronic Barcoded Tubes"],
-        "Pooled Library": ["Micronic Barcoded Tubes"],
-        cDNA: ["Plates"],
-        "cDNA Library": ["Plates"],
-        other: ["Plates", "Micronic Barcoded Tubes", "Blocks/Slides/Tubes"]
-    },
+  mouseApplications: ['mousewholegenome ', 'm-impact_v1'],
 
-    humanApplications: [
-        "expanded_genomics ",
-        "msk-access",
-        "hemepact",
-        "archer",
-        "impact4",
-        "humanwholegenome"
-    ],
+  humanOrMouseApplications: ['wholeexomesequencing'],
 
-    mouseApplications: ["mousewholegenome ", "m-impact_v1"],
+  logger: 'sample-sub',
 
-    humanOrMouseApplications: ["wholeexomesequencing"],
-
-    logger: "sample-sub",
-
-    cmoPmEmailApplications: ["Archer-HemePanel", "Archer-SolidTumorPanel", "Archer-Immunoverse", "HemePACT_v4", "HumanWholeGenome", "IMPACT410", "IMPACT468", "MSK-ACCESS_v1", "RNASeq_PolyA", "RNASeq_RiboDeplete", "RNASeq", "ShallowWGS", "WholeExomeSequencing", "TCRSeq", "(Multiple of the Above)"]
+  cmoPmEmailApplications: [
+    'Archer-HemePanel',
+    'Archer-SolidTumorPanel',
+    'Archer-Immunoverse',
+    'HemePACT_v4',
+    'HumanWholeGenome',
+    'IMPACT410',
+    'IMPACT468',
+    'MSK-ACCESS_v1',
+    'RNASeq_PolyA',
+    'RNASeq_RiboDeplete',
+    'RNASeq',
+    'ShallowWGS',
+    'WholeExomeSequencing',
+    'TCRSeq',
+    '(Multiple of the Above)',
+  ],
 };

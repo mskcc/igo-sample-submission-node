@@ -1,13 +1,13 @@
 // TODO MERGE with button
 
-import React from 'react'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import MuiButton from '@material-ui/core/Button'
-import Fade from '@material-ui/core/Fade'
+import React from 'react';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import MuiButton from '@material-ui/core/Button';
+import Fade from '@material-ui/core/Fade';
 
-import classNames from 'classnames'
-import { withStyles } from '@material-ui/core/styles'
-import { Translate } from 'react-localize-redux'
+import classNames from 'classnames';
+import { withStyles } from '@material-ui/core/styles';
+import { Translate } from 'react-localize-redux';
 
 const Button = ({ id, onClick, isLoading, done, title, classes, color }) => (
   <Translate>
@@ -17,7 +17,9 @@ const Button = ({ id, onClick, isLoading, done, title, classes, color }) => (
           variant="contained"
           type="submit"
           onClick={onClick}
-          className={id.includes('promote') ? classes.promoteButton: classes.button}
+          className={
+            id.includes('promote') ? classes.promoteButton : classes.button
+          }
           id={id}
           color={color}
           disabled={isLoading}
@@ -33,14 +35,12 @@ const Button = ({ id, onClick, isLoading, done, title, classes, color }) => (
             className={classes.buttonProgress}
           />
         )}
-
-        
       </React.Fragment>
     )}
   </Translate>
-)
+);
 
-const styles = theme => ({
+const styles = (theme) => ({
   button: {
     margin: theme.spacing(1),
     minWidth: 250,
@@ -69,6 +69,6 @@ const styles = theme => ({
     marginTop: -53,
     marginLeft: -65,
   },
-})
+});
 
-export default withStyles(styles)(Button)
+export default withStyles(styles)(Button);

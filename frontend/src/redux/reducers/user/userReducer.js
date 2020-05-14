@@ -1,8 +1,8 @@
 import {
   formActions as FormActionTypes,
-  userActions as ActionTypes,
-} from '../../actions'
-import FileSaver from 'file-saver'
+  userActions as ActionTypes
+} from '../../actions';
+import FileSaver from 'file-saver';
 const initialState = {
   submissions: {},
   username: '',
@@ -11,24 +11,24 @@ const initialState = {
   saved: false,
   submissionsTable: {},
   isSaving: false,
-  role: '',
-}
+  role: ''
+};
 
 function userReducer(state = initialState, action) {
-  const { error } = action
+  const { error } = action;
 
-  if (error && error.response && error.response.status == 401) {
+  if (error && error.response && error.response.status === 401) {
     return {
       ...state,
-      loggedIn: true,
-    }
+      loggedIn: true
+    };
   }
   switch (action.type) {
     case ActionTypes.REFRESH_TOKEN_REQUEST:
       return {
         ...state,
-        loading: true,
-      }
+        loading: true
+      };
     case ActionTypes.REFRESH_TOKEN_VALID:
       return {
         ...state,
@@ -36,17 +36,17 @@ function userReducer(state = initialState, action) {
         loading: false,
         isSaving: false,
 
-        username: action.payload.username,
+        username: action.payload.username
         // message: 'Welcome back, ' + action.payload.username + '.',
-      }
+      };
 
     case ActionTypes.REFRESH_TOKEN_INVALID:
       return {
         ...state,
         loggedIn: true,
         loading: false,
-        username: '',
-      }
+        username: ''
+      };
 
     case ActionTypes.LOGIN_SUCCESS:
       return {
@@ -56,60 +56,59 @@ function userReducer(state = initialState, action) {
         username: action.payload.username,
         role: action.payload.role,
         submissionsTable: action.table,
-        submissions: action.payload.submissions,
+        submissions: action.payload.submissions
         // message: action.payload.message,
-      }
+      };
 
     case ActionTypes.LOGIN_FAIL:
       return {
         ...state,
         loggedIn: true,
-        loading: false,
-      }
+        loading: false
+      };
 
     case ActionTypes.LOGOUT_SUCCESS:
       return {
-        ...initialState,
-      }
+        ...initialState
+      };
 
     case ActionTypes.LOGOUT_FAIL:
       return {
         ...state,
-        loggedIn: true,
+        loggedIn: true
         // loading: false,
         // message: action.message,
-      }
-
+      };
 
     case ActionTypes.BUTTON_RESET: {
-      return { ...state, submitted: false, saved: false }
+      return { ...state, submitted: false, saved: false };
     }
 
     case ActionTypes.DOWNLOAD_RECEIPT:
       return {
-        ...state,
-      }
+        ...state
+      };
 
     case ActionTypes.DOWNLOAD_RECEIPT_FAIL:
       return {
-        ...state,
-      }
+        ...state
+      };
     case ActionTypes.DOWNLOAD_RECEIPT_SUCCESS:
       FileSaver.saveAs(
         new Blob([action.file], {
           type:
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         }),
         action.filename + '.xlsx'
-      )
+      );
 
       return {
-        ...state,
-      }
+        ...state
+      };
 
     default:
-      return state
+      return state;
   }
 }
 
-export default userReducer
+export default userReducer;

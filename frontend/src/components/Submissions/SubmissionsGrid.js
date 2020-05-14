@@ -1,30 +1,37 @@
-import { HotTable } from '@handsontable/react'
+import { HotTable } from '@handsontable/react';
 
-import 'handsontable/dist/handsontable.full.css'
-import React from 'react'
-import {
-  ButtonGroup,
-  Button,
-  withStyles,
-} from '@material-ui/core'
-
+import 'handsontable/dist/handsontable.full.css';
+import React from 'react';
+import { ButtonGroup, Button, withStyles } from '@material-ui/core';
 
 class SubmissionsGrid extends React.Component {
   constructor(props) {
-    super(props)
-    this.hotTableComponent = React.createRef()
+    super(props);
+    this.hotTableComponent = React.createRef();
   }
 
   render() {
-    const { classes, handleGridClick, handleFilterClick, grid } = this.props
+    const { classes, handleGridClick, handleFilterClick, grid } = this.props;
     return (
-      <div className={classes.container} >
-        <ButtonGroup color="primary" size="small" aria-label="small outlined primary button group">
-          <Button onClick={() => handleFilterClick("months", 1)}>Last Month</Button>
-          <Button onClick={() => handleFilterClick("months", 3)}>Last 3 Months</Button>
-          <Button onClick={() => handleFilterClick("years", 1)}>Last Year</Button>
-          <Button onClick={() => handleFilterClick("years", 2)}>Last 2 Years</Button>
-          <Button onClick={() => handleFilterClick("", 0, true)}>All</Button>‰
+      <div className={classes.container}>
+        <ButtonGroup
+          color="primary"
+          size="small"
+          aria-label="small outlined primary button group"
+        >
+          <Button onClick={() => handleFilterClick('months', 1)}>
+            Last Month
+          </Button>
+          <Button onClick={() => handleFilterClick('months', 3)}>
+            Last 3 Months
+          </Button>
+          <Button onClick={() => handleFilterClick('years', 1)}>
+            Last Year
+          </Button>
+          <Button onClick={() => handleFilterClick('years', 2)}>
+            Last 2 Years
+          </Button>
+          <Button onClick={() => handleFilterClick('', 0, true)}>All</Button>‰
         </ButtonGroup>
 
         <HotTable
@@ -44,27 +51,27 @@ class SubmissionsGrid extends React.Component {
           dropdownMenu={['filter_by_value', 'filter_action_bar']}
           // make actions clickable
           afterOnCellMouseDown={(event, coords, TD) => {
-            if (coords.row != -1) {
-              let actionElement = TD.firstElementChild || undefined
+            if (coords.row !== -1) {
+              let actionElement = TD.firstElementChild || undefined;
               if (actionElement) {
-                let submitted = actionElement.getAttribute('submitted') == "true" || undefined
-                let service_id = actionElement.getAttribute('service-id') || undefined
-                let id = actionElement.getAttribute('submission-id') || undefined
-                handleGridClick(coords, submitted, id, service_id)
+                let submitted =
+                  actionElement.getAttribute('submitted') === 'true' ||
+                  undefined;
+                let service_id =
+                  actionElement.getAttribute('service-id') || undefined;
+                let id =
+                  actionElement.getAttribute('submission-id') || undefined;
+                handleGridClick(coords, submitted, id, service_id);
               }
-
             }
           }}
         />
       </div>
-    )
+    );
   }
 }
 
-
-
 const styles = theme => ({
   // container: { width: '80vw' }
-
-})
-export default withStyles(styles)(SubmissionsGrid)
+});
+export default withStyles(styles)(SubmissionsGrid);

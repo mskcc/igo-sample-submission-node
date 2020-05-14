@@ -1,62 +1,62 @@
 // check if grid length changes after sample number was changed
 // check if grid is generated
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
-import { applyMiddleware, createStore } from 'redux'
-import thunk from 'redux-thunk'
-import multi from 'redux-multi'
-import moxios from 'moxios'
-import { Provider } from 'react-redux'
-import configureStore from 'redux-mock-store'
+import { applyMiddleware, createStore } from 'redux';
+import thunk from 'redux-thunk';
+import multi from 'redux-multi';
+import moxios from 'moxios';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
 
-import renderer from 'react-test-renderer'
-import { mount } from 'enzyme'
+import renderer from 'react-test-renderer';
+import { mount } from 'enzyme';
 
-import uploadReducer from '../../../reducers/upload/uploadReducer'
+import uploadReducer from '../../../reducers/upload/uploadReducer';
 
-import TestUploadPage from '../UploadPage'
-import uploadFormReducer from '../../../reducers/upload/uploadFormReducer'
+import TestUploadPage from '../UploadPage';
+import uploadFormReducer from '../../../reducers/upload/uploadFormReducer';
 // import gridActions from '../../../redux/actions/upload/gridActions'
 
-import { initialFullStateMock, filledFullStateMock } from '../../../mocks'
+import { initialFullStateMock, filledFullStateMock } from '../../../mocks';
 
-const middlewares = [thunk, multi]
-const mockStore = configureStore(middlewares)
+const middlewares = [thunk, multi];
+const mockStore = configureStore(middlewares);
 
-const flushAllPromises = () => new Promise(resolve => setImmediate(resolve))
-const UploadPage = props => (
+const flushAllPromises = () => new Promise((resolve) => setImmediate(resolve));
+const UploadPage = (props) => (
   <Provider store={props.store}>
     <TestUploadPage />
   </Provider>
-)
+);
 
 // TODO first few are basically unit tests, should be moved eventually
 describe('renders UploadPage', () => {
-  beforeEach(function() {
-    moxios.install()
-  })
+  beforeEach(function () {
+    moxios.install();
+  });
 
-  afterEach(function() {
-    moxios.uninstall()
-  })
+  afterEach(function () {
+    moxios.uninstall();
+  });
 
   it('renders itself and UploadForm correctly', () => {
     const UploadFormContainerComponent = renderer
       .create(<UploadPage store={mockStore(initialFullStateMock)} />)
-      .toJSON()
-    expect(UploadFormContainerComponent).toMatchSnapshot()
-  })
+      .toJSON();
+    expect(UploadFormContainerComponent).toMatchSnapshot();
+  });
 
   it('renders UploadForm child', async () => {
-    const store = mockStore(initialFullStateMock)
+    const store = mockStore(initialFullStateMock);
     const wrapper = mount(
       <UploadPage store={mockStore(initialFullStateMock)} />
-    )
-    expect(wrapper.find('UploadForm').exists()).toBe(true)
-  })
+    );
+    expect(wrapper.find('UploadForm').exists()).toBe(true);
+  });
   it('renders UploadGrid', async () => {
     // const getColumns = jest.fn()
-    const store = mockStore(filledFullStateMock)
+    const store = mockStore(filledFullStateMock);
     // let oldState = store.getState()
     // const gridActions = { getColumns: jest.fn() }
     const wrapper = mount(
@@ -65,7 +65,7 @@ describe('renders UploadPage', () => {
         // gridActions={gridActions}
         // getColumns={getColumns}
       />
-    )
+    );
 
     // request initial state for grid on button click
     // wrapper
@@ -76,7 +76,7 @@ describe('renders UploadPage', () => {
     // let newStore = store.getState()
     // console.log(oldState)
     // console.log(newStore)
-    expect(wrapper.find('UploadGrid').exists()).toBe(true)
+    expect(wrapper.find('UploadGrid').exists()).toBe(true);
 
     // expect(newStore).not.toEqual(oldState)
     // console.log(wrapper.find('UploadForm').instance().state)
@@ -97,8 +97,8 @@ describe('renders UploadPage', () => {
     // expect(getColumns).toHaveBeenCalledTimes(1)
     // console.log(wrapper.find('UploadGrid').instance().state)
     // expect(actions).toEqual(expectedActions)
-  })
-})
+  });
+});
 
 // const UploadFormContainer = props => (
 //   <Provider store={mockStore(initialFullStateMock)}>
