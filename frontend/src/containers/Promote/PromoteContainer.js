@@ -12,7 +12,7 @@ class Promote extends Component {
     super(props);
 
     this.state = {
-      service_id: '',
+      service_id: ''
       // investigator: '',
     };
     this.hotTableComponent = React.createRef();
@@ -30,10 +30,25 @@ class Promote extends Component {
   //   // this.props.promoteSelected(selectedRows)
 
   // }
-  promoteSamples = (projectId, requestId, rows) => {
+  promoteSamples = (projectId, requestId, rows, indeces = undefined) => {
     // let rows = getState().promote.rows
     let rowsBackup = this.props.promote.rowsBackup;
-    if (!isEqual(rows, rowsBackup)) {
+    if (indeces) {
+      let i = 0;
+      let selectedNeedsUpdate = false;
+      
+      indeces.map(index => {
+        if (!isEqual(rowsBackup[index],rows[i])) {
+          selectedNeedsUpdate = true;
+        }
+        i++;
+      });
+      if (selectedNeedsUpdate) {
+        console.log('selected need update first');
+      } else {
+        console.log('selected good to go');
+      }
+    } else if (!isEqual(rows, rowsBackup)) {
       console.log('needs update first');
     } else {
       console.log('good to go');
@@ -68,12 +83,12 @@ class Promote extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  promote: state.promote,
+const mapStateToProps = state => ({
+  promote: state.promote
 });
 
 const mapDispatchToProps = {
-  ...promoteActions,
+  ...promoteActions
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Promote);

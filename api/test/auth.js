@@ -1,7 +1,5 @@
-const { chai, server, should } = require('./testConfig');
+const { chai, server } = require('./testConfig');
 // const UserModel = require("../models/UserModel");
-const axios = require('axios');
-const moxios = require('moxios');
 
 /**
  * Test cases to test all the authentication APIs

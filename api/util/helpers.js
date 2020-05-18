@@ -72,7 +72,7 @@ function cacheAllPicklists(limsColumns) {
     });
     Promise.all(picklistPromises).then((results) => {
       if (results.some((x) => x.length === 0)) {
-        reject(`Could not cache picklists.`);
+        reject('Could not cache picklists.');
       }
       Object.keys(picklists).map((element, index) => {
         picklists[element] = results[index];
@@ -208,17 +208,17 @@ function fillColumns(
 const overwriteContainer = (userContainer) => {
   let newContainer;
   switch (userContainer) {
-    case 'Plates':
-      newContainer = allColumns.gridColumns['Plate ID'];
-      break;
-    case 'Micronic Barcoded Tubes':
-      newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
-      break;
-    case 'Blocks/Slides/Tubes':
-      newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
-      break;
-    default:
-      return `Container '${userContainer}' not found.`;
+  case 'Plates':
+    newContainer = allColumns.gridColumns['Plate ID'];
+    break;
+  case 'Micronic Barcoded Tubes':
+    newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
+    break;
+  case 'Blocks/Slides/Tubes':
+    newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
+    break;
+  default:
+    return `Container '${userContainer}' not found.`;
   }
   return newContainer;
 };
@@ -261,7 +261,7 @@ const fillAdditionalRows = (columns, formValues) => {
 
 // Lots of autofilling happening here
 const fillData = (columns, formValues) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     let rowData = [];
     let numberOfRows = formValues.numberOfSamples;
     for (var i = 0; i < numberOfRows; i++) {
@@ -331,7 +331,7 @@ const fillData = (columns, formValues) => {
 // i = counter indicating how often I stepped through A-H
 // plateColIndex = plate column
 const setWellPos = (columns) => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     let rows = columns.rowData;
     let plateRows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
     let numPlates = Math.ceil(rows.length / plateRows.length);
@@ -393,33 +393,33 @@ function choosePatientIdValidator(patientIDType, species, groupingChecked) {
     }
   } else {
     switch (patientIDType) {
-      case 'MSK-Patients (or derived from MSK Patients)':
-        return {
-          pattern: '^[0-9]{8}$',
-          columnHeader: 'MRN',
-          tooltip: "The patient's MRN.",
-          error:
+    case 'MSK-Patients (or derived from MSK Patients)':
+      return {
+        pattern: '^[0-9]{8}$',
+        columnHeader: 'MRN',
+        tooltip: 'The patient\'s MRN.',
+        error:
             'MRN is incorrectly formatted, please correct, or speak to a project manager if unsure.',
-          type: 'text',
-        };
-      case 'Non-MSK Patients':
-        return {
-          pattern: '[A-Za-z0-9\\,_-]{4,}',
-          columnHeader: 'Patient ID',
-          error:
+        type: 'text',
+      };
+    case 'Non-MSK Patients':
+      return {
+        pattern: '[A-Za-z0-9\\,_-]{4,}',
+        columnHeader: 'Patient ID',
+        error:
             'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
-        };
-      case 'Cell Lines, not from Patients':
-        return { columnHeader: 'Cell Line Name' };
-      case 'Both MSK-Patients and Non-MSK Patients':
-        return {
-          pattern: '[A-Za-z0-9\\,_-]{4,}|^[0-9]{8}$',
-          columnHeader: 'Patient ID',
-          error:
+      };
+    case 'Cell Lines, not from Patients':
+      return { columnHeader: 'Cell Line Name' };
+    case 'Both MSK-Patients and Non-MSK Patients':
+      return {
+        pattern: '[A-Za-z0-9\\,_-]{4,}|^[0-9]{8}$',
+        columnHeader: 'Patient ID',
+        error:
             'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
-        };
-      default:
-        return { pattern: 'formatter not found' };
+      };
+    default:
+      return { pattern: 'formatter not found' };
     }
   }
 }
@@ -631,7 +631,7 @@ export function generateGridExcel(grid, role) {
 // CLEAN THIS UP
 
 export function generatePromoteGrid(limsColumnOrdering) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     let grid = {
       columnFeatures: [],
       columnHeaders: [],
@@ -642,6 +642,13 @@ export function generatePromoteGrid(limsColumnOrdering) {
     limsColumnOrdering.map((element) => {
       let promoteColFeature = {};
       let columnName = element.split(':')[1];
+      console.log(columnName);
+      console.log(columnName);
+      console.log(columnName);
+      console.log(columnName);
+      console.log(columnName);
+      console.log(columnName);
+      console.log(columnName);
       // If we recognize the column, attach the feature and add it to the list used for picklist generation
       if (columnName in allColumns.gridColumns) {
         promoteColFeature = Object.assign(
@@ -709,7 +716,7 @@ function camelize(str) {
 }
 
 export function loadBankedSamples(queryType, query) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     services.loadBankedSamples(queryType, query).then((response) => {
       // TODO: Clean out some data like in old rex?
       resolve(response);

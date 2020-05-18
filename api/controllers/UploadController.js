@@ -1,7 +1,6 @@
 const apiResponse = require('../util/apiResponse');
 const { body, query, validationResult } = require('express-validator');
 const util = require('../util/helpers');
-var _ = require('lodash');
 const services = require('../services/services');
 import CacheService from '../util/cache';
 const ttl = 60 * 60 * 1; // cache for 1 Hour
@@ -297,7 +296,7 @@ exports.crdbId = [
 
         Promise.all([patientIdPromise]).then((results) => {
           if (results.some((x) => x.length === 0)) {
-            return apiResponse.errorResponse(res, `Could not anonymize ID.`);
+            return apiResponse.errorResponse(res, 'Could not anonymize ID.');
           }
           let [patientIdResult] = results;
           let responseObject = {
@@ -363,7 +362,7 @@ exports.additionalRows = [
           if (results.some((x) => x.length === 0)) {
             return apiResponse.errorResponse(
               res,
-              `Could not retrieve autofilled row.`
+              'Could not retrieve autofilled row.'
             );
           }
           let [additionalRows] = results;

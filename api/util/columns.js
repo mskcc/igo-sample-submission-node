@@ -75,7 +75,7 @@ export const gridColumns = {
     error:
       'Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively.',
     uniqueError: 'Sample ID needs to be unique.',
-    containsSampleError: "Sample ID cannot contain the word 'sample'.",
+    containsSampleError: 'Sample ID cannot contain the word \'sample\'.',
   },
   Species: {
     name: 'Species',

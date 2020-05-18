@@ -45,16 +45,20 @@ class PromoteGrid extends Component {
     var selected = this.hotTableComponent.current.hotInstance.getSelected();
     if (selected) {
       var selectedRows = [];
+      var indeces = [];
       selected.map((element) => {
-        var row = this.hotTableComponent.current.hotInstance.getDataAtRow(
-          element[0]
-        );
+        // var row = this.hotTableComponent.current.hotInstance.getDataAtRow(
+        //   element[0]
+        // );
+        var row = this.props.promote.rows[element[0]];
         selectedRows.push(row);
+        indeces.push(element[0]);
       });
       this.props.promoteSamples(
         this.state.projectId,
         this.state.requestId,
-        selectedRows
+        selectedRows,
+        indeces
       );
     }
   };

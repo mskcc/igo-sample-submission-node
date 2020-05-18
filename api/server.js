@@ -7,10 +7,10 @@ require('dotenv').config();
 var cookieParser = require('cookie-parser');
 
 const winston = require('winston');
+const { format,  loggers } = require('winston');
+const { combine, timestamp, prettyPrint } = format;
 
-const { createLogger, format, transports, loggers } = require('winston');
 
-const { combine, timestamp, label, prettyPrint } = format;
 
 loggers.add('logger', {
   level: 'info',
@@ -42,7 +42,6 @@ mongoose
     console.error('App starting error:', err.message);
     process.exit(1);
   });
-var db = mongoose.connection;
 
 var port = 0;
 const hostname = '127.0.0.1';

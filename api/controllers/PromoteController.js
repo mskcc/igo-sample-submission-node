@@ -1,5 +1,5 @@
 const apiResponse = require('../util/apiResponse');
-const { body, param, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 const services = require('../services/services');
 const util = require('../util/helpers');
 import CacheService from '../util/cache';
@@ -15,7 +15,7 @@ exports.grid = [
       if (results.some((x) => x.length === 0)) {
         return apiResponse.errorResponse(
           res,
-          `Could not retrieve promote grid.`
+          'Could not retrieve promote grid.'
         );
       }
       let [columnsResult] = results;
@@ -28,7 +28,7 @@ exports.grid = [
           if (results.some((x) => x.length === 0)) {
             return apiResponse.errorResponse(
               res,
-              `Could not retrieve promote grid.`
+              'Could not retrieve promote grid.'
             );
           }
           let [gridResult] = results;

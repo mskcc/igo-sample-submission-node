@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "nyc _mocha --require @babel/register --timeout 10000 --exit --report lcovonly -- -R spec",
-    "start": "nodemon --exec babel-node server.js"
+    "start": "eslint . && nodemon --exec babel-node server.js"
   },
   "repository": {
     "type": "git",
