@@ -215,9 +215,12 @@ exports.submit = (bankedSample) => {
       return resp;
     })
     .catch((error) => {
-      // console.log(error)
       logger.log('info', `Error retrieving response from ${url}`);
-      throw error;
+      if (error.response) {
+        throw error.response.data.message;
+      } else {
+        throw error;
+      }
     })
     .then((resp) => {
       return formatData(resp);
@@ -280,6 +283,7 @@ exports.loadBankedSamples = (queryType, query) => {
     })
     .then((resp) => {
       logger.log('info', `Successfully retrieved response from ${url}`);
+      console.log(resp.data)
       return resp;
     })
     .catch((error) => {

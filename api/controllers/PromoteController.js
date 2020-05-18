@@ -83,6 +83,7 @@ exports.load = [
           let responseObject = {
             samples,
           };
+          
           return apiResponse.successResponseWithData(
             res,
             'Operation success',
@@ -93,5 +94,67 @@ exports.load = [
     } catch (err) {
       return apiResponse.errorResponse(res, err);
     }
+  },
+];
+/**
+ * Submits to LIMS Banked Samples
+ *
+ * @returns {Object}
+ */
+exports.promoteDry = [
+  body('requestId')
+    .optional()
+    .isString()
+    .withMessage('RequestId must be String.'),
+  body('projectId')
+    .optional()
+    .isString()
+    .withMessage('ProjectId must be String.'),
+  body('needsUpdate').isBoolean().withMessage('needsUpdate must be Boolean.'),
+  body('transactionId').isInt().withMessage('transactionId must be Int.'),
+  body('samples')
+    .isJSON()
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage('samples must be JSON.'),
+  function (req, res) {
+    console.log(req.body);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return apiResponse.validationErrorWithData(
+        res,
+        'Validation error.',
+        errors.array()
+      );
+    }
+
+    
+
+    let samples = JSON.parse(req.body.samples);
+    let transactionId = req.body.transactionId;
+
+    let updatePromise = util.updateBanked(samples, res.user, transactionId);
+
+    Promise.all([updatePromise])
+      .then((results) => {
+        if (results.some((x) => x.length === 0)) {
+          return apiResponse.errorResponse(res, 'Could not update.');
+        }
+        let [updateResult] = results;
+
+        // let sendEmail = mailer.sendToPms(submissionToSubmit.formValues);
+        // if (sendEmail) {
+        //   mailer.sendNotification(submissionToSubmit);
+        // }
+        return apiResponse.successResponseWithData(
+          res,
+          'Operation success',
+          updateResult
+        );
+      })
+      .catch((reasons) => {
+        console.log(reasons)
+        return apiResponse.errorResponse(res, reasons);
+      });
   },
 ];

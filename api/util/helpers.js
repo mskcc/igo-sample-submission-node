@@ -208,17 +208,17 @@ function fillColumns(
 const overwriteContainer = (userContainer) => {
   let newContainer;
   switch (userContainer) {
-  case 'Plates':
-    newContainer = allColumns.gridColumns['Plate ID'];
-    break;
-  case 'Micronic Barcoded Tubes':
-    newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
-    break;
-  case 'Blocks/Slides/Tubes':
-    newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
-    break;
-  default:
-    return `Container '${userContainer}' not found.`;
+    case 'Plates':
+      newContainer = allColumns.gridColumns['Plate ID'];
+      break;
+    case 'Micronic Barcoded Tubes':
+      newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
+      break;
+    case 'Blocks/Slides/Tubes':
+      newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
+      break;
+    default:
+      return `Container '${userContainer}' not found.`;
   }
   return newContainer;
 };
@@ -393,33 +393,33 @@ function choosePatientIdValidator(patientIDType, species, groupingChecked) {
     }
   } else {
     switch (patientIDType) {
-    case 'MSK-Patients (or derived from MSK Patients)':
-      return {
-        pattern: '^[0-9]{8}$',
-        columnHeader: 'MRN',
-        tooltip: 'The patient\'s MRN.',
-        error:
+      case 'MSK-Patients (or derived from MSK Patients)':
+        return {
+          pattern: '^[0-9]{8}$',
+          columnHeader: 'MRN',
+          tooltip: "The patient's MRN.",
+          error:
             'MRN is incorrectly formatted, please correct, or speak to a project manager if unsure.',
-        type: 'text',
-      };
-    case 'Non-MSK Patients':
-      return {
-        pattern: '[A-Za-z0-9\\,_-]{4,}',
-        columnHeader: 'Patient ID',
-        error:
+          type: 'text',
+        };
+      case 'Non-MSK Patients':
+        return {
+          pattern: '[A-Za-z0-9\\,_-]{4,}',
+          columnHeader: 'Patient ID',
+          error:
             'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
-      };
-    case 'Cell Lines, not from Patients':
-      return { columnHeader: 'Cell Line Name' };
-    case 'Both MSK-Patients and Non-MSK Patients':
-      return {
-        pattern: '[A-Za-z0-9\\,_-]{4,}|^[0-9]{8}$',
-        columnHeader: 'Patient ID',
-        error:
+        };
+      case 'Cell Lines, not from Patients':
+        return { columnHeader: 'Cell Line Name' };
+      case 'Both MSK-Patients and Non-MSK Patients':
+        return {
+          pattern: '[A-Za-z0-9\\,_-]{4,}|^[0-9]{8}$',
+          columnHeader: 'Patient ID',
+          error:
             'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
-      };
-    default:
-      return { pattern: 'formatter not found' };
+        };
+      default:
+        return { pattern: 'formatter not found' };
     }
   }
 }
@@ -642,13 +642,6 @@ export function generatePromoteGrid(limsColumnOrdering) {
     limsColumnOrdering.map((element) => {
       let promoteColFeature = {};
       let columnName = element.split(':')[1];
-      console.log(columnName);
-      console.log(columnName);
-      console.log(columnName);
-      console.log(columnName);
-      console.log(columnName);
-      console.log(columnName);
-      console.log(columnName);
       // If we recognize the column, attach the feature and add it to the list used for picklist generation
       if (columnName in allColumns.gridColumns) {
         promoteColFeature = Object.assign(
@@ -721,6 +714,64 @@ export function loadBankedSamples(queryType, query) {
       // TODO: Clean out some data like in old rex?
       resolve(response);
     });
+  });
+}
+
+// updates banked prior to promote
+export function updateBanked(samples, user, transactionId) {
+  return new Promise((resolve, reject) => {
+    let updatedSamples = [];
+    // prep banked sample record
+    for (let i = 0; i < samples.length; i++) {
+      let bankedSample = Object.assign({}, samples[i]);
+      bankedSample.transactionId = transactionId;
+      bankedSample.igoUser = user.username;
+      bankedSample.user = process.env.API_USER;
+      bankedSample.concentrationUnits = 'ng/uL';
+
+      if ('wellPosition' in bankedSample) {
+        var match = /([A-Za-z]+)(\d+)/.exec(bankedSample.wellPosition);
+        if (!match) {
+          reject('Invalid Well Position.');
+        } else {
+          bankedSample.rowPos = match[1];
+          bankedSample.colPos = match[2];
+          delete bankedSample.wellPosition;
+        }
+      }
+      //  not needed in LIMS, only displayed for users' convenience
+      if ('indexSequence' in bankedSample) {
+        delete bankedSample.indexSequence;
+      }
+      if ('concentration' in bankedSample) {
+        bankedSample.concentration = bankedSample.concentration.replace(
+          'ng/uL',
+          ''
+        );
+      }
+
+      // delete empty fields
+      Object.keys(bankedSample).map((element) => {
+        if (bankedSample[element] === '') {
+          delete bankedSample[element];
+        }
+      });
+
+      services
+        .submit(bankedSample)
+        .then((response) => {
+          logger.log('info', `Updated ${bankedSample.userId}.`);
+          updatedSamples.push(response);
+          if (updatedSamples.length === samples.length) {
+            resolve(updatedSamples);
+          }
+        })
+        .catch((err) =>
+          reject(
+            `Update failed at sample ${bankedSample.userId}, index ${bankedSample.rowIndex}. ${err}`
+          )
+        );
+    }
   });
 }
 

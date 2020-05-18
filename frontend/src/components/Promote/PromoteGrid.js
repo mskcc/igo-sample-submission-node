@@ -23,11 +23,6 @@ class PromoteGrid extends Component {
     };
     this.hotTableComponent = React.createRef();
   }
-  componentDidMount() {
-    if (!this.props.promote.initialFetched) {
-      this.props.getInitialState();
-    }
-  }
 
   handleChange = (event) => {
     this.setState({

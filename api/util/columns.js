@@ -75,7 +75,7 @@ export const gridColumns = {
     error:
       'Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively.',
     uniqueError: 'Sample ID needs to be unique.',
-    containsSampleError: 'Sample ID cannot contain the word \'sample\'.',
+    containsSampleError: 'Sample ID cannot contain the word "sample".',
   },
   Species: {
     name: 'Species',
@@ -412,15 +412,16 @@ export const gridColumns = {
   'Sample Type': {
     name: 'Sample Type',
     columnHeader: 'Sample Type',
-    // headerCellClass: "optional",
-    // optional: "true",
+    picklistName: 'Exemplar+Sample+Types',
+    type: 'autocomplete',
     data: 'sampleType',
     pattern: validationPatterns.alphanum,
   },
   Recipe: {
     name: 'Recipe',
     columnHeader: 'Recipe',
-    // headerCellClass: "optional",
+    picklistName: 'Recipe',
+    type: 'autocomplete',
     // optional: "true",
     data: 'recipe',
     pattern: validationPatterns.alphanum,

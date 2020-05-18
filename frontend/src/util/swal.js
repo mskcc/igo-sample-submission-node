@@ -94,7 +94,6 @@ export const confirmUpdate = () => {
       title: 'Update?',
       html: 'You are editing an existing partial submission. Are you sure you want to update it?',
       type: 'info',
-      animation: 'false',
       showCancelButton: true,
       animation: false,
       confirmButtonColor: '#df4602',

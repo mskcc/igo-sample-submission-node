@@ -198,9 +198,7 @@ export const generateSubmitData = (state, isPartial = false) => {
     id: ''
   };
   if (!isPartial) {
-    let now = Date.now();
-    let date = Math.floor(now / 1000);
-    data.transactionId = date;
+    data.transactionId = getTransactionId();
     data.id = state.submissions.submissionToEdit;
   }
   data.version = Config.VERSION;
@@ -212,12 +210,12 @@ export const generateSubmitData = (state, isPartial = false) => {
   return data;
 };
 
-function rowsWithRowIndex(rows) {
+export const rowsWithRowIndex = function(rows) {
   for (let i = 0; i < rows.length; i++) {
     rows[i].rowIndex = i + 1;
   }
   return rows;
-}
+};
 
 // PROMOTE
 export const isEqual = function(value, other) {
@@ -650,3 +648,8 @@ export const buildErrorMessage = errors => {
 };
 
 /*------------------------------------------------------------------------*/
+export const getTransactionId = () => {
+  let now = Date.now();
+  let transactionId = Math.floor(now / 1000);
+  return transactionId;
+};

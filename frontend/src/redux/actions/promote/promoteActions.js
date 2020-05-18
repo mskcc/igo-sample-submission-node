@@ -13,7 +13,7 @@ export const RECEIVE_INITIAL_STATE_PROMOTE_FAIL =
 export const INITIAL_STATE_PROMOTE_RETRIEVED =
   'INITIAL_STATE_PROMOTE_RETRIEVED';
 
-export function getInitialState() {
+export function getPromoteGrid() {
   return (dispatch, getState) => {
     if (getState().promote.initialFetched)
       return dispatch({ type: INITIAL_STATE_PROMOTE_RETRIEVED });
@@ -56,8 +56,8 @@ export function loadBankedSamples(queryType, query) {
         let rowsBackup = samples.map(a => Object.assign({}, a));
         dispatch({
           type: RECEIVE_BANKED_SAMPLES_SUCCESS,
-          rows: rows,
-          rowsBackup: rowsBackup
+          rows: util.rowsWithRowIndex(rows),
+          rowsBackup: util.rowsWithRowIndex(rowsBackup)
         });
         return response;
       })
@@ -69,14 +69,6 @@ export function loadBankedSamples(queryType, query) {
       );
   };
 }
-
-export const REQUEST_UPDATE_BANKED_SAMPLES = 'REQUEST_UPDATE_BANKED_SAMPLES';
-
-export const RECEIVE_UPDATE_BANKED_SAMPLES_SUCCESS =
-  'RECEIVE_UPDATE_BANKED_SAMPLES_SUCCESS';
-
-export const RECEIVE_UPDATE_BANKED_SAMPLES_FAIL =
-  'RECEIVE_UPDATE_BANKED_SAMPLES_FAIL';
 
 export const REQUEST_PROMOTE_DRYRUN = 'REQUEST_PROMOTE_DRYRUN';
 
@@ -90,36 +82,36 @@ export const RECEIVE_PROMOTE_FORREAL_SUCCESS =
 
 export const RECEIVE_PROMOTE_FORREAL_FAIL = 'RECEIVE_PROMOTE_FORREAL_FAIL';
 
-export function promoteSamples(projectId, requestId, rows, rowsBackup) {
-  return (dispatch, getState) => {
+export function promoteAction(projectId, requestId, rows, needsUpdate) {
+  return (dispatch) => {
     dispatch({ type: REQUEST_PROMOTE_DRYRUN });
-    if (!util.isEqual(rows, rowsBackup)) {
-      axios
-        .post(Config.API_ROOT + '/updateBankedSamples', {
-          data: util.generateSubmitDataPromote(getState())
-        })
-        .then(response => {
-          console.log(response);
-          console.log(response.data);
-          var rows = { ...response.data };
-          var rowsBackup = { ...response.data };
-          dispatch({
-            type: RECEIVE_UPDATE_BANKED_SAMPLES_SUCCESS,
-            rows: rows,
-            rowsBackup: rowsBackup
-          });
+    let transactionId = util.getTransactionId();
+    let samples = JSON.stringify(rows);
+    services
+      .promoteDry({ projectId, requestId, transactionId, samples, needsUpdate })
 
-          return dispatch(promoteForReal(projectId, requestId));
-        })
-        .catch(error => {
-          return dispatch({
-            type: RECEIVE_PROMOTE_DRYRUN_FAIL,
-            error: error
-          });
+      .then(response => {
+        console.log(response);
+        console.log(response.data);
+        var rows = { ...response.data };
+        var rowsBackup = { ...response.data };
+        dispatch({
+          type: 'UPDATE_BANKED_SAMPLES_SUCCESS',
+          rows: rows,
+          rowsBackup: rowsBackup
         });
-    } else {
-      return dispatch(promoteForReal(projectId, requestId));
-    }
+
+        return dispatch(promoteForReal(projectId, requestId));
+      })
+      .catch(error => {
+        return dispatch({
+          type: RECEIVE_PROMOTE_DRYRUN_FAIL,
+          error: error
+        });
+      });
+    // } else {
+    //   return dispatch(promoteForReal(projectId, requestId));
+    // }
   };
 }
 

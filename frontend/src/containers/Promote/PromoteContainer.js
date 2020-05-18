@@ -2,63 +2,36 @@ import React, { Component } from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { PromoteGrid } from '../../components';
 import 'handsontable/dist/handsontable.full.css';
-import { swal } from '../../util';
+import { swal, util } from '../../util';
 import { connect } from 'react-redux';
 import { promoteActions } from '../../redux/actions';
 import { isEqual } from '../../util/helpers';
 
 class Promote extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      service_id: ''
-      // investigator: '',
-    };
-    this.hotTableComponent = React.createRef();
-  }
   componentDidMount() {
-    // todo wait for token refresh!
-    console.log(this.props);
     if (!this.props.promote.initialFetched) {
-      this.props.getInitialState();
+      this.props.getPromoteGrid();
     }
   }
-
-  // promoteSelected = (selectedRows) => {
-  //   console.log(selectedRows)
-  //   // this.props.promoteSelected(selectedRows)
-
-  // }
   promoteSamples = (projectId, requestId, rows, indeces = undefined) => {
-    // let rows = getState().promote.rows
     let rowsBackup = this.props.promote.rowsBackup;
+    let needsUpdate = false;
     if (indeces) {
       let i = 0;
-      let selectedNeedsUpdate = false;
-      
       indeces.map(index => {
-        if (!isEqual(rowsBackup[index],rows[i])) {
-          selectedNeedsUpdate = true;
+        if (!isEqual(rowsBackup[index], rows[i])) {
+          return (needsUpdate = true);
         }
         i++;
       });
-      if (selectedNeedsUpdate) {
-        console.log('selected need update first');
-      } else {
-        console.log('selected good to go');
-      }
-    } else if (!isEqual(rows, rowsBackup)) {
-      console.log('needs update first');
     } else {
-      console.log('good to go');
+      needsUpdate = !isEqual(rows, rowsBackup);
     }
+
+    this.props.promoteAction(projectId, requestId, rows, needsUpdate);
+
     // this.props.promote(projectId, requestId, rows)
   };
-
-  // promoteAll = (projectId, requestId, rows) => {
-  //   this.props.promote(projectId, requestId, rows)
-  // }
   handleLoad = (queryType, query) => {
     if (!query) {
       return swal.alertEmptyLoad(queryType);
