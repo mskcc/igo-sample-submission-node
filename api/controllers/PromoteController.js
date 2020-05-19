@@ -83,7 +83,7 @@ exports.load = [
           let responseObject = {
             samples,
           };
-          
+
           return apiResponse.successResponseWithData(
             res,
             'Operation success',
@@ -128,12 +128,16 @@ exports.promoteDry = [
       );
     }
 
-    
-
     let samples = JSON.parse(req.body.samples);
     let transactionId = req.body.transactionId;
+    let needsUpdate = req.body.needsUpdate;
 
-    let updatePromise = util.updateBanked(samples, res.user, transactionId);
+    let updatePromise = util.updateBanked(
+      samples,
+      res.user,
+      transactionId,
+      needsUpdate
+    );
 
     Promise.all([updatePromise])
       .then((results) => {
@@ -141,11 +145,11 @@ exports.promoteDry = [
           return apiResponse.errorResponse(res, 'Could not update.');
         }
         let [updateResult] = results;
-
-        // let sendEmail = mailer.sendToPms(submissionToSubmit.formValues);
-        // if (sendEmail) {
-        //   mailer.sendNotification(submissionToSubmit);
-        // }
+        let bankedIds = updateResult.map((element) => {
+          console.log(element);
+          console.log('element');
+        });
+        // let dryRunPromise = util.promote(true,)
         return apiResponse.successResponseWithData(
           res,
           'Operation success',
@@ -153,7 +157,7 @@ exports.promoteDry = [
         );
       })
       .catch((reasons) => {
-        console.log(reasons)
+        console.log(reasons);
         return apiResponse.errorResponse(res, reasons);
       });
   },

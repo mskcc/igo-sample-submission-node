@@ -718,8 +718,11 @@ export function loadBankedSamples(queryType, query) {
 }
 
 // updates banked prior to promote
-export function updateBanked(samples, user, transactionId) {
+export function updateBanked(samples, user, transactionId, needsUpdate) {
   return new Promise((resolve, reject) => {
+    if (!needsUpdate){
+      resolve(samples);
+    }
     let updatedSamples = [];
     // prep banked sample record
     for (let i = 0; i < samples.length; i++) {

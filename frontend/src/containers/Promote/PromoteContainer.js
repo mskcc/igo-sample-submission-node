@@ -14,6 +14,8 @@ class Promote extends Component {
     }
   }
   promoteSamples = (projectId, requestId, rows, indeces = undefined) => {
+    // need to go with rowBackup and isEqual comparison to decide if changes happened because
+    // handsontable changes do not trigger redux events
     let rowsBackup = this.props.promote.rowsBackup;
     let needsUpdate = false;
     if (indeces) {

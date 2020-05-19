@@ -51,6 +51,8 @@ export function loadBankedSamples(queryType, query) {
     services
       .loadBankedSamples(queryType, query)
       .then(response => {
+        // need to go with rowBackup and isEqual comparison to decide if changes happened because
+        // handsontable changes do not trigger redux events
         let samples = response.payload.samples;
         let rows = samples.map(a => Object.assign({}, a));
         let rowsBackup = samples.map(a => Object.assign({}, a));
@@ -70,21 +72,27 @@ export function loadBankedSamples(queryType, query) {
   };
 }
 
-export const REQUEST_PROMOTE_DRYRUN = 'REQUEST_PROMOTE_DRYRUN';
+export const PROMOTE_DRYRUN = 'PROMOTE_DRYRUN';
+export const PROMOTE_DRYRUN_AND_UPDATE = 'PROMOTE_DRYRUN_AND_UPDATE';
 
-export const RECEIVE_PROMOTE_DRYRUN_SUCCESS = 'RECEIVE_PROMOTE_DRYRUN_SUCCESS';
+export const PROMOTE_DRYRUN_SUCCESS = 'PROMOTE_DRYRUN_SUCCESS';
 
-export const RECEIVE_PROMOTE_DRYRUN_FAIL = 'RECEIVE_PROMOTE_DRYRUN_FAIL';
-export const REQUEST_PROMOTE_FORREAL = 'REQUEST_PROMOTE_FORREAL';
+export const PROMOTE_DRYRUN_FAIL = 'PROMOTE_DRYRUN_FAIL';
+export const PROMOTE_FORREAL = 'PROMOTE_FORREAL';
 
-export const RECEIVE_PROMOTE_FORREAL_SUCCESS =
-  'RECEIVE_PROMOTE_FORREAL_SUCCESS';
+export const PROMOTE_FORREAL_SUCCESS =
+  'PROMOTE_FORREAL_SUCCESS';
 
-export const RECEIVE_PROMOTE_FORREAL_FAIL = 'RECEIVE_PROMOTE_FORREAL_FAIL';
+export const PROMOTE_FORREAL_FAIL = 'PROMOTE_FORREAL_FAIL';
 
 export function promoteAction(projectId, requestId, rows, needsUpdate) {
-  return (dispatch) => {
-    dispatch({ type: REQUEST_PROMOTE_DRYRUN });
+  return dispatch => {
+    if (needsUpdate) {
+      dispatch({
+        type: PROMOTE_DRYRUN_AND_UPDATE,
+        message: 'Updating samples and determining ProjectId...'
+      });
+    } else dispatch({ type: PROMOTE_DRYRUN, message: 'Determining ProjectId...' });
     let transactionId = util.getTransactionId();
     let samples = JSON.stringify(rows);
     services
@@ -105,7 +113,7 @@ export function promoteAction(projectId, requestId, rows, needsUpdate) {
       })
       .catch(error => {
         return dispatch({
-          type: RECEIVE_PROMOTE_DRYRUN_FAIL,
+          type: PROMOTE_DRYRUN_FAIL,
           error: error
         });
       });
@@ -140,7 +148,7 @@ export function promoteForReal(
       })
       .then(response => {
         console.log(response);
-        dispatch({ type: RECEIVE_PROMOTE_DRYRUN_SUCCESS });
+        dispatch({ type: PROMOTE_DRYRUN_SUCCESS });
         Swal.fire({
           title: response.data + '?',
           type: 'info',
@@ -152,10 +160,10 @@ export function promoteForReal(
           // customClass: { content: 'alert' },
         }).then(result => {
           if (!result.value) {
-            dispatch({ type: RECEIVE_PROMOTE_DRYRUN_SUCCESS });
+            dispatch({ type: PROMOTE_DRYRUN_SUCCESS });
           } else {
             console.log('dryrun false');
-            dispatch({ type: REQUEST_PROMOTE_FORREAL });
+            dispatch({ type: PROMOTE_FORREAL });
             // it works!
             data.dryrun = false;
             // location.reload()
@@ -164,7 +172,7 @@ export function promoteForReal(
                 data: data
               })
               .then(response => {
-                dispatch({ type: RECEIVE_PROMOTE_FORREAL_SUCCESS });
+                dispatch({ type: PROMOTE_FORREAL_SUCCESS });
                 console.log(response);
                 Swal.fire({
                   title: 'Promoted!',
@@ -183,7 +191,7 @@ export function promoteForReal(
                   error.response.data.message &&
                   error.response.data.message.includes('Invalid characters')
                 ) {
-                  dispatch({ type: RECEIVE_PROMOTE_FORREAL_SUCCESS });
+                  dispatch({ type: PROMOTE_FORREAL_SUCCESS });
                   Swal.fire({
                     title: 'Promoted!',
                     // html: response.data,
@@ -194,7 +202,7 @@ export function promoteForReal(
                     // customClass: { content: 'alert' },
                   });
                 } else {
-                  dispatch({ type: RECEIVE_PROMOTE_FORREAL_FAIL });
+                  dispatch({ type: PROMOTE_FORREAL_FAIL });
                   console.log(error);
                   Swal.fire({
                     title: 'Error',
@@ -210,7 +218,7 @@ export function promoteForReal(
           }
         });
         return dispatch({
-          type: RECEIVE_PROMOTE_DRYRUN_SUCCESS
+          type: PROMOTE_DRYRUN_SUCCESS
         });
       })
       .catch(error => {
@@ -226,7 +234,7 @@ export function promoteForReal(
           // customClass: { content: 'alert' },
         });
         return dispatch({
-          type: RECEIVE_PROMOTE_DRYRUN_FAIL
+          type: PROMOTE_DRYRUN_FAIL
         });
       });
   };
