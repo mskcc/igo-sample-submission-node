@@ -163,6 +163,7 @@ exports.getApplications = (material) => {
       httpsAgent: agent,
     })
     .then((resp) => {
+      console.log(resp);
       logger.log('info', `Successfully retrieved response from ${url}`);
       return resp;
     })
@@ -274,7 +275,7 @@ exports.getCrdbId = (patientId) => {
 };
 
 exports.loadBankedSamples = (queryType, query) => {
-  const url = `${LIMS_URL}/getBankedSamples?${queryType}=${query}`;
+  const url = `${LIMS_URL}/getBankedSamplesd?${queryType}=${query}`;
   logger.log('info', `Sending request to ${url}`);
   return axios
     .get(url, {
@@ -283,11 +284,41 @@ exports.loadBankedSamples = (queryType, query) => {
     })
     .then((resp) => {
       logger.log('info', `Successfully retrieved response from ${url}`);
-      console.log(resp.data)
       return resp;
     })
     .catch((error) => {
       logger.log('info', `Error retrieving response from ${url}`);
+      return error;
+    })
+    .then((resp) => {
+      return formatData(resp);
+    });
+};
+
+//  PROMOTE
+exports.promote = (data) => {
+  const url = `${LIMS_URL}/promoteBankedSample`;
+  logger.log('info', `Sending request to ${url}`);
+  console.log(data);
+  return axios
+    .post(
+      url,
+      {},
+      {
+        auth: { ...LIMS_AUTH },
+        httpsAgent: agent,
+        params: { ...data },
+      }
+    )
+    .then((resp) => {
+      console.log(resp);
+      logger.log('info', `Successfully retrieved response from ${url}`);
+
+      return resp;
+    })
+    .catch((error) => {
+      logger.log('info', `Error retrieving response from ${url}`);
+
       throw error;
     })
     .then((resp) => {

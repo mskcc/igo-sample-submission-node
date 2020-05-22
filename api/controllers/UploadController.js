@@ -294,20 +294,24 @@ exports.crdbId = [
         let patientId = req.body.patientId.replace(/^\s+|\s+$/g, '');
         let patientIdPromise = services.getCrdbId(patientId);
 
-        Promise.all([patientIdPromise]).then((results) => {
-          if (results.some((x) => x.length === 0)) {
-            return apiResponse.errorResponse(res, 'Could not anonymize ID.');
-          }
-          let [patientIdResult] = results;
-          let responseObject = {
-            ...patientIdResult,
-          };
-          return apiResponse.successResponseWithData(
-            res,
-            'Operation success',
-            responseObject
-          );
-        });
+        Promise.all([patientIdPromise])
+          .catch(function (err) {
+            return apiResponse.errorResponse(res, err);
+          })
+          .then((results) => {
+            if (results.some((x) => x.length === 0)) {
+              return apiResponse.errorResponse(res, 'Could not anonymize ID.');
+            }
+            let [patientIdResult] = results;
+            let responseObject = {
+              ...patientIdResult,
+            };
+            return apiResponse.successResponseWithData(
+              res,
+              'Operation success',
+              responseObject
+            );
+          });
       }
     } catch (err) {
       return apiResponse.errorResponse(res, err);

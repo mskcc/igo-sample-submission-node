@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { PromoteGrid } from '../../components';
 import 'handsontable/dist/handsontable.full.css';
-import { swal, util } from '../../util';
+import { swal } from '../../util';
 import { connect } from 'react-redux';
 import { promoteActions } from '../../redux/actions';
-import { isEqual } from '../../util/helpers';
 
 class Promote extends Component {
   componentDidMount() {
@@ -13,32 +12,26 @@ class Promote extends Component {
       this.props.getPromoteGrid();
     }
   }
-  promoteSamples = (projectId, requestId, rows, indeces = undefined) => {
-    // need to go with rowBackup and isEqual comparison to decide if changes happened because
-    // handsontable changes do not trigger redux events
-    let rowsBackup = this.props.promote.rowsBackup;
-    let needsUpdate = false;
-    if (indeces) {
-      let i = 0;
-      indeces.map(index => {
-        if (!isEqual(rowsBackup[index], rows[i])) {
-          return (needsUpdate = true);
-        }
-        i++;
-      });
-    } else {
-      needsUpdate = !isEqual(rows, rowsBackup);
-    }
-
-    this.props.promoteAction(projectId, requestId, rows, needsUpdate);
-
-    // this.props.promote(projectId, requestId, rows)
+  promoteSamples = (projectId, requestId, rows) => {
+    let bankedSampleIds = [];
+    let serviceId = rows[0].serviceId;
+    console.log(rows);
+    rows.map(element => {
+      console.log(element);
+      bankedSampleIds.push(element.recordId);
+    });
+    console.log(bankedSampleIds);
+    this.props.promoteDry(projectId, requestId, serviceId, bankedSampleIds);
   };
   handleLoad = (queryType, query) => {
     if (!query) {
       return swal.alertEmptyLoad(queryType);
     }
     this.props.loadBankedSamples(queryType, query);
+  };
+
+  showShiftMessage = () => {
+    return this.props.showShiftMessage();
   };
 
   render() {
@@ -49,6 +42,7 @@ class Promote extends Component {
             promote={this.props.promote}
             handleLoad={this.handleLoad}
             promoteSamples={this.promoteSamples}
+            showShiftMessage={this.showShiftMessage}
           />
         ) : (
           <CircularProgress color="secondary" size={35} />

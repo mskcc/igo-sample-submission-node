@@ -54,45 +54,43 @@ exports.load = [
     ),
   body('query').isString().trim().withMessage('query must be specified.'),
   function (req, res) {
-    console.log(req.body);
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return apiResponse.validationErrorWithData(
-          res,
-          'Validation error.',
-          errors.array()
-        );
-      } else {
-        // remove leading and trailing whitespaces just in case
-        let queryType = req.body.queryType;
-        let query = req.body.query;
+    // console.log(req.body);
+    // try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return apiResponse.validationErrorWithData(
+        res,
+        'Validation error.',
+        errors.array()
+      );
+    } else {
+      // remove leading and trailing whitespaces just in case
+      let queryType = req.body.queryType;
+      let query = req.body.query;
 
-        let samplesPromise = cache.get(`BankedSamples-${query}`, () =>
-          util.loadBankedSamples(queryType, query)
-        );
+      // let samplesPromise = cache.get(`BankedSamples-${query}`, () =>
+      //   util.loadBankedSamples(queryType, query)
+      // );
 
-        Promise.all([samplesPromise]).then((results) => {
-          if (results.some((x) => x.length === 0)) {
-            return apiResponse.errorResponse(
-              res,
-              `Could not load samples for ${queryType} = ${query}.`
-            );
-          }
-          let [samples] = results;
-          let responseObject = {
-            samples,
-          };
-
-          return apiResponse.successResponseWithData(
+      let samplesPromise = util.loadBankedSamples(queryType, query);
+      Promise.all([samplesPromise]).then((results) => {
+        if (!results || results.some((x) => x.length === 0)) {
+          return apiResponse.errorResponse(
             res,
-            'Operation success',
-            responseObject
+            `Could not load samples for ${queryType} = ${query}.`
           );
-        });
-      }
-    } catch (err) {
-      return apiResponse.errorResponse(res, err);
+        }
+        let [samples] = results;
+        let responseObject = {
+          samples,
+        };
+
+        return apiResponse.successResponseWithData(
+          res,
+          'Operation success',
+          responseObject
+        );
+      });
     }
   },
 ];
@@ -101,7 +99,7 @@ exports.load = [
  *
  * @returns {Object}
  */
-exports.promoteDry = [
+exports.promote = [
   body('requestId')
     .optional()
     .isString()
@@ -110,15 +108,18 @@ exports.promoteDry = [
     .optional()
     .isString()
     .withMessage('ProjectId must be String.'),
-  body('needsUpdate').isBoolean().withMessage('needsUpdate must be Boolean.'),
+  body('serviceId')
+    .optional()
+    .isString()
+    .withMessage('ServiceId must be String.'),
+  body('dryrun').isBoolean().withMessage('dryrun must be Boolean.'),
   body('transactionId').isInt().withMessage('transactionId must be Int.'),
-  body('samples')
-    .isJSON()
+  body('bankedSampleIds')
+    .isArray()
     .isLength({ min: 1 })
     .trim()
-    .withMessage('samples must be JSON.'),
+    .withMessage('bankedSampleId must be JSON array of recordIds.'),
   function (req, res) {
-    console.log(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return apiResponse.validationErrorWithData(
@@ -128,36 +129,60 @@ exports.promoteDry = [
       );
     }
 
-    let samples = JSON.parse(req.body.samples);
+    // let samples = JSON.parse(req.body.samples);
     let transactionId = req.body.transactionId;
-    let needsUpdate = req.body.needsUpdate;
-
-    let updatePromise = util.updateBanked(
-      samples,
-      res.user,
+    let requestId = req.body.requestId;
+    let projectId = req.body.projectId;
+    let serviceId = req.body.serviceId;
+    let bankedSampleIds = req.body.bankedSampleIds;
+    console.log(bankedSampleIds);
+    let dryrun = req.body.dryrun;
+    let promotePromise = util.promote(
       transactionId,
-      needsUpdate
+      requestId,
+      projectId,
+      serviceId,
+      bankedSampleIds,
+      res.user.username,
+      dryrun
     );
 
-    Promise.all([updatePromise])
+    // let promotePromise = util.promote(
+    //   transactionId,
+    //   requestId,
+    //   projectId,
+    //   [bankedSampleId],
+    //   res.user.username,
+    //   dry
+    // );
+
+    Promise.all([promotePromise])
+      .catch(function (err) {
+        return apiResponse.errorResponse(res, err);
+      })
       .then((results) => {
-        if (results.some((x) => x.length === 0)) {
-          return apiResponse.errorResponse(res, 'Could not update.');
+        console.log(results);
+        if (!results || results.some((x) => x.length === 0)) {
+          return apiResponse.errorResponse(res, 'Could not promote.');
         }
-        let [updateResult] = results;
-        let bankedIds = updateResult.map((element) => {
-          console.log(element);
-          console.log('element');
-        });
+        let promoteResult;
+        if (dryrun) {
+          promoteResult = results[0];
+          return apiResponse.successResponse(res, promoteResult);
+        } else {
+          [promoteResult] = results;
+          return apiResponse.successResponseWithData(
+            res,
+            'Operation success',
+            promoteResult
+          );
+        }
+        // let bankedIds = updateResult.map((element) => {
+
+        // });
         // let dryRunPromise = util.promote(true,)
-        return apiResponse.successResponseWithData(
-          res,
-          'Operation success',
-          updateResult
-        );
       })
       .catch((reasons) => {
-        console.log(reasons);
         return apiResponse.errorResponse(res, reasons);
       });
   },

@@ -1,6 +1,6 @@
 import Swal from 'sweetalert2';
 
-export const formGridMismatch = (match) => {
+export const formGridMismatch = match => {
   Swal.fire({
     title: 'Header does not match Grid',
     html:
@@ -8,7 +8,7 @@ export const formGridMismatch = (match) => {
       match.message,
     type: 'error',
     animation: false,
-    confirmButtonText: 'Dismiss',
+    confirmButtonText: 'Dismiss'
   });
 };
 
@@ -19,7 +19,7 @@ export const altServiceIdNotice = () => {
       'Please make sure to get an ID through iLabs. For now, we will use a placeholder, please write it down (it will also be on your receipt once you submitted.).',
     type: 'info',
     animation: false,
-    confirmButtonText: 'Dismiss',
+    confirmButtonText: 'Dismiss'
   });
 };
 
@@ -30,12 +30,12 @@ export const tooManyRowsPasteAlert = () => {
       'We adjusted the grid for you now, please paste one more time. (Additional rows need to be added before pasting to apply all autofilling logic.)',
     type: 'warning',
     animation: false,
-    confirmButtonText: 'Dismiss',
+    confirmButtonText: 'Dismiss'
   });
 };
 
 export const confirmDelete = () => {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     Swal.fire({
       title: 'Are you sure?',
       type: 'warning',
@@ -43,8 +43,8 @@ export const confirmDelete = () => {
       animation: false,
       confirmButtonColor: '#df4602',
       cancelButtonColor: '#007cba',
-      confirmButtonText: 'Delete',
-    }).then((result) => {
+      confirmButtonText: 'Delete'
+    }).then(result => {
       if (result.value) {
         resolve(true);
       } else resolve(false);
@@ -52,7 +52,7 @@ export const confirmDelete = () => {
   });
 };
 export const confirmClear = () => {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     Swal.fire({
       title: 'Are you sure?',
       type: 'warning',
@@ -60,8 +60,8 @@ export const confirmClear = () => {
       animation: false,
       confirmButtonColor: '#df4602',
       cancelButtonColor: '#007cba',
-      confirmButtonText: 'Delete',
-    }).then((result) => {
+      confirmButtonText: 'Delete'
+    }).then(result => {
       if (result.value) {
         resolve(true);
       } else resolve(false);
@@ -69,7 +69,7 @@ export const confirmClear = () => {
   });
 };
 export const confirmGridClear = () => {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     Swal.fire({
       title: 'Are you sure?',
       text:
@@ -79,8 +79,8 @@ export const confirmGridClear = () => {
       animation: false,
       confirmButtonColor: '#df4602',
       cancelButtonColor: '#007cba',
-      confirmButtonText: 'Delete',
-    }).then((result) => {
+      confirmButtonText: 'Delete'
+    }).then(result => {
       if (result.value) {
         resolve(true);
       } else resolve(false);
@@ -89,18 +89,19 @@ export const confirmGridClear = () => {
 };
 
 export const confirmUpdate = () => {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     Swal.fire({
       title: 'Update?',
-      html: 'You are editing an existing partial submission. Are you sure you want to update it?',
+      html:
+        'You are editing an existing partial submission. Are you sure you want to update it?',
       type: 'info',
       showCancelButton: true,
       animation: false,
       confirmButtonColor: '#df4602',
       cancelButtonColor: '#007cba',
       confirmButtonText: 'Overwrite',
-      cancelButtonText: 'Cancel',
-    }).then((result) => {
+      cancelButtonText: 'Cancel'
+    }).then(result => {
       if (result.value) {
         resolve(true);
       } else resolve(false);
@@ -112,7 +113,7 @@ export const apiValidationError = (msg, data) => {
   let errors = data || '';
   if (data) {
     errors = '';
-    data.map((element) => {
+    data.map(element => {
       errors += `${element.param}: ${element.msg}\n`;
     });
   }
@@ -121,21 +122,21 @@ export const apiValidationError = (msg, data) => {
     html: errors,
     type: 'error',
     animation: false,
-    confirmButtonText: 'Dismiss',
+    confirmButtonText: 'Dismiss'
   });
 };
-export const emptyFieldsError = (emptyColumns) => {
+export const emptyFieldsError = emptyColumns => {
   Swal.fire({
     title: 'Required Fields',
     html: [...emptyColumns].join('<br> '),
     type: 'error',
     animation: false,
-    confirmButtonText: 'Dismiss',
+    confirmButtonText: 'Dismiss'
   });
 };
 
 export const submitSuccess = () => {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     Swal.fire({
       title: 'Submitted!',
       text: 'Download your Receipt under My Submissions.',
@@ -145,21 +146,37 @@ export const submitSuccess = () => {
       confirmButtonColor: '#007cba',
       cancelButtonColor: '#4c8b2b',
       confirmButtonText: 'Dismiss',
-      cancelButtonText: 'To My Submissions',
-    }).then((result) =>
+      cancelButtonText: 'To My Submissions'
+    }).then(result =>
       result.value ? resolve('upload') : resolve('submissions')
     );
   });
 };
 
 //  PROMOTE
-export const alertEmptyLoad = (queryType) => {
+export const alertEmptyLoad = queryType => {
   Swal.fire({
     title: 'Required',
     text: `Please fill enter a value for ${queryType}.`,
     type: 'error',
     animation: false,
-    confirmButtonText: 'Dismiss',
+    confirmButtonText: 'Dismiss'
+  });
+};
+
+export const dryRunSuccess = message => {
+  return new Promise(resolve => {
+    Swal.fire({
+      // title: 'Do you want to proceed?',
+      html: `${message} <br> Do you want to proceed?`,
+      type: 'success',
+      showCancelButton: true,
+      animation: false,
+      confirmButtonColor: '#007cba',
+      cancelButtonColor: '#df4602',
+      confirmButtonText: 'Proceed',
+      cancelButtonText: 'Cancel'
+    }).then(result => (result.value ? resolve(true) : resolve(false)));
   });
 };
 

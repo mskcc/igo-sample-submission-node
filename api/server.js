@@ -52,7 +52,10 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 var publicDir = path.join(__dirname, 'public');
-
+// process.on('unhandledRejection', (reason, p) => {
+//   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+//   // application specific logging, throwing an error, or other logic here
+// });
 var app = express();
 
 app.use(cookieParser());

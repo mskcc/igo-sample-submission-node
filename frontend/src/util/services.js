@@ -16,6 +16,11 @@ axios.interceptors.response.use(
     // Do something with response data
     if (response.data.data) {
       response.payload = response.data.data;
+      return response;
+    }
+    if (response.data) {
+      response.payload = response.data;
+      return response;
     }
     return response;
   },
@@ -220,22 +225,8 @@ export const loadBankedSamples = (queryType, query) => {
     });
 };
 
-export const promoteDry = (data) => {
-  const url = `${Config.NODE_API_ROOT}/promote/promoteDry`;
-  return axios
-    .post(url, { ...data })
-    .then((resp) => {
-      return resp;
-    })
-    .catch((error) => {
-      throw error;
-    })
-    .then((resp) => {
-      return resp;
-    });
-};
-export const updateBanked = (data) => {
-  const url = `${Config.NODE_API_ROOT}/promote/update`;
+export const promote = (data) => {
+  const url = `${Config.NODE_API_ROOT}/promote/promote`;
   return axios
     .post(url, { ...data })
     .then((resp) => {

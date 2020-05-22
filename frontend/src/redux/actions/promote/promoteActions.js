@@ -46,7 +46,10 @@ export const BANKED_SAMPLES_RETRIEVED = 'BANKED_SAMPLES_RETRIEVED';
 
 export function loadBankedSamples(queryType, query) {
   return (dispatch, getState) => {
-    dispatch({ type: REQUEST_BANKED_SAMPLES });
+    dispatch({
+      type: REQUEST_BANKED_SAMPLES,
+      message: `Fetching Banked Samples for ${queryType}: ${query}...`
+    });
 
     services
       .loadBankedSamples(queryType, query)
@@ -73,43 +76,51 @@ export function loadBankedSamples(queryType, query) {
 }
 
 export const PROMOTE_DRYRUN = 'PROMOTE_DRYRUN';
-export const PROMOTE_DRYRUN_AND_UPDATE = 'PROMOTE_DRYRUN_AND_UPDATE';
 
 export const PROMOTE_DRYRUN_SUCCESS = 'PROMOTE_DRYRUN_SUCCESS';
 
 export const PROMOTE_DRYRUN_FAIL = 'PROMOTE_DRYRUN_FAIL';
-export const PROMOTE_FORREAL = 'PROMOTE_FORREAL';
 
-export const PROMOTE_FORREAL_SUCCESS =
-  'PROMOTE_FORREAL_SUCCESS';
-
-export const PROMOTE_FORREAL_FAIL = 'PROMOTE_FORREAL_FAIL';
-
-export function promoteAction(projectId, requestId, rows, needsUpdate) {
+export function promoteDry(projectId, requestId, serviceId, bankedSampleIds) {
   return dispatch => {
-    if (needsUpdate) {
-      dispatch({
-        type: PROMOTE_DRYRUN_AND_UPDATE,
-        message: 'Updating samples and determining ProjectId...'
-      });
-    } else dispatch({ type: PROMOTE_DRYRUN, message: 'Determining ProjectId...' });
+    dispatch({
+      type: PROMOTE_DRYRUN,
+      message: 'Determining promote method...'
+    });
     let transactionId = util.getTransactionId();
-    let samples = JSON.stringify(rows);
+
     services
-      .promoteDry({ projectId, requestId, transactionId, samples, needsUpdate })
+      .promote({
+        projectId,
+        requestId,
+        serviceId,
+        transactionId,
+        bankedSampleIds: bankedSampleIds,
+        dryrun: true
+      })
 
       .then(response => {
-        console.log(response);
-        console.log(response.data);
         var rows = { ...response.data };
         var rowsBackup = { ...response.data };
         dispatch({
-          type: 'UPDATE_BANKED_SAMPLES_SUCCESS',
+          type: PROMOTE_DRYRUN_SUCCESS,
           rows: rows,
-          rowsBackup: rowsBackup
+          rowsBackup: rowsBackup,
+          message: ''
         });
-
-        return dispatch(promoteForReal(projectId, requestId));
+        swal.dryRunSuccess(response.payload.message).then(decision => {
+          if (decision) {
+            dispatch(
+              promoteForReal(
+                projectId,
+                requestId,
+                serviceId,
+                transactionId,
+                bankedSampleIds
+              )
+            );
+          }
+        });
       })
       .catch(error => {
         return dispatch({
@@ -117,125 +128,72 @@ export function promoteAction(projectId, requestId, rows, needsUpdate) {
           error: error
         });
       });
-    // } else {
-    //   return dispatch(promoteForReal(projectId, requestId));
-    // }
   };
 }
+export const PROMOTE_FORREAL = 'PROMOTE_FORREAL';
+
+export const PROMOTE_FORREAL_SUCCESS = 'PROMOTE_FORREAL_SUCCESS';
+
+export const PROMOTE_FORREAL_FAIL = 'PROMOTE_FORREAL_FAIL';
 
 export function promoteForReal(
-  projectId = '',
-  requestId = '',
-  rows,
-  serviceId
+  projectId,
+  requestId,
+  serviceId,
+  transactionId,
+  bankedSampleIds
 ) {
-  return (dispatch, getState) => {
+  return dispatch => {
     // let rows = getState().promote.rows
-    let bankedId = [];
-    bankedId = rows.map(elem => {
-      return elem.recordId;
+    dispatch({
+      type: PROMOTE_FORREAL,
+      message: 'Promoting...'
     });
-    let data = {
-      projectId: projectId,
-      requestId: requestId,
-      serviceId: serviceId,
-      bankedId: bankedId,
-      dryrun: true
-    };
-    axios
-      .post(Config.API_ROOT + '/promoteBankedSample', {
-        data: data
+    services
+      .promote({
+        projectId,
+        requestId,
+        serviceId,
+        transactionId,
+        bankedSampleIds: JSON.stringify(bankedSampleIds),
+        dryrun: false
       })
       .then(response => {
         console.log(response);
-        dispatch({ type: PROMOTE_DRYRUN_SUCCESS });
+
+        dispatch({ type: PROMOTE_FORREAL_SUCCESS });
         Swal.fire({
-          title: response.data + '?',
-          type: 'info',
+          title: 'Promoted!',
+          html: response.data,
+          // footer: 'To avoid mistakes, invalid cells are cleared immediately.',
+          type: 'success',
           animation: false,
-          showCancelButton: true,
-          confirmButtonText: 'Okay!',
-          confirmButtonColor: '#df4602',
-          cancelButtonColor: '#007cba'
+          confirmButtonText: 'Dismiss'
           // customClass: { content: 'alert' },
-        }).then(result => {
-          if (!result.value) {
-            dispatch({ type: PROMOTE_DRYRUN_SUCCESS });
-          } else {
-            console.log('dryrun false');
-            dispatch({ type: PROMOTE_FORREAL });
-            // it works!
-            data.dryrun = false;
-            // location.reload()
-            axios
-              .post(Config.API_ROOT + '/promoteBankedSample', {
-                data: data
-              })
-              .then(response => {
-                dispatch({ type: PROMOTE_FORREAL_SUCCESS });
-                console.log(response);
-                Swal.fire({
-                  title: 'Promoted!',
-                  html: response.data,
-                  // footer: 'To avoid mistakes, invalid cells are cleared immediately.',
-                  type: 'success',
-                  animation: false,
-                  confirmButtonText: 'Dismiss'
-                  // customClass: { content: 'alert' },
-                });
-              })
-              .catch(error => {
-                if (
-                  error.response &&
-                  error.response.data &&
-                  error.response.data.message &&
-                  error.response.data.message.includes('Invalid characters')
-                ) {
-                  dispatch({ type: PROMOTE_FORREAL_SUCCESS });
-                  Swal.fire({
-                    title: 'Promoted!',
-                    // html: response.data,
-                    // footer: 'To avoid mistakes, invalid cells are cleared immediately.',
-                    type: 'success',
-                    animation: false,
-                    confirmButtonText: 'Dismiss'
-                    // customClass: { content: 'alert' },
-                  });
-                } else {
-                  dispatch({ type: PROMOTE_FORREAL_FAIL });
-                  console.log(error);
-                  Swal.fire({
-                    title: 'Error',
-                    html: error.response.data,
-                    // footer: 'To avoid mistakes, invalid cells are cleared immediately.',
-                    type: 'error',
-                    animation: false,
-                    confirmButtonText: 'Dismiss'
-                    // customClass: { content: 'alert' },
-                  });
-                }
-              });
-          }
-        });
-        return dispatch({
-          type: PROMOTE_DRYRUN_SUCCESS
         });
       })
       .catch(error => {
+        dispatch({ type: PROMOTE_FORREAL_FAIL });
         console.log(error);
         Swal.fire({
           title: 'Error',
-          html:
-            'Something went wrong. Please tell Lisa or Anna to check the logs.',
+          html: error.response.data,
           // footer: 'To avoid mistakes, invalid cells are cleared immediately.',
           type: 'error',
           animation: false,
           confirmButtonText: 'Dismiss'
           // customClass: { content: 'alert' },
         });
-        return dispatch({
-          type: PROMOTE_DRYRUN_FAIL
-        });
       });
+  };
+}
+
+export function showShiftMessage() {
+  return dispatch => {
+    dispatch({
+      type: 'SHOW_SHIFT_MESSAGE',
+      message:
+        'Selecting only works using CMD+Click or CTRL+Click, not with SHIFT+CLICK.'
+    });
   };
 }

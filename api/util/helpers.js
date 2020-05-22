@@ -317,7 +317,7 @@ const fillData = (columns, formValues) => {
           rowData[i] = { ...rowData[i], specimenType: 'CellLine' };
         }
       });
-      if (rowData.length === numberOfRows) {
+      if (rowData.length === numberOfRows - 1) {
         columns.rowData = rowData;
         resolve(columns);
       }
@@ -637,7 +637,6 @@ export function generatePromoteGrid(limsColumnOrdering) {
       columnHeaders: [],
       rowData: [{}],
     };
-    let picklistCols = [];
     // lims returns these columns as ["Integer:String","Integer:String",...]
     limsColumnOrdering.map((element) => {
       let promoteColFeature = {};
@@ -648,12 +647,6 @@ export function generatePromoteGrid(limsColumnOrdering) {
           {},
           allColumns.gridColumns[columnName]
         );
-        if (
-          'picklistName' in promoteColFeature &&
-          promoteColFeature.data !== 'index'
-        ) {
-          picklistCols.push(columnName);
-        }
       } else {
         logger.log('info', `${columnName} not found`);
         promoteColFeature = {
@@ -665,39 +658,28 @@ export function generatePromoteGrid(limsColumnOrdering) {
       grid.columnFeatures.push(promoteColFeature);
     });
     // console.log(columnNamesOnly)
-    cacheAllPicklists(picklistCols).then((picklists) => {
-      grid.columnFeatures.map((promoteColFeature) => {
-        if (promoteColFeature.picklistName && !promoteColFeature.source) {
-          if (promoteColFeature.data === 'index') {
-            promoteColFeature.barcodeHash =
-              picklists[promoteColFeature.picklistName];
-          } else {
-            promoteColFeature.source =
-              picklists[promoteColFeature.picklistName];
-          }
-        }
-        promoteColFeature.optional = true;
-        promoteColFeature.allowEmpty = true;
-        promoteColFeature.className = 'optional';
-        promoteColFeature.readOnly =
-          promoteColFeature.data === 'investigator' ? true : false;
-        promoteColFeature.error = promoteColFeature.error
-          ? promoteColFeature.error
-          : 'Invalid format.';
-        grid.rowData[0][promoteColFeature.data] = '';
-      });
-      grid.columnHeaders = grid.columnFeatures.map(
-        (a) =>
-          '<span class="' +
-          a.className +
-          '" title="' +
-          a.tooltip +
-          '">' +
-          a.columnHeader +
-          '</span>'
-      );
-      resolve(grid);
+    // cacheAllPicklists(picklistCols).then((picklists) => {
+    grid.columnFeatures.map((promoteColFeature) => {
+      promoteColFeature.optional = true;
+      promoteColFeature.allowEmpty = true;
+      promoteColFeature.readOnly = true;
+      // promoteColFeature.data === 'investigator' ? true : false;
+      promoteColFeature.error = promoteColFeature.error
+        ? promoteColFeature.error
+        : 'Invalid format.';
+      grid.rowData[0][promoteColFeature.data] = '';
     });
+    grid.columnHeaders = grid.columnFeatures.map(
+      (a) =>
+        '<span class="' +
+        a.className +
+        '" title="' +
+        a.tooltip +
+        '">' +
+        a.columnHeader +
+        '</span>'
+    );
+    resolve(grid);
   });
 }
 function camelize(str) {
@@ -709,73 +691,108 @@ function camelize(str) {
 }
 
 export function loadBankedSamples(queryType, query) {
-  return new Promise((resolve) => {
-    services.loadBankedSamples(queryType, query).then((response) => {
-      // TODO: Clean out some data like in old rex?
-      resolve(response);
-    });
-  });
-}
-
-// updates banked prior to promote
-export function updateBanked(samples, user, transactionId, needsUpdate) {
   return new Promise((resolve, reject) => {
-    if (!needsUpdate){
-      resolve(samples);
-    }
-    let updatedSamples = [];
-    // prep banked sample record
-    for (let i = 0; i < samples.length; i++) {
-      let bankedSample = Object.assign({}, samples[i]);
-      bankedSample.transactionId = transactionId;
-      bankedSample.igoUser = user.username;
-      bankedSample.user = process.env.API_USER;
-      bankedSample.concentrationUnits = 'ng/uL';
-
-      if ('wellPosition' in bankedSample) {
-        var match = /([A-Za-z]+)(\d+)/.exec(bankedSample.wellPosition);
-        if (!match) {
-          reject('Invalid Well Position.');
-        } else {
-          bankedSample.rowPos = match[1];
-          bankedSample.colPos = match[2];
-          delete bankedSample.wellPosition;
-        }
-      }
-      //  not needed in LIMS, only displayed for users' convenience
-      if ('indexSequence' in bankedSample) {
-        delete bankedSample.indexSequence;
-      }
-      if ('concentration' in bankedSample) {
-        bankedSample.concentration = bankedSample.concentration.replace(
-          'ng/uL',
-          ''
-        );
-      }
-
-      // delete empty fields
-      Object.keys(bankedSample).map((element) => {
-        if (bankedSample[element] === '') {
-          delete bankedSample[element];
-        }
-      });
-
-      services
-        .submit(bankedSample)
-        .then((response) => {
-          logger.log('info', `Updated ${bankedSample.userId}.`);
-          updatedSamples.push(response);
-          if (updatedSamples.length === samples.length) {
-            resolve(updatedSamples);
-          }
-        })
-        .catch((err) =>
-          reject(
-            `Update failed at sample ${bankedSample.userId}, index ${bankedSample.rowIndex}. ${err}`
-          )
-        );
-    }
+    services
+      .loadBankedSamples(queryType, query)
+      .then((response) => {
+        // TODO: Clean out some data like in old rex?
+        resolve(response);
+      })
+      .catch((reasons) => reject(reasons));
   });
 }
+
+export function promote(
+  transactionId,
+  requestId,
+  projectId,
+  serviceId,
+  bankedSampleId,
+  user,
+  dryrun
+) {
+  return new Promise((resolve, reject) => {
+    let data = {
+      transactionId: transactionId,
+      requestId: requestId || 'NULL',
+      projectId: projectId || 'NULL',
+      serviceId: serviceId,
+      bankedId: bankedSampleId,
+      igoUser: process.env.API_USER,
+      user: user,
+      dryrun: dryrun,
+    };
+    // console.log(data);
+    services
+      .promote(data)
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+// // updates banked prior to promote NOT CURRENTLY NEEDED
+// export function updateBanked(samples, user, transactionId, needsUpdate) {
+//   return new Promise((resolve, reject) => {
+//     if (!needsUpdate) {
+//       resolve(samples);
+//     }
+//     let updatedSamples = [];
+//     // prep banked sample record
+//     for (let i = 0; i < samples.length; i++) {
+//       let bankedSample = Object.assign({}, samples[i]);
+//       bankedSample.transactionId = transactionId;
+//       bankedSample.igoUser = user.username;
+//       bankedSample.user = process.env.API_USER;
+//       bankedSample.concentrationUnits = 'ng/uL';
+
+//       if ('wellPosition' in bankedSample) {
+//         var match = /([A-Za-z]+)(\d+)/.exec(bankedSample.wellPosition);
+//         if (!match) {
+//           reject('Invalid Well Position.');
+//         } else {
+//           bankedSample.rowPos = match[1];
+//           bankedSample.colPos = match[2];
+//           delete bankedSample.wellPosition;
+//         }
+//       }
+//       //  not needed in LIMS, only displayed for users' convenience
+//       if ('indexSequence' in bankedSample) {
+//         delete bankedSample.indexSequence;
+//       }
+//       if ('concentration' in bankedSample) {
+//         bankedSample.concentration = bankedSample.concentration.replace(
+//           'ng/uL',
+//           ''
+//         );
+//       }
+
+//       // delete empty fields
+//       Object.keys(bankedSample).map((element) => {
+//         if (bankedSample[element] === '') {
+//           delete bankedSample[element];
+//         }
+//       });
+
+//       services
+//         .submit(bankedSample)
+//         .then((response) => {
+//           logger.log('info', `Updated ${bankedSample.userId}.`);
+//           updatedSamples.push(response);
+//           if (updatedSamples.length === samples.length) {
+//             resolve(updatedSamples);
+//           }
+//         })
+//         .catch((err) =>
+//           reject(
+//             `Update failed at sample ${bankedSample.userId}, index ${bankedSample.rowIndex}. ${err}`
+//           )
+//         );
+//     }
+//   });
+// }
 
 // PROMOTE END

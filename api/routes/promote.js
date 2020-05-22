@@ -5,6 +5,6 @@ var router = express.Router();
 
 router.get('/grid', PromoteController.grid);
 router.post('/load', PromoteController.load);
-router.post('/promoteDry', PromoteController.promoteDry);
+router.post('/promote', PromoteController.promote);
 
 module.exports = router;
