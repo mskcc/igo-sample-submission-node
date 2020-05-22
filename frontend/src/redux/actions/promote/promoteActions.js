@@ -94,7 +94,7 @@ export function promoteDry(projectId, requestId, serviceId, bankedSampleIds) {
         requestId,
         serviceId,
         transactionId,
-        bankedSampleIds: bankedSampleIds,
+        bankedSampleIds: [bankedSampleIds[0]],
         dryrun: true
       })
 
@@ -145,13 +145,14 @@ export function promoteForReal(
       type: PROMOTE_FORREAL,
       message: 'Promoting...'
     });
+    console.log(bankedSampleIds);
     services
       .promote({
         projectId,
         requestId,
         serviceId,
         transactionId,
-        bankedSampleIds: bankedSampleIds,
+        bankedSampleIds: [bankedSampleIds],
         dryrun: false
       })
       .then(response => {

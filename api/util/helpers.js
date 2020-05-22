@@ -722,7 +722,8 @@ export function promote(
       user: user,
       dryrun: dryrun,
     };
-    // console.log(data);
+    console.log(bankedSampleId);
+    console.log(data);
     services
       .promote(data)
       .then((response) => {
