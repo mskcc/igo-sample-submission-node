@@ -88,9 +88,8 @@ export function promoteDry(projectId, requestId, serviceId, bankedSampleIds) {
       message: 'Determining promote method...'
     });
     let transactionId = util.getTransactionId();
-
     services
-      .promote({
+      .dryrun({
         projectId,
         requestId,
         serviceId,
@@ -100,13 +99,10 @@ export function promoteDry(projectId, requestId, serviceId, bankedSampleIds) {
       })
 
       .then(response => {
-        var rows = { ...response.data };
-        var rowsBackup = { ...response.data };
+        console.log(response);
         dispatch({
           type: PROMOTE_DRYRUN_SUCCESS,
-          rows: rows,
-          rowsBackup: rowsBackup,
-          message: ''
+          message: 'clear'
         });
         swal.dryRunSuccess(response.payload.message).then(decision => {
           if (decision) {
@@ -155,12 +151,10 @@ export function promoteForReal(
         requestId,
         serviceId,
         transactionId,
-        bankedSampleIds: JSON.stringify(bankedSampleIds),
+        bankedSampleIds: bankedSampleIds,
         dryrun: false
       })
       .then(response => {
-        console.log(response);
-
         dispatch({ type: PROMOTE_FORREAL_SUCCESS });
         Swal.fire({
           title: 'Promoted!',
@@ -173,17 +167,16 @@ export function promoteForReal(
         });
       })
       .catch(error => {
-        dispatch({ type: PROMOTE_FORREAL_FAIL });
-        console.log(error);
-        Swal.fire({
-          title: 'Error',
-          html: error.response.data,
-          // footer: 'To avoid mistakes, invalid cells are cleared immediately.',
-          type: 'error',
-          animation: false,
-          confirmButtonText: 'Dismiss'
-          // customClass: { content: 'alert' },
-        });
+        dispatch({ type: PROMOTE_FORREAL_FAIL, message: 'clear' });
+        // console.log(error);
+        let message = error.payload.message;
+        if (message.includes('already been promoted')) {
+          message = message.replace(
+            'ERROR IN  PROMOTING BANKED SAMPLE: org.mskcc.limsrest.service.LimsException:',
+            ''
+          );
+        }
+        swal.genericMessage('error', message);
       });
   };
 }

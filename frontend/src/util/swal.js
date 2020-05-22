@@ -164,6 +164,16 @@ export const alertEmptyLoad = queryType => {
   });
 };
 
+export const genericMessage = (type, msg) => {
+  Swal.fire({
+    title: type.charAt(0).toUpperCase() + type.slice(1),
+    text: msg,
+    type: type,
+    animation: false,
+    confirmButtonText: 'Dismiss'
+  });
+};
+
 export const dryRunSuccess = message => {
   return new Promise(resolve => {
     Swal.fire({

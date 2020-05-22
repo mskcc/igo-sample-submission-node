@@ -4,7 +4,7 @@ const initialState = {
   version: '2.0',
   error: false,
   message: '',
-  serverError: false,
+  serverError: false
   // loading: true,
 };
 
@@ -12,10 +12,15 @@ const initialState = {
 function commonReducer(state = initialState, action) {
   const { type, error, message, serverError } = action;
   if (message) {
-    console.log(message);
+    if (message === 'clear') {
+      return {
+        ...state,
+        message: ''
+      };
+    }
     return {
       ...state,
-      message: message,
+      message: message
     };
   } else if (error && error.payload) {
     console.log('common error');
@@ -26,12 +31,12 @@ function commonReducer(state = initialState, action) {
     }
     return {
       ...state,
-      message: error.payload.message,
+      message: error.payload.message
     };
   } else if (error && error.message) {
     return {
       ...state,
-      message: error.message,
+      message: error.message
     };
   } else {
     return { ...state };

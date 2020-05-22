@@ -118,7 +118,7 @@ exports.promote = [
     .isArray()
     .isLength({ min: 1 })
     .trim()
-    .withMessage('bankedSampleId must be JSON array of recordIds.'),
+    .withMessage('bankedSampleId must be array of recordIds.'),
   function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -146,44 +146,30 @@ exports.promote = [
       res.user.username,
       dryrun
     );
+    promotePromise
 
-    // let promotePromise = util.promote(
-    //   transactionId,
-    //   requestId,
-    //   projectId,
-    //   [bankedSampleId],
-    //   res.user.username,
-    //   dry
-    // );
-
-    Promise.all([promotePromise])
-      .catch(function (err) {
-        return apiResponse.errorResponse(res, err);
-      })
-      .then((results) => {
-        console.log(results);
-        if (!results || results.some((x) => x.length === 0)) {
-          return apiResponse.errorResponse(res, 'Could not promote.');
-        }
+      .then((result) => {
         let promoteResult;
         if (dryrun) {
-          promoteResult = results[0];
+          promoteResult = result;
           return apiResponse.successResponse(res, promoteResult);
         } else {
-          [promoteResult] = results;
+          [promoteResult] = result;
           return apiResponse.successResponseWithData(
             res,
             'Operation success',
             promoteResult
           );
         }
+
         // let bankedIds = updateResult.map((element) => {
 
         // });
         // let dryRunPromise = util.promote(true,)
       })
-      .catch((reasons) => {
-        return apiResponse.errorResponse(res, reasons);
+      .catch(function (err) {
+        
+        return apiResponse.errorResponse(res, err);
       });
   },
 ];

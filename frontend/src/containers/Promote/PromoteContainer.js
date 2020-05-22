@@ -15,9 +15,7 @@ class Promote extends Component {
   promoteSamples = (projectId, requestId, rows) => {
     let bankedSampleIds = [];
     let serviceId = rows[0].serviceId;
-    console.log(rows);
     rows.map(element => {
-      console.log(element);
       bankedSampleIds.push(element.recordId);
     });
     console.log(bankedSampleIds);

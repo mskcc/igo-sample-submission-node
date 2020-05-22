@@ -29,8 +29,7 @@ exports.errorResponse = function (res, msg) {
     status: 0,
     message: 'Application Error: ' + msg,
   };
-  logger.log('error', msg);
-  // console.log(data);
+
   res.status(500).json(data);
 };
 

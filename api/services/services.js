@@ -275,7 +275,7 @@ exports.getCrdbId = (patientId) => {
 };
 
 exports.loadBankedSamples = (queryType, query) => {
-  const url = `${LIMS_URL}/getBankedSamplesd?${queryType}=${query}`;
+  const url = `${LIMS_URL}/getBankedSamples?${queryType}=${query}`;
   logger.log('info', `Sending request to ${url}`);
   return axios
     .get(url, {
@@ -299,7 +299,6 @@ exports.loadBankedSamples = (queryType, query) => {
 exports.promote = (data) => {
   const url = `${LIMS_URL}/promoteBankedSample`;
   logger.log('info', `Sending request to ${url}`);
-  console.log(data);
   return axios
     .post(
       url,
@@ -311,7 +310,6 @@ exports.promote = (data) => {
       }
     )
     .then((resp) => {
-      console.log(resp);
       logger.log('info', `Successfully retrieved response from ${url}`);
 
       return resp;
@@ -319,6 +317,9 @@ exports.promote = (data) => {
     .catch((error) => {
       logger.log('info', `Error retrieving response from ${url}`);
 
+      if (error.response && error.response.data) {
+        throw error.response.data;
+      }
       throw error;
     })
     .then((resp) => {
