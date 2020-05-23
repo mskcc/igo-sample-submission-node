@@ -92,7 +92,7 @@ export function generateGrid(limsColumnList, userRole, formValues) {
     };
 
     if (!limsColumnList) {
-      PromiseRejectionEvent('Invalid Combination.');
+      reject('Invalid Combination.');
     }
     // combinations with no optional columns return an empty element we need to filter out
     limsColumnList = limsColumnList.filter((element) => element[0] !== '');
@@ -208,17 +208,17 @@ function fillColumns(
 const overwriteContainer = (userContainer) => {
   let newContainer;
   switch (userContainer) {
-    case 'Plates':
-      newContainer = allColumns.gridColumns['Plate ID'];
-      break;
-    case 'Micronic Barcoded Tubes':
-      newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
-      break;
-    case 'Blocks/Slides/Tubes':
-      newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
-      break;
-    default:
-      return `Container '${userContainer}' not found.`;
+  case 'Plates':
+    newContainer = allColumns.gridColumns['Plate ID'];
+    break;
+  case 'Micronic Barcoded Tubes':
+    newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
+    break;
+  case 'Blocks/Slides/Tubes':
+    newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
+    break;
+  default:
+    return `Container '${userContainer}' not found.`;
   }
   return newContainer;
 };
@@ -237,6 +237,8 @@ export const generateAdditionalRows = (
     let columns = { columnFeatures: columnFeatures, formValues: formValues };
     fillAdditionalRows(columns, formValues).then((columns) => {
       //delete all old rows
+      prevRowNumber = parseInt(prevRowNumber);
+      newRowNumber = parseInt(newRowNumber);
       for (let i = 0; i < prevRowNumber; i++) {
         columns.rowData.shift();
         if (i + 1 === prevRowNumber) {
@@ -263,8 +265,10 @@ const fillAdditionalRows = (columns, formValues) => {
 const fillData = (columns, formValues) => {
   return new Promise((resolve) => {
     let rowData = [];
+
     let numberOfRows = formValues.numberOfSamples;
     for (var i = 0; i < numberOfRows; i++) {
+    
       columns.columnFeatures.map((entry) => {
         rowData[i] = { ...rowData[i], [entry.data]: '' };
         if (entry.data === 'species' || entry.data === 'organism') {
@@ -317,7 +321,7 @@ const fillData = (columns, formValues) => {
           rowData[i] = { ...rowData[i], specimenType: 'CellLine' };
         }
       });
-      if (rowData.length === numberOfRows - 1) {
+      if (rowData.length === parseInt(numberOfRows)) {
         columns.rowData = rowData;
         resolve(columns);
       }
@@ -393,33 +397,33 @@ function choosePatientIdValidator(patientIDType, species, groupingChecked) {
     }
   } else {
     switch (patientIDType) {
-      case 'MSK-Patients (or derived from MSK Patients)':
-        return {
-          pattern: '^[0-9]{8}$',
-          columnHeader: 'MRN',
-          tooltip: "The patient's MRN.",
-          error:
+    case 'MSK-Patients (or derived from MSK Patients)':
+      return {
+        pattern: '^[0-9]{8}$',
+        columnHeader: 'MRN',
+        tooltip: 'The patient\'s MRN.',
+        error:
             'MRN is incorrectly formatted, please correct, or speak to a project manager if unsure.',
-          type: 'text',
-        };
-      case 'Non-MSK Patients':
-        return {
-          pattern: '[A-Za-z0-9\\,_-]{4,}',
-          columnHeader: 'Patient ID',
-          error:
+        type: 'text',
+      };
+    case 'Non-MSK Patients':
+      return {
+        pattern: '[A-Za-z0-9\\,_-]{4,}',
+        columnHeader: 'Patient ID',
+        error:
             'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
-        };
-      case 'Cell Lines, not from Patients':
-        return { columnHeader: 'Cell Line Name' };
-      case 'Both MSK-Patients and Non-MSK Patients':
-        return {
-          pattern: '[A-Za-z0-9\\,_-]{4,}|^[0-9]{8}$',
-          columnHeader: 'Patient ID',
-          error:
+      };
+    case 'Cell Lines, not from Patients':
+      return { columnHeader: 'Cell Line Name' };
+    case 'Both MSK-Patients and Non-MSK Patients':
+      return {
+        pattern: '[A-Za-z0-9\\,_-]{4,}|^[0-9]{8}$',
+        columnHeader: 'Patient ID',
+        error:
             'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
-        };
-      default:
-        return { pattern: 'formatter not found' };
+      };
+    default:
+      return { pattern: 'formatter not found' };
     }
   }
 }

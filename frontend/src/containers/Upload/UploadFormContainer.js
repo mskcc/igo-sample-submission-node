@@ -7,9 +7,7 @@ import { formActions } from '../../redux/actions/';
 import { UploadForm } from '../../components';
 
 export class UploadFormContainer extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+
 
   componentDidUpdate(prevProps, prevState) {}
 

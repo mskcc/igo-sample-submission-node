@@ -121,9 +121,7 @@ exports.promote = [
     .withMessage('bankedSampleId must be array of recordIds.'),
   function (req, res) {
     const errors = validationResult(req);
-    console.log(req.body);
     if (!errors.isEmpty()) {
-      console.log(req.body);
       return apiResponse.validationErrorWithData(
         res,
         'Validation error.',
@@ -137,7 +135,6 @@ exports.promote = [
     let projectId = req.body.projectId;
     let serviceId = req.body.serviceId;
     let bankedSampleIds = req.body.bankedSampleIds;
-    console.log(bankedSampleIds);
     let dryrun = req.body.dryrun;
     let promotePromise = util.promote(
       transactionId,

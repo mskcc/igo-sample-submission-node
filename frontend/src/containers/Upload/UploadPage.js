@@ -9,15 +9,15 @@ import UploadFormContainer from './UploadFormContainer';
 import UploadGridContainer from './UploadGridContainer';
 
 export class UploadPage extends Component {
-  handleFormSubmit = (formValues) => {
+  handleFormSubmit = formValues => {
     this.props.getColumns(formValues);
   };
 
-  handleGridSubmit = (formValues) => {
+  handleGridSubmit = formValues => {
     this.props.addGridToBankedSample(this.props);
   };
 
-  pasteTooMany = (newRowNumber) => {
+  pasteTooMany = newRowNumber => {
     const prevRowNumber = this.props.grid.form.numberOfSamples;
     this.props.increaseRowNumber(prevRowNumber, newRowNumber);
     swal.tooManyRowsPasteAlert();
@@ -27,6 +27,7 @@ export class UploadPage extends Component {
     const newRowNumber = this.props.form.selected.numberOfSamples;
     const prevRowNumber = this.props.grid.form.numberOfSamples;
     const change = newRowNumber - prevRowNumber;
+
     if (change < 0) {
       return this.props.decreaseRowNumber(change, newRowNumber);
     }
@@ -58,17 +59,17 @@ export class UploadPage extends Component {
 }
 
 UploadPage.defaultProps = {
-  grid: {},
+  grid: {}
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   grid: state.upload.grid,
-  form: state.upload.form,
+  form: state.upload.form
 });
 
 export default withLocalize(
   connect(mapStateToProps, {
     ...gridActions,
-    ...userActions,
+    ...userActions
   })(UploadPage)
 );

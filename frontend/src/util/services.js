@@ -38,6 +38,20 @@ axios.interceptors.response.use(
   }
 );
 
+export const grid = (data) => {
+  const url = `${Config.NODE_API_ROOT}/upload/grid`;
+  return axios
+    .post(url, {...data})
+    .then(resp => {
+      return resp;
+    })
+    .catch(error => {
+      throw error;
+    })
+    .then(resp => {
+      return resp;
+    });
+};
 export const getAdditionalRows = data => {
   const url = `${Config.NODE_API_ROOT}/upload/additionalRows`;
   return axios

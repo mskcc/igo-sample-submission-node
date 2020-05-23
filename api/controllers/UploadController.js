@@ -221,7 +221,7 @@ exports.grid = [
   body('groupingChecked').optional(),
   body('altServiceId').optional(),
   // sanitizeBody("*").escape(),
-  async function (req, res) {
+  function (req, res) {
     // try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

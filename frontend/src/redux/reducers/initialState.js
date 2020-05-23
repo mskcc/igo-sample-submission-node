@@ -78,6 +78,5 @@ export const initialGridState = {
 export const initialPromoteState = {
   columnHeaders: [],
   rows: [],
-
   initialFetched: false,
 };

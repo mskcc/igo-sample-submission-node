@@ -103,7 +103,6 @@ class UploadGridContainer extends React.Component {
         handleMRN={this.handleMRN}
         handleIndex={this.handleIndex}
         handleAssay={this.handleAssay}
-        handleRowNumberUpdate={this.handleRowNumberUpdate}
         handleTumorType={this.handleTumorType}
         handleSubmit={this.handleSubmit}
         handleChange={this.handleChange}

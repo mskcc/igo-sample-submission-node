@@ -78,19 +78,17 @@ export function getMaterialsForApplication(
         }
       })
       .then(response => {
-        dispatch({
+        return dispatch({
           type: RECEIVE_DATA_FOR_APPLICATION_SUCCESS,
           materials: response.payload.materials,
           species: response.payload.species
         });
-        return response;
       })
       .catch(error => {
-        dispatch({
+        return dispatch({
           type: RECEIVE_DATA_FOR_APPLICATION_FAIL,
           error: error
         });
-        return error;
       });
   };
 }
@@ -185,20 +183,17 @@ export function getApplicationsForMaterial(
         }
       })
       .then(response => {
-        dispatch({
+        return dispatch({
           type: RECEIVE_APPLICATIONS_FOR_MATERIAL_SUCCESS,
           applications: response.payload.applications,
           containers: response.payload.containers
         });
-
-        return response;
       })
       .catch(error => {
-        dispatch({
+        return dispatch({
           type: RECEIVE_APPLICATIONS_FOR_MATERIAL_FAIL,
           error: error
         });
-        return error;
       });
   };
 }

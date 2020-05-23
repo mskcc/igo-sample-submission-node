@@ -163,7 +163,7 @@ exports.getApplications = (material) => {
       httpsAgent: agent,
     })
     .then((resp) => {
-      console.log(resp);
+      // console.log(resp);
       logger.log('info', `Successfully retrieved response from ${url}`);
       return resp;
     })
