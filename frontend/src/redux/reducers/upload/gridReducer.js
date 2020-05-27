@@ -76,7 +76,7 @@ export default function gridReducer(state = initialGridState, action) {
 
     case ActionTypes.GET_COLUMNS_FAIL:
       return {
-        ...state,
+        ...initialGridState,
         gridIsLoading: false,
         error: action.error
         // action.error.response.data +

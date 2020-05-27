@@ -44,29 +44,37 @@ function cacheAllPicklists(limsColumns) {
   return new Promise((resolve, reject) => {
     let picklistPromises = [];
     let picklists = {};
-
     limsColumns.map((columnName) => {
       if (!allColumns.gridColumns[columnName]) {
-        reject(`Column '${columnName}' not found.`);
-      }
-      let picklist = allColumns.gridColumns[columnName].picklistName;
+        logger.log(
+          'info',
+          `Column '${columnName}' not found in possible columns.`
+        );
+        if (!allColumns.deprecatedColumns.includes(columnName)) {
+          reject(
+            `Column '${columnName}' not found in possible or deprecated columns.`
+          );
+        }
+      } else {
+        let picklist = allColumns.gridColumns[columnName].picklistName;
 
-      if (picklist !== undefined) {
-        picklists[picklist] = [];
-        if (picklist === 'barcodes') {
-          picklistPromises.push(
-            cache.get(picklist + '-Picklist', () => services.getBarcodes())
-          );
-        } else if (picklist === 'tumorType') {
-          picklistPromises.push(
-            cache.get(picklist + '-Picklist', () => services.getOnco())
-          );
-        } else {
-          picklistPromises.push(
-            cache.get(picklist + '-Picklist', () =>
-              services.getPicklist(picklist)
-            )
-          );
+        if (picklist !== undefined) {
+          picklists[picklist] = [];
+          if (picklist === 'barcodes') {
+            picklistPromises.push(
+              cache.get(picklist + '-Picklist', () => services.getBarcodes())
+            );
+          } else if (picklist === 'tumorType') {
+            picklistPromises.push(
+              cache.get(picklist + '-Picklist', () => services.getOnco())
+            );
+          } else {
+            picklistPromises.push(
+              cache.get(picklist + '-Picklist', () =>
+                services.getPicklist(picklist)
+              )
+            );
+          }
         }
       }
     });
@@ -133,42 +141,56 @@ function fillColumns(
     });
     limsColumnList.forEach((element, index) => {
       let columnName = element[0];
+
       let colDef = allColumns.gridColumns[columnName];
       if (!colDef) {
-        reject(`Column '${columnName}' not found.`);
-      }
-      if (
-        colDef.container &&
-        colDef.container !== formValues.container &&
-        formValues.application !== 'Expanded_Genomics'
-      ) {
-        colDef = overwriteContainer(formValues.container);
-      }
-
-      if (colDef.data === 'patientId') {
-        let formattingAdjustments = choosePatientIdValidator(
-          formValues.patientIdType,
-          formValues.species,
-          formValues.groupingChecked
+        logger.log(
+          'info',
+          `Column '${columnName}' not found in possible columns.`
         );
-        colDef = { ...colDef, ...formattingAdjustments };
-      }
-      if (colDef.picklistName && !colDef.source) {
-        if (colDef.data === 'index') {
-          colDef.barcodeHash = picklists[colDef.picklistName];
-        } else {
-          colDef.source = picklists[colDef.picklistName];
+        if (!allColumns.deprecatedColumns.includes(columnName)) {
+          logger.log(
+            'info',
+            `Column '${columnName}' not found in possible or deprecated columns.`
+          );
+          reject(
+            `Column '${columnName}' not found in possible or deprecated columns.`
+          );
         }
-      }
+      } else {
+        if (
+          colDef.container &&
+          colDef.container !== formValues.container &&
+          formValues.application !== 'Expanded_Genomics'
+        ) {
+          colDef = overwriteContainer(formValues.container);
+        }
 
-      colDef.error = colDef.error ? colDef.error : 'Invalid format.';
-      columns.columnFeatures.push(colDef);
-      if (colDef.hiddenFrom && colDef.hiddenFrom === userRole) {
-        columns.hiddenColumns.push(columns.columnFeatures.length);
+        if (colDef.data === 'patientId') {
+          let formattingAdjustments = choosePatientIdValidator(
+            formValues.patientIdType,
+            formValues.species,
+            formValues.groupingChecked
+          );
+          colDef = { ...colDef, ...formattingAdjustments };
+        }
+        if (colDef.picklistName && !colDef.source) {
+          if (colDef.data === 'index') {
+            colDef.barcodeHash = picklists[colDef.picklistName];
+          } else {
+            colDef.source = picklists[colDef.picklistName];
+          }
+        }
+
+        colDef.error = colDef.error ? colDef.error : 'Invalid format.';
+        columns.columnFeatures.push(colDef);
+        if (colDef.hiddenFrom && colDef.hiddenFrom === userRole) {
+          columns.hiddenColumns.push(columns.columnFeatures.length);
+        }
+        colDef.optional = requiredColumns.includes(columnName) ? false : true;
+        colDef.allowEmpty = colDef.optional;
+        colDef.className = colDef.optional ? 'optional' : 'required';
       }
-      colDef.optional = requiredColumns.includes(columnName) ? false : true;
-      colDef.allowEmpty = colDef.optional;
-      colDef.className = colDef.optional ? 'optional' : 'required';
 
       if (index === limsColumnList.length - 1) {
         // if plate column present but not WellPos, add WellPos
@@ -208,17 +230,17 @@ function fillColumns(
 const overwriteContainer = (userContainer) => {
   let newContainer;
   switch (userContainer) {
-  case 'Plates':
-    newContainer = allColumns.gridColumns['Plate ID'];
-    break;
-  case 'Micronic Barcoded Tubes':
-    newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
-    break;
-  case 'Blocks/Slides/Tubes':
-    newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
-    break;
-  default:
-    return `Container '${userContainer}' not found.`;
+    case 'Plates':
+      newContainer = allColumns.gridColumns['Plate ID'];
+      break;
+    case 'Micronic Barcoded Tubes':
+      newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
+      break;
+    case 'Blocks/Slides/Tubes':
+      newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
+      break;
+    default:
+      return `Container '${userContainer}' not found.`;
   }
   return newContainer;
 };
@@ -268,7 +290,6 @@ const fillData = (columns, formValues) => {
 
     let numberOfRows = formValues.numberOfSamples;
     for (var i = 0; i < numberOfRows; i++) {
-    
       columns.columnFeatures.map((entry) => {
         rowData[i] = { ...rowData[i], [entry.data]: '' };
         if (entry.data === 'species' || entry.data === 'organism') {
@@ -397,33 +418,33 @@ function choosePatientIdValidator(patientIDType, species, groupingChecked) {
     }
   } else {
     switch (patientIDType) {
-    case 'MSK-Patients (or derived from MSK Patients)':
-      return {
-        pattern: '^[0-9]{8}$',
-        columnHeader: 'MRN',
-        tooltip: 'The patient\'s MRN.',
-        error:
+      case 'MSK-Patients (or derived from MSK Patients)':
+        return {
+          pattern: '^[0-9]{8}$',
+          columnHeader: 'MRN',
+          tooltip: "The patient's MRN.",
+          error:
             'MRN is incorrectly formatted, please correct, or speak to a project manager if unsure.',
-        type: 'text',
-      };
-    case 'Non-MSK Patients':
-      return {
-        pattern: '[A-Za-z0-9\\,_-]{4,}',
-        columnHeader: 'Patient ID',
-        error:
+          type: 'text',
+        };
+      case 'Non-MSK Patients':
+        return {
+          pattern: '[A-Za-z0-9\\,_-]{4,}',
+          columnHeader: 'Patient ID',
+          error:
             'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
-      };
-    case 'Cell Lines, not from Patients':
-      return { columnHeader: 'Cell Line Name' };
-    case 'Both MSK-Patients and Non-MSK Patients':
-      return {
-        pattern: '[A-Za-z0-9\\,_-]{4,}|^[0-9]{8}$',
-        columnHeader: 'Patient ID',
-        error:
+        };
+      case 'Cell Lines, not from Patients':
+        return { columnHeader: 'Cell Line Name' };
+      case 'Both MSK-Patients and Non-MSK Patients':
+        return {
+          pattern: '[A-Za-z0-9\\,_-]{4,}|^[0-9]{8}$',
+          columnHeader: 'Patient ID',
+          error:
             'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
-      };
-    default:
-      return { pattern: 'formatter not found' };
+        };
+      default:
+        return { pattern: 'formatter not found' };
     }
   }
 }
@@ -711,7 +732,8 @@ export function promote(
   requestId,
   projectId,
   serviceId,
-  bankedSampleId,
+  materials,
+  bankedSampleIds,
   user,
   dryrun
 ) {
@@ -721,13 +743,12 @@ export function promote(
       requestId: requestId || 'NULL',
       projectId: projectId || 'NULL',
       serviceId: serviceId,
-      bankedId: bankedSampleId,
+      materials: materials,
+      bankedId: bankedSampleIds,
       igoUser: process.env.API_USER,
       user: user,
       dryrun: dryrun,
     };
-    console.log(bankedSampleId);
-    console.log(data);
     services
       .promote(data)
       .then((response) => {

@@ -12,6 +12,8 @@ const validationPatterns = {
   // "nonMSKPatients": "[0-9a-zA-Z]{4,}",
   // "bothMSKAndNonMSKPatients": "[0-9a-zA-Z]{4,}|d{8}",
 };
+
+export const deprecatedColumns = ['Index Position'];
 export const gridColumns = {
   'Service ID': {
     name: 'Service ID',

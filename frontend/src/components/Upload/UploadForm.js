@@ -407,7 +407,7 @@ class UploadForm extends React.Component {
                 color="primary"
                 id="formSubmit"
                 formId="upload-form"
-                isLoading={gridIsLoading}
+                isLoading={false}
                 nothingToSubmit={nothingToChange}
               />
               <Button
