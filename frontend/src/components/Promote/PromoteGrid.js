@@ -40,6 +40,7 @@ class PromoteGrid extends Component {
     var selected = this.hotTableComponent.current.hotInstance.getSelected();
     if (selected) {
       var selectedRows = [];
+      
       selected.map(element => {
         var row = this.props.promote.rows[element[0]];
         selectedRows.push(row);

@@ -24,7 +24,7 @@ const styles = theme => ({
   // },
 
   success: {
-    backgroundColor: theme.palette.primary.light,
+    backgroundColor: theme.palette.secondary.light,
     fontSize: '1em',
     fontWeight: 'bold'
   },
@@ -35,9 +35,10 @@ const styles = theme => ({
     fontWeight: 'bold'
   },
   info: {
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: theme.palette.secondary.dark,
     fontSize: '1em',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    // color: 'black'
   },
   warning: {
     fontSize: '1em',
@@ -64,7 +65,7 @@ class SimpleSnackbar extends React.Component {
   }
 
   render() {
-    const { type, message, classes, handleClose, variant } = this.props;
+    const { message, classes, variant } = this.props;
     return (
       <Snackbar
         open={this.state.open}
