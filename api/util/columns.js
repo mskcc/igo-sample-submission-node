@@ -527,7 +527,14 @@ export const submissionColumns = {
     renderer: 'html',
   },
 };
-
+export const promoteSelect = {
+  name: 'Select',
+  columnHeader: '',
+  className: 'htCenter htMiddle',
+  readOnly: false,
+  type: 'checkbox',
+  data: 'select',
+};
 export const formColumns = {
   sharedWith: {
     data: 'sharedWith',

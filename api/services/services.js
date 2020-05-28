@@ -316,7 +316,6 @@ exports.promote = (data) => {
     })
     .catch((error) => {
       logger.log('info', `Error retrieving response from ${url}`);
-
       if (error.response && error.response.data) {
         throw error.response.data;
       }

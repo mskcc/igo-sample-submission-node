@@ -14,22 +14,27 @@ class Promote extends Component {
   }
   promoteSamples = (projectId, requestId, rows) => {
     let bankedSampleIds = [];
+    let materials = new Set();
     let serviceId = rows[0].serviceId;
     rows.map(element => {
       bankedSampleIds.push(element.recordId);
+      materials.add(element.sampleType);
     });
-    console.log(bankedSampleIds);
-    this.props.promoteDry(projectId, requestId, serviceId, bankedSampleIds);
+
+    materials = [...materials].join('_');
+    this.props.promoteDry(
+      projectId,
+      requestId,
+      serviceId,
+      materials,
+      bankedSampleIds
+    );
   };
   handleLoad = (queryType, query) => {
     if (!query) {
       return swal.alertEmptyLoad(queryType);
     }
     this.props.loadBankedSamples(queryType, query);
-  };
-
-  showShiftMessage = () => {
-    return this.props.showShiftMessage();
   };
 
   render() {
@@ -40,7 +45,6 @@ class Promote extends Component {
             promote={this.props.promote}
             handleLoad={this.handleLoad}
             promoteSamples={this.promoteSamples}
-            showShiftMessage={this.showShiftMessage}
           />
         ) : (
           <CircularProgress color="secondary" size={35} />

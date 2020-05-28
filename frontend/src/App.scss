@@ -80,6 +80,10 @@ code {
   background-color: $material-gray !important;
 }
 
+input.htCheckboxRendererInput {
+  text-align: center;
+}
+
 .grid-action {
   color: black;
   // font-weight: bold;
@@ -102,6 +106,9 @@ code {
 //   overflow-y: scroll;
 // }
 
+[title="check"] > div > button {
+  display: none;
+}
 .ht_master {
   overflow: unset;
 }
@@ -112,10 +119,7 @@ code {
 
 #gridSubmit {
   background: $mskcc-dark-green !important;
-
 }
-
-
 
 // .handsontableEditor.autocompleteEditor.htMacScroll.handsontable.listbox {
 //   overflow: visible !important;

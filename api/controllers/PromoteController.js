@@ -77,7 +77,7 @@ exports.load = [
         if (!results || results.some((x) => x.length === 0)) {
           return apiResponse.errorResponse(
             res,
-            `Could not load samples for ${queryType} = ${query}.`
+            `Could not find samples for ${queryType} = ${query}.`
           );
         }
         let [samples] = results;
@@ -112,6 +112,7 @@ exports.promote = [
     .optional()
     .isString()
     .withMessage('ServiceId must be String.'),
+  body('materials').isString().withMessage('materials must be String.'),
   body('dryrun').isBoolean().withMessage('dryrun must be Boolean.'),
   body('transactionId').isInt().withMessage('transactionId must be Int.'),
   body('bankedSampleIds')
@@ -128,12 +129,11 @@ exports.promote = [
         errors.array()
       );
     }
-
-    // let samples = JSON.parse(req.body.samples);
     let transactionId = req.body.transactionId;
     let requestId = req.body.requestId;
     let projectId = req.body.projectId;
     let serviceId = req.body.serviceId;
+    let materials = req.body.materials;
     let bankedSampleIds = req.body.bankedSampleIds;
     let dryrun = req.body.dryrun;
     let promotePromise = util.promote(
@@ -141,30 +141,23 @@ exports.promote = [
       requestId,
       projectId,
       serviceId,
+      materials,
       bankedSampleIds,
       res.user.username,
       dryrun
     );
     promotePromise
-
       .then((result) => {
         let promoteResult;
         if (dryrun) {
           promoteResult = result;
           return apiResponse.successResponse(res, promoteResult);
         } else {
-          [promoteResult] = result;
-          return apiResponse.successResponseWithData(
+          return apiResponse.successResponse(
             res,
-            'Operation success',
-            promoteResult
+            `Successfully promoted ${bankedSampleIds}`
           );
         }
-
-        // let bankedIds = updateResult.map((element) => {
-
-        // });
-        // let dryRunPromise = util.promote(true,)
       })
       .catch(function (err) {
         return apiResponse.errorResponse(res, err);

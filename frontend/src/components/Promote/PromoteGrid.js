@@ -40,11 +40,12 @@ class PromoteGrid extends Component {
     var selected = this.hotTableComponent.current.hotInstance.getSelected();
     if (selected) {
       var selectedRows = [];
-      
-      selected.map(element => {
-        var row = this.props.promote.rows[element[0]];
-        selectedRows.push(row);
+      this.props.promote.rows.map(row => {
+        if (row.select) {
+          selectedRows.push(row);
+        }
       });
+
       this.props.promoteSamples(
         this.state.projectId,
         this.state.requestId,
@@ -171,13 +172,6 @@ class PromoteGrid extends Component {
               // stretchH='all'
               selectionMode="multiple"
               outsideClickDeselects={false}
-              afterOnCellMouseUp={(event, coords, TD, wt) => {
-                
-                if (event.shiftKey) {
-                this.props.showShiftMessage();
-                
-                }
-              }}
               height={() => {
                 if (promote.rows.length >= 25) return '700';
                 else if (promote.rows.length >= 20) return '510';

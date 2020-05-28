@@ -212,13 +212,7 @@ function fillColumns(
         }
         columns.columnHeaders = columns.columnFeatures.map(
           (a) =>
-            '<span class="' +
-            a.className +
-            '" title="' +
-            a.tooltip +
-            '">' +
-            a.columnHeader +
-            '</span>'
+            `<span class='${a.className}' title='${a.tooltip}'>${a.columnHeader}</span>`
         );
         resolve(columns);
       }
@@ -682,11 +676,10 @@ export function generatePromoteGrid(limsColumnOrdering) {
       }
       grid.columnFeatures.push(promoteColFeature);
     });
-    // console.log(columnNamesOnly)
+
+    console.log(grid.columnFeatures);
     // cacheAllPicklists(picklistCols).then((picklists) => {
     grid.columnFeatures.map((promoteColFeature) => {
-      promoteColFeature.optional = true;
-      promoteColFeature.allowEmpty = true;
       promoteColFeature.readOnly = true;
       // promoteColFeature.data === 'investigator' ? true : false;
       promoteColFeature.error = promoteColFeature.error
@@ -696,14 +689,12 @@ export function generatePromoteGrid(limsColumnOrdering) {
     });
     grid.columnHeaders = grid.columnFeatures.map(
       (a) =>
-        '<span class="' +
-        a.className +
-        '" title="' +
-        a.tooltip +
-        '">' +
-        a.columnHeader +
-        '</span>'
+        `<span class='${a.className}' title='${a.tooltip}'>${a.columnHeader}</span>`
     );
+    const selectCol = allColumns.promoteSelect;
+    grid.columnHeaders.unshift('<span class="material-icons select-col" title="check">check</span>');
+    grid.columnFeatures.unshift(selectCol);
+    grid.rowData[0][selectCol.data] = false;
     resolve(grid);
   });
 }

@@ -62,7 +62,8 @@ export function loadBankedSamples(queryType, query) {
         dispatch({
           type: RECEIVE_BANKED_SAMPLES_SUCCESS,
           rows: util.rowsWithRowIndex(rows),
-          rowsBackup: util.rowsWithRowIndex(rowsBackup)
+          rowsBackup: util.rowsWithRowIndex(rowsBackup),
+          message: 'clear'
         });
         return response;
       })
@@ -81,7 +82,13 @@ export const PROMOTE_DRYRUN_SUCCESS = 'PROMOTE_DRYRUN_SUCCESS';
 
 export const PROMOTE_DRYRUN_FAIL = 'PROMOTE_DRYRUN_FAIL';
 
-export function promoteDry(projectId, requestId, serviceId, bankedSampleIds) {
+export function promoteDry(
+  projectId,
+  requestId,
+  serviceId,
+  materials,
+  bankedSampleIds
+) {
   return dispatch => {
     dispatch({
       type: PROMOTE_DRYRUN,
@@ -93,9 +100,10 @@ export function promoteDry(projectId, requestId, serviceId, bankedSampleIds) {
         projectId,
         requestId,
         serviceId,
-        transactionId,
+        materials,
         bankedSampleIds: [bankedSampleIds[0]],
-        dryrun: true
+        dryrun: true,
+        transactionId
       })
 
       .then(response => {
@@ -111,8 +119,9 @@ export function promoteDry(projectId, requestId, serviceId, bankedSampleIds) {
                 projectId,
                 requestId,
                 serviceId,
-                transactionId,
-                bankedSampleIds
+                materials,
+                bankedSampleIds,
+                transactionId
               )
             );
           }
@@ -136,8 +145,9 @@ export function promoteForReal(
   projectId,
   requestId,
   serviceId,
-  transactionId,
-  bankedSampleIds
+  materials,
+  bankedSampleIds,
+  transactionId
 ) {
   return dispatch => {
     // let rows = getState().promote.rows
@@ -145,31 +155,23 @@ export function promoteForReal(
       type: PROMOTE_FORREAL,
       message: 'Promoting...'
     });
-    console.log(bankedSampleIds);
     services
       .promote({
         projectId,
         requestId,
         serviceId,
-        transactionId,
+        materials,
         bankedSampleIds: [bankedSampleIds],
-        dryrun: false
+        dryrun: false,
+        transactionId
       })
       .then(response => {
-        dispatch({ type: PROMOTE_FORREAL_SUCCESS });
-        Swal.fire({
-          title: 'Promoted!',
-          html: response.data,
-          // footer: 'To avoid mistakes, invalid cells are cleared immediately.',
-          type: 'success',
-          animation: false,
-          confirmButtonText: 'Dismiss'
-          // customClass: { content: 'alert' },
-        });
+        dispatch({ type: PROMOTE_FORREAL_SUCCESS, message: 'clear' });
+        swal.genericMessage('success', response.payload.message);
       })
       .catch(error => {
         dispatch({ type: PROMOTE_FORREAL_FAIL, message: 'clear' });
-        // console.log(error);
+        
         let message = error.payload.message;
         if (message.includes('already been promoted')) {
           message = message.replace(
@@ -182,12 +184,3 @@ export function promoteForReal(
   };
 }
 
-export function showShiftMessage() {
-  return dispatch => {
-    dispatch({
-      type: 'SHOW_SHIFT_MESSAGE',
-      message:
-        'Selecting only works using CMD+Click or CTRL+Click, not with SHIFT+CLICK.'
-    });
-  };
-}
