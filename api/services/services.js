@@ -40,7 +40,7 @@ const formatDataMaterialsOrApps = function (resp) {
 
 const formatCrdb = function (resp) {
   let data = {};
-  if (resp.data.PRM_JOB_STATUS === 0) {
+  if (resp.data.PRM_JOB_STATUS.toString() === '0') {
     data = {
       patientId: resp.data.PRM_PT_ID,
       sex: resp.data.PRM_PT_GENDER || '',
