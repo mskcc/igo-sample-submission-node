@@ -3,7 +3,7 @@ const express = require('express');
 var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
-require('dotenv').config();
+// require('dotenv').config();
 var cookieParser = require('cookie-parser');
 
 const winston = require('winston');
@@ -43,13 +43,13 @@ mongoose
     process.exit(1);
   });
 
-var port = 0;
+var port = process.env.PORT;
 const hostname = '127.0.0.1';
-if (process.env.NODE_ENV !== 'test') {
-  port = 3002;
-} else {
-  port = 3003;
-}
+// if (process.env.NODE_ENV !== 'test') {
+//   port = 3002;
+// } else {
+//   port = 3003;
+// }
 
 var publicDir = path.join(__dirname, 'public');
 // process.on('unhandledRejection', (reason, p) => {
