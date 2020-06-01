@@ -9,7 +9,6 @@ export default function uploadFormReducer(state = initialPromoteState, action) {
     };
 
   case ActionTypes.RECEIVE_INITIAL_STATE_PROMOTE_SUCCESS:
-    console.log(action);
     return {
       ...state,
       columns: action.grid.columnHeaders,

@@ -27,7 +27,6 @@ axios.interceptors.response.use(
   function(error) {
     if (error.response) {
       error.payload = error.response.data;
-      console.log(error.payload);
       if (error.response.status === 401) {
         // Automatically redirect client to the login page
         window.location.href = `${Config.LOGIN_PAGE_URL}/${Config.HOME_PAGE_PATH}`;
@@ -37,6 +36,34 @@ axios.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+export const getHeaderValues = page => {
+  const url = `${Config.NODE_API_ROOT}/${page}/headerValues`;
+  return axios
+    .get(url)
+    .then(resp => {
+      return resp;
+    })
+    .catch(error => {
+      throw error;
+    })
+    .then(resp => {
+      return resp;
+    });
+};
+export const getPicklist = name => {
+  const url = `${Config.NODE_API_ROOT}/upload/picklist?picklist=${name}`;
+  return axios
+    .get(url)
+    .then(resp => {
+      return resp;
+    })
+    .catch(error => {
+      throw error;
+    })
+    .then(resp => {
+      return resp;
+    });
+};
 
 export const grid = data => {
   const url = `${Config.NODE_API_ROOT}/upload/grid`;

@@ -3,10 +3,11 @@ import { NavLink } from 'react-router-dom';
 import {
   Avatar,
   AppBar,
+  Divider,
   Toolbar,
   Button,
   Typography,
-  withStyles,
+  withStyles
 } from '@material-ui/core';
 
 import classNames from 'classnames';
@@ -19,7 +20,7 @@ const Header = ({ classes, loggedIn, role }) => (
       <Avatar alt="mskcc logo" src={image} className={classes.avatar} />
 
       <Typography color="inherit" variant="h6" className={classes.title}>
-        IGO SampleSubmission
+        IGO Sample Submission
       </Typography>
 
       <React.Fragment>
@@ -34,6 +35,20 @@ const Header = ({ classes, loggedIn, role }) => (
             </Typography>
           </NavLink>
         </Button>
+        <Divider className={classes.divider} orientation="vertical" flexItem />
+
+        <Button>
+          <NavLink
+            to="/dmp"
+            activeClassName={classes.active}
+            className={classes.navlink}
+          >
+            <Typography color="inherit" variant="h6">
+              DMP
+            </Typography>
+          </NavLink>
+        </Button>
+        <Divider className={classes.divider} orientation="vertical" flexItem />
 
         <Button>
           <NavLink
@@ -46,18 +61,23 @@ const Header = ({ classes, loggedIn, role }) => (
             </Typography>
           </NavLink>
         </Button>
+        <Divider className={classes.divider} orientation="vertical" flexItem />
+
         {role !== '' && role !== 'user' && (
-          <Button>
-            <NavLink
-              to="/promote"
-              activeClassName={classes.active}
-              className={classes.navlink}
-            >
-              <Typography color="inherit" variant="h6">
-                Promote
-              </Typography>
-            </NavLink>
-          </Button>
+          <React.Fragment>
+            <Button>
+              <NavLink
+                to="/promote"
+                activeClassName={classes.active}
+                className={classes.navlink}
+              >
+                <Typography color="inherit" variant="h6">
+                  Promote
+                </Typography>
+              </NavLink>
+            </Button>
+            <Divider className={classes.divider} orientation="vertical" flexItem />
+          </React.Fragment>
         )}
         <Button>
           <NavLink
@@ -70,6 +90,7 @@ const Header = ({ classes, loggedIn, role }) => (
             </Typography>
           </NavLink>
         </Button>
+        <Divider className={classes.divider} orientation="vertical" flexItem />
       </React.Fragment>
     </Toolbar>
   </AppBar>
@@ -77,25 +98,30 @@ const Header = ({ classes, loggedIn, role }) => (
   // </div>
 );
 
-const styles = (theme) => ({
+const styles = theme => ({
   header: {
     backgroundColor: theme.palette.primary.logo,
     color: 'white',
-    textAlign: 'center',
+    textAlign: 'center'
   },
   title: {
-    marginRight: theme.spacing(3),
+    marginRight: theme.spacing(3)
   },
 
   navlink: {
     color: theme.palette.textSecondary,
     textDecoration: 'none',
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(1)
   },
   active: {
     color: 'white',
-    fontSize: '1em',
+    fontSize: '1em'
   },
+
+  divider: {
+    backgroundColor: 'rgba(255,255,255,0.7)',
+    
+  }
 });
 
 export default withStyles(styles)(Header);

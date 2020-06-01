@@ -7,22 +7,13 @@ import { util, swal, services, excel } from '../../../util';
 
 import {
   diff,
-  findSubmission,
-  generateSubmitData,
   generateRows,
-  generateAGColumns,
-  generateGridData,
-  generateSubmissionsGrid,
   updateRows,
   redactMRN,
-  createPatientId,
   appendAssay,
   translateTumorTypes,
   findIndexSeq,
   validateGrid,
-  checkGridAndForm,
-  submissionExists,
-  addValidatorToRegexCols
 } from '../../../util/helpers';
 
 import { Config } from '../../../config.js';
@@ -173,7 +164,7 @@ export function getInitialColumns(formValues, userRole) {
           message:
             'Grid generated for ' +
             material +
-            ' and ' +
+            ' for ' +
             application +
             '. Green columns are optional.'
         });
@@ -341,7 +332,6 @@ export function handleMRN(rowIndex, patientId) {
         patientId: patientId
       })
       .then(response => {
-        console.log(response);
         dispatch({
           type: HANDLE_MRN_SUCCESS,
           message: 'MRN redacted.',

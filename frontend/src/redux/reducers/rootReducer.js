@@ -4,6 +4,7 @@ import { localizeReducer } from 'react-localize-redux';
 import uploadReducer from './upload/uploadReducer';
 import submissionsReducer from './submissions/submissionsReducer';
 import promoteReducer from './promote/promoteReducer';
+import dmpReducer from './dmp/dmpReducer';
 import commonReducer from './common/commonReducer';
 import userReducer from './user/userReducer';
 import { persistReducer } from 'redux-persist';
@@ -14,11 +15,12 @@ import { Config } from '../../config.js';
 const persistConfig = {
   key: 'root',
   storage: sessionStorage,
-  whitelist: ['upload', 'user', 'submissions', 'promote'],
+  whitelist: ['upload', 'user', 'submissions', 'promote', 'dmp'],
 };
 
 const appReducer = combineReducers({
   upload: uploadReducer,
+  dmp: dmpReducer,
   common: commonReducer,
   user: userReducer,
   submissions: submissionsReducer,

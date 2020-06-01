@@ -224,17 +224,17 @@ function fillColumns(
 const overwriteContainer = (userContainer) => {
   let newContainer;
   switch (userContainer) {
-    case 'Plates':
-      newContainer = allColumns.gridColumns['Plate ID'];
-      break;
-    case 'Micronic Barcoded Tubes':
-      newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
-      break;
-    case 'Blocks/Slides/Tubes':
-      newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
-      break;
-    default:
-      return `Container '${userContainer}' not found.`;
+  case 'Plates':
+    newContainer = allColumns.gridColumns['Plate ID'];
+    break;
+  case 'Micronic Barcoded Tubes':
+    newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
+    break;
+  case 'Blocks/Slides/Tubes':
+    newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
+    break;
+  default:
+    return `Container '${userContainer}' not found.`;
   }
   return newContainer;
 };
@@ -412,33 +412,33 @@ function choosePatientIdValidator(patientIDType, species, groupingChecked) {
     }
   } else {
     switch (patientIDType) {
-      case 'MSK-Patients (or derived from MSK Patients)':
-        return {
-          pattern: '^[0-9]{8}$',
-          columnHeader: 'MRN',
-          tooltip: "The patient's MRN.",
-          error:
+    case 'MSK-Patients (or derived from MSK Patients)':
+      return {
+        pattern: '^[0-9]{8}$',
+        columnHeader: 'MRN',
+        tooltip: 'The patient\'s MRN.',
+        error:
             'MRN is incorrectly formatted, please correct, or speak to a project manager if unsure.',
-          type: 'text',
-        };
-      case 'Non-MSK Patients':
-        return {
-          pattern: '[A-Za-z0-9\\,_-]{4,}',
-          columnHeader: 'Patient ID',
-          error:
+        type: 'text',
+      };
+    case 'Non-MSK Patients':
+      return {
+        pattern: '[A-Za-z0-9\\,_-]{4,}',
+        columnHeader: 'Patient ID',
+        error:
             'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
-        };
-      case 'Cell Lines, not from Patients':
-        return { columnHeader: 'Cell Line Name' };
-      case 'Both MSK-Patients and Non-MSK Patients':
-        return {
-          pattern: '[A-Za-z0-9\\,_-]{4,}|^[0-9]{8}$',
-          columnHeader: 'Patient ID',
-          error:
+      };
+    case 'Cell Lines, not from Patients':
+      return { columnHeader: 'Cell Line Name' };
+    case 'Both MSK-Patients and Non-MSK Patients':
+      return {
+        pattern: '[A-Za-z0-9\\,_-]{4,}|^[0-9]{8}$',
+        columnHeader: 'Patient ID',
+        error:
             'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
-        };
-      default:
-        return { pattern: 'formatter not found' };
+      };
+    default:
+      return { pattern: 'formatter not found' };
     }
   }
 }
@@ -676,12 +676,8 @@ export function generatePromoteGrid(limsColumnOrdering) {
       }
       grid.columnFeatures.push(promoteColFeature);
     });
-
-    console.log(grid.columnFeatures);
-    // cacheAllPicklists(picklistCols).then((picklists) => {
     grid.columnFeatures.map((promoteColFeature) => {
       promoteColFeature.readOnly = true;
-      // promoteColFeature.data === 'investigator' ? true : false;
       promoteColFeature.error = promoteColFeature.error
         ? promoteColFeature.error
         : 'Invalid format.';

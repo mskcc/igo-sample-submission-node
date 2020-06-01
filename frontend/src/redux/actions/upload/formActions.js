@@ -2,6 +2,7 @@
 import axios from 'axios';
 
 import { Config } from '../../../config.js';
+import { services } from '../../../util/index.js';
 
 // species that trigger patient id field
 const PatientIDSpecies = ['human'];
@@ -30,8 +31,8 @@ export function getInitialState() {
       return dispatch({ type: INITIAL_STATE_RETRIEVED });
     else {
       dispatch({ type: REQUEST_INITIAL_STATE });
-      return axios
-        .get(Config.NODE_API_ROOT + '/upload/headerValues')
+      services
+        .getHeaderValues('upload')
         .then(response => {
           dispatch({
             type: RECEIVE_INITIAL_STATE_SUCCESS,
@@ -235,9 +236,8 @@ export const RECEIVE_PICKLIST_FAIL = 'RECEIVE_PICKLIST_FAIL';
 export function getPicklist(picklist) {
   return dispatch => {
     dispatch({ type: REQUEST_PICKLIST, picklist });
-    return axios
-      .get(Config.NODE_API_ROOT + '/upload/picklist?picklist=' + picklist)
-
+    services
+      .getPicklist(picklist)
       .then(response => {
         return dispatch({
           type: RECEIVE_PICKLIST_SUCCESS,

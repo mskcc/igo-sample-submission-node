@@ -11,7 +11,7 @@
     "numberOfSamples_helptext": "Number of Samples",
     "serviceId_label": "iLabs Service ID*",
     "altServiceId_label": "I don't have an iLabs Service ID",
-    "altServiceId_helptext": "Please make sure to get an ID through iLabs. For now, we will use a placeholder. Please write it down (it will also be on your receipt once you submitted.).",
+    "altServiceId_helptext": "The iLabs service ID is found on the top of the iLabs submission. Please submit iLabs if you haven't done so. For now, a placeholder will be used. Please write down this number to link this submission to your request (once sample information has been submitted, the placeholder will also be available on the receipt.",
     "serviceId_helptext": "Enter your six digit iLabs Service ID",
     "container_label": "Container*",
     "container_helptext": "Select Container",

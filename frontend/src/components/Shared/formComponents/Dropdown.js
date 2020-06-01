@@ -107,7 +107,7 @@ Dropdown.propTypes = {
 
 const styles = (theme) => ({
   input: {
-    fontSize: '1em',
+    // fontSize: '.4em',
   },
   textField: {
     margin: 2 * theme.spacing(1),

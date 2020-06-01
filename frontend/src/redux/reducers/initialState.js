@@ -25,8 +25,8 @@ export const initialFormState = {
     groupingChecked: false,
     altServiceId: false,
     isShared: false,
-    sharedWith: '',
-  },
+    sharedWith: ''
+  }
   // selected: {
   //   application: 'MouseWholeGenome',
   //   material: 'DNA',
@@ -72,11 +72,27 @@ export const initialGridState = {
   form: [],
   gridIsLoading: false,
   isSaving: false,
-  nothingToChange: false,
+  nothingToChange: false
 };
 
 export const initialPromoteState = {
   columnHeaders: [],
   rows: [],
+  initialFetched: false
+};
+
+export const initialDmpFormState = {
+  applications: [],
+  materials: [],
+  formIsLoading: false,
   initialFetched: false,
+  picklists: {},
+
+  selected: {
+    application: '',
+    material: '',
+    numberOfSamples: '',
+    isShared: false,
+    sharedWith: ''
+  }
 };

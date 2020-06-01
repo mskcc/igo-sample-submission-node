@@ -105,9 +105,7 @@ export function promoteDry(
         dryrun: true,
         transactionId
       })
-
       .then(response => {
-        console.log(response);
         dispatch({
           type: PROMOTE_DRYRUN_SUCCESS,
           message: 'clear'

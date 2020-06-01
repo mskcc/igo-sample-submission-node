@@ -17,6 +17,7 @@ import { Header, Message, SnackMessage } from '../components';
 import UploadPage from './Upload/UploadPage';
 import SubmissionsPage from './Submissions/SubmissionsContainer';
 import PromotePage from './Promote/PromoteContainer';
+import DmpPage from './Dmp/DmpPage';
 import Login from './Login';
 import Logout from './Logout';
 import ErrorPage from './ErrorPage';
@@ -100,6 +101,7 @@ class Root extends Component {
                     <Route path="/(upload|)" component={UploadPage} />
                     <Route path="/promote" component={PromotePage} />
                     <Route path="/submissions" component={SubmissionsPage} />
+                    <Route path="/dmp" component={DmpPage} />
                     <Route path="/logout" component={Logout} />
                     <Route path="/login" component={Login} />
                     <Route path="/error" component={ErrorPage} />
