@@ -5,17 +5,6 @@ import Swal from 'sweetalert2';
 import { updateHeader } from './formActions';
 import { util, swal, services, excel } from '../../../util';
 
-import {
-  diff,
-  generateRows,
-  updateRows,
-  redactMRN,
-  appendAssay,
-  translateTumorTypes,
-  findIndexSeq,
-  validateGrid,
-} from '../../../util/helpers';
-
 import { Config } from '../../../config.js';
 
 export const REGISTER_GRID_CHANGE = 'REGISTER_GRID_CHANGE';
@@ -27,20 +16,11 @@ export const REGISTER_GRID_CHANGE_POST_VALIDATE =
 export const RESET_MESSAGE = 'RESET_MESSAGE';
 export const registerGridChange = changes => {
   return (dispatch, getState) => {
-    let result = validateGrid(changes, getState().upload.grid);
+    let result = util.validateGrid(changes, getState().upload.grid);
     // dispatch({ type: RESET_MESSAGE })
     // would prefer to have this in reducer
     if (result.numErrors > 1) {
-      Swal.fire({
-        title: 'Invalid Values',
-        html: result.errorMessage,
-        footer: 'To avoid mistakes, invalid cells are cleared immediately.',
-        type: 'error',
-        animation: false,
-        confirmButtonText: 'Dismiss',
-        confirmButtonColor: '#007cba',
-        customClass: { content: 'alert' }
-      });
+      swal.invalidValues(result.errorMessage);
       return dispatch({
         type: REGISTER_GRID_CHANGE_POST_VALIDATE,
         payload: result,
@@ -88,15 +68,9 @@ export function getColumns(formValues) {
     if (getState().upload.grid.columnFeatures.length === 0) {
       return dispatch(getInitialColumns(formValues, getState().user.role));
     } else {
-      let diffValues = diff(getState().upload.grid.form, formValues);
+      let diffValues = util.diff(getState().upload.grid.form, formValues);
       if (!diffValues || Object.entries(diffValues).length === 0) {
-        Swal.fire({
-          title: 'Nothing to change.',
-          type: 'info',
-          animation: false,
-          confirmButtonColor: '#007cba',
-          confirmButtonText: 'Dismiss'
-        });
+        swal.nothingToChange();
 
         dispatch({ type: NO_CHANGE });
         return setTimeout(() => {
@@ -111,7 +85,7 @@ export function getColumns(formValues) {
       ) {
         dispatch({ type: UPDATE_NUM_OF_ROWS });
 
-        let rows = updateRows(formValues, getState().upload.grid);
+        let rows = util.updateRows(formValues, getState().upload.grid);
         return dispatch({
           type: UPDATE_NUM_OF_ROWS_SUCCESS,
           message: 'Number of rows updated.',
@@ -270,7 +244,7 @@ export function handlePatientId(rowIndex) {
     if (patientId === '') {
       return dispatch({
         type: HANDLE_PATIENT_ID_SUCCESS,
-        rows: redactMRN(rows, rowIndex, '', '', '')
+        rows: util.redactMRN(rows, rowIndex, '', '', '')
       });
     }
     // handle as MRN whenever 8 digit id is entered
@@ -285,18 +259,15 @@ export function handlePatientId(rowIndex) {
       dispatch({
         type: HANDLE_PATIENT_ID_FAIL,
         message: `${patientIdType.columnHeader}: ${patientIdType.error}`,
-        rows: redactMRN(rows, rowIndex, '', '', '')
+        rows: util.redactMRN(rows, rowIndex, '', '', '')
       });
     } else {
-      normalizedPatientID = util.normalizePatientId(
-        patientId,
-        patientIdType,
-        getState().user.username
-      );
-      return axios
-        .post(Config.NODE_API_ROOT + '/upload/crdbId', {
-          patientId: normalizedPatientID
+      return services
+        .mrnToCid({
+          patientId: patientId,
+          patientIdType: patientIdType
         })
+
         .then(response => {
           dispatch({
             type: HANDLE_PATIENT_ID_SUCCESS,
@@ -304,7 +275,7 @@ export function handlePatientId(rowIndex) {
               rows,
               rowIndex,
               response.payload.patientId,
-              normalizedPatientID
+              response.payload.normalizedPatientId
             )
           });
           dispatch({ type: REGISTER_GRID_CHANGE });
@@ -313,7 +284,7 @@ export function handlePatientId(rowIndex) {
           dispatch({
             type: HANDLE_PATIENT_ID_FAIL,
             error: error,
-            rows: redactMRN(rows, rowIndex, '', '', '')
+            rows: util.redactMRN(rows, rowIndex, '', '', '')
           });
         });
     }
@@ -335,7 +306,7 @@ export function handleMRN(rowIndex, patientId) {
         dispatch({
           type: HANDLE_MRN_SUCCESS,
           message: 'MRN redacted.',
-          rows: redactMRN(
+          rows: util.redactMRN(
             rows,
             rowIndex,
             response.payload.patientId,
@@ -349,7 +320,7 @@ export function handleMRN(rowIndex, patientId) {
         dispatch({
           type: HANDLE_MRN_FAIL,
           error: error,
-          rows: redactMRN(rows, rowIndex, '', '', '')
+          rows: util.redactMRN(rows, rowIndex, '', '', '')
         });
         return error;
       });
@@ -363,7 +334,7 @@ export function handleAssay(rowIndex, colIndex, oldValue, newValue) {
   return (dispatch, getState) => {
     return dispatch({
       type: HANDLE_ASSAY_SUCCESS,
-      rows: appendAssay(
+      rows: util.appendAssay(
         getState().upload.grid.rows,
         rowIndex,
         oldValue,
@@ -381,7 +352,7 @@ export function handleTumorType(rowIndex, colIndex, oldValue, newValue) {
   return (dispatch, getState) => {
     return dispatch({
       type: HANDLE_TUMOR_TYPE_SUCCESS,
-      rows: translateTumorTypes(
+      rows: util.translateTumorTypes(
         getState().upload.grid.rows,
         getState().upload.grid.columnFeatures[colIndex].source,
         rowIndex,
@@ -399,7 +370,7 @@ export function handleClear() {
   return (dispatch, getState) => {
     return dispatch({
       type: HANDLE_CLEAR_SUCCESS,
-      rows: generateRows(
+      rows: util.generateRows(
         getState().upload.grid.columnFeatures,
         getState().upload.grid.form,
         getState().upload.grid.rows.length
@@ -412,7 +383,7 @@ export const HANDLE_INDEX_SUCCESS = 'HANDLE_INDEX_SUCCESS';
 export const HANDLE_INDEX_FAIL = 'HANDLE_INDEX_FAIL';
 export function handleIndex(colIndex, rowIndex, newValue) {
   return (dispatch, getState) => {
-    let indexSeq = findIndexSeq(
+    let indexSeq = util.findIndexSeq(
       getState().upload.grid,
       colIndex,
       rowIndex,

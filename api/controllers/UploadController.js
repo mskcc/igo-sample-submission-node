@@ -275,11 +275,16 @@ exports.grid = [
   },
 ];
 
-exports.crdbId = [
+// MRN to C-ID
+exports.mrnToCid = [
   body('patientId')
     .isLength({ min: 1 })
     .trim()
     .withMessage('patientId must be specified.'),
+  body('patientIdType')
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage('patientIdType must be specified.'),
   function (req, res) {
     try {
       const errors = validationResult(req);
@@ -292,7 +297,17 @@ exports.crdbId = [
       } else {
         // remove leading and trailing whitespaces just in case
         let patientId = req.body.patientId.replace(/^\s+|\s+$/g, '');
-        let patientIdPromise = services.getCrdbId(patientId);
+        let patientIdType = req.body.patientIdType;
+        let username = res.user.username;
+        let normalizedPatientId = '';
+        if (patientIdType.columnHeader === 'Cell Line Name') {
+          normalizedPatientId = `CELLLINE_${patientId
+            .replace(/_|\W/g, '')
+            .toUpperCase()}`;
+        } else {
+          normalizedPatientId = `${username.toUpperCase()}_${patientId}`;
+        }
+        let patientIdPromise = services.getCrdbId(normalizedPatientId);
 
         Promise.all([patientIdPromise])
           .catch(function (err) {
@@ -305,6 +320,7 @@ exports.crdbId = [
             let [patientIdResult] = results;
             let responseObject = {
               ...patientIdResult,
+              normalizedPatientId: normalizedPatientId,
             };
             return apiResponse.successResponseWithData(
               res,
@@ -318,6 +334,10 @@ exports.crdbId = [
     }
   },
 ];
+
+// MRN to C-ID
+// C-ID verification
+// DMP-ID to MRN to C-ID
 
 exports.additionalRows = [
   body('formValues')
