@@ -9,13 +9,13 @@ export const DMP_HEADER_SUCCESS = 'DMP_HEADER_SUCCESS';
 export const DMP_HEADER_FAIL = 'DMP_HEADER_FAIL';
 export const DMP_HEADER_RETRIEVED = 'DMP_HEADER_RETRIEVED';
 
-export function getInitialState() {
+export function dmpGetInitialState() {
   return (dispatch, getState) => {
     if (getState().dmp.form.initialFetched)
       return dispatch({ type: DMP_HEADER_RETRIEVED });
     else {
       dispatch({ type: REQUEST_DMP_HEADER });
-     return services
+      return services
         .getHeaderValues('dmp')
         .then(response => {
           dispatch({
@@ -38,13 +38,18 @@ export function getInitialState() {
 
 export const UPDATE_HEADER = 'UPDATE_HEADER';
 
-export const SELECT = 'SELECT';
+export const DMP_SELECT = 'DMP_SELECT';
 
-export function select(id, value) {
+export function dmpSelect(id, value) {
+  console.log('dmpselect');
+  console.log('dmpselect');
+  console.log('dmpselect');
+  console.log('dmpselect');
+
   return dispatch => {
     if (id === 'service_id') {
       return dispatch({
-        type: SELECT,
+        type: DMP_SELECT,
         payload: { id: id, value: value },
         message: 'Service Id updated.'
       });
@@ -53,115 +58,46 @@ export function select(id, value) {
     if (id === 'number_of_samples') {
       if (value > 199) {
         return dispatch({
-          type: SELECT,
+          type: DMP_SELECT,
           payload: { id: id, value: value },
           message:
             'A sample set this large might lead to performance issues. We recommend keeping it below 200 and submitting mutliple requests if necessary.'
         });
       }
     } else {
-      return dispatch({ type: SELECT, payload: { id: id, value: value } });
+      return dispatch({ type: DMP_SELECT, payload: { id: id, value: value } });
     }
   };
 }
 
-export const CLEAR = 'CLEAR';
+export const DMP_CLEAR = 'DMP_CLEAR';
 
-export function clear(id) {
+export function dmpClear(id) {
   return dispatch => {
-    return dispatch({ type: CLEAR, payload: { id: id } });
+    return dispatch({ type: DMP_CLEAR, payload: { id: id } });
   };
 }
-export const CLEAR_FORM = 'CLEAR_FORM';
-export function clearForm() {
+export const DMP_CLEAR_FORM = 'DMP_CLEAR_FORM';
+export function dmpClearForm() {
   return dispatch => {
-    dispatch({ type: CLEAR_FORM });
-    dispatch(getInitialState()).then(() => {
+    dispatch({ type: DMP_CLEAR_FORM });
+    dispatch(dmpGetInitialState()).then(() => {
       window.location.reload();
     });
   };
 }
 
-export const SELECT_MATERIAL = 'SELECT_MATERIAL';
-
-export const REQUEST_APPLICATIONS_FOR_MATERIAL =
-  'REQUEST_APPLICATIONS_FOR_MATERIAL';
-
-export const RECEIVE_APPLICATIONS_FOR_MATERIAL_SUCCESS =
-  'RECEIVE_APPLICATIONS_FOR_MATERIAL_SUCCESS';
-
-export const RECEIVE_APPLICATIONS_FOR_MATERIAL_FAIL =
-  'RECEIVE_APPLICATIONS_FOR_MATERIAL_FAIL';
-
-// get applications that can be combined with material
-// SelectedMaterial impacts applications and containers, containers are filtered in FormContainer
-export function getApplicationsForMaterial(
-  selectedMaterial,
-  checkForMismatch = true
-) {
-  return (dispatch, getState) => {
-    dispatch({ type: SELECT_MATERIAL, selectedMaterial });
-    dispatch({ type: REQUEST_APPLICATIONS_FOR_MATERIAL });
-    checkForMismatch && dispatch(checkForChange('material', selectedMaterial));
-    return axios
-      .get(Config.NODE_API_ROOT + '/upload/applicationsAndContainers', {
-        params: {
-          material: selectedMaterial
-        }
-      })
-      .then(response => {
-        return dispatch({
-          type: RECEIVE_APPLICATIONS_FOR_MATERIAL_SUCCESS,
-          applications: response.payload.applications,
-          containers: response.payload.containers
-        });
-      })
-      .catch(error => {
-        return dispatch({
-          type: RECEIVE_APPLICATIONS_FOR_MATERIAL_FAIL,
-          error: error
-        });
-      });
-  };
-}
-
-export const REQUEST_PICKLIST = 'REQUEST_PICKLIST';
-export const RECEIVE_PICKLIST_SUCCESS = 'RECEIVE_PICKLIST_SUCCESS';
-export const RECEIVE_PICKLIST_FAIL = 'RECEIVE_PICKLIST_FAIL';
-
-export function getPicklist(picklist) {
-  return dispatch => {
-    dispatch({ type: REQUEST_PICKLIST, picklist });
-    return axios
-      .get(Config.NODE_API_ROOT + '/upload/picklist?picklist=' + picklist)
-
-      .then(response => {
-        return dispatch({
-          type: RECEIVE_PICKLIST_SUCCESS,
-          picklist: response.data.data.picklist,
-          listname: response.data.data.listname
-        });
-      })
-      .catch(error => {
-        return dispatch({
-          type: RECEIVE_PICKLIST_FAIL,
-          error: error
-        });
-      });
-  };
-}
-
-export const CLEARED = 'CLEARED';
+export const DMP_CLEARED = 'DMP_CLEARED';
 // timeout for CLEARED to show user loading animation to indicate change
 export const cleared = () => {
   return dispatch => {
     return setTimeout(() => {
-      dispatch({ type: CLEARED });
+      dispatch({ type: DMP_CLEARED });
     }, 500);
   };
 };
 
-export const checkForChange = (field, value) => {
+export const dmpCheckForChange = (field, value) => {
   return (dispatch, getState) => {
     if (
       getState().dmp.grid.form[field] &&

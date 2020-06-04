@@ -30,11 +30,6 @@ class DmpForm extends React.Component {
     };
   }
 
-  componentDidMount() {
-    // todo wait for token refresh!
-    console.log(this.props);
-  }
-
   handleDropdownChange = event => {
     this.setState({
       values: {
@@ -160,7 +155,7 @@ class DmpForm extends React.Component {
       submitRowNumberUpdate
     } = this.props;
     const { formValid, values } = this.state;
-    console.log(form);
+    console.log(this.props);
     return (
       <Translate>
         {({ translate }) => (

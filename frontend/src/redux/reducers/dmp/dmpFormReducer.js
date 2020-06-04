@@ -39,7 +39,7 @@ export default function dmpFormReducer(state = initialDmpFormState, action) {
         formIsLoading: true
       };
 
-    case ActionTypes.SELECT:
+    case ActionTypes.DMP_SELECT:
       return {
         ...state,
         selected: {
