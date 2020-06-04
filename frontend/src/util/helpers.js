@@ -289,7 +289,6 @@ export const isEqual = function(value, other) {
 //   return grid
 // }
 
-
 // PROMOTE END
 
 // find submission in user (or all if current user is member/super) submission
@@ -299,20 +298,6 @@ export const findSubmission = (submissions, submissionId) => {
       return submissions[i];
     }
   }
-};
-
-export const submissionExists = (
-  service_id,
-  material,
-  username,
-  submissions
-) => {
-  return submissions.some(
-    e =>
-      e.service_id === service_id &&
-      e.username === username &&
-      e.material === material
-  );
 };
 
 // ROW NUMBER  DECREASE (INCREASE HANDLED IN API)
@@ -333,14 +318,6 @@ export const redactMRN = (rows, index, crdbId, msg, sex) => {
     rows[index].gender = sex === 'Female' ? 'F' : 'M';
   }
   return rows;
-};
-
-export const normalizePatientId = (patientId, type, username) => {
-  if (type.columnHeader === 'Cell Line Name') {
-    return `CELLLINE_${patientId.replace(/_|\W/g, '').toUpperCase()}`;
-  } else {
-    return `${username.toUpperCase()}_${patientId}`;
-  }
 };
 
 export const createPatientId = (rows, index, crdbId, normalizedPatientID) => {

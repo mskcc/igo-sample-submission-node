@@ -79,6 +79,24 @@ export const grid = data => {
       return resp;
     });
 };
+
+
+export const mrnToCid = data => {
+  const url = `${Config.NODE_API_ROOT}/upload/mrnToCid`;
+  return axios
+    .post(url, { ...data })
+    .then(resp => {
+      return resp;
+    })
+    .catch(error => {
+      throw error;
+    })
+    .then(resp => {
+      return resp;
+    });
+};
+
+
 export const getAdditionalRows = data => {
   const url = `${Config.NODE_API_ROOT}/upload/additionalRows`;
   return axios

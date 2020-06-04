@@ -1,6 +1,12 @@
 export const constants = {
   containers: ['Plates', 'Micronic Barcoded Tubes', 'Blocks/Slides/Tubes'],
-
+  headerPicklists: [
+    'Recipe',
+    'Exemplar+Sample+Types',
+    'Species',
+    'PatientIDTypes',
+    'PatientIdTypesSpecified',
+  ],
   containersByMaterial: {
     Tissue: ['Blocks/Slides/Tubes'],
     Cells: ['Plates', 'Blocks/Slides/Tubes'],
@@ -40,6 +46,4 @@ export const constants = {
     'MSK-ACCESS_v1',
     'WholeExomeSequencing',
   ],
-
-  
 };

@@ -40,11 +40,9 @@ export class UploadPage extends Component {
     return (
       <React.Fragment>
         <UploadFormContainer
+          formType={this.props.type}
           handleSubmit={this.handleFormSubmit}
           submitRowNumberUpdate={this.submitRowNumberUpdate}
-          gridIsLoading={this.props.grid.gridIsLoading}
-          nothingToChange={this.props.grid.nothingToChange}
-          gridNumberOfSamples={this.props.grid.form.numberOfSamples}
         />
 
         {this.props.grid.rows.length > 0 && (

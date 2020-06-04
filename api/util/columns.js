@@ -454,6 +454,53 @@ export const gridColumns = {
   },
 };
 
+export const formattingAdjustments = {
+  MRN: {
+    pattern: '^[0-9]{8}$',
+    columnHeader: 'MRN',
+    tooltip: 'The patient MRN.',
+    error:
+      'MRN is incorrectly formatted, please correct, or speak to a project manager if unsure.',
+    type: 'text',
+  },
+  'DMP ID': {
+    pattern: '*',
+    columnHeader: 'DMP ID',
+    tooltip: 'The patient DMP ID.',
+    error:
+      'DMP ID is incorrectly formatted, please correct, or speak to a project manager if unsure. The usual DMP ID format is P-0000000-A00-ABC.',
+    type: 'text',
+  },
+  'CMO ID': {
+    pattern: '*',
+    columnHeader: 'CMO ID',
+    tooltip: 'The patient CMO ID.',
+    error:
+      'CMO ID is incorrectly formatted, please correct, or speak to a project manager if unsure. The usual DMP ID format is C-A1B2C3 or C-A1B2C3.',
+    type: 'text',
+  },
+  'Non-MSK Patients': {
+    pattern: '[A-Za-z0-9\\,_-]{4,}',
+    columnHeader: 'Patient ID',
+    error:
+      'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
+  },
+  'Cell Lines, not from Patients': {
+    columnHeader: 'Cell Line Name',
+  },
+  'Strain or Line Name': {
+    pattern: '[0-9a-zA-Z]{4,}',
+    columnHeader: 'Strain or Line Name',
+    error:
+      'Invalid format. Please use at least four alpha-numeric characters. Every 8 digit ID is considered a MRN.',
+  },
+  'Grouping ID': {
+    pattern: '[A-Za-z0-9\\,_-]{4,}',
+    columnHeader: 'Grouping ID',
+    error:
+      'Invalid format. Please use at least four alpha-numeric characters. Every 8 digit ID is considered a MRN.',
+  },
+};
 export const submissionColumns = {
   'Service ID': {
     name: 'Service ID',
@@ -588,3 +635,151 @@ export const noShowColumns = [
 ];
 
 export const noShowEmptyColumns = ['patientIdType', 'sharedWith'];
+
+export const dmpColumns = {
+  'Tracking ID': {
+    name: 'Tracking ID',
+    columnHeader: 'Tracking ID',
+    data: 'dmpTrackingId',
+    pattern: validationPatterns.alphanumdash,
+  },
+  'Molecular Pathology Accession Number': {
+    name: 'Molecular Pathology Accession Number',
+    columnHeader: 'Molecular Pathology Accession Number',
+    data: 'molecularPathologyAccsessionNumber',
+    pattern: validationPatterns.alphanumdash,
+    error: 'Only letters, digits and –, please.',
+  },
+  'DMP Sample ID': {
+    name: 'DMP Sample ID',
+    columnHeader: 'DMP Sample ID',
+    data: 'dmpSampleId',
+    pattern: '^.{1,35}$',
+    error: 'Must follow standard DMP nomenclature.',
+    sendToDmp: true,
+  },
+
+  'Investigator Patient ID (Study Subject Identifier)': {
+    name: 'Investigator Patient ID (Study Subject Identifier)',
+    columnHeader: 'Investigator Patient ID (Study Subject Identifier)',
+    data: 'studySubjectIdentifier',
+    pattern: validationPatterns.alphanumdash,
+    error: 'Only letters, digits and –, please.',
+  },
+
+  'Investigator Sample ID (Study Sample Identifier)': {
+    name: 'Investigator Sample ID (Study Sample Identifier)',
+    columnHeader: 'Investigator Sample ID (Study Sample Identifier)',
+    data: 'userId',
+    pattern: validationPatterns.alphanumdash,
+    error: 'Only letters, digits and –, please.',
+  },
+
+  'Sample Type': {
+    name: 'Sample Type',
+    columnHeader: 'Sample Type',
+    picklistName: 'DmpSampleTypes',
+    type: 'autocomplete',
+    data: 'sampleType',
+    error: 'Only dropdown options are permitted as values',
+    sendToDmp: true,
+  },
+
+  'Specimen Type': {
+    name: 'Specimen Type',
+    columnHeader: 'Specimen Type',
+    picklistName: 'DmpSpecimenTypes',
+    type: 'autocomplete',
+    data: 'sampleType',
+    error: 'Only dropdown options are permitted as values',
+    sendToDmp: true,
+  },
+  'Project PI': {
+    name: 'Project PI',
+    columnHeader: 'Project PI',
+    data: 'projectPi',
+    pattern: validationPatterns.alphanum,
+    error: 'Only letters, digits and –, please.',
+    sendToDmp: true,
+  },
+
+  'Project Title': {
+    name: 'Project Title',
+    columnHeader: 'Project Title',
+    data: 'projectTitle',
+    pattern: validationPatterns.alphanum,
+    error: 'Only letters, digits and –, please.',
+    sendToDmp: true,
+  },
+
+  'Gene and Mutation': {
+    name: 'Gene and Mutation',
+    columnHeader: 'Gene and Mutation',
+    data: 'projectTitle',
+    pattern: validationPatterns.alphanum,
+    error: 'Only letters, digits and –, please.',
+  },
+
+  'DMP to Transfer': {
+    name: 'DMP to Transfer',
+    columnHeader: 'DMP to Transfer',
+    type: 'checkbox',
+    data: 'dmpToTransfer',
+    hiddenFrom: 'user',
+    sendToDmp: true,
+  },
+
+  'Sample Approved by CMO': {
+    name: 'Sample Approved by CMO',
+    columnHeader: 'Sample Approved by CMO',
+    picklistName: 'DmpCmoSampleApproval',
+    type: 'autocomplete',
+    data: 'sampleApprovedByCmo',
+    error: 'Only dropdown options are permitted as values',
+    hiddenFrom: 'user',
+    sendToDmp: true,
+  },
+
+  'Variant Allele Frequency': {
+    name: 'Variant Allele Frequency',
+    columnHeader: 'Variant Allele Frequency',
+
+    data: 'variantAlleleFrequency',
+    hiddenFrom: 'user',
+  },
+  Coverage: {
+    name: 'Coverage',
+    columnHeader: 'Coverage',
+    picklistName: 'DmpCmoSampleApproval',
+    type: 'autocomplete',
+    data: 'requestedReads',
+    error: 'Only dropdown options are permitted as values',
+    hiddenFrom: 'user',
+  },
+
+  'Investigator Patient ID (Investigator Provided Study Subject Identifier)': {
+    name:
+      'Investigator Patient ID (Investigator Provided Study Subject Identifier)',
+    columnHeader:
+      'Investigator Patient ID (Investigator Provided Study Subject Identifier)',
+    data: 'patientId',
+    pattern: validationPatterns.alphanumdash,
+    error: 'Only letters, digits and –, please.',
+  },
+
+  'Investigator Sample ID (Investigator Provided Study Sample Identifier)': {
+    name:
+      'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
+    columnHeader:
+      'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
+    data: 'userId',
+    pattern: validationPatterns.alphanumdash,
+    error: 'Only letters, digits and –, please.',
+  },
+
+  'Additional Info': {
+    name: 'Additional Info',
+    columnHeader: 'Additional Info',
+    data: 'additionalInfo',
+  },
+};

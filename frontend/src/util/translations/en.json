@@ -16,9 +16,12 @@
     "container_label": "Container*",
     "container_helptext": "Select Container",
     "patientIdType_label": "Patient ID Type*",
+    "patientIdType_helptext": "Select Patient ID Type",
+    "patientIdTypeSpecified_helptext": "MRN, DMP-ID (P-0000000-A00-ABC) or CMO-ID (C-A1B2C3 or C-A1B2C3) ",
+    "patientIdTypeSpecified_label": "Specified Patient ID Type*",
     "groupIdType_helptext": "Select Patient or Group ID Type",
     "groupIdType_label": "Patient or Group  ID Type*",
-    "patientIdType_helptext": "Select Patient ID Type",
+    
     "isShared_label": "I want others to be able to edit or submit these samples on my behalf.",
     "sharedWith_label": "Give permission to:",
     "sharedWith_helptext": "Please enter MSK email addresses or zzPDLs separated by comma.\n No emails will be sent, this is only used for authorization.",

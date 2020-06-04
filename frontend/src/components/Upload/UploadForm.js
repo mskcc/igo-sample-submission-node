@@ -29,11 +29,30 @@ class UploadForm extends React.Component {
         species: true,
         container: true,
         patientIdType: true,
+        patientIdTypeSpecified: true,
         sharedWith: true
       }
     };
   }
 
+  showGroupingCheckbox = () => {
+    return (
+      this.state.values.species === 'Mouse' ||
+      this.state.values.species === 'Mouse_GeneticallyModified'
+    );
+  };
+  showPatientIdTypeDropdown = () => {
+    return this.state.values.species === 'Human';
+  };
+  showPatientIdTypeSpecDropdown = () => {
+    return (
+      this.state.values.species === 'Human' &&
+      (this.state.values.patientIdType ===
+        'MSK-Patients (or derived from MSK Patients)' ||
+        this.state.values.patientIdType ===
+          'Both MSK-Patients and Non-MSK Patients')
+    );
+  };
   handleDropdownChange = event => {
     this.setState({
       values: {
@@ -78,7 +97,6 @@ class UploadForm extends React.Component {
       this.props.handleInputChange('altServiceId', false);
     }
   };
-
   handleCheckbox = name => event => {
     this.setState({
       values: { ...this.state.values, [name]: event.target.checked }
@@ -154,8 +172,20 @@ class UploadForm extends React.Component {
 
         case 'patientIdType':
           // only validate if species mandates a format, else value will be disregarded anyway
-          if (values.species === 'Human') {
-            isValidOption = this.props.form.picklists.PatientIDTypes.some(
+          if (this.showPatientIdTypeDropdown()) {
+            isValidOption = this.props.form.patientIdTypes.some(function(el) {
+              return el === values[value];
+            });
+            formValid[value] = isValidOption && values[value].length > 0;
+            break;
+          } else {
+            formValid[value] = true;
+            break;
+          }
+        case 'patientIdTypeSpecified':
+          // only validate if species mandates a format, else value will be disregarded anyway
+          if (this.showPatientIdTypeSpecDropdown()) {
+            isValidOption = this.props.form.patientIdTypesSpecified.some(
               function(el) {
                 return el === values[value];
               }
@@ -218,6 +248,7 @@ class UploadForm extends React.Component {
       this.state.formValid.species &&
       this.state.formValid.container &&
       this.state.formValid.patientIdType &&
+      this.state.formValid.patientIdTypeSpecified &&
       this.state.formValid.sharedWith
     );
   }
@@ -286,6 +317,7 @@ class UploadForm extends React.Component {
                   error={!formValid.species}
                   onSelect={handleSpeciesChange}
                   onChange={this.handleDropdownChange}
+                  dynamic
                   loading={form.formIsLoading}
                   items={form.filteredSpecies.map(option => ({
                     value: option,
@@ -295,31 +327,23 @@ class UploadForm extends React.Component {
                     value: form.selected.species,
                     label: form.selected.species
                   }}
-ic
+                  ic
                 />
-                {values.species === 'Mouse' ||
-                values.species === 'Mouse_GeneticallyModified' ? (
+                {this.showGroupingCheckbox() && (
                   <Checkbox
                     id="groupingCheckbox"
                     checked={form.selected.groupingChecked}
                     onChange={e => this.handleCheckbox('groupingChecked')}
                   />
-                ) : null}
+                )}
               </FormControl>
 
-              {// PatientID is needed when Human is selected or when Mouse* is selected and combined with species checkbox value
-              this.props.form.patientIDTypeNeedsFormatting &&
-              form.picklists.PatientIDTypes &&
-              values.species === 'Human' &&
-              !this.state.groupingChecked ? (
+              {this.showPatientIdTypeDropdown() && (
                 <Dropdown
-                  id={
-                    this.state.groupingChecked ? 'groupIdType' : 'patientIdType'
-                  }
-                  // value={this.props.form.patientIDType}
+                  id="patientIdType"
                   error={!formValid.patientIdType}
                   onChange={this.handleDropdownChange}
-                  items={form.picklists.PatientIDTypes.map(option => ({
+                  items={form.patientIdTypes.map(option => ({
                     value: option,
                     label: option
                   }))}
@@ -328,7 +352,22 @@ ic
                     label: form.selected.patientIdType
                   }}
                 />
-              ) : null}
+              )}
+              {this.showPatientIdTypeSpecDropdown() && (
+                <Dropdown
+                  id="patientIdTypeSpecified"
+                  error={!formValid.patientIdTypeSpecified}
+                  onChange={this.handleDropdownChange}
+                  items={form.patientIdTypesSpecified.map(option => ({
+                    value: option,
+                    label: option
+                  }))}
+                  value={{
+                    value: form.selected.patientIdTypeSpecified,
+                    label: form.selected.patientIdTypeSpecified
+                  }}
+                />
+              )}
 
               <Dropdown
                 id="container"
@@ -442,7 +481,6 @@ UploadForm.defaultProps = {
     ],
 
     allSpecies: [{ id: 'test', value: 'test' }],
-    patientIDTypeNeedsFormatting: false,
     selected: {
       application: '',
       material: '',

@@ -8,12 +8,12 @@ export const initialFormState = {
   formIsLoading: false,
   initialFetched: false,
   filteredMaterials: [],
-  picklists: {},
+  patientIdTypes: [],
+  patientIdTypesSpecified: [],
 
   allSpecies: [],
   filteredSpecies: [],
 
-  patientIDTypeNeedsFormatting: false,
   selected: {
     application: '',
     material: '',
@@ -22,6 +22,7 @@ export const initialFormState = {
     species: '',
     container: '',
     patientIdType: '',
+    patientIdTypeSpecified: '',
     groupingChecked: false,
     altServiceId: false,
     isShared: false,

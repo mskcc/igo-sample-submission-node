@@ -2,6 +2,7 @@ const apiResponse = require('../util/apiResponse');
 const { body, query, validationResult } = require('express-validator');
 const util = require('../util/helpers');
 const services = require('../services/services');
+const crdbServices = require('../services/crdbServices');
 import CacheService from '../util/cache';
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
@@ -15,17 +16,13 @@ const { constants } = require('../util/constants');
 exports.headerValues = [
   function (req, res) {
     let containers = constants.containers;
-    let applicationsPromise = cache.get('Recipe-Picklist', () =>
-      services.getPicklist('Recipe')
-    );
-    let materialsPromise = cache.get('Exemplar+Sample+Types', () =>
-      services.getPicklist('Exemplar+Sample+Types')
-    );
-    let speciesPromise = cache.get('Species', () =>
-      services.getPicklist('Species')
-    );
-
-    Promise.all([applicationsPromise, materialsPromise, speciesPromise])
+    let promises = [];
+    constants.headerPicklists.map((picklist) => {
+      promises.push(
+        cache.get(`${picklist}-Picklist`, () => services.getPicklist(picklist))
+      );
+    });
+    Promise.all(promises)
       .then((results) => {
         if (results.some((x) => x.length === 0)) {
           return apiResponse.errorResponse(
@@ -33,13 +30,21 @@ exports.headerValues = [
             'Could not retrieve picklists from LIMS.'
           );
         }
-        let [applicationsResult, materialsResult, speciesResult] = results;
+        let [
+          applicationsResult,
+          materialsResult,
+          speciesResult,
+          patientIdTypesResult,
+          patientIdTypesSpecResult,
+        ] = results;
 
         let responseObject = {
           applications: applicationsResult,
           materials: materialsResult,
           species: speciesResult,
           containers: containers,
+          patientIdTypes: patientIdTypesResult,
+          patientIdTypesSpecified: patientIdTypesSpecResult,
         };
         return apiResponse.successResponseWithData(
           res,
@@ -307,7 +312,7 @@ exports.mrnToCid = [
         } else {
           normalizedPatientId = `${username.toUpperCase()}_${patientId}`;
         }
-        let patientIdPromise = services.getCrdbId(normalizedPatientId);
+        let patientIdPromise = crdbServices.getCrdbId(normalizedPatientId);
 
         Promise.all([patientIdPromise])
           .catch(function (err) {
@@ -338,6 +343,52 @@ exports.mrnToCid = [
 // MRN to C-ID
 // C-ID verification
 // DMP-ID to MRN to C-ID
+exports.verifyCmoId = [
+  body('cmoId')
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage('cmoId must be specified.'),
+
+  function (req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return apiResponse.validationErrorWithData(
+          res,
+          'Validation error.',
+          errors.array()
+        );
+      } else {
+        // remove leading and trailing whitespaces just in case
+        let cmoId = req.body.cmoId.replace(/^\s+|\s+$/g, '');
+
+        let patientIdPromise = crdbServices.verifyCmoId(cmoId);
+
+        Promise.all([patientIdPromise])
+          .catch(function (err) {
+            return apiResponse.errorResponse(res, err);
+          })
+          .then((results) => {
+            console.log(results);
+            if (results.some((x) => x.length === 0)) {
+              return apiResponse.errorResponse(res, 'Could not anonymize ID.');
+            }
+            let [patientIdResult] = results;
+            let responseObject = {
+              ...patientIdResult,
+            };
+            return apiResponse.successResponseWithData(
+              res,
+              'Operation success',
+              responseObject
+            );
+          });
+      }
+    } catch (err) {
+      return apiResponse.errorResponse(res, err);
+    }
+  },
+];
 
 exports.additionalRows = [
   body('formValues')

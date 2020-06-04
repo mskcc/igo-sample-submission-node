@@ -169,6 +169,7 @@ function fillColumns(
         if (colDef.data === 'patientId') {
           let formattingAdjustments = choosePatientIdValidator(
             formValues.patientIdType,
+            formValues.patientIdTypeSpecified,
             formValues.species,
             formValues.groupingChecked
           );
@@ -224,17 +225,17 @@ function fillColumns(
 const overwriteContainer = (userContainer) => {
   let newContainer;
   switch (userContainer) {
-  case 'Plates':
-    newContainer = allColumns.gridColumns['Plate ID'];
-    break;
-  case 'Micronic Barcoded Tubes':
-    newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
-    break;
-  case 'Blocks/Slides/Tubes':
-    newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
-    break;
-  default:
-    return `Container '${userContainer}' not found.`;
+    case 'Plates':
+      newContainer = allColumns.gridColumns['Plate ID'];
+      break;
+    case 'Micronic Barcoded Tubes':
+      newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
+      break;
+    case 'Blocks/Slides/Tubes':
+      newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
+      break;
+    default:
+      return `Container '${userContainer}' not found.`;
   }
   return newContainer;
 };
@@ -393,52 +394,29 @@ const setWellPos = (columns) => {
 };
 
 // patient id validation depends on user selected id type
-function choosePatientIdValidator(patientIDType, species, groupingChecked) {
+function choosePatientIdValidator(
+  patientIdType,
+  patientIdTypeSpecified,
+  species,
+  groupingChecked
+) {
+  let formattingAdjustments = allColumns.formattingAdjustments;
+
   if (species === 'Mouse' || species === 'Mouse_GeneticallyModified') {
     if (groupingChecked) {
-      return {
-        pattern: '[A-Za-z0-9\\,_-]{4,}',
-        columnHeader: 'Grouping ID',
-        error:
-          'Invalid format. Please use at least four alpha-numeric characters. Every 8 digit ID is considered a MRN.',
-      };
+      return formattingAdjustments['Grouping ID'];
     } else {
-      return {
-        pattern: '[0-9a-zA-Z]{4,}',
-        columnHeader: 'Strain or Line Name',
-        error:
-          'Invalid format. Please use at least four alpha-numeric characters. Every 8 digit ID is considered a MRN.',
-      };
+      return formattingAdjustments['Strain or Line Name'];
     }
   } else {
-    switch (patientIDType) {
-    case 'MSK-Patients (or derived from MSK Patients)':
-      return {
-        pattern: '^[0-9]{8}$',
-        columnHeader: 'MRN',
-        tooltip: 'The patient\'s MRN.',
-        error:
-            'MRN is incorrectly formatted, please correct, or speak to a project manager if unsure.',
-        type: 'text',
-      };
-    case 'Non-MSK Patients':
-      return {
-        pattern: '[A-Za-z0-9\\,_-]{4,}',
-        columnHeader: 'Patient ID',
-        error:
-            'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
-      };
-    case 'Cell Lines, not from Patients':
-      return { columnHeader: 'Cell Line Name' };
-    case 'Both MSK-Patients and Non-MSK Patients':
-      return {
-        pattern: '[A-Za-z0-9\\,_-]{4,}|^[0-9]{8}$',
-        columnHeader: 'Patient ID',
-        error:
-            'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
-      };
-    default:
-      return { pattern: 'formatter not found' };
+    if (
+      species === 'Human' &&
+      (patientIdType === 'MSK-Patients (or derived from MSK Patients)' ||
+        patientIdType === 'Both MSK-Patients and Non-MSK Patients')
+    ) {
+      return formattingAdjustments[patientIdTypeSpecified];
+    } else {
+      return formattingAdjustments[patientIdType];
     }
   }
 }
@@ -688,7 +666,9 @@ export function generatePromoteGrid(limsColumnOrdering) {
         `<span class='${a.className}' title='${a.tooltip}'>${a.columnHeader}</span>`
     );
     const selectCol = allColumns.promoteSelect;
-    grid.columnHeaders.unshift('<span class="material-icons select-col" title="check">check</span>');
+    grid.columnHeaders.unshift(
+      '<span class="material-icons select-col" title="check">check</span>'
+    );
     grid.columnFeatures.unshift(selectCol);
     grid.rowData[0][selectCol.data] = false;
     resolve(grid);

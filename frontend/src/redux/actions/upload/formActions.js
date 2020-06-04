@@ -100,14 +100,20 @@ export function updateHeader(formValues) {
   return dispatch => {
     dispatch(getApplicationsForMaterial(formValues.material, false));
     dispatch(getMaterialsForApplication(formValues.application, false));
-    dispatch(getFormatterForSpecies(formValues.species, false));
   };
 }
 
 export const SELECT = 'SELECT';
 
-export function select(id, value) {
+export function select(id, value, checkForMismatch = true) {
   return dispatch => {
+    if (id === 'species') {
+      checkForMismatch && dispatch(checkForChange(id, value));
+      return dispatch({
+        type: SELECT,
+        payload: { id: id, value: value }
+      });
+    }
     if (id === 'service_id') {
       return dispatch({
         type: SELECT,
@@ -173,7 +179,7 @@ export function getApplicationsForMaterial(
   selectedMaterial,
   checkForMismatch = true
 ) {
-  return (dispatch, getState) => {
+  return dispatch => {
     dispatch({ type: SELECT_MATERIAL, selectedMaterial });
     dispatch({ type: REQUEST_APPLICATIONS_FOR_MATERIAL });
     checkForMismatch && dispatch(checkForChange('material', selectedMaterial));
@@ -199,60 +205,11 @@ export function getApplicationsForMaterial(
   };
 }
 
-export const SELECT_SPECIES_WITH_ID_FORMATTER =
-  'SELECT_SPECIES_WITH_ID_FORMATTER';
-export const SELECT_SPECIES_WITHOUT_ID_FORMATTER =
-  'SELECT_SPECIES_WITHOUT_ID_FORMATTER';
 export const CLEAR_SPECIES = 'CLEAR_SPECIES';
-export function getFormatterForSpecies(
-  selectedSpecies,
-  checkForMismatch = true
-) {
-  return dispatch => {
-    checkForMismatch && dispatch(checkForChange('species', selectedSpecies));
-    if (PatientIDSpecies.includes(selectedSpecies.toLowerCase())) {
-      let formatter = 'PatientIDTypes';
-
-      dispatch({
-        type: SELECT_SPECIES_WITH_ID_FORMATTER
-      });
-      return dispatch(getPicklist(formatter));
-    } else {
-      return dispatch({
-        type: SELECT_SPECIES_WITHOUT_ID_FORMATTER
-      });
-    }
-  };
-}
 
 export const clearSpecies = () => {
   return { type: CLEAR_SPECIES };
 };
-
-export const REQUEST_PICKLIST = 'REQUEST_PICKLIST';
-export const RECEIVE_PICKLIST_SUCCESS = 'RECEIVE_PICKLIST_SUCCESS';
-export const RECEIVE_PICKLIST_FAIL = 'RECEIVE_PICKLIST_FAIL';
-
-export function getPicklist(picklist) {
-  return dispatch => {
-    dispatch({ type: REQUEST_PICKLIST, picklist });
-    services
-      .getPicklist(picklist)
-      .then(response => {
-        return dispatch({
-          type: RECEIVE_PICKLIST_SUCCESS,
-          picklist: response.data.data.picklist,
-          listname: response.data.data.listname
-        });
-      })
-      .catch(error => {
-        return dispatch({
-          type: RECEIVE_PICKLIST_FAIL,
-          error: error
-        });
-      });
-  };
-}
 
 export const CLEAR_MATERIAL = 'CLEAR_MATERIAL';
 

@@ -12,6 +12,27 @@ export const formGridMismatch = match => {
   });
 };
 
+export const invalidValues = msg => {
+  Swal.fire({
+    title: 'Invalid Values',
+    html: msg,
+    footer: 'To avoid mistakes, invalid cells are cleared immediately.',
+    type: 'error',
+    animation: false,
+    confirmButtonText: 'Dismiss',
+    confirmButtonColor: '#007cba',
+    customClass: { content: 'alert' }
+  });
+};
+export const nothingToChange = () => {
+  Swal.fire({
+    title: 'Nothing to change.',
+    type: 'info',
+    animation: false,
+    confirmButtonColor: '#007cba',
+    confirmButtonText: 'Dismiss'
+  });
+};
 export const altServiceIdNotice = () => {
   Swal.fire({
     title: 'Service Id',
@@ -31,6 +52,25 @@ export const tooManyRowsPasteAlert = () => {
     type: 'warning',
     animation: false,
     confirmButtonText: 'Dismiss'
+  });
+};
+
+export const confirmGridOverwrite = msg => {
+  return new Promise(resolve => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: msg,
+      type: 'warning',
+      showCancelButton: true,
+      animation: false,
+      confirmButtonColor: '#df4602',
+      cancelButtonColor: '#007cba',
+      confirmButtonText: 'Delete'
+    }).then(result => {
+      if (result.value) {
+        resolve(true);
+      } else resolve(false);
+    });
   });
 };
 
@@ -73,7 +113,7 @@ export const confirmGridClear = () => {
     Swal.fire({
       title: 'Are you sure?',
       text:
-        'You won\'t be able to revert this unless you have a saved partial submission.',
+        'You will not be able to revert this unless you have a saved partial submission.',
       type: 'warning',
       showCancelButton: true,
       animation: false,
@@ -189,8 +229,5 @@ export const dryRunSuccess = message => {
     }).then(result => (result.value ? resolve(true) : resolve(false)));
   });
 };
-
-
-
 
 // PROMOTE END

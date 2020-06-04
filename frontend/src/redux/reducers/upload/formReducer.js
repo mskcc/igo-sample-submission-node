@@ -22,7 +22,9 @@ export default function formReducer(state = initialFormState, action) {
         allSpecies: action.form_data.species,
         filteredSpecies: action.form_data.species,
         allContainers: action.form_data.containers,
-        filteredContainers: action.form_data.containers
+        filteredContainers: action.form_data.containers,
+        patientIdTypes: action.form_data.patientIdTypes,
+        patientIdTypesSpecified: action.form_data.patientIdTypesSpecified
       };
 
     case ActionTypes.RECEIVE_INITIAL_STATE_FAIL:
@@ -48,13 +50,13 @@ export default function formReducer(state = initialFormState, action) {
     case ActionTypes.RECEIVE_MATERIALS_AND_APPLICATIONS_FAIL:
       return {
         ...state,
-        error: action.error,
-        formIsLoading: false
+        error: action.error
       };
 
     case ActionTypes.SELECT:
       return {
         ...state,
+        formIsLoading: false,
         selected: {
           ...state.selected,
           [action.payload.id]: action.payload.value
@@ -159,20 +161,15 @@ export default function formReducer(state = initialFormState, action) {
         formIsLoading: false,
         error: action.error
       };
-    case ActionTypes.SELECT_SPECIES_WITH_ID_FORMATTER:
-      return {
-        ...state,
-        patientIDTypeNeedsFormatting: true
-      };
-    case ActionTypes.SELECT_SPECIES_WITHOUT_ID_FORMATTER:
-      return {
-        ...state,
-        patientIDTypeNeedsFormatting: false
-      };
+
     case ActionTypes.CLEAR_SPECIES:
       return {
         ...state,
-        patientIDTypeNeedsFormatting: false
+        selected: {
+          ...state.selected,
+          patientIdType: '',
+          patientIdTypesSpecified: ''
+        }
       };
     case ActionTypes.REQUEST_PICKLIST:
       return {
@@ -183,10 +180,8 @@ export default function formReducer(state = initialFormState, action) {
       return {
         ...state,
         formIsLoading: false,
-        picklists: {
-          ...state.picklists,
-          [action.listname]: action.picklist
-        }
+
+        [action.listname]: action.picklist
       };
 
     case ActionTypes.RECEIVE_PICKLIST_FAIL:
