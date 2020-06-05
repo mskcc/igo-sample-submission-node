@@ -28,7 +28,7 @@ const Button = ({
           form={formId}
           className={classes.button}
           color={color}
-          disabled={isLoading}
+          // disabled={isLoading}
           onClick={onClick}
         >
           {translate('buttons.' + id + '_label')}

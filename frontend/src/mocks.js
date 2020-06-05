@@ -14,8 +14,6 @@ export const initialFormStateMock = {
   allSpecies: [],
   filteredSpecies: [],
 
-  patientIDTypeNeedsFormatting: false,
-
   selected: {
     application: '',
     material: '',
@@ -94,7 +92,6 @@ export const initialFullStateMock = {
 
       allSpecies: [{ id: 'test', value: 'test' }],
       filteredSpecies: [{ id: 'test', value: 'test' }],
-      patientIDTypeNeedsFormatting: false,
       selected: {
         application: '',
         material: '',
@@ -155,7 +152,6 @@ export const filledFullStateMock = {
 
       allSpecies: [{ id: 'test', value: 'test' }],
       filteredSpecies: [{ id: 'test', value: 'test' }],
-      patientIDTypeNeedsFormatting: false,
       selected: {
         application: '',
         material: '',

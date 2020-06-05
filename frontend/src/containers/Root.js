@@ -13,35 +13,15 @@ import enTranslations from '../util/translations/en.json';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import { Header, Message, SnackMessage } from '../components';
+import { Header, SnackMessage } from '../components';
 import UploadPage from './Upload/UploadPage';
 import SubmissionsPage from './Submissions/SubmissionsContainer';
 import PromotePage from './Promote/PromoteContainer';
-import DmpPage from './Dmp/DmpPage';
 import Login from './Login';
 import Logout from './Logout';
 import ErrorPage from './ErrorPage';
 
 import { Config } from '../config.js';
-
-const isIE = /*@cc_on!@*/ false || !!document.documentMode;
-
-function PrivateRoute({ component: Component, loggedIn, ...rest }) {
-  return (
-    <Route
-      {...rest}
-      render={
-        (props) => (
-          // loggedIn === false ? (
-          <Component {...props} />
-        )
-        // ) : (
-        //   <Redirect to={{ pathname: '/login' }} />
-        // )
-      }
-    />
-  );
-}
 
 class Root extends Component {
   constructor(props) {
@@ -54,8 +34,8 @@ class Root extends Component {
       options: {
         renderToStaticMarkup,
         renderInnerHtml: false,
-        defaultLanguage: 'en',
-      },
+        defaultLanguage: 'en'
+      }
     });
   }
 
@@ -74,7 +54,7 @@ class Root extends Component {
     // this.props.resetErrorMessage()
   };
 
-  escFunction = (event) => {
+  escFunction = event => {
     if (event.keyCode === 27) {
       //Do whatever when esc is pressed
       this.props.resetMessage();
@@ -98,25 +78,35 @@ class Root extends Component {
                     <CircularProgress color="secondary" size={24} />
                   )}
                   <div>
-                    <Route path="/(upload|)" component={UploadPage} />
+                    <Route
+                      path="/(upload|)"
+                      render={routeProps => (
+                        <UploadPage {...routeProps} type="upload" />
+                      )}
+                    />
                     <Route path="/promote" component={PromotePage} />
                     <Route path="/submissions" component={SubmissionsPage} />
-                    <Route path="/dmp" component={DmpPage} />
+                    <Route
+                      path="/dmp"
+                      render={routeProps => (
+                        <UploadPage {...routeProps} type="dmp" />
+                      )}
+                    />
                     <Route path="/logout" component={Logout} />
                     <Route path="/login" component={Login} />
                     <Route path="/error" component={ErrorPage} />
                   </div>{' '}
                   {this.props.common.message &&
                   this.props.common.message.length > 0 ? (
-                      <span>
-                        <SnackMessage
-                          open
-                          type={this.props.error ? 'error' : 'info'}
-                          message={this.props.common.message}
-                          handleClose={this.handleMsgClose}
-                        />
-                      </span>
-                    ) : null}
+                    <span>
+                      <SnackMessage
+                        open
+                        type={this.props.error ? 'error' : 'info'}
+                        message={this.props.common.message}
+                        handleClose={this.handleMsgClose}
+                      />
+                    </span>
+                  ) : null}
                 </React.Fragment>
               )}
             </div>
@@ -127,34 +117,34 @@ class Root extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   common: state.common,
-  ...state.user,
+  ...state.user
 });
 const mapDispatchToProps = {
   ...commonActions,
-  ...userActions,
+  ...userActions
 };
 
 export default withLocalize(connect(mapStateToProps, mapDispatchToProps)(Root));
 
 const theme = createMuiTheme({
   typography: {
-    useNextVariants: true,
+    useNextVariants: true
   },
   palette: {
     primary: {
       logo: '#319ae8',
       light: '#8FC7E8',
       main: '#007CBA',
-      dark: '#006098',
+      dark: '#006098'
     },
     secondary: {
       light: '#F6C65B',
       main: '#DF4602',
-      dark: '#C24D00',
+      dark: '#C24D00'
     },
 
-    textSecondary: '#e0e0e0',
-  },
+    textSecondary: '#e0e0e0'
+  }
 });

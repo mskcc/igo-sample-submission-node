@@ -1,4 +1,5 @@
 const services = require('../services/services');
+const crdbServices = require('../services/crdbServices');
 const { logger } = require('../util/winston');
 const { constants } = require('./constants');
 const allColumns = require('./columns');
@@ -625,8 +626,6 @@ export function generateGridExcel(grid, role) {
 
 // PROMOTE
 
-// CLEAN THIS UP
-
 export function generatePromoteGrid(limsColumnOrdering) {
   return new Promise((resolve) => {
     let grid = {
@@ -727,65 +726,25 @@ export function promote(
   });
 }
 
-// // updates banked prior to promote NOT CURRENTLY NEEDED
-// export function updateBanked(samples, user, transactionId, needsUpdate) {
-//   return new Promise((resolve, reject) => {
-//     if (!needsUpdate) {
-//       resolve(samples);
-//     }
-//     let updatedSamples = [];
-//     // prep banked sample record
-//     for (let i = 0; i < samples.length; i++) {
-//       let bankedSample = Object.assign({}, samples[i]);
-//       bankedSample.transactionId = transactionId;
-//       bankedSample.igoUser = user.username;
-//       bankedSample.user = process.env.API_USER;
-//       bankedSample.concentrationUnits = 'ng/uL';
-
-//       if ('wellPosition' in bankedSample) {
-//         var match = /([A-Za-z]+)(\d+)/.exec(bankedSample.wellPosition);
-//         if (!match) {
-//           reject('Invalid Well Position.');
-//         } else {
-//           bankedSample.rowPos = match[1];
-//           bankedSample.colPos = match[2];
-//           delete bankedSample.wellPosition;
-//         }
-//       }
-//       //  not needed in LIMS, only displayed for users' convenience
-//       if ('indexSequence' in bankedSample) {
-//         delete bankedSample.indexSequence;
-//       }
-//       if ('concentration' in bankedSample) {
-//         bankedSample.concentration = bankedSample.concentration.replace(
-//           'ng/uL',
-//           ''
-//         );
-//       }
-
-//       // delete empty fields
-//       Object.keys(bankedSample).map((element) => {
-//         if (bankedSample[element] === '') {
-//           delete bankedSample[element];
-//         }
-//       });
-
-//       services
-//         .submit(bankedSample)
-//         .then((response) => {
-//           logger.log('info', `Updated ${bankedSample.userId}.`);
-//           updatedSamples.push(response);
-//           if (updatedSamples.length === samples.length) {
-//             resolve(updatedSamples);
-//           }
-//         })
-//         .catch((err) =>
-//           reject(
-//             `Update failed at sample ${bankedSample.userId}, index ${bankedSample.rowIndex}. ${err}`
-//           )
-//         );
-//     }
-//   });
-// }
-
 // PROMOTE END
+
+//  DMP
+// DMP Patient IDs needs to be verified and anonymized
+export function handleDmpId(dmpId) {
+  return new Promise((resolve, reject) => {
+    let result = {
+      patientId: 'MRN REDACTED',
+      cmoPatientId: '',
+      normalizedPatientId: 'MRN REDACTED',
+    };
+
+    crdbServices
+      .verifyDmpId(dmpId)
+      .then((response) => {
+        result.cmoPatientId = response.CMO_ID;
+        resolve(result);
+      })
+
+      .catch((reasons) => reject(reasons));
+  });
+}

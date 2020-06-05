@@ -254,7 +254,7 @@ export function handlePatientId(rowIndex) {
     // validation necessary because this fct is triggered before any handsontable validation would be
     let regex = new RegExp(patientIdType.pattern);
     let isValidId = regex.test(patientId);
-
+    // PUT IN CONTAINE
     if (!isValidId) {
       dispatch({
         type: HANDLE_PATIENT_ID_FAIL,

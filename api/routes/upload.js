@@ -13,6 +13,7 @@ router.get('/picklist', UploadController.picklist);
 router.post('/grid', UploadController.grid);
 router.post('/mrnToCid', UploadController.mrnToCid);
 router.post('/verifyCmoId', UploadController.verifyCmoId);
+router.post('/verifyDmpId', UploadController.verifyDmpId);
 router.post('/additionalRows', UploadController.additionalRows);
 router.post('/export', UploadController.export);
 

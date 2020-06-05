@@ -13,30 +13,7 @@ const CRDB_DB_USER = process.env.CRDB_DB_USER;
 const CRDB_DB_PW = process.env.CRDB_DB_PW;
 const CRDB_DB_URL = process.env.CRDB_DB_UR;
 
-const getCrdbConnection = () => {
-  return new Promise((resolve, reject) => {
-    try {
-      oracledb
-        .getConnection({
-          user: CRDB_DB_USER,
-          password: CRDB_DB_PW,
-          connectString: CRDB_DB_URL,
-        })
-        .then(function (connection) {
-          resolve(connection);
-        })
-        .catch(function (error) {
-          console.log(error);
-          reject(error);
-        });
-    } catch (err) {
-      console.log(err);
-    }
-  });
-};
-
 const formatCrdb = (resp) => {
-  getCrdbConnection();
   let data = {};
   if (resp.data.PRM_JOB_STATUS.toString() === '0') {
     data = {
@@ -46,6 +23,12 @@ const formatCrdb = (resp) => {
   } else {
     data = [];
   }
+  return data;
+};
+
+const formatDbResponse = (resp) => {
+  const data = resp.rows[0] || [];
+  delete data.PT_MRN;
   return data;
 };
 
@@ -78,34 +61,6 @@ exports.getCrdbId = (patientId) => {
     });
 };
 
-// def get_mrn(connection, cmo_id):
-//     """
-//     Method to get 'MRN' and 'DMP_ID' from CRDB
-//     :param connection
-//     :param cmo_id
-//     :returns MRN, DMP_ID
-//     """
-//     try:
-//         sql = """
-//               SELECT pt_mrn, dmp_id FROM crdb_cmo_loj_dmp_map
-//               WHERE cmo_id = :p_cmo_id
-//               """
-//         # Allocate Cursor
-//         cursor = connection.cursor()
-//         cursor.execute(sql, p_cmo_id=cmo_id)
-//         mrn = None
-//         dmp_id = None
-//         for row in cursor:
-//             mrn, dmp_id = row
-//             # we need only first record. break loop after first iteration is done.
-//             break
-//         add_to_logs("get mrn -> mrn and dmp_id: {}, {}".format(mrn, dmp_id))
-//         cursor.close()
-//         return mrn, dmp_id
-//     except Exception as e:
-//         add_error_to_logs("Error: CRDB query failed. {}".format(repr(e)), "api")
-//         return None, None
-
 exports.verifyCmoId = (cmoId) => {
   return new Promise((resolve, reject) => {
     oracledb
@@ -121,18 +76,44 @@ exports.verifyCmoId = (cmoId) => {
             [cmoId]
           )
           .then(function (result) {
-            console.log(result.rows);
             connection.close();
-            resolve(result);
+            resolve(formatDbResponse(result));
           })
           .catch(function (error) {
-            console.log(error);
             connection.close();
             reject(error);
           });
       })
       .catch((error) => {
-        console.log(error);
+        reject(error);
+      });
+  });
+};
+
+exports.verifyDmpId = (dmpId) => {
+  return new Promise((resolve, reject) => {
+    oracledb
+      .getConnection({
+        user: CRDB_DB_USER,
+        password: CRDB_DB_PW,
+        connectString: CRDB_DB_URL,
+      })
+      .then((connection) => {
+        connection
+          .execute(
+            'SELECT pt_mrn, cmo_id, dmp_id FROM crdb_cmo_loj_dmp_map WHERE dmp_id = :dmpId',
+            [dmpId]
+          )
+          .then(function (result) {
+            connection.close();
+            resolve(formatDbResponse(result));
+          })
+          .catch(function (error) {
+            connection.close();
+            reject(error);
+          });
+      })
+      .catch((error) => {
         reject(error);
       });
   });

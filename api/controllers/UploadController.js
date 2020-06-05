@@ -369,9 +369,54 @@ exports.verifyCmoId = [
             return apiResponse.errorResponse(res, err);
           })
           .then((results) => {
-            console.log(results);
             if (results.some((x) => x.length === 0)) {
-              return apiResponse.errorResponse(res, 'Could not anonymize ID.');
+              return apiResponse.errorResponse(res, 'Could not verify ID.');
+            }
+            let [patientIdResult] = results;
+            let responseObject = {
+              ...patientIdResult,
+            };
+            return apiResponse.successResponseWithData(
+              res,
+              'Operation success',
+              responseObject
+            );
+          });
+      }
+    } catch (err) {
+      return apiResponse.errorResponse(res, err);
+    }
+  },
+];
+
+// verify DMP ID and send back anonymized C-ID
+exports.verifyDmpId = [
+  body('dmpId')
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage('dmpId must be specified.'),
+  function (req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return apiResponse.validationErrorWithData(
+          res,
+          'Validation error.',
+          errors.array()
+        );
+      } else {
+        // remove leading and trailing whitespaces just in case
+        let dmpId = req.body.dmpId.replace(/^\s+|\s+$/g, '');
+
+        let patientIdPromise = util.handleDmpId(dmpId);
+
+        Promise.all([patientIdPromise])
+          .catch(function (err) {
+            return apiResponse.errorResponse(res, err);
+          })
+          .then((results) => {
+            if (results.some((x) => x.length === 0)) {
+              return apiResponse.errorResponse(res, 'Could not verify ID.');
             }
             let [patientIdResult] = results;
             let responseObject = {

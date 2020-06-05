@@ -4,13 +4,17 @@ const validationPatterns = {
   blockslidetube: '^.{1,25}$',
   number: '^[0-9.]*$',
   collectionYear: 'd{4}|^$',
-  wellPosition: '[A-Za-z]+d+|^$',
+  wellPosition: '[A-Za-z]+[0-9]+|^$',
   micronicTubeBarcode: '^[0-9]{10}$',
   alphanum: '[0-9a-zA-Z]',
+  alphanumFour: '[0-9a-zA-Z]{4,}',
   alphanumdash: '^[A-Za-z0-9](?!.*__)[A-Za-z0-9\\,_-]{2}[A-Za-z0-9\\,_-]*$',
-  // "mskPatients": "d{8}",
-  // "nonMSKPatients": "[0-9a-zA-Z]{4,}",
-  // "bothMSKAndNonMSKPatients": "[0-9a-zA-Z]{4,}|d{8}",
+  cmoId: '^C[-|_].{6}$',
+  dmpSampleId: '^P-[0-9]{7}-.{3}-.{3}$',
+  dmpPatientId: '^P-[0-9]{7}$',
+  mrn: '^[0-9]{8}$',
+  groupingId: '[A-Za-z0-9\\,_-]{4,}',
+  plateId: '^MSK-[A-Za-z0-9\\,_-]{10,}$',
 };
 
 export const deprecatedColumns = ['Index Position'];
@@ -46,17 +50,18 @@ export const gridColumns = {
     columnHeader: 'Plate ID',
     data: 'plateId',
     container: 'Plates',
-    pattern: validationPatterns.userId,
-    error: 'Only letters, digits and –, please. 2 char minimum.',
+    pattern: validationPatterns.plateId,
+    error:
+      'Only letters, digits and –, please. Must begin with "MSK-" followed by 10 characters.',
     tooltip:
-      'The plate ID is the barcode on your plate.  Please scan, or carefully type, the barcode ID into this field for all samples on the plate',
+      'The Plate ID is the barcode on the side of your plate, and it begins with MSK-. Please scan or carefully type the barcode into this field for all samples on this plate.',
   },
   'Well Position': {
     name: 'Well Position',
     columnHeader: 'Well Position',
     data: 'wellPosition',
     readOnly: true,
-    pattern: 'wellPosition',
+    pattern: validationPatterns.wellPosition,
     tooltip:
       'Fill Plate by Column. It must have at least one letter followed by a number',
     error: 'Well Position must have at least one letter followed by a number',
@@ -456,7 +461,7 @@ export const gridColumns = {
 
 export const formattingAdjustments = {
   MRN: {
-    pattern: '^[0-9]{8}$',
+    pattern: validationPatterns.mrn,
     columnHeader: 'MRN',
     tooltip: 'The patient MRN.',
     error:
@@ -464,15 +469,15 @@ export const formattingAdjustments = {
     type: 'text',
   },
   'DMP ID': {
-    pattern: '*',
+    pattern: validationPatterns.dmpPatientId,
     columnHeader: 'DMP ID',
     tooltip: 'The patient DMP ID.',
     error:
-      'DMP ID is incorrectly formatted, please correct, or speak to a project manager if unsure. The usual DMP ID format is P-0000000-A00-ABC.',
+      'DMP ID is incorrectly formatted, please correct, or speak to a project manager if unsure. The usual DMP Patient ID format is P-0000000.',
     type: 'text',
   },
   'CMO ID': {
-    pattern: '*',
+    pattern: validationPatterns.cmoId,
     columnHeader: 'CMO ID',
     tooltip: 'The patient CMO ID.',
     error:
@@ -480,7 +485,7 @@ export const formattingAdjustments = {
     type: 'text',
   },
   'Non-MSK Patients': {
-    pattern: '[A-Za-z0-9\\,_-]{4,}',
+    pattern: validationPatterns.alphanumDash,
     columnHeader: 'Patient ID',
     error:
       'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
@@ -489,13 +494,13 @@ export const formattingAdjustments = {
     columnHeader: 'Cell Line Name',
   },
   'Strain or Line Name': {
-    pattern: '[0-9a-zA-Z]{4,}',
+    pattern: validationPatterns.alphanumFour,
     columnHeader: 'Strain or Line Name',
     error:
       'Invalid format. Please use at least four alpha-numeric characters. Every 8 digit ID is considered a MRN.',
   },
   'Grouping ID': {
-    pattern: '[A-Za-z0-9\\,_-]{4,}',
+    pattern: validationPatterns.groupingId,
     columnHeader: 'Grouping ID',
     error:
       'Invalid format. Please use at least four alpha-numeric characters. Every 8 digit ID is considered a MRN.',
