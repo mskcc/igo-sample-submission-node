@@ -91,6 +91,7 @@ export function createPartialSubmission() {
       });
   };
 }
+
 export const UPDATE_PARTIAL_SUBMISSION = 'UPDATE_PARTIAL_SUBMISSION';
 export const UPDATE_PARTIAL_SUBMISSION_FAIL = 'UPDATE_PARTIAL_SUBMISSION_FAIL';
 export const UPDATE_PARTIAL_SUBMISSION_SUCCESS =

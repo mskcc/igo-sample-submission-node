@@ -214,6 +214,22 @@ export const genericMessage = (type, msg) => {
   });
 };
 
+export const genericDecision = (title, message) => {
+  return new Promise(resolve => {
+    Swal.fire({
+      title: title,
+      html: message,
+      type: 'warning',
+      showCancelButton: true,
+      animation: false,
+      confirmButtonColor: '#df4602',
+      cancelButtonColor: '#007cba',
+      confirmButtonText: 'Proceed',
+      cancelButtonText: 'Cancel'
+    }).then(result => (result.value ? resolve(true) : resolve(false)));
+  });
+};
+
 export const dryRunSuccess = message => {
   return new Promise(resolve => {
     Swal.fire({

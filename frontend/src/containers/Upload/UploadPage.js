@@ -24,7 +24,12 @@ export class UploadPage extends Component {
   };
 
   submitRowNumberUpdate = () => {
-    const newRowNumber = this.props.form.selected.numberOfSamples;
+    let newRowNumber;
+    if (this.props.type === 'dmp') {
+      newRowNumber = this.props.dmpForm.selected.numberOfSamples;
+    } else {
+      newRowNumber = this.props.form.selected.numberOfSamples;
+    }
     const prevRowNumber = this.props.grid.form.numberOfSamples;
     const change = newRowNumber - prevRowNumber;
 
@@ -45,12 +50,13 @@ export class UploadPage extends Component {
           submitRowNumberUpdate={this.submitRowNumberUpdate}
         />
 
-        {this.props.grid.rows.length > 0 && (
-          <UploadGridContainer
-            handleSubmit={this.handleGridSubmit}
-            pasteTooMany={this.pasteTooMany}
-          />
-        )}
+        {this.props.grid.rows.length > 0 &&
+          this.props.type === this.props.grid.gridType && (
+            <UploadGridContainer
+              handleSubmit={this.handleGridSubmit}
+              pasteTooMany={this.pasteTooMany}
+            />
+          )}
       </React.Fragment>
     );
   }
@@ -62,7 +68,8 @@ UploadPage.defaultProps = {
 
 const mapStateToProps = state => ({
   grid: state.upload.grid,
-  form: state.upload.form
+  form: state.upload.form,
+  dmpForm: state.dmp.form
 });
 
 export default withLocalize(

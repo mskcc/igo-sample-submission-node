@@ -199,7 +199,7 @@ class DmpForm extends React.Component {
                 error={!formValid.numberOfSamples}
                 onChange={this.handleChange}
                 inputProps={{
-                  inputProps: { min: 1 }
+                  inputProps: { min: 0 }
                 }}
                 value={form.selected.numberOfSamples}
               />
@@ -240,13 +240,7 @@ class DmpForm extends React.Component {
                 isLoading={gridIsLoading}
                 nothingToSubmit={nothingToChange}
               />
-              <Button
-                color="secondary"
-                id="formClear"
-                onClick={this.props.handleClear}
-                isLoading={false}
-                nothingToSubmit={false}
-              />
+             
             </div>
           </Paper>
         )}

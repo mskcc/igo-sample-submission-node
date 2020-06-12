@@ -91,8 +91,7 @@ export class UploadFormContainer extends React.Component {
           <DmpForm
             handleSubmit={handleSubmit}
             handleInputChange={this.handleInputChange}
-            handleClear={this.handleClear}
-            submitRowNumberUpdate={this.submitRowNumberUpdate}
+            submitRowNumberUpdate={submitRowNumberUpdate}
             gridIsLoading={upload.grid.gridIsLoading}
             // gridIsLoading={dmp.grid.gridIsLoading}
             nothingToChange={upload.grid.nothingToChange}

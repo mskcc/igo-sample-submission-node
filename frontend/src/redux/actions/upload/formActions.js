@@ -31,22 +31,21 @@ export function getInitialState() {
       return dispatch({ type: INITIAL_STATE_RETRIEVED });
     else {
       dispatch({ type: REQUEST_INITIAL_STATE });
-      services
+      return services
         .getHeaderValues('upload')
         .then(response => {
-          dispatch({
+          return dispatch({
             type: RECEIVE_INITIAL_STATE_SUCCESS,
             form_data: response.payload,
             user: response.payload.user
           });
-          return response;
         })
-        .catch(error =>
-          dispatch({
+        .catch(error => {
+          return dispatch({
             type: RECEIVE_INITIAL_STATE_FAIL,
             error: error
-          })
-        );
+          });
+        });
     }
   };
 }

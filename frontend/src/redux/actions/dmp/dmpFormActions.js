@@ -41,11 +41,6 @@ export const UPDATE_HEADER = 'UPDATE_HEADER';
 export const DMP_SELECT = 'DMP_SELECT';
 
 export function dmpSelect(id, value) {
-  console.log('dmpselect');
-  console.log('dmpselect');
-  console.log('dmpselect');
-  console.log('dmpselect');
-
   return dispatch => {
     if (id === 'service_id') {
       return dispatch({

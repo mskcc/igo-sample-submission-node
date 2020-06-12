@@ -44,15 +44,20 @@ class UploadGridContainer extends React.Component {
 
   handleSave = () => {
     // Check if current form was the one used to generate grid
-    let match = util.checkGridAndForm(
-      this.props.form.selected,
-      this.props.grid.form
-    );
+    const gridType = this.props.grid.gridType;
+    console.log(gridType);
+    console.log(this.props);
+    const formValues = this.props[gridType].form.selected;
+
+    console.log(formValues);
+    let match = util.checkGridAndForm(formValues, this.props.grid.form);
     if (!match.success) {
       return swal.formGridMismatch(match);
     }
 
     let submissionToEdit = this.props.submissions.submissionToEdit;
+    
+    
     if (submissionToEdit === undefined) {
       this.props.createPartialSubmission(this.props.grid);
     } else {
@@ -68,10 +73,11 @@ class UploadGridContainer extends React.Component {
 
   handleSubmit = () => {
     const { columnFeatures, hiddenColumns, rows } = this.props.grid;
-    let match = util.checkGridAndForm(
-      this.props.form.selected,
-      this.props.grid.form
-    );
+    const gridType = this.props.grid.gridType;
+    const formValues = this.props[gridType].form.selected;
+
+    console.log(formValues);
+    let match = util.checkGridAndForm(formValues, this.props.grid.form);
     if (!match.success) {
       return swal.formGridMismatch(match);
     }
@@ -134,6 +140,8 @@ UploadGridContainer.defaultProps = {
 const mapStateToProps = state => ({
   grid: state.upload.grid,
   form: state.upload.form,
+  upload: state.upload,
+  dmp: state.dmp,
 
   submissions: state.submissions,
   user: state.user

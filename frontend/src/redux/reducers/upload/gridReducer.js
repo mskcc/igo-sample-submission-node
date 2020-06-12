@@ -65,12 +65,12 @@ export default function gridReducer(state = initialGridState, action) {
     case ActionTypes.GET_COLUMNS_SUCCESS:
       return {
         ...state,
+        gridType: action.gridType,
         gridIsLoading: false,
         columnHeaders: action.columnHeaders,
         hiddenColumns: action.hiddenColumns,
         columnFeatures: action.columnFeatures,
         rows: action.rows,
-        // rows: action.rows,
         form: action.form
       };
 

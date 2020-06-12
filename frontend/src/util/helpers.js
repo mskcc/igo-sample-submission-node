@@ -192,6 +192,7 @@ export const generateAdditionalRowData = (
 export const generateSubmitData = (state, isPartial = false) => {
   let data = {
     version: '',
+    submissionType: '',
     gridValues: '',
     formValues: '',
     transactionId: '',
@@ -203,7 +204,7 @@ export const generateSubmitData = (state, isPartial = false) => {
   }
   data.version = Config.VERSION;
   let rowsWithIndex = rowsWithRowIndex(state.upload.grid.rows);
-
+  data.submissionType = state.upload.grid.gridType;
   data.gridValues = JSON.stringify(rowsWithIndex);
   data.formValues = JSON.stringify(state.upload.grid.form);
 

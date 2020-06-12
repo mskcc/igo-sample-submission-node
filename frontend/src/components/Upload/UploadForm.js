@@ -389,7 +389,7 @@ class UploadForm extends React.Component {
                 error={!formValid.numberOfSamples}
                 onChange={this.handleChange}
                 inputProps={{
-                  inputProps: { min: 1 }
+                  inputProps: { min: 0 }
                 }}
                 value={form.selected.numberOfSamples}
               />

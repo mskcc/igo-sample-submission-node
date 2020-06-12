@@ -66,6 +66,7 @@ export const initialFormState = {
 };
 
 export const initialGridState = {
+  gridType: '',
   columnFeatures: [],
   columnHeaders: [],
   rows: [],

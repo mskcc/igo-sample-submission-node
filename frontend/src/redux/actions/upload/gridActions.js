@@ -69,7 +69,8 @@ export function getColumns(page, formValues) {
         getInitialColumns(page, formValues, getState().user.role)
       );
     } else {
-      let diffValues = util.diff(getState().upload.grid.form, formValues);
+      let grid = getState().upload.grid;
+      let diffValues = util.diff(grid.form, formValues);
       if (!diffValues || Object.entries(diffValues).length === 0) {
         swal.nothingToChange();
 
@@ -86,7 +87,7 @@ export function getColumns(page, formValues) {
       ) {
         dispatch({ type: UPDATE_NUM_OF_ROWS });
 
-        let rows = util.updateRows(formValues, getState().upload.grid);
+        let rows = util.updateRows(formValues, grid);
         return dispatch({
           type: UPDATE_NUM_OF_ROWS_SUCCESS,
           message: 'Number of rows updated.',
@@ -94,25 +95,37 @@ export function getColumns(page, formValues) {
           form: formValues
         });
       } else {
-        Swal.fire({
-          title: 'Are you sure?',
-          text:
-            'Changing Material, Application, Species, Patient ID Type or Container causes the grid to be cleared and re-generated.',
-          type: 'warning',
-          showCancelButton: true,
-          animation: false,
-          confirmButtonColor: '#df4602',
-          cancelButtonColor: '#007cba',
-          confirmButtonText: 'Yes, re-generate!'
-        }).then(result => {
-          if (result.value) {
-            return dispatch(
-              getInitialColumns(page, formValues, getState().user.role)
-            );
-          } else {
-            return dispatch({ type: NO_CHANGE_RESET });
-          }
-        });
+        if (page !== grid.gridType) {
+          swal
+            .genericDecision(
+              'Are you sure?',
+              'It looks like you have an open submission in another tab. If you generate this grid, the other grid will be cleared.'
+            )
+            .then(decision => {
+              if (decision) {
+                return dispatch(
+                  getInitialColumns(page, formValues, getState().user.role)
+                );
+              } else {
+                return dispatch({ type: NO_CHANGE_RESET });
+              }
+            });
+        } else {
+          swal
+            .genericDecision(
+              'Are you sure?',
+              'Changing Material, Application, Species, Patient ID Type or Container causes the grid to be cleared and re-generated.'
+            )
+            .then(decision => {
+              if (decision) {
+                return dispatch(
+                  getInitialColumns(page, formValues, getState().user.role)
+                );
+              } else {
+                return dispatch({ type: NO_CHANGE_RESET });
+              }
+            });
+        }
       }
     }
   };
@@ -131,6 +144,7 @@ export function getInitialColumns(page, formValues, userRole) {
         let data = response.payload;
         return dispatch({
           type: GET_COLUMNS_SUCCESS,
+          gridType: page,
           columnHeaders: data.columnHeaders,
           columnFeatures: data.columnFeatures,
           hiddenColumns: data.hiddenColumns,
