@@ -68,11 +68,7 @@ class DmpForm extends React.Component {
     e.preventDefault();
     e.stopPropagation();
     if (this.validate()) {
-      handleParentSubmit({
-        ...this.state.values,
-
-        serviceId: 'IGO-' + this.state.values.serviceId.toString()
-      });
+      handleParentSubmit('dmp', this.state.values);
     }
   };
 
@@ -240,7 +236,7 @@ class DmpForm extends React.Component {
               <Button
                 color="primary"
                 id="formSubmit"
-                formId="upload-form"
+                formId="dmp-upload-form"
                 isLoading={gridIsLoading}
                 nothingToSubmit={nothingToChange}
               />

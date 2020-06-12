@@ -2,8 +2,9 @@ const services = require('../services/services');
 const crdbServices = require('../services/crdbServices');
 const { logger } = require('../util/winston');
 const { constants } = require('./constants');
-const allColumns = require('./columns');
+const submitColumns = require('./columns');
 import CacheService from './cache';
+const dmpColumns = require('./dmpColumns');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 
@@ -41,7 +42,13 @@ exports.getSpecies = (recipe) => {
   }
 };
 
-function cacheAllPicklists(limsColumns) {
+const getColumnNamesFromLimsCols = (limsColumns) => {
+  return limsColumns.map((element) => {
+    return element[0];
+  });
+};
+
+const cacheAllPicklists = (limsColumns, allColumns) => {
   return new Promise((resolve, reject) => {
     let picklistPromises = [];
     let picklists = {};
@@ -89,9 +96,18 @@ function cacheAllPicklists(limsColumns) {
       resolve(picklists);
     });
   });
-}
+};
 
-export function generateGrid(limsColumnList, userRole, formValues) {
+export function generateGrid(
+  limsColumnList,
+  userRole,
+  formValues,
+  type = 'submit'
+) {
+  let allColumns = submitColumns;
+  if (type == 'dmp') {
+    allColumns = dmpColumns;
+  }
   return new Promise((resolve, reject) => {
     let columns = {
       columnFeatures: [],
@@ -103,15 +119,22 @@ export function generateGrid(limsColumnList, userRole, formValues) {
     if (!limsColumnList) {
       reject('Invalid Combination.');
     }
+    console.log(limsColumnList);
     // combinations with no optional columns return an empty element we need to filter out
     limsColumnList = limsColumnList.filter((element) => element[0] !== '');
-    let columnNamesOnly = limsColumnList.map((element) => {
-      return element[0];
-    });
 
-    cacheAllPicklists(columnNamesOnly)
+    let columnNamesOnly = getColumnNamesFromLimsCols(limsColumnList);
+
+    cacheAllPicklists(columnNamesOnly, allColumns)
       .then((picklists) =>
-        fillColumns(columns, limsColumnList, userRole, formValues, picklists)
+        fillColumns(
+          columns,
+          limsColumnList,
+          userRole,
+          formValues,
+          picklists,
+          allColumns
+        )
       )
       .then((columns) => fillData(columns, formValues))
       .catch((reasons) => reject(reasons))
@@ -131,7 +154,8 @@ function fillColumns(
   limsColumnList,
   userRole,
   formValues = {},
-  picklists
+  picklists,
+  allColumns
 ) {
   return new Promise((resolve, reject) => {
     let requiredColumns = [];
@@ -164,7 +188,7 @@ function fillColumns(
           colDef.container !== formValues.container &&
           formValues.application !== 'Expanded_Genomics'
         ) {
-          colDef = overwriteContainer(formValues.container);
+          colDef = overwriteContainer(formValues.container, allColumns);
         }
 
         if (colDef.data === 'patientId') {
@@ -172,7 +196,8 @@ function fillColumns(
             formValues.patientIdType,
             formValues.patientIdTypeSpecified,
             formValues.species,
-            formValues.groupingChecked
+            formValues.groupingChecked,
+            allColumns
           );
           colDef = { ...colDef, ...formattingAdjustments };
         }
@@ -223,20 +248,20 @@ function fillColumns(
 }
 
 // if lims returned a container type is different from the container the user indicated, chose the user one
-const overwriteContainer = (userContainer) => {
+const overwriteContainer = (userContainer, allColumns) => {
   let newContainer;
   switch (userContainer) {
-    case 'Plates':
-      newContainer = allColumns.gridColumns['Plate ID'];
-      break;
-    case 'Micronic Barcoded Tubes':
-      newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
-      break;
-    case 'Blocks/Slides/Tubes':
-      newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
-      break;
-    default:
-      return `Container '${userContainer}' not found.`;
+  case 'Plates':
+    newContainer = allColumns.gridColumns['Plate ID'];
+    break;
+  case 'Micronic Barcoded Tubes':
+    newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
+    break;
+  case 'Blocks/Slides/Tubes':
+    newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
+    break;
+  default:
+    return `Container '${userContainer}' not found.`;
   }
   return newContainer;
 };
@@ -399,7 +424,8 @@ function choosePatientIdValidator(
   patientIdType,
   patientIdTypeSpecified,
   species,
-  groupingChecked
+  groupingChecked,
+  allColumns
 ) {
   let formattingAdjustments = allColumns.formattingAdjustments;
 
@@ -426,10 +452,10 @@ export function generateSubmissionGrid(submissions, userRole) {
   return new Promise((resolve, reject) => {
     try {
       let grid = { columnHeaders: [], rows: [], columnFeatures: [] };
-      grid.columnHeaders = Object.keys(allColumns.submissionColumns).map(
-        (a) => allColumns.submissionColumns[a].name
+      grid.columnHeaders = Object.keys(submitColumns.submissionColumns).map(
+        (a) => submitColumns.submissionColumns[a].name
       );
-      grid.columnFeatures = Object.values(allColumns.submissionColumns);
+      grid.columnFeatures = Object.values(submitColumns.submissionColumns);
 
       if (userRole === 'user') {
         grid.columnHeaders = grid.columnHeaders.filter((element) => {
@@ -515,6 +541,10 @@ export function submit(submission, user, transactionId) {
       bankedSample.user = process.env.API_USER;
       bankedSample.concentrationUnits = 'ng/uL';
 
+      if (recipe.includes('COVID')) {
+        bankedSample.userId = `${bankedSample.userId}-${serviceId}`;
+      }
+
       if ('wellPosition' in bankedSample) {
         var match = /([A-Za-z]+)(\d+)/.exec(bankedSample.wellPosition);
         if (!match) {
@@ -563,11 +593,11 @@ export function generateSubmissionExcel(submission, role) {
   let sheetFormData = {};
   // replace form keys with column names and filter out noShow columns
   Object.keys(submission.formValues).map((element) => {
-    let colDef = allColumns.formColumns[element] || '';
-    let isNoShowCol = isUser && allColumns.noShowColumns.includes(element);
+    let colDef = submitColumns.formColumns[element] || '';
+    let isNoShowCol = isUser && submitColumns.noShowColumns.includes(element);
     let isNoShowEmptyCol =
       isUser &&
-      allColumns.noShowEmptyColumns.includes(element) &&
+      submitColumns.noShowEmptyColumns.includes(element) &&
       submission.formValues[element] === '';
     if (!isNoShowCol && !isNoShowEmptyCol) {
       let colName = colDef.columnHeader || element;
@@ -580,12 +610,12 @@ export function generateSubmissionExcel(submission, role) {
     let sheetGridRow = [];
     Object.keys(gridRow).map((element) => {
       let colDef = element;
-      let isNoShowCol = isUser && allColumns.noShowColumns.includes(element);
+      let isNoShowCol = isUser && submitColumns.noShowColumns.includes(element);
       // find columnHeader for this element in object of objects
       if (!isNoShowCol) {
-        for (let key in allColumns.gridColumns) {
-          if (allColumns.gridColumns[key].data === element) {
-            colDef = allColumns.gridColumns[key].columnHeader;
+        for (let key in submitColumns.gridColumns) {
+          if (submitColumns.gridColumns[key].data === element) {
+            colDef = submitColumns.gridColumns[key].columnHeader;
             break;
           }
         }
@@ -597,7 +627,11 @@ export function generateSubmissionExcel(submission, role) {
   return sheetData;
 }
 
-export function generateGridExcel(grid, role) {
+export function generateGridExcel(grid, role, type = 'submit') {
+  let allColumns = submitColumns;
+  if (type == 'dmp') {
+    allColumns = dmpColumns;
+  }
   let isUser = role === 'user';
   let sheetData = [];
   let sheetFormData = {};
@@ -638,10 +672,10 @@ export function generatePromoteGrid(limsColumnOrdering) {
       let promoteColFeature = {};
       let columnName = element.split(':')[1];
       // If we recognize the column, attach the feature and add it to the list used for picklist generation
-      if (columnName in allColumns.gridColumns) {
+      if (columnName in submitColumns.gridColumns) {
         promoteColFeature = Object.assign(
           {},
-          allColumns.gridColumns[columnName]
+          submitColumns.gridColumns[columnName]
         );
       } else {
         logger.log('info', `${columnName} not found`);
@@ -664,7 +698,7 @@ export function generatePromoteGrid(limsColumnOrdering) {
       (a) =>
         `<span class='${a.className}' title='${a.tooltip}'>${a.columnHeader}</span>`
     );
-    const selectCol = allColumns.promoteSelect;
+    const selectCol = submitColumns.promoteSelect;
     grid.columnHeaders.unshift(
       '<span class="material-icons select-col" title="check">check</span>'
     );
@@ -687,6 +721,7 @@ export function loadBankedSamples(queryType, query) {
       .loadBankedSamples(queryType, query)
       .then((response) => {
         // TODO: Clean out some data like in old rex?
+        console.log('helper');
         resolve(response);
       })
       .catch((reasons) => reject(reasons));
@@ -746,5 +781,56 @@ export function handleDmpId(dmpId) {
       })
 
       .catch((reasons) => reject(reasons));
+  });
+}
+
+// export function generateDmpGrid(userRole, formValues) {
+//   return new Promise((resolve, reject) => {
+//     let columns = {
+//       columnFeatures: [],
+//       rowData: [],
+//       columnHeaders: [],
+//       hiddenColumns: [],
+//     };
+
+//     //   if (!limsColumnList) {
+//     //     reject('Invalid Combination.');
+//     //   }
+//     //   // combinations with no optional columns return an empty element we need to filter out
+//     //   limsColumnList = limsColumnList.filter((element) => element[0] !== '');
+//     //   let columnNamesOnly = limsColumnList.map((element) => {
+//     //     return element[0];
+//     //   });
+
+//     //   cacheAllPicklists(columnNamesOnly)
+//     //     .then((picklists) =>
+//     //       fillColumns(columns, limsColumnList, userRole, formValues, picklists)
+//     //     )
+//     //     .then((columns) => fillData(columns, formValues))
+//     //     .catch((reasons) => reject(reasons))
+//     //     .then((columns) => {
+//     //       if (columns.columnFeatures.some((x) => x.data === 'wellPosition')) {
+//     //         setWellPos(columns).then(resolve(columns));
+//     //       } else {
+//     //         resolve(columns);
+//     //       }
+//     //     })
+//     //     .catch((reasons) => reject(reasons));
+//   });
+// }
+
+export function getDmpColumns(material, application) {
+  return new Promise((resolve, reject) => {
+    try {
+      let combination = `${material}+${application}`;
+      console.log(combination);
+      let columns = dmpColumns.dmpIntakeForms[combination];
+      console.log(columns);
+      console.log(getColumnNamesFromLimsCols(columns[0]));
+      resolve(columns);
+    } catch (error) {
+      console.log(error);
+      reject(`Could not retrieve grid for '${material}' and '${application}'.`);
+    }
   });
 }

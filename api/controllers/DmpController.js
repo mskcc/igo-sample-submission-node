@@ -198,26 +198,12 @@ exports.grid = [
     .isLength({ min: 1 })
     .trim()
     .withMessage('Material must be present.'),
-  body('serviceId')
-    .isLength({ min: 1 })
-    .trim()
-    .withMessage('ServiceId must be present.'),
+
   body('numberOfSamples')
     .isLength({ min: 1 })
     .trim()
     .withMessage('NumberOfSamples must be present.'),
-  body('species')
-    .isLength({ min: 1 })
-    .trim()
-    .withMessage('Species must be present.'),
-  body('container')
-    .isLength({ min: 1 })
-    .trim()
-    .withMessage('Container must be present.'),
-  body('patientIdType').optional(),
-  body('groupingChecked').optional(),
-  body('altServiceId').optional(),
-  // sanitizeBody("*").escape(),
+
   function (req, res) {
     // try {
     const errors = validationResult(req);
@@ -233,7 +219,7 @@ exports.grid = [
       let application = formValues.application;
 
       let columnsPromise = cache.get(`${material}-${application}-Columns`, () =>
-        services.getColumns(material, application)
+        util.getDmpColumns(material, application)
       );
       Promise.all([columnsPromise]).then((results) => {
         if (results.some((x) => x.length === 0)) {
@@ -243,10 +229,12 @@ exports.grid = [
           );
         }
         let [columnsResult] = results;
+        console.log(columnsResult);
         let gridPromise = util.generateGrid(
           columnsResult,
           res.user.role,
-          formValues
+          formValues,
+          'dmp'
         );
 
         Promise.all([gridPromise])

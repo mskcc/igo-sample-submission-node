@@ -59,14 +59,15 @@ export const GET_COLUMNS_SUCCESS = 'GET_COLUMNS_SUCCESS';
 // export const GET_COLUMNS_INVALID_COMBINATION = 'GET_COLUMNS_INVALID_COMBINATION'
 export const GET_COLUMNS_FAIL = 'GET_COLUMNS_FAIL';
 
-export function getColumns(formValues) {
+export function getColumns(page, formValues) {
   return (dispatch, getState) => {
     // let formValues = getState().upload.form.selected
     dispatch({ type: GET_COLUMNS });
-
     // no grid? get inital columns
     if (getState().upload.grid.columnFeatures.length === 0) {
-      return dispatch(getInitialColumns(formValues, getState().user.role));
+      return dispatch(
+        getInitialColumns(page, formValues, getState().user.role)
+      );
     } else {
       let diffValues = util.diff(getState().upload.grid.form, formValues);
       if (!diffValues || Object.entries(diffValues).length === 0) {
@@ -106,7 +107,7 @@ export function getColumns(formValues) {
         }).then(result => {
           if (result.value) {
             return dispatch(
-              getInitialColumns(formValues, getState().user.role)
+              getInitialColumns(page, formValues, getState().user.role)
             );
           } else {
             return dispatch({ type: NO_CHANGE_RESET });
@@ -117,13 +118,13 @@ export function getColumns(formValues) {
   };
 }
 
-export function getInitialColumns(formValues, userRole) {
+export function getInitialColumns(page, formValues, userRole) {
   return dispatch => {
     dispatch({ type: GET_INITIAL_COLUMNS });
     let material = formValues.material;
     let application = formValues.application;
     return axios
-      .post(Config.NODE_API_ROOT + '/upload/grid', {
+      .post(`${Config.NODE_API_ROOT}/${page}/grid`, {
         ...formValues
       })
       .then(response => {
@@ -209,7 +210,11 @@ export function populateGridFromSubmission(submissionId, ownProps) {
       .getSubmission(submissionId)
       .then(resp => {
         let submission = resp.payload.submission;
-        dispatch(getInitialColumns(submission.formValues), getState().user.role)
+
+        dispatch(
+          getInitialColumns('upload', submission.formValues),
+          getState().user.role
+        )
           .then(dispatch(updateHeader(submission.formValues)))
           .then(() => {
             dispatch({

@@ -7,27 +7,27 @@ export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_FAIL = 'LOGIN_FAIL';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export function login(username, password) {
-  return (dispatch) => {
+  return dispatch => {
     dispatch({ type: LOGIN_REQUEST });
     return axios
       .post(Config.NODE_API_ROOT + '/auth/login', {
         username: username,
-        password: password,
+        password: password
       })
-      .then((response) => {
+      .then(response => {
         sessionStorage.setItem('access_token', response.payload.token);
 
         return dispatch({
           type: LOGIN_SUCCESS,
           message: 'Successfully logged in.',
-          payload: response.payload,
+          payload: response.payload
         });
       })
 
-      .catch((error) => {
+      .catch(error => {
         return dispatch({
           type: LOGIN_FAIL,
-          error: error,
+          error: error
         });
       });
   };
@@ -35,8 +35,28 @@ export function login(username, password) {
 
 export const LOGOUT = 'LOGOUT';
 export function logout() {
-  return (dispatch) => {
-    dispatch({ type: LOGOUT });
+  return dispatch => {
+    //   dispatch({ type: LOGOUT });
+    // };
+    console.log('bye');
+    console.log('bye');
+    console.log('bye');
+    console.log('bye');
+    console.log('bye');
+
+    return axios
+      .get('http://localhost:4200/api/auth/logout', {})
+      .then(response => {
+        console.log(response);
+        // window.location.href = `${Config.LOGIN_PAGE_URL}/${Config.HOME_PAGE_PATH}`;
+      })
+
+      .catch(error => {
+        return dispatch({
+          type: LOGIN_FAIL,
+          error: error
+        });
+      });
   };
 }
 
@@ -98,5 +118,5 @@ export const RESET_ERROR_MESSAGE = 'RESET_ERROR_MESSAGE';
 
 // Resets the currently visible error message.
 export const resetErrorMessage = () => ({
-  type: RESET_ERROR_MESSAGE,
+  type: RESET_ERROR_MESSAGE
 });

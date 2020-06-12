@@ -89,7 +89,7 @@ export class UploadFormContainer extends React.Component {
           )
         ) : (
           <DmpForm
-            handleSubmit={this.handleFormSubmit}
+            handleSubmit={handleSubmit}
             handleInputChange={this.handleInputChange}
             handleClear={this.handleClear}
             submitRowNumberUpdate={this.submitRowNumberUpdate}

@@ -113,7 +113,7 @@ class UploadForm extends React.Component {
     e.preventDefault();
     e.stopPropagation();
     if (this.validate()) {
-      handleParentSubmit({
+      handleParentSubmit('upload', {
         ...this.state.values,
 
         serviceId: 'IGO-' + this.state.values.serviceId.toString()
@@ -406,11 +406,13 @@ class UploadForm extends React.Component {
                     )
                   }}
                 />
-                <Checkbox
-                  id="altServiceId"
-                  checked={form.selected.altServiceId}
-                  onChange={this.handleServiceIdCheck}
-                />
+                {!form.selected.application.includes('COVID') && (
+                  <Checkbox
+                    id="altServiceId"
+                    checked={form.selected.altServiceId}
+                    onChange={this.handleServiceIdCheck}
+                  />
+                )}
               </FormControl>
 
               <FormControl component="fieldset" className={classes.lastItem}>

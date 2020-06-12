@@ -9,8 +9,8 @@ import UploadFormContainer from './UploadFormContainer';
 import UploadGridContainer from './UploadGridContainer';
 
 export class UploadPage extends Component {
-  handleFormSubmit = formValues => {
-    this.props.getColumns(formValues);
+  handleFormSubmit = (page, formValues) => {
+    this.props.getColumns(page, formValues);
   };
 
   handleGridSubmit = formValues => {

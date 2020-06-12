@@ -10,7 +10,7 @@ class Logout extends React.Component {
 
   render() {
     return (
-      this.props.loading && <CircularProgress color="secondary" size={24} />
+      <CircularProgress color="secondary" size={24} />
     );
   }
 }

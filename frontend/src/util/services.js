@@ -25,6 +25,7 @@ axios.interceptors.response.use(
     return response;
   },
   function(error) {
+    console.log(error);
     if (error.response) {
       error.payload = error.response.data;
       if (error.response.status === 401) {
@@ -80,7 +81,6 @@ export const grid = data => {
     });
 };
 
-
 export const mrnToCid = data => {
   const url = `${Config.NODE_API_ROOT}/upload/mrnToCid`;
   return axios
@@ -95,7 +95,6 @@ export const mrnToCid = data => {
       return resp;
     });
 };
-
 
 export const getAdditionalRows = data => {
   const url = `${Config.NODE_API_ROOT}/upload/additionalRows`;

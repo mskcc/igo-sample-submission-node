@@ -64,7 +64,6 @@ exports.load = [
         errors.array()
       );
     } else {
-      // remove leading and trailing whitespaces just in case
       let queryType = req.body.queryType;
       let query = req.body.query;
 
