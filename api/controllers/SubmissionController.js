@@ -7,6 +7,7 @@ var mongoose = require('mongoose');
 var ObjectId = mongoose.Types.ObjectId;
 
 const SubmissionModel = require('../models/SubmissionModel');
+const DmpSubmissionModel = require('../models/DmpSubmissionModel');
 
 exports.list = [
   function (req, res) {
@@ -21,7 +22,6 @@ exports.list = [
         submissions,
       });
     });
-    
   },
 ];
 
@@ -177,6 +177,11 @@ exports.create = [
     .isLength({ min: 1 })
     .trim()
     .withMessage('gridValues must be JSON.'),
+  body('submissionType')
+    .isString()
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage('submissionType must be specified.'),
   function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -186,16 +191,27 @@ exports.create = [
         errors.array()
       );
     }
-
+    console.log(req.body);
     let formValues = JSON.parse(req.body.formValues);
     let gridValues = JSON.parse(req.body.gridValues);
+    let submissionType= req.body.submissionType;
 
-    let submission = new SubmissionModel({
-      username: res.user.username,
-      formValues: formValues,
-      gridValues: gridValues,
-      appVersion: '2.5',
-    });
+    let submission;
+    if (submissionType=== 'dmp') {
+      submission = new DmpSubmissionModel({
+        username: res.user.username,
+        formValues: formValues,
+        gridValues: gridValues,
+        appVersion: '2.5',
+      });
+    } else {
+      submission = new SubmissionModel({
+        username: res.user.username,
+        formValues: formValues,
+        gridValues: gridValues,
+        appVersion: '2.5',
+      });
+    }
     submission.save(function (err) {
       if (err) {
         return apiResponse.errorResponse(res, 'Submission could not be saved.');
