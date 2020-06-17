@@ -578,31 +578,35 @@ export const checkGridAndForm = (form, grid) => {
   let errors = new Set([]);
 
   let result = { success: true, message: '' };
+  if (form.serviceId !== 'IGO-' + grid.serviceId) {
+    errors.add(`iLabs Service ID: '${form.serviceId}' vs. '${grid.serviceId}'`);
+  }
+
   if (form.material !== grid.material) {
-    errors.add('Material: ' + form.material + ' vs. ' + grid.material);
+    errors.add(`Material: '${form.material}' vs. '${grid.material}'`);
   }
 
   if (form.application !== grid.application) {
-    errors.add('Application: ' + form.application + ' vs. ' + grid.application);
+    errors.add(`Application: '${form.application}' vs. '${grid.application}'`);
   }
 
   if (form.species !== grid.species) {
-    errors.add('Species: ' + form.species + ' vs. ' + grid.species);
+    errors.add(`Species: '${form.species}' vs. '${grid.species}'`);
   }
-  if (form.patient_id_type !== grid.patient_id_type) {
+  if (form.patientIdType !== grid.patientIdType) {
     errors.add(
-      'Patient ID Type: ' +
-        form.patient_id_type +
-        ' vs. ' +
-        grid.patient_id_type
+      `Patient ID Type: 
+        '${form.patientIdType}'
+         vs. 
+        '${grid.patientIdType}'`
     );
   }
-  if (form.grouping_checked !== grid.grouping_checked) {
+  if (form.groupingChecked !== grid.groupingChecked) {
     errors.add(
-      'Groups pairs or replicates: ' +
-        (form.grouping_checked ? 'yes' : 'no') +
-        ' vs. ' +
-        (grid.grouping_checked ? 'yes' : 'no')
+      `Groups pairs or replicates: 
+        '${form.groupingChecked ? 'yes' : 'no'}'
+         vs. 
+        '${grid.groupingChecked ? 'yes' : 'no'}'`
     );
   }
 
