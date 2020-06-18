@@ -52,11 +52,7 @@ class UploadGridContainer extends React.Component {
       return swal.formGridMismatch(match);
     }
 
-    // return this.props.createPartialSubmission(this.props.grid);
-
-    if (this.props.submissionToEdit === undefined) {
-      this.props.createPartialSubmission(this.props.grid);
-    }
+    this.props.createPartialSubmission(this.props.grid);
   };
 
   handleUpdate = () => {
@@ -104,7 +100,7 @@ class UploadGridContainer extends React.Component {
   };
 
   render() {
-    const { grid,gridType, user, submissionToEdit } = this.props;
+    const { grid, gridType, user, submissionToEdit } = this.props;
 
     return grid.rows.length > 0 ? (
       <UploadGrid

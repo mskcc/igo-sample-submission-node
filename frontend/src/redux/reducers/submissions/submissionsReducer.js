@@ -67,7 +67,8 @@ function submissionsReducer(state = initialState, action) {
           numberOfSamples: action.payload.formValues.numberOfSamples,
           container: action.payload.formValues.container,
           username: action.payload.username,
-          createdAt: util.parseDate(action.payload.createdAt)
+          createdAt: util.parseDate(action.payload.createdAt),
+          updatedAt: util.parseDate(action.payload.updatedAt)
         }
       };
 
@@ -83,7 +84,6 @@ function submissionsReducer(state = initialState, action) {
       };
 
     case ActionTypes.UPDATE_PARTIAL_SUBMISSION_SUCCESS:
-      console.log(action.payload);
       return {
         ...state,
         isSaving: false,
@@ -96,7 +96,8 @@ function submissionsReducer(state = initialState, action) {
           numberOfSamples: action.payload.formValues.numberOfSamples,
           container: action.payload.formValues.container,
           username: action.payload.username,
-          createdAt: util.parseDate(action.payload.createdAt)
+          createdAt: util.parseDate(action.payload.createdAt),
+          updatedAt: util.parseDate(action.payload.updatedAt)
         }
       };
 
@@ -174,7 +175,8 @@ function submissionsReducer(state = initialState, action) {
           numberOfSamples: action.payload.formValues.numberOfSamples,
           container: action.payload.formValues.container,
           username: action.payload.username,
-          createdAt: util.parseDate(action.payload.createdAt)
+          createdAt: util.parseDate(action.payload.createdAt),
+          updatedAt: util.parseDate(action.payload.updatedAt)
         }
       };
 

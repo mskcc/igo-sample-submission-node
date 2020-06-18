@@ -28,12 +28,11 @@ class UploadGrid extends React.Component {
       handleTumorType,
       handlePatientId
     } = this.props;
-    console.log(submissionToEdit);
     return (
       <div>
         <div className={classes.container}>
           {gridType == 'upload' && submissionToEdit && (
-            <EditPanel submission={submissionToEdit} />
+            <EditPanel role="lab_member" submission={submissionToEdit} />
           )}
           <div className={classes.buttons}>
             <GridButton

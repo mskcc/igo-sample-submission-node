@@ -102,11 +102,9 @@ export function updatePartialSubmission() {
     dispatch({ type: UPDATE_PARTIAL_SUBMISSION });
     let submitData = util.generateSubmitData(getState(), true);
     let id = getState().submissions.submissionToEdit._id;
-    console.log(id);
     services
       .updateSubmission({ ...submitData, id: id })
       .then(response => {
-        console.log(response);
         dispatch({
           type: UPDATE_PARTIAL_SUBMISSION_SUCCESS,
           message: 'Updated!',

@@ -53,7 +53,7 @@ export class UploadPage extends Component {
         {this.props.grid.rows.length > 0 &&
           this.props.type === this.props.grid.gridType && (
             <UploadGridContainer
-            gridType={this.props.type}
+              gridType={this.props.type}
               handleSubmit={this.handleGridSubmit}
               pasteTooMany={this.pasteTooMany}
             />

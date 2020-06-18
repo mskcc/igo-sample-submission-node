@@ -25,6 +25,7 @@ export const gridColumns = {
   },
   'DMP Sample ID': {
     name: 'DMP Sample ID',
+    pattern: validationPatterns.dmpSampleId,
     columnHeader: 'DMP Sample ID',
     data: 'dmpSampleId',
   },
@@ -35,7 +36,6 @@ export const gridColumns = {
   },
   'Investigator Sample ID (Study Sample Identifier)': {
     name: 'Investigator Sample ID (Study Sample Identifier)',
-    pattern: validationPatterns.dmpSampleId,
     columnHeader: 'Investigator Sample ID (Study Sample Identifier)',
     data: 'studySampleIdentifier',
   },
@@ -124,7 +124,6 @@ export const gridColumns = {
     columnHeader:
       'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
     data: 'investigatorProvidedStudySampleIdentifier',
-    pattern: validationPatterns.dmpSampleId,
   },
   'Additional Info': {
     name: 'Additional Info',

@@ -254,17 +254,20 @@ exports.update = [
     let formValues = JSON.parse(req.body.formValues);
     let gridValues = JSON.parse(req.body.gridValues);
     let id = req.body.id;
-
-    SubmissionModel.findByIdAndUpdate(ObjectId(id), {
-      formValues: formValues,
-      gridValues: gridValues,
-    })
+    
+    SubmissionModel.findByIdAndUpdate(
+      ObjectId(id),
+      {
+        formValues: formValues,
+        gridValues: gridValues,
+      },
+      { new: true }
+    )
       .lean()
       .exec(function (err, submission) {
         if (err) {
           return apiResponse.errorResponse(res, 'Could not update submission.');
         }
-        console.log(submission);
         return apiResponse.successResponseWithData(res, 'Operation success', {
           submission: submission,
         });
