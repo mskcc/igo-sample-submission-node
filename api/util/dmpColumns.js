@@ -16,7 +16,7 @@ const validationPatterns = {
   groupingId: '[A-Za-z0-9\\,_-]{4,}',
   plateId: '^MSK-[A-Za-z0-9\\,_-]{10,}$',
 };
-
+export const deprecatedColumns = ['Index Position'];
 export const gridColumns = {
   'Tracking ID': {
     name: 'Tracking ID',
@@ -80,6 +80,12 @@ export const gridColumns = {
     name: 'Molecular Pathology Accession Number',
     columnHeader: 'Molecular Pathology Accession Number',
     data: 'molecularPathologyAccessionNumber',
+  },
+
+  'Gene and Mutation': {
+    name: 'Gene and Mutation',
+    columnHeader: 'Gene and Mutation',
+    data: 'geneAndMutation',
   },
 
   'Sample Approved by CMO': {
@@ -164,7 +170,7 @@ export const dmpIntakeForms = {
     ['DMP to Transfer', 'Required'],
     ['Molecular Pathology Accession Number', 'Optional'],
   ],
-  'DNA+HumanWholeGenome ': [
+  'DNA+HumanWholeGenome': [
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -198,10 +204,10 @@ export const dmpIntakeForms = {
     ['Project PI', 'Required'],
     ['Project Title', 'Required'],
     ['DMP to Transfer', 'Required'],
-    'Gene and Mutation',
+    ['Gene and Mutation', 'Optional'],
     ['Molecular Pathology Accession Number', 'Optional'],
   ],
-  'DNA+WholeExomeSequencing ': [
+  'DNA+WholeExomeSequencing': [
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -225,7 +231,7 @@ export const dmpIntakeForms = {
     ['Additional Info', 'Optional'],
     ['Molecular Pathology Accession Number', 'Optional'],
   ],
-  'DNA Library+HumanWholeGenome ': [
+  'DNA Library+HumanWholeGenome': [
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -262,7 +268,7 @@ export const dmpIntakeForms = {
     ['Gene and Mutation', 'Optional'],
     [' Molecular Pathology Accession Number', 'Optional'],
   ],
-  'DNA Library+WholeExomeSequencing ': [
+  'DNA Library+WholeExomeSequencing': [
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],

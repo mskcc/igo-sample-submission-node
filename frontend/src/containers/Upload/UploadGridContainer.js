@@ -45,30 +45,35 @@ class UploadGridContainer extends React.Component {
   handleSave = () => {
     // Check if current form was the one used to generate grid
     const gridType = this.props.grid.gridType;
-    console.log(gridType);
-    console.log(this.props);
     const formValues = this.props[gridType].form.selected;
 
-    console.log(formValues);
     let match = util.checkGridAndForm(formValues, this.props.grid.form);
     if (!match.success) {
       return swal.formGridMismatch(match);
     }
 
-    let submissionToEdit = this.props.submissions.submissionToEdit;
-    
-    
-    if (submissionToEdit === undefined) {
+    // return this.props.createPartialSubmission(this.props.grid);
+
+    if (this.props.submissionToEdit === undefined) {
       this.props.createPartialSubmission(this.props.grid);
-    } else {
-      swal.confirmUpdate().then(decision => {
-        if (decision) {
-          this.props.updatePartialSubmission(
-            this.props.updatePartialSubmission
-          );
-        }
-      });
     }
+  };
+
+  handleUpdate = () => {
+    // Check if current form was the one used to generate grid
+    const gridType = this.props.grid.gridType;
+    const formValues = this.props[gridType].form.selected;
+
+    let match = util.checkGridAndForm(formValues, this.props.grid.form);
+    if (!match.success) {
+      return swal.formGridMismatch(match);
+    }
+
+    swal.confirmUpdate().then(decision => {
+      if (decision) {
+        this.props.updatePartialSubmission(this.props.updatePartialSubmission);
+      }
+    });
   };
 
   handleSubmit = () => {
@@ -76,7 +81,6 @@ class UploadGridContainer extends React.Component {
     const gridType = this.props.grid.gridType;
     const formValues = this.props[gridType].form.selected;
 
-    console.log(formValues);
     let match = util.checkGridAndForm(formValues, this.props.grid.form);
     if (!match.success) {
       return swal.formGridMismatch(match);
@@ -100,12 +104,14 @@ class UploadGridContainer extends React.Component {
   };
 
   render() {
-    const { grid, user } = this.props;
+    const { grid,gridType, user, submissionToEdit } = this.props;
 
     return grid.rows.length > 0 ? (
       <UploadGrid
         grid={grid}
+        gridType={gridType}
         user={user}
+        submissionToEdit={submissionToEdit}
         handleMRN={this.handleMRN}
         handleIndex={this.handleIndex}
         handleAssay={this.handleAssay}
@@ -113,6 +119,7 @@ class UploadGridContainer extends React.Component {
         handleSubmit={this.handleSubmit}
         handleChange={this.handleChange}
         handleSave={this.handleSave}
+        handleUpdate={this.handleUpdate}
         handleDownload={this.handleDownload}
         preValidate={this.props.preValidate}
         handlePatientId={this.props.handlePatientId}
@@ -143,7 +150,7 @@ const mapStateToProps = state => ({
   upload: state.upload,
   dmp: state.dmp,
 
-  submissions: state.submissions,
+  submissionToEdit: state.submissions.submissionToEdit,
   user: state.user
 });
 

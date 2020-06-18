@@ -43,9 +43,7 @@ exports.getSpecies = (recipe) => {
 };
 
 const getColumnNamesFromLimsCols = (limsColumns) => {
-  return limsColumns.map((element) => {
-    return element[0];
-  });
+  return limsColumns.map((element) => element[0]);
 };
 
 const cacheAllPicklists = (limsColumns, allColumns) => {
@@ -119,7 +117,6 @@ export function generateGrid(
     if (!limsColumnList) {
       reject('Invalid Combination.');
     }
-    console.log(limsColumnList);
     // combinations with no optional columns return an empty element we need to filter out
     limsColumnList = limsColumnList.filter((element) => element[0] !== '');
 
@@ -821,15 +818,11 @@ export function handleDmpId(dmpId) {
 
 export function getDmpColumns(material, application) {
   return new Promise((resolve, reject) => {
-    try {
-      let combination = `${material}+${application}`;
-      console.log(combination);
-      let columns = dmpColumns.dmpIntakeForms[combination];
-      console.log(columns);
-      console.log(getColumnNamesFromLimsCols(columns[0]));
+    const combination = `${material}+${application}`;
+    const columns = dmpColumns.dmpIntakeForms[combination];
+    if (columns) {
       resolve(columns);
-    } catch (error) {
-      console.log(error);
+    } else {
       reject(`Could not retrieve grid for '${material}' and '${application}'.`);
     }
   });

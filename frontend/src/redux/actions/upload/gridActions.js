@@ -232,7 +232,7 @@ export function populateGridFromSubmission(submissionId, ownProps) {
           .then(dispatch(updateHeader(submission.formValues)))
           .then(() => {
             dispatch({
-              type: 'GET_SUBMISSION_TO_EDIT_SUCCESS',
+              type: GET_SUBMISSION_TO_EDIT_SUCCESS,
               payload: submission,
               message: 'Loaded!'
             });
@@ -241,7 +241,7 @@ export function populateGridFromSubmission(submissionId, ownProps) {
       })
       .catch(error => {
         return dispatch({
-          type: 'GET_SUBMISSION_TO_EDIT_FAIL',
+          type: GET_SUBMISSION_TO_EDIT_FAIL,
           error: error
         });
       });

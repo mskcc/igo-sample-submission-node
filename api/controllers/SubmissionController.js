@@ -194,10 +194,10 @@ exports.create = [
     console.log(req.body);
     let formValues = JSON.parse(req.body.formValues);
     let gridValues = JSON.parse(req.body.gridValues);
-    let submissionType= req.body.submissionType;
+    let submissionType = req.body.submissionType;
 
     let submission;
-    if (submissionType=== 'dmp') {
+    if (submissionType === 'dmp') {
       submission = new DmpSubmissionModel({
         username: res.user.username,
         formValues: formValues,
@@ -264,6 +264,7 @@ exports.update = [
         if (err) {
           return apiResponse.errorResponse(res, 'Could not update submission.');
         }
+        console.log(submission);
         return apiResponse.successResponseWithData(res, 'Operation success', {
           submission: submission,
         });
@@ -290,7 +291,7 @@ exports.submit = [
     .trim()
     .withMessage('gridValues must be JSON.'),
   function (req, res) {
-    // console.log(req.body)
+    console.log(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return apiResponse.validationErrorWithData(

@@ -4,13 +4,13 @@ import Dropdown from './Shared/formComponents/Dropdown.js';
 import Input from './Shared/formComponents/Input.js';
 
 import GridButton from './Shared/Button.js';
+import EditPanel from './Shared/EditPanel.js';
 
 import UploadForm from './Upload/UploadForm.js';
 import UploadGrid from './Upload/UploadGrid.js';
 import PromoteGrid from './Promote/PromoteGrid.js';
 
 import DmpForm from './Dmp/DmpForm.js';
-// import UploadGrid from './Upload/UploadGrid.js';
 
 import Header from './Shared/Header.js';
 import Message from './Shared/Message.js';
@@ -28,5 +28,6 @@ export {
   UploadForm,
   UploadGrid,
   GridButton,
+  EditPanel,
   DmpForm
 };

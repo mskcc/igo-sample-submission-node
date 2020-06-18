@@ -33,7 +33,7 @@ export const gridColumns = {
     pattern: validationPatterns.micronicTubeBarcode,
     error: 'Micronic tubes have a ten digit barcode.',
     tooltip:
-      'The Micronic Tube Barcode has been provided to you in advance by the sample receiving team.  If you cannot find it, the Micronic Tube Barcode is located on the side of the tube, and the 2D barcode can be scanned by a reade',
+      'Micronic tubes have been provided to you in advance by the Sample and Project Management Team. The barcode can be found on the side of the tube or can be read by a reader on the bottom of the tube.',
   },
   'Block/Slide/TubeID': {
     name: 'Block/Slide/TubeID',
@@ -344,6 +344,7 @@ export const gridColumns = {
     error: 'Only OncoTree Tumor IDs or exact dropdown options are permitted.',
     strict: true,
     picklistName: 'tumorType',
+    tooltip: 'Tumor types taken from http://oncotree.mskcc.org/'
   },
   'Sample Class': {
     name: 'Sample Class',

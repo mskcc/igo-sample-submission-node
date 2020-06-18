@@ -3,7 +3,7 @@
 import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import MuiButton from '@material-ui/core/Button';
-import Fade from '@material-ui/core/Fade';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
@@ -13,21 +13,30 @@ const Button = ({ id, onClick, isLoading, done, title, classes, color }) => (
   <Translate>
     {({ translate }) => (
       <React.Fragment>
-        <MuiButton
-          variant="contained"
-          type="submit"
-          onClick={onClick}
-          className={
-            id.includes('promote') ? classes.promoteButton : classes.button
+        <Tooltip
+          title={
+            translate('buttons.' + id + '_tooltip').includes('Missing')
+              ? translate('buttons.' + id + '_label')
+              : translate('buttons.' + id + '_tooltip')
           }
-          id={id}
-          color={color}
-          disabled={isLoading}
+          classes={{ tooltip: classes.tooltip }}
         >
-          {done
-            ? translate('buttons.' + id + '_msg')
-            : translate('buttons.' + id + '_label')}
-        </MuiButton>
+          <MuiButton
+            variant="contained"
+            type="submit"
+            onClick={onClick}
+            className={
+              id.includes('promote') ? classes.promoteButton : classes.button
+            }
+            id={id}
+            color={color}
+            disabled={isLoading}
+          >
+            {done
+              ? translate('buttons.' + id + '_msg')
+              : translate('buttons.' + id + '_label')}
+          </MuiButton>
+        </Tooltip>
         {isLoading && (
           <CircularProgress
             color={color}
@@ -40,35 +49,39 @@ const Button = ({ id, onClick, isLoading, done, title, classes, color }) => (
   </Translate>
 );
 
-const styles = (theme) => ({
+const styles = theme => ({
   button: {
     margin: theme.spacing(1),
     minWidth: 250,
-    maxWidth: 250,
+    maxWidth: 250
   },
   promoteButton: {
     margin: theme.spacing(1),
     minWidth: 310,
-    maxWidth: 310,
+    maxWidth: 310
   },
   wrapper: {
     margin: theme.spacing(1),
-    position: 'relative',
+    position: 'relative'
+  },
+
+  tooltip: {
+    fontSize: '15px'
   },
   buttonProgress: {
     position: 'absolute',
     top: '50%',
     left: '50%',
     marginTop: -12,
-    marginLeft: -12,
+    marginLeft: -12
   },
   nothingToSubmit: {
     position: 'absolute',
     top: '50%',
     left: '50%',
     marginTop: -53,
-    marginLeft: -65,
-  },
+    marginLeft: -65
+  }
 });
 
 export default withStyles(styles)(Button);

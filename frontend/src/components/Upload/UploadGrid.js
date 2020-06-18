@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core';
 import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.css';
 
-import { GridButton } from '../index';
+import { GridButton, EditPanel } from '../index';
 
 class UploadGrid extends React.Component {
   constructor(props) {
@@ -16,27 +16,45 @@ class UploadGrid extends React.Component {
     const {
       classes,
       grid,
+      gridType,
       handleChange,
+      handleSubmit,
+      handleSave,
+      handleUpdate,
       pasteTooMany,
       user,
+      submissionToEdit,
       handleAssay,
       handleTumorType,
       handlePatientId
     } = this.props;
+    console.log(submissionToEdit);
     return (
       <div>
         <div className={classes.container}>
+          {gridType == 'upload' && submissionToEdit && (
+            <EditPanel submission={submissionToEdit} />
+          )}
           <div className={classes.buttons}>
             <GridButton
               id="gridSubmit"
-              onClick={this.props.handleSubmit}
+              onClick={handleSubmit}
               isLoading={false}
               nothingToSubmit={false}
               color="primary"
             />
+            {submissionToEdit && (
+              <GridButton
+                id="gridUpdate"
+                onClick={handleUpdate}
+                isLoading={user.isSaving}
+                done={user.saved}
+                color="primary"
+              />
+            )}
             <GridButton
-              id="gridSave"
-              onClick={this.props.handleSave}
+              id="gridSaveNew"
+              onClick={handleSave}
               isLoading={user.isSaving}
               done={user.saved}
               color="primary"
@@ -137,12 +155,13 @@ const styles = theme => ({
   container: {
     display: 'grid',
     justifyItems: 'center',
+    gridTemplateAreas: '"submission" "buttons" "grid"',
     marginLeft: theme.spacing(2),
     width: '95vw',
     overflow: 'hidden',
     marginBottom: '5em'
   },
-  buttons: {},
+  submission: {},
   tooltipCell: {
     fontSize: '.8em',
     color: 'black !important',

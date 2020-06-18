@@ -578,7 +578,7 @@ export const checkGridAndForm = (form, grid) => {
   let errors = new Set([]);
 
   let result = { success: true, message: '' };
-  if (form.serviceId !== 'IGO-' + grid.serviceId) {
+  if ('IGO-' + form.serviceId !== grid.serviceId) {
     errors.add(`iLabs Service ID: '${form.serviceId}' vs. '${grid.serviceId}'`);
   }
 
@@ -635,4 +635,12 @@ export const getTransactionId = () => {
   let now = Date.now();
   let transactionId = Math.floor(now / 1000);
   return transactionId;
+};
+
+export const parseDate = mongooseDate => {
+  let date = new Date(mongooseDate * 1000);
+  let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+  let humanReadable = `${date.getMonth() +
+    1}/${date.getDate()}/${date.getFullYear()} at ${date.getHours()}:${minutes}`;
+  return humanReadable;
 };

@@ -198,12 +198,10 @@ exports.grid = [
     .isLength({ min: 1 })
     .trim()
     .withMessage('Material must be present.'),
-
   body('numberOfSamples')
     .isLength({ min: 1 })
     .trim()
     .withMessage('NumberOfSamples must be present.'),
-
   function (req, res) {
     // try {
     const errors = validationResult(req);
@@ -221,41 +219,37 @@ exports.grid = [
       let columnsPromise = cache.get(`${material}-${application}-Columns`, () =>
         util.getDmpColumns(material, application)
       );
-      Promise.all([columnsPromise]).then((results) => {
-        if (results.some((x) => x.length === 0)) {
-          return apiResponse.errorResponse(
-            res,
-            `Could not retrieve grid for '${material}' and '${application}'.`
-          );
-        }
-        let [columnsResult] = results;
-        console.log(columnsResult);
-        let gridPromise = util.generateGrid(
-          columnsResult,
-          res.user.role,
-          formValues,
-          'dmp'
-        );
-
-        Promise.all([gridPromise])
-          .then((results) => {
-            if (results.some((x) => x.length === 0)) {
-              return apiResponse.errorResponse(
-                res,
-                `Could not retrieve grid for '${material}' and '${application}'.`
-              );
-            }
-            let [gridResult] = results;
-            return apiResponse.successResponseWithData(
+      columnsPromise
+        .then((results) => {
+          if (results.some((x) => x.length === 0)) {
+            return apiResponse.errorResponse(
               res,
-              'Operation success',
-              gridResult
+              `Could not retrieve grid for '${material}' and '${application}'.`
             );
-          })
-          .catch((reasons) => {
-            return apiResponse.errorResponse(res, reasons);
-          });
-      });
+          }
+          let columnsResult = results;
+
+          let gridPromise = util
+            .generateGrid(columnsResult, res.user.role, formValues, 'dmp')
+            .catch((reasons) => {
+              return apiResponse.errorResponse(res, reasons);
+            });
+          gridPromise
+            .catch((reasons) => {
+              return apiResponse.errorResponse(res, reasons);
+            })
+            .then((results) => {
+              let gridResult = results;
+              return apiResponse.successResponseWithData(
+                res,
+                'Operation success',
+                gridResult
+              );
+            });
+        })
+        .catch((reasons) => {
+          return apiResponse.errorResponse(res, reasons);
+        });
     }
   },
 ];

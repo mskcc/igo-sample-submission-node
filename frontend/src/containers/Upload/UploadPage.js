@@ -53,6 +53,7 @@ export class UploadPage extends Component {
         {this.props.grid.rows.length > 0 &&
           this.props.type === this.props.grid.gridType && (
             <UploadGridContainer
+            gridType={this.props.type}
               handleSubmit={this.handleGridSubmit}
               pasteTooMany={this.pasteTooMany}
             />
@@ -69,6 +70,7 @@ UploadPage.defaultProps = {
 const mapStateToProps = state => ({
   grid: state.upload.grid,
   form: state.upload.form,
+  // submissionToEdit: state.upload.submissions.submissionToEdit,
   dmpForm: state.dmp.form
 });
 
