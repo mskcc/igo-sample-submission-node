@@ -11,7 +11,7 @@ const CRDB_PASSWORD = process.env.CRDB_PASSWORD;
 const CRDB_SERVER_ID = process.env.CRDB_SERVER_ID;
 const CRDB_DB_USER = process.env.CRDB_DB_USER;
 const CRDB_DB_PW = process.env.CRDB_DB_PW;
-const CRDB_DB_URL = process.env.CRDB_DB_UR;
+const CRDB_DB_URL = process.env.CRDB_DB_URL;
 
 const formatCrdb = (resp) => {
   let data = {};

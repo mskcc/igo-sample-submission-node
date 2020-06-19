@@ -15,7 +15,7 @@ import { Config } from '../../config.js';
 const persistConfig = {
   key: 'root',
   storage: sessionStorage,
-  whitelist: ['upload', 'user', 'submissions', 'promote', 'dmp'],
+  whitelist: ['upload', 'user', 'submissions', 'promote', 'dmp']
 };
 
 const appReducer = combineReducers({
@@ -25,26 +25,20 @@ const appReducer = combineReducers({
   user: userReducer,
   submissions: submissionsReducer,
   promote: promoteReducer,
-  localize: localizeReducer,
+  localize: localizeReducer
 });
 
 const rootReducer = (state, action) => {
   if (action.user) {
     state = {
       ...state,
-      user: { ...action.user },
+      user: { ...action.user }
     };
   }
 
-  if (action.type === 'LOGOUT') {
+  if (action.type === 'LOGOUT_SUCCESS' || action.type === 'LOGOUT_FAIL') {
     console.log('goodbye');
-    localStorage.clear();
-    state = {
-      upload: undefined,
-      user: undefined,
-      common: undefined,
-      localize: state.localize,
-    };
+    sessionStorage.removeItem('persist:root');
     window.location.href = `${Config.LOGIN_PAGE_URL}/${Config.HOME_PAGE_PATH}`;
   }
 

@@ -125,7 +125,6 @@ export const patientIdToCid = data => {
     });
 };
 
-
 export const verifyDmpId = data => {
   const url = `${Config.NODE_API_ROOT}/upload/verifyDmpId`;
   return axios
@@ -353,3 +352,18 @@ export const dryrun = data => {
 };
 
 //  PROMOTE END
+
+export const logout = data => {
+  const url = `${Config.LOGIN_PAGE_URL}/auth/api/logout`;
+  return axios
+    .get(url)
+    .then(resp => {
+      return resp;
+    })
+    .catch(error => {
+      throw error;
+    })
+    .then(resp => {
+      return resp;
+    });
+};
