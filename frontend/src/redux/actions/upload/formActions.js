@@ -106,7 +106,12 @@ export const SELECT = 'SELECT';
 
 export function select(id, value, checkForMismatch = true) {
   return dispatch => {
-    if (id === 'species') {
+    if (
+      id === 'species' ||
+      id === 'container' ||
+      id === 'patientIdType' ||
+      id === 'patientIdTypeSpecified'
+    ) {
       checkForMismatch && dispatch(checkForChange(id, value));
       return dispatch({
         type: SELECT,

@@ -1,7 +1,6 @@
 // actions should not have this much BL, will change once it gets too convoluted
-import React from 'react';
+
 import axios from 'axios';
-import Swal from 'sweetalert2';
 import { updateHeader } from './formActions';
 import { util, swal, services, excel } from '../../../util';
 
@@ -253,10 +252,9 @@ export const HANDLE_PATIENT_ID_FAIL = 'HANDLE_PATIENT_ID_FAIL';
 export const HANDLE_PATIENT_ID_SUCCESS = 'HANDLE_PATIENT_ID_SUCCESS';
 export function handlePatientId(rowIndex) {
   return (dispatch, getState) => {
-    let patientId = getState().upload.grid.rows[rowIndex].patientId;
-    let normalizedPatientID = '';
+    const patientId = getState().upload.grid.rows[rowIndex].patientId.trim();
     let rows = getState().upload.grid.rows;
-    let patientIdType = getState().upload.grid.columnFeatures.find(
+    const patientIdType = getState().upload.grid.columnFeatures.find(
       element => element.data === 'patientId'
     );
     dispatch({ type: 'HANDLE_PATIENT_ID' });
@@ -266,14 +264,13 @@ export function handlePatientId(rowIndex) {
         rows: util.redactMRN(rows, rowIndex, '', '', '')
       });
     }
-    // handle as MRN whenever 8 digit id is entered
+    // simply handle as MRN whenever 8 digit id is entered
     if (/^[0-9]{8}$/.test(patientId.trim())) {
-      return dispatch(handleMRN(rowIndex, patientId.trim()));
+      return dispatch(handleMRN(patientId, patientIdType, rows, rowIndex));
     }
-    // validation necessary because this fct is triggered before any handsontable validation would be
+    // validation necessary because this action is triggered before any handsontable validation would be
     let regex = new RegExp(patientIdType.pattern);
     let isValidId = regex.test(patientId);
-    // PUT IN CONTAINE
     if (!isValidId) {
       dispatch({
         type: HANDLE_PATIENT_ID_FAIL,
@@ -281,50 +278,92 @@ export function handlePatientId(rowIndex) {
         rows: util.redactMRN(rows, rowIndex, '', '', '')
       });
     } else {
-      return services
-        .mrnToCid({
-          patientId: patientId,
-          patientIdType: patientIdType
-        })
-
-        .then(response => {
-          dispatch({
-            type: HANDLE_PATIENT_ID_SUCCESS,
-            rows: util.createPatientId(
-              rows,
-              rowIndex,
-              response.payload.patientId,
-              response.payload.normalizedPatientId
-            )
-          });
-          dispatch({ type: REGISTER_GRID_CHANGE });
-        })
-        .catch(error => {
-          dispatch({
-            type: HANDLE_PATIENT_ID_FAIL,
-            error: error,
-            rows: util.redactMRN(rows, rowIndex, '', '', '')
-          });
-        });
+      switch (patientIdType.columnHeader) {
+        case 'CMO ID':
+          return dispatch(handleCmoId(patientId, rows, rowIndex));
+        case 'DMP ID':
+          return dispatch(handleDmpId(patientId, rows, rowIndex));
+        case 'Cell Line Name':
+          return dispatch(anonymizeId(patientId, 'cellline', rows, rowIndex));
+        case 'MRN':
+          // should never reach this because we check for MRN regex match first - just in case
+          return dispatch(handleMRN(patientId, patientIdType, rows, rowIndex));
+        default:
+          return dispatch(anonymizeId(patientId, 'investigator', rows, rowIndex));
+      }
     }
   };
 }
 
-export const HANDLE_MRN = 'HANDLE_MRN';
-export const HANDLE_MRN_FAIL = 'HANDLE_MRN_FAIL';
-export const HANDLE_MRN_SUCCESS = 'HANDLE_MRN_SUCCESS';
-export function handleMRN(rowIndex, patientId) {
-  return (dispatch, getState) => {
-    dispatch({ type: 'HANDLE_MRN' });
-    let rows = getState().upload.grid.rows;
-    return axios
-      .post(Config.NODE_API_ROOT + '/upload/crdbId', {
+function anonymizeId(patientId,type, rows, rowIndex) {
+  return dispatch => {
+    
+    return services
+      .patientIdToCid({
+        patientId: patientId,
+        type: type,
+      })
+      .then(response => {
+        dispatch({
+          type: HANDLE_PATIENT_ID_SUCCESS,
+          rows: util.createPatientId(
+            rows,
+            rowIndex,
+            response.payload.patientId,
+            response.payload.normalizedPatientId
+          )
+        });
+        dispatch({ type: REGISTER_GRID_CHANGE });
+      })
+      .catch(error => {
+        dispatch({
+          type: HANDLE_PATIENT_ID_FAIL,
+          error: error,
+          rows: util.redactMRN(rows, rowIndex, '', '', '')
+        });
+      });
+  };
+}
+
+function handleCmoId(patientId, rows, rowIndex) {
+  return dispatch => {
+    // CMO IDs have a 'C-' prefix in the LIMS but not in CRDB, which we use to verify
+    const cmoId = patientId.replace('C-', '');
+    return services
+      .verifyCmoId({
+        cmoId: cmoId
+      })
+      .then(response => {
+        dispatch({
+          type: HANDLE_PATIENT_ID_SUCCESS,
+          rows: util.createPatientId(
+            rows,
+            rowIndex,
+            response.payload.patientId,
+            response.payload.normalizedPatientId
+          )
+        });
+        dispatch({ type: REGISTER_GRID_CHANGE });
+      })
+      .catch(error => {
+        dispatch({
+          type: HANDLE_PATIENT_ID_FAIL,
+          error: error,
+          rows: util.redactMRN(rows, rowIndex, '', '', '')
+        });
+      });
+  };
+}
+
+function handleMRN(patientId, patientIdType, rows, rowIndex) {
+  return dispatch => {
+    return services
+      .mrnToCid({
         patientId: patientId
       })
       .then(response => {
         dispatch({
-          type: HANDLE_MRN_SUCCESS,
-          message: 'MRN redacted.',
+          type: HANDLE_PATIENT_ID_SUCCESS,
           rows: util.redactMRN(
             rows,
             rowIndex,
@@ -337,11 +376,39 @@ export function handleMRN(rowIndex, patientId) {
       })
       .catch(error => {
         dispatch({
-          type: HANDLE_MRN_FAIL,
+          type: HANDLE_PATIENT_ID_FAIL,
           error: error,
           rows: util.redactMRN(rows, rowIndex, '', '', '')
         });
-        return error;
+      });
+  };
+}
+
+function handleDmpId(patientId, rows, rowIndex) {
+  return dispatch => {
+    return services
+      .verifyDmpId({
+        dmpId: patientId
+      })
+
+      .then(response => {
+        dispatch({
+          type: HANDLE_PATIENT_ID_SUCCESS,
+          rows: util.createPatientId(
+            rows,
+            rowIndex,
+            response.payload.patientId,
+            response.payload.normalizedPatientId
+          )
+        });
+        dispatch({ type: REGISTER_GRID_CHANGE });
+      })
+      .catch(error => {
+        dispatch({
+          type: HANDLE_PATIENT_ID_FAIL,
+          error: error,
+          rows: util.redactMRN(rows, rowIndex, '', '', '')
+        });
       });
   };
 }

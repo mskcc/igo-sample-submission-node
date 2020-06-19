@@ -286,10 +286,7 @@ exports.mrnToCid = [
     .isLength({ min: 1 })
     .trim()
     .withMessage('patientId must be specified.'),
-  body('patientIdType')
-    .isLength({ min: 1 })
-    .trim()
-    .withMessage('patientIdType must be specified.'),
+
   function (req, res) {
     try {
       const errors = validationResult(req);
@@ -302,16 +299,65 @@ exports.mrnToCid = [
       } else {
         // remove leading and trailing whitespaces just in case
         let patientId = req.body.patientId.replace(/^\s+|\s+$/g, '');
-        let patientIdType = req.body.patientIdType;
-        let username = res.user.username;
-        let normalizedPatientId = '';
-        if (patientIdType.columnHeader === 'Cell Line Name') {
-          normalizedPatientId = `CELLLINE_${patientId
-            .replace(/_|\W/g, '')
-            .toUpperCase()}`;
+
+        let patientIdPromise = crdbServices.getCrdbId(patientId);
+
+        Promise.all([patientIdPromise])
+          .catch(function (err) {
+            return apiResponse.errorResponse(res, err);
+          })
+          .then((results) => {
+            if (results.some((x) => x.length === 0)) {
+              return apiResponse.errorResponse(res, 'Could not anonymize ID.');
+            }
+            let [patientIdResult] = results;
+            let responseObject = {
+              ...patientIdResult,
+              normalizedPatientId: 'MRN REDACTED',
+            };
+            return apiResponse.successResponseWithData(
+              res,
+              'Operation success',
+              responseObject
+            );
+          });
+      }
+    } catch (err) {
+      return apiResponse.errorResponse(res, err);
+    }
+  },
+];
+
+// default patient id scrambler (not MRN, not C-ID, not DMP)
+exports.patientIdToCid = [
+  body('patientId')
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage('patientIdType must be specified.'),
+  body('type')
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage('type must be specified.'),
+  function (req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return apiResponse.validationErrorWithData(
+          res,
+          'Validation error.',
+          errors.array()
+        );
+      } else {
+        // remove leading and trailing whitespaces just in case
+        let patientId = req.body.patientId;
+        let type = req.body.type;
+        let normalizedPatientId;
+        if (type === 'cellline') {
+          normalizedPatientId = `CELLLINE_${patientId.toUpperCase()}`;
         } else {
-          normalizedPatientId = `${username.toUpperCase()}_${patientId}`;
+          normalizedPatientId = `${res.user.username.toUpperCase()}_${patientId.toUpperCase()}`;
         }
+
         let patientIdPromise = crdbServices.getCrdbId(normalizedPatientId);
 
         Promise.all([patientIdPromise])
@@ -361,6 +407,8 @@ exports.verifyCmoId = [
       } else {
         // remove leading and trailing whitespaces just in case
         let cmoId = req.body.cmoId.replace(/^\s+|\s+$/g, '');
+        let username = res.user.username;
+        let normalizedPatientId = `${username.toUpperCase()}_${cmoId}`;
 
         let patientIdPromise = crdbServices.verifyCmoId(cmoId);
 
@@ -372,9 +420,9 @@ exports.verifyCmoId = [
             if (results.some((x) => x.length === 0)) {
               return apiResponse.errorResponse(res, 'Could not verify ID.');
             }
-            let [patientIdResult] = results;
             let responseObject = {
-              ...patientIdResult,
+              patientId: cmoId,
+              normalizedPatientId: normalizedPatientId,
             };
             return apiResponse.successResponseWithData(
               res,
@@ -407,7 +455,7 @@ exports.verifyDmpId = [
       } else {
         // remove leading and trailing whitespaces just in case
         let dmpId = req.body.dmpId.replace(/^\s+|\s+$/g, '');
-
+        let normalizedPatientId = `${res.user.username.toUpperCase()}_${dmpId}`;
         let patientIdPromise = util.handleDmpId(dmpId);
 
         Promise.all([patientIdPromise])
@@ -421,6 +469,7 @@ exports.verifyDmpId = [
             let [patientIdResult] = results;
             let responseObject = {
               ...patientIdResult,
+              normalizedPatientId: normalizedPatientId,
             };
             return apiResponse.successResponseWithData(
               res,

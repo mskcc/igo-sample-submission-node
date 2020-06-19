@@ -11,6 +11,7 @@ router.get(
 );
 router.get('/picklist', UploadController.picklist);
 router.post('/grid', UploadController.grid);
+router.post('/patientIdToCid', UploadController.patientIdToCid);
 router.post('/mrnToCid', UploadController.mrnToCid);
 router.post('/verifyCmoId', UploadController.verifyCmoId);
 router.post('/verifyDmpId', UploadController.verifyDmpId);

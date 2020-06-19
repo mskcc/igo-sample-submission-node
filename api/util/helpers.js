@@ -765,9 +765,8 @@ export function promote(
 export function handleDmpId(dmpId) {
   return new Promise((resolve, reject) => {
     let result = {
-      patientId: 'MRN REDACTED',
+      patientId: dmpId,
       cmoPatientId: '',
-      normalizedPatientId: 'MRN REDACTED',
     };
 
     crdbServices

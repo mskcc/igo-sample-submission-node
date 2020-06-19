@@ -7,7 +7,7 @@ const initialState = {
   saved: false,
   grid: { columnHeaders: [], rows: [], columnFeatures: [] },
   isSaving: false,
-  submissionToEdit: {}
+  submissionToEdit: undefined
 };
 
 function submissionsReducer(state = initialState, action) {

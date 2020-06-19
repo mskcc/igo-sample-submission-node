@@ -77,10 +77,12 @@ exports.verifyCmoId = (cmoId) => {
           )
           .then(function (result) {
             connection.close();
+            logger.log('info', 'Successfully retrieved response from CRDB');
             resolve(formatDbResponse(result));
           })
           .catch(function (error) {
             connection.close();
+            logger.log('info', 'Error retrieving response from CRDB');
             reject(error);
           });
       })
@@ -106,10 +108,12 @@ exports.verifyDmpId = (dmpId) => {
           )
           .then(function (result) {
             connection.close();
+            logger.log('info', 'Successfully retrieved response from CRDB');
             resolve(formatDbResponse(result));
           })
           .catch(function (error) {
             connection.close();
+            logger.log('info', 'Error retrieving response from CRDB');
             reject(error);
           });
       })
