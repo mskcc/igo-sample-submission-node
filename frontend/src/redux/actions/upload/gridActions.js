@@ -397,7 +397,7 @@ function handleDmpId(patientId, rows, rowIndex) {
           rows: util.createPatientId(
             rows,
             rowIndex,
-            response.payload.patientId,
+            response.payload.cmoPatientId,
             response.payload.normalizedPatientId
           )
         });

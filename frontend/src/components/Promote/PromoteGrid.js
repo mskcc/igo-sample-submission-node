@@ -4,7 +4,8 @@ import {
   Divider,
   Paper,
   IconButton,
-  InputBase
+  InputBase,
+  InputAdornment
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { HotTable } from '@handsontable/react';
@@ -80,6 +81,9 @@ class PromoteGrid extends Component {
                     this.handleLoad('serviceId');
                   }
                 }}
+                startAdornment={
+                  <InputAdornment position="start">IGO-</InputAdornment>
+                }
               />
               <Divider className={classes.divider} orientation="vertical" />
               <IconButton

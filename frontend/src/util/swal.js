@@ -140,7 +140,7 @@ export const confirmUpdate = () => {
       animation: false,
       confirmButtonColor: '#df4602',
       cancelButtonColor: '#007cba',
-      confirmButtonText: 'Overwrite',
+      confirmButtonText: 'Yes',
       cancelButtonText: 'Cancel'
     }).then(result => {
       if (result.value) {

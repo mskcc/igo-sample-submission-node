@@ -11,17 +11,19 @@ const DmpSubmissionModel = require('../models/DmpSubmissionModel');
 
 exports.list = [
   function (req, res) {
-    SubmissionModel.find({}, '').exec(function (err, submissions) {
-      if (err) {
-        return apiResponse.errorResponse(
-          res,
-          'Could not retrieve submissions.'
-        );
-      }
-      return apiResponse.successResponseWithData(res, 'Operation success', {
-        submissions,
+    SubmissionModel.find({}, '')
+      .sort({ createdAt: 'desc' })
+      .exec(function (err, submissions) {
+        if (err) {
+          return apiResponse.errorResponse(
+            res,
+            'Could not retrieve submissions.'
+          );
+        }
+        return apiResponse.successResponseWithData(res, 'Operation success', {
+          submissions,
+        });
       });
-    });
   },
 ];
 
@@ -79,36 +81,38 @@ exports.unsubmit = [
 // table for all todo: table for users
 exports.grid = [
   function (req, res) {
-    SubmissionModel.find({}, '').exec(function (err, submissions) {
-      if (err) {
-        return apiResponse.errorResponse(
-          res,
-          'Could not retrieve submissions.'
-        );
-      }
-      let submissionGridPromise = util.generateSubmissionGrid(
-        submissions,
-        res.user.role
-      );
-      Promise.all([submissionGridPromise])
-        .then((results) => {
-          if (results.some((x) => x.length === 0)) {
-            return apiResponse.errorResponse(
-              res,
-              'Could not retrieve submission grid.'
-            );
-          }
-          let [submissionGridResult] = results;
-          return apiResponse.successResponseWithData(
+    SubmissionModel.find({}, '')
+      .sort({ createdAt: 'desc' })
+      .exec(function (err, submissions) {
+        if (err) {
+          return apiResponse.errorResponse(
             res,
-            'Operation success',
-            submissionGridResult
+            'Could not retrieve submissions.'
           );
-        })
-        .catch((reasons) => {
-          return apiResponse.errorResponse(res, reasons);
-        });
-    });
+        }
+        let submissionGridPromise = util.generateSubmissionGrid(
+          submissions,
+          res.user.role
+        );
+        Promise.all([submissionGridPromise])
+          .then((results) => {
+            if (results.some((x) => x.length === 0)) {
+              return apiResponse.errorResponse(
+                res,
+                'Could not retrieve submission grid.'
+              );
+            }
+            let [submissionGridResult] = results;
+            return apiResponse.successResponseWithData(
+              res,
+              'Operation success',
+              submissionGridResult
+            );
+          })
+          .catch((reasons) => {
+            return apiResponse.errorResponse(res, reasons);
+          });
+      });
   },
 ];
 
@@ -125,39 +129,38 @@ exports.since = [
       );
     }
     let time = req.params.time;
-    SubmissionModel.find({ createdAt: { $gt: time } }, '').exec(function (
-      err,
-      submissions
-    ) {
-      if (err || _.isEmpty(submissions)) {
-        return apiResponse.errorResponse(
-          res,
-          'Could not retrieve submissions.'
-        );
-      }
-      let submissionGridPromise = util.generateSubmissionGrid(
-        submissions,
-        res.user.role
-      );
-      Promise.all([submissionGridPromise])
-        .then((results) => {
-          if (results.some((x) => x.length === 0)) {
-            return apiResponse.errorResponse(
-              res,
-              'Could not retrieve submission grid.'
-            );
-          }
-          let [submissionGridResult] = results;
-          return apiResponse.successResponseWithData(
+    SubmissionModel.find({ createdAt: { $gt: time } }, '')
+      .sort({ createdAt: 'desc' })
+      .exec(function (err, submissions) {
+        if (err || _.isEmpty(submissions)) {
+          return apiResponse.errorResponse(
             res,
-            'Operation success',
-            submissionGridResult
+            'Could not retrieve submissions.'
           );
-        })
-        .catch((reasons) => {
-          return apiResponse.errorResponse(res, reasons);
-        });
-    });
+        }
+        let submissionGridPromise = util.generateSubmissionGrid(
+          submissions,
+          res.user.role
+        );
+        Promise.all([submissionGridPromise])
+          .then((results) => {
+            if (results.some((x) => x.length === 0)) {
+              return apiResponse.errorResponse(
+                res,
+                'Could not retrieve submission grid.'
+              );
+            }
+            let [submissionGridResult] = results;
+            return apiResponse.successResponseWithData(
+              res,
+              'Operation success',
+              submissionGridResult
+            );
+          })
+          .catch((reasons) => {
+            return apiResponse.errorResponse(res, reasons);
+          });
+      });
   },
 ];
 
@@ -254,7 +257,7 @@ exports.update = [
     let formValues = JSON.parse(req.body.formValues);
     let gridValues = JSON.parse(req.body.gridValues);
     let id = req.body.id;
-    
+
     SubmissionModel.findByIdAndUpdate(
       ObjectId(id),
       {
