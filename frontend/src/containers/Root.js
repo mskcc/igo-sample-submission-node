@@ -44,6 +44,9 @@ class Root extends Component {
     // this.props.checkVersion()
     // this.props.refreshToken()
     document.addEventListener('keydown', this.escFunction, false);
+    if (!this.props.username) {
+      this.props.fetchUser();
+    }
   }
   componentWillUnmount() {
     document.removeEventListener('keydown', this.escFunction, false);

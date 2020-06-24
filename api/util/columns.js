@@ -78,11 +78,11 @@ export const gridColumns = {
     data: 'userId',
     pattern: validationPatterns.userId,
     tooltip:
-      'The Sample ID stays with your sample for its lifetime. Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively.',
+      'The Sample ID stays with your sample for its lifetime. Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively.Cannot contain "sample" or "IGO-".',
     error:
-      'Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively.',
+      'Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively. Cannot contain "sample" or "IGO-".',
     uniqueError: 'Sample ID needs to be unique.',
-    containsSampleError: 'Sample ID cannot contain the word "sample".',
+    containsSampleError: 'Sample ID cannot contain the word "sample" or "IGO-.',
   },
   Species: {
     name: 'Species',
@@ -179,7 +179,7 @@ export const gridColumns = {
     type: 'autocomplete',
     error: 'Only dropdown options are permitted as values',
     strict: true,
-    picklistName: 'Sequencing+Reads+Requested',
+    picklistName: 'SubmissionReadsCoverage',
   },
   Index: {
     name: 'Index',
@@ -677,7 +677,7 @@ export const dmpColumns = {
     name: 'Investigator Sample ID (Study Sample Identifier)',
     columnHeader: 'Investigator Sample ID (Study Sample Identifier)',
     data: 'userId',
-    pattern: validationPatterns.alphanumdash,
+    pattern: validationPatterns.userId,
     error: 'Only letters, digits and –, please.',
   },
 

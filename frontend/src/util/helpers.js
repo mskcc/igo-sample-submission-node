@@ -499,7 +499,10 @@ export const validateGrid = (changes, grid) => {
         continue;
       }
       // "sample" not allowed in this id
-      if (newValue.toLowerCase().includes('sample')) {
+      if (
+        newValue.toLowerCase().includes('sample') ||
+        newValue.toLowerCase().includes('igo-')
+      ) {
         errors.add(
           grid.columnFeatures[columnIndex].name +
             ': ' +

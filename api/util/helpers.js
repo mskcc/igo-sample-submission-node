@@ -8,12 +8,6 @@ const dmpColumns = require('./dmpColumns');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 
-exports.determineRole = (groups) => {
-  if (groups.includes(process.env.LAB_GROUP)) return 'lab_member';
-  if (groups.includes(process.env.PM_GROUP)) return 'project_manager';
-  else return 'user';
-};
-
 exports.createSharedString = (shared, username) => {
   let sharedSet = new Set();
   let sharedArray = shared.split(',');
@@ -74,6 +68,7 @@ const cacheAllPicklists = (limsColumns, allColumns) => {
             picklistPromises.push(
               cache.get(picklist + '-Picklist', () => services.getOnco())
             );
+          
           } else {
             picklistPromises.push(
               cache.get(picklist + '-Picklist', () =>
@@ -91,6 +86,7 @@ const cacheAllPicklists = (limsColumns, allColumns) => {
       Object.keys(picklists).map((element, index) => {
         picklists[element] = results[index];
       });
+      console.log(picklists);
       resolve(picklists);
     });
   });
@@ -248,17 +244,17 @@ function fillColumns(
 const overwriteContainer = (userContainer, allColumns) => {
   let newContainer;
   switch (userContainer) {
-  case 'Plates':
-    newContainer = allColumns.gridColumns['Plate ID'];
-    break;
-  case 'Micronic Barcoded Tubes':
-    newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
-    break;
-  case 'Blocks/Slides/Tubes':
-    newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
-    break;
-  default:
-    return `Container '${userContainer}' not found.`;
+    case 'Plates':
+      newContainer = allColumns.gridColumns['Plate ID'];
+      break;
+    case 'Micronic Barcoded Tubes':
+      newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
+      break;
+    case 'Blocks/Slides/Tubes':
+      newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
+      break;
+    default:
+      return `Container '${userContainer}' not found.`;
   }
   return newContainer;
 };

@@ -4,9 +4,6 @@ import axios from 'axios';
 import { Config } from '../../../config.js';
 import { services } from '../../../util/index.js';
 
-// species that trigger patient id field
-const PatientIDSpecies = ['human'];
-
 export const MESSAGE = 'MESSAGE';
 
 export const REQUEST_MATERIALS_AND_APPLICATIONS =
@@ -37,7 +34,6 @@ export function getInitialState() {
           return dispatch({
             type: RECEIVE_INITIAL_STATE_SUCCESS,
             form_data: response.payload,
-            user: response.payload.user
           });
         })
         .catch(error => {

@@ -30,7 +30,7 @@ axios.interceptors.response.use(
       error.payload = error.response.data;
       if (error.response.status === 401) {
         // Automatically redirect client to the login page
-        window.location.href = `${Config.LOGIN_PAGE_URL}/${Config.HOME_PAGE_PATH}`;
+        window.location.href = `${Config.AUTH_URL}/${Config.HOME_PAGE_PATH}`;
       }
     }
     // Do something with response error
@@ -353,8 +353,10 @@ export const dryrun = data => {
 
 //  PROMOTE END
 
+
+//  USER 
 export const logout = data => {
-  const url = `${Config.LOGIN_PAGE_URL}/auth/api/logout`;
+  const url = `${Config.AUTH_URL}/api/auth/logout`;
   return axios
     .get(url)
     .then(resp => {
@@ -367,3 +369,19 @@ export const logout = data => {
       return resp;
     });
 };
+
+export const fetchUser = data => {
+  const url = `${Config.AUTH_URL}/api/session/user`;
+  return axios
+    .get(url)
+    .then(resp => {
+      return resp;
+    })
+    .catch(error => {
+      throw error;
+    })
+    .then(resp => {
+      return resp;
+    });
+};
+//  USER END

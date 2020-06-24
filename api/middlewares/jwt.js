@@ -4,9 +4,8 @@ const apiResponse = require('../util/apiResponse');
 exports.authenticate = function (req, res, next) {
   try {
     let user = jwtInCookie.validateJwtToken(req);
-    // req.user = user
     res.user = user;
-    res.user.role = determineRole(user);
+    user.role = determineRole(user);
   } catch (err) {
     return apiResponse.unauthorizedResponse(res, 'Invalid session');
   }
@@ -14,11 +13,11 @@ exports.authenticate = function (req, res, next) {
 };
 
 const determineRole = (user) => {
-  if (user.isAdmin) {
-    return 'admin';
-  }
   if (user.isLabMember) {
     return 'lab_member';
+  }
+  if (user.isPM) {
+    return 'cmo_pm';
   }
   if (user.isUser) {
     return 'user';

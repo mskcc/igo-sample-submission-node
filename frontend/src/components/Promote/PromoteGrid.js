@@ -81,9 +81,6 @@ class PromoteGrid extends Component {
                     this.handleLoad('serviceId');
                   }
                 }}
-                startAdornment={
-                  <InputAdornment position="start">IGO-</InputAdornment>
-                }
               />
               <Divider className={classes.divider} orientation="vertical" />
               <IconButton
