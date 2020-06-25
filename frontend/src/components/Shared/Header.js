@@ -24,45 +24,6 @@ const Header = ({ classes, loggedIn, role }) => (
       </Typography>
 
       <React.Fragment>
-        <Button>
-          <NavLink
-            to="/upload"
-            activeClassName={classes.active}
-            className={classes.navlink}
-          >
-            <Typography color="inherit" variant="h6">
-              Upload
-            </Typography>
-          </NavLink>
-        </Button>
-        <Divider className={classes.divider} orientation="vertical" flexItem />
-
-        <Button>
-          <NavLink
-            to="/dmp"
-            activeClassName={classes.active}
-            className={classes.navlink}
-          >
-            <Typography color="inherit" variant="h6">
-              DMP
-            </Typography>
-          </NavLink>
-        </Button>
-        <Divider className={classes.divider} orientation="vertical" flexItem />
-
-        <Button>
-          <NavLink
-            to="/submissions"
-            activeClassName={classes.active}
-            className={classes.navlink}
-          >
-            <Typography color="inherit" variant="h6">
-              My Submissions
-            </Typography>
-          </NavLink>
-        </Button>
-        <Divider className={classes.divider} orientation="vertical" flexItem />
-
         {role !== '' && role !== 'user' && (
           <React.Fragment>
             <Button>
@@ -76,7 +37,6 @@ const Header = ({ classes, loggedIn, role }) => (
                 </Typography>
               </NavLink>
             </Button>
-            <Divider className={classes.divider} orientation="vertical" flexItem />
           </React.Fragment>
         )}
         <Button>
@@ -90,7 +50,6 @@ const Header = ({ classes, loggedIn, role }) => (
             </Typography>
           </NavLink>
         </Button>
-        <Divider className={classes.divider} orientation="vertical" flexItem />
       </React.Fragment>
     </Toolbar>
   </AppBar>
@@ -119,8 +78,7 @@ const styles = theme => ({
   },
 
   divider: {
-    backgroundColor: 'rgba(255,255,255,0.7)',
-    
+    backgroundColor: 'rgba(255,255,255,0.7)'
   }
 });
 

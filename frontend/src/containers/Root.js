@@ -82,21 +82,11 @@ class Root extends Component {
                   )}
                   <div>
                     <Route
-                      path="/(upload|)"
-                      render={routeProps => (
-                        <UploadPage {...routeProps} type="upload" />
-                      )}
+                      path="/(promote|)"
+                      component={PromotePage} 
                     />
-                    <Route path="/promote" component={PromotePage} />
-                    <Route path="/submissions" component={SubmissionsPage} />
-                    <Route
-                      path="/dmp"
-                      render={routeProps => (
-                        <UploadPage {...routeProps} type="dmp" />
-                      )}
-                    />
+                    
                     <Route path="/logout" component={Logout} />
-                    <Route path="/login" component={Login} />
                     <Route path="/error" component={ErrorPage} />
                   </div>{' '}
                   {this.props.common.message &&
