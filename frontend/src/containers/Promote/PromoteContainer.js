@@ -35,7 +35,7 @@ class Promote extends Component {
       return swal.alertEmptyLoad(queryType);
     }
     if (queryType === 'serviceId') {
-      query = query.includes('IGO-') ? query : `IGO-${query}`;
+      query = query.toLowerCase().includes('igo-') ? query : `IGO-${query}`;
     }
     this.props.loadBankedSamples(queryType, query);
   };

@@ -10,14 +10,13 @@ import {
   withStyles
 } from '@material-ui/core';
 
-import classNames from 'classnames';
-import image from './msk.png';
+import logo from './logo.png';
 
 const Header = ({ classes, loggedIn, role }) => (
   // <div className={classes.mskccHeader}>
-  <AppBar position="static" title={image} className={classes.header}>
+  <AppBar position="static" title={logo} className={classes.header}>
     <Toolbar>
-      <Avatar alt="mskcc logo" src={image} className={classes.avatar} />
+      <Avatar alt="mskcc logo" src={logo} className={classes.avatar} />
 
       <Typography color="inherit" variant="h6" className={classes.title}>
         IGO Sample Submission
@@ -35,7 +34,7 @@ const Header = ({ classes, loggedIn, role }) => (
             </Typography>
           </NavLink>
         </Button>
-        <Divider className={classes.divider} orientation="vertical" flexItem />
+        <div className={classes.divider}>&#8226;</div>
 
         <Button>
           <NavLink
@@ -48,7 +47,7 @@ const Header = ({ classes, loggedIn, role }) => (
             </Typography>
           </NavLink>
         </Button>
-        <Divider className={classes.divider} orientation="vertical" flexItem />
+        <div className={classes.divider}>&#8226;</div>
 
         <Button>
           <NavLink
@@ -61,7 +60,7 @@ const Header = ({ classes, loggedIn, role }) => (
             </Typography>
           </NavLink>
         </Button>
-        <Divider className={classes.divider} orientation="vertical" flexItem />
+        <div className={classes.divider}>&#8226;</div>
 
         {role !== '' && role !== 'user' && (
           <React.Fragment>
@@ -76,7 +75,7 @@ const Header = ({ classes, loggedIn, role }) => (
                 </Typography>
               </NavLink>
             </Button>
-            <Divider className={classes.divider} orientation="vertical" flexItem />
+            <div className={classes.divider}>&#8226;</div>
           </React.Fragment>
         )}
         <Button>
@@ -90,7 +89,7 @@ const Header = ({ classes, loggedIn, role }) => (
             </Typography>
           </NavLink>
         </Button>
-        <Divider className={classes.divider} orientation="vertical" flexItem />
+        <div className={classes.divider}>&#8226;</div>
       </React.Fragment>
     </Toolbar>
   </AppBar>
@@ -99,6 +98,10 @@ const Header = ({ classes, loggedIn, role }) => (
 );
 
 const styles = theme => ({
+  avatar: {
+    marginRight: theme.spacing(3)
+  },
+
   header: {
     backgroundColor: theme.palette.primary.logo,
     color: 'white',
@@ -119,8 +122,9 @@ const styles = theme => ({
   },
 
   divider: {
-    backgroundColor: 'rgba(255,255,255,0.7)',
-    
+    // backgroundColor: 'rgba(255,255,255,0.7)',
+    color: 'rgba(255,255,255,1)',
+    paddingBottom: '7px'
   }
 });
 

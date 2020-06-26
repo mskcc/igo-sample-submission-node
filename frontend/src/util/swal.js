@@ -71,7 +71,6 @@ export const confirmGridOverwrite = msg => {
         resolve(true);
       } else resolve(false);
     });
-    
   });
 };
 
@@ -177,20 +176,13 @@ export const emptyFieldsError = emptyColumns => {
 };
 
 export const submitSuccess = () => {
-  return new Promise(resolve => {
-    Swal.fire({
-      title: 'Submitted!',
-      text: 'Download your Receipt under My Submissions.',
-      type: 'success',
-      showCancelButton: true,
-      animation: false,
-      confirmButtonColor: '#007cba',
-      cancelButtonColor: '#4c8b2b',
-      confirmButtonText: 'Dismiss',
-      cancelButtonText: 'To My Submissions'
-    }).then(result =>
-      result.value ? resolve('upload') : resolve('submissions')
-    );
+  Swal.fire({
+    title: 'Submitted!',
+    text: 'Download your Receipt under My Submissions.',
+    type: 'success',
+    animation: false,
+    confirmButtonColor: '#007cba',
+    confirmButtonText: 'Dismiss'
   });
 };
 

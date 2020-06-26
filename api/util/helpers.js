@@ -244,17 +244,17 @@ function fillColumns(
 const overwriteContainer = (userContainer, allColumns) => {
   let newContainer;
   switch (userContainer) {
-    case 'Plates':
-      newContainer = allColumns.gridColumns['Plate ID'];
-      break;
-    case 'Micronic Barcoded Tubes':
-      newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
-      break;
-    case 'Blocks/Slides/Tubes':
-      newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
-      break;
-    default:
-      return `Container '${userContainer}' not found.`;
+  case 'Plates':
+    newContainer = allColumns.gridColumns['Plate ID'];
+    break;
+  case 'Micronic Barcoded Tubes':
+    newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
+    break;
+  case 'Blocks/Slides/Tubes':
+    newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
+    break;
+  default:
+    return `Container '${userContainer}' not found.`;
   }
   return newContainer;
 };

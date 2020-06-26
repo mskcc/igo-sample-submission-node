@@ -189,9 +189,7 @@ export function submitSubmission() {
         dispatch({
           type: SUBMIT_SUCCESS
         });
-        swal.submitSuccess().then(page => {
-          window.location.href = `/${page}`;
-        });
+        return swal.submitSuccess();
       })
       .catch(error => {
         dispatch({
