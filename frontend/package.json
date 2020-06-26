@@ -84,7 +84,10 @@
     "start": "node scripts/start.js",
     "dev": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js"
+    "test": "node scripts/test.js",
+    "config-qa": "cp ./src/config.qa.js ./src/config.js",
+    "config-dev": "cp ./src/config.dev.js ./src/config.js",
+    "config-prod": "cp ./src/config.prod.js ./src/config.js"
   },
   "eslintConfig": {
     "extends": "react-app"

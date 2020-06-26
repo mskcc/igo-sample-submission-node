@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { HashRouter as Router, Route } from 'react-router-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 import { connect } from 'react-redux';
