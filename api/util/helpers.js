@@ -68,7 +68,6 @@ const cacheAllPicklists = (limsColumns, allColumns) => {
             picklistPromises.push(
               cache.get(picklist + '-Picklist', () => services.getOnco())
             );
-          
           } else {
             picklistPromises.push(
               cache.get(picklist + '-Picklist', () =>
@@ -86,7 +85,6 @@ const cacheAllPicklists = (limsColumns, allColumns) => {
       Object.keys(picklists).map((element, index) => {
         picklists[element] = results[index];
       });
-      console.log(picklists);
       resolve(picklists);
     });
   });
@@ -244,17 +242,17 @@ function fillColumns(
 const overwriteContainer = (userContainer, allColumns) => {
   let newContainer;
   switch (userContainer) {
-  case 'Plates':
-    newContainer = allColumns.gridColumns['Plate ID'];
-    break;
-  case 'Micronic Barcoded Tubes':
-    newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
-    break;
-  case 'Blocks/Slides/Tubes':
-    newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
-    break;
-  default:
-    return `Container '${userContainer}' not found.`;
+    case 'Plates':
+      newContainer = allColumns.gridColumns['Plate ID'];
+      break;
+    case 'Micronic Barcoded Tubes':
+      newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
+      break;
+    case 'Blocks/Slides/Tubes':
+      newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
+      break;
+    default:
+      return `Container '${userContainer}' not found.`;
   }
   return newContainer;
 };
@@ -749,6 +747,7 @@ export function promote(
         resolve(response);
       })
       .catch((err) => {
+
         reject(err);
       });
   });
@@ -768,6 +767,11 @@ export function handleDmpId(dmpId) {
     crdbServices
       .verifyDmpId(dmpId)
       .then((response) => {
+        if (!response.CMO_ID) {
+          reject(
+            `Could not verify ID ${dmpId}. If possible, enter MRN for this patient instead.`
+          );
+        }
         result.cmoPatientId = response.CMO_ID;
         resolve(result);
       })

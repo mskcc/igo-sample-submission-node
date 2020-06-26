@@ -463,9 +463,6 @@ exports.verifyDmpId = [
             return apiResponse.errorResponse(res, err);
           })
           .then((results) => {
-            if (results.some((x) => x.length === 0)) {
-              return apiResponse.errorResponse(res, 'Could not verify ID.');
-            }
             let [patientIdResult] = results;
             let responseObject = {
               ...patientIdResult,
