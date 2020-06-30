@@ -14,7 +14,7 @@ const validationPatterns = {
   dmpPatientId: '^P-[0-9]{7}$',
   mrn: '^[0-9]{8}$',
   groupingId: '[A-Za-z0-9\\,_-]{4,}',
-  plateId: '^MSK-[A-Za-z0-9\\,_-]{10,}$',
+  // plateId: '^MSK-[A-Za-z0-9\\,_-]{10,}$',
 };
 
 export const deprecatedColumns = ['Index Position'];
@@ -50,9 +50,9 @@ export const gridColumns = {
     columnHeader: 'Plate ID',
     data: 'plateId',
     container: 'Plates',
-    pattern: validationPatterns.plateId,
-    error:
-      'Only letters, digits and –, please. Must begin with "MSK-" followed by 10 characters.',
+    // pattern: validationPatterns.plateId,
+    // error:
+    //   'Only letters, digits and –, please. Must begin with "MSK-" followed by 10 characters.',
     tooltip:
       'The Plate ID is the barcode on the side of your plate, and it begins with MSK-. Please scan or carefully type the barcode into this field for all samples on this plate.',
   },
