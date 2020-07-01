@@ -439,14 +439,18 @@ function choosePatientIdValidator(
   }
 }
 
-export function generateSubmissionGrid(submissions, userRole) {
+export function generateSubmissionGrid(submissions, userRole, submissionType) {
   return new Promise((resolve, reject) => {
+    let gridColumns =
+      submissionType === 'dmp'
+        ? dmpColumns.submissionColumns
+        : submitColumns.submissionColumns;
     try {
       let grid = { columnHeaders: [], rows: [], columnFeatures: [] };
-      grid.columnHeaders = Object.keys(submitColumns.submissionColumns).map(
-        (a) => submitColumns.submissionColumns[a].name
+      grid.columnHeaders = Object.keys(gridColumns).map(
+        (a) => gridColumns[a].name
       );
-      grid.columnFeatures = Object.values(submitColumns.submissionColumns);
+      grid.columnFeatures = Object.values(gridColumns);
 
       if (userRole === 'user') {
         grid.columnHeaders = grid.columnHeaders.filter((element) => {
@@ -486,6 +490,10 @@ export function generateSubmissionGrid(submissions, userRole) {
             ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">delete</span>`
             : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action">delete</span>`,
         };
+
+        if (submissionType === 'dmp'){
+          rows[i].samplesApproved = `${submission.samplesApproved}/${submission.formValues.numberOfSamples}`;
+        }
         if (userRole !== 'user') {
           rows[i].unsubmit = !isSubmitted
             ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">undo</span>`
@@ -747,7 +755,6 @@ export function promote(
         resolve(response);
       })
       .catch((err) => {
-
         reject(err);
       });
   });

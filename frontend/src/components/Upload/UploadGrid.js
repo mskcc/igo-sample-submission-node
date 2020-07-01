@@ -31,11 +31,11 @@ class UploadGrid extends React.Component {
     return (
       <div>
         <div className={classes.container}>
-          {gridType === 'igo' && submissionToEdit && (
+          {submissionToEdit && submissionToEdit.gridType === gridType && (
             <EditPanel userRole="lab_member" submission={submissionToEdit} />
           )}
           <div className={classes.buttons}>
-            {gridType === 'igo' ? (
+            {gridType === 'upload' ? (
               <GridButton
                 id="gridSubmit"
                 onClick={handleSubmit}

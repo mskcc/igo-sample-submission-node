@@ -39,9 +39,9 @@ exports.submission = [
         errors.array()
       );
     }
-    let gridType = req.params.type;
-    console.log(gridType);
-    let model = gridType === 'igo' ? SubmissionModel : DmpSubmissionModel;
+    let submissionType = req.params.type;
+    console.log(submissionType);
+    let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
     model.findById(ObjectId(req.params.id)).exec(function (err, submission) {
       if (err || !submission) {
         return apiResponse.errorResponse(res, 'Could not retrieve submission.');
@@ -90,9 +90,9 @@ exports.grid = [
         errors.array()
       );
     }
-    let gridType = req.params.type;
-    
-    let model = gridType === 'igo' ? SubmissionModel : DmpSubmissionModel;
+    let submissionType = req.params.type;
+
+    let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
     model
       .find({}, '')
       .sort({ createdAt: 'desc' })
@@ -105,7 +105,8 @@ exports.grid = [
         }
         let submissionGridPromise = util.generateSubmissionGrid(
           submissions,
-          res.user.role
+          res.user.role,
+          submissionType
         );
         Promise.all([submissionGridPromise])
           .then((results) => {
@@ -246,6 +247,9 @@ exports.create = [
  */
 exports.update = [
   body('id').isString().withMessage('id must be String.'),
+  body('submissionType')
+    .isString()
+    .withMessage('submissionType must be String.'),
   body('formValues')
     .isJSON()
     .isLength({ min: 1 })
@@ -257,7 +261,6 @@ exports.update = [
     .trim()
     .withMessage('gridValues must be JSON.'),
   function (req, res) {
-    // console.log(req)
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return apiResponse.validationErrorWithData(
@@ -281,9 +284,10 @@ exports.update = [
     )
       .lean()
       .exec(function (err, submission) {
-        if (err) {
+        if (err || !submission) {
           return apiResponse.errorResponse(res, 'Could not update submission.');
         }
+        console.log(submission);
         return apiResponse.successResponseWithData(res, 'Operation success', {
           submission: submission,
         });
@@ -310,7 +314,6 @@ exports.submit = [
     .trim()
     .withMessage('gridValues must be JSON.'),
   function (req, res) {
-    console.log(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return apiResponse.validationErrorWithData(
@@ -350,33 +353,37 @@ exports.submit = [
           res.user,
           transactionId
         );
-        Promise.all([submissionPromise]).then((results) => {
-          if (results.some((x) => x.length === 0)) {
-            return apiResponse.errorResponse(res, 'Could not submit.');
-          }
-          let [submissionResult] = results;
-          submissionToSubmit.submitted = true;
-          submissionToSubmit.transactionId = transactionId;
-          submissionToSubmit.submittedAt = transactionId;
-          submissionToSubmit.save(function (err) {
-            if (err) {
-              return apiResponse.errorResponse(
-                res,
-                'Submission could not be saved on this site but was submitted to IGO.'
-              );
-            } else {
-              let sendEmail = mailer.sendToPms(submissionToSubmit.formValues);
-              if (sendEmail) {
-                mailer.sendNotification(submissionToSubmit);
-              }
-              return apiResponse.successResponseWithData(
-                res,
-                'Operation success',
-                submissionResult
-              );
+        Promise.all([submissionPromise])
+          .catch((reasons) => {
+            return apiResponse.errorResponse(res, reasons);
+          })
+          .then((results) => {
+            if (results.some((x) => x.length === 0)) {
+              return apiResponse.errorResponse(res, 'Could not submit.');
             }
+            let [submissionResult] = results;
+            submissionToSubmit.submitted = true;
+            submissionToSubmit.transactionId = transactionId;
+            submissionToSubmit.submittedAt = transactionId;
+            submissionToSubmit.save(function (err) {
+              if (err) {
+                return apiResponse.errorResponse(
+                  res,
+                  'Submission could not be saved on this site but was submitted to IGO.'
+                );
+              } else {
+                let sendEmail = mailer.sendToPms(submissionToSubmit.formValues);
+                if (sendEmail) {
+                  mailer.sendNotification(submissionToSubmit);
+                }
+                return apiResponse.successResponseWithData(
+                  res,
+                  'Operation success',
+                  submissionResult
+                );
+              }
+            });
           });
-        });
       })
       .catch((reasons) => {
         return apiResponse.errorResponse(res, reasons);
@@ -406,10 +413,12 @@ exports.delete = [
 ];
 
 exports.download = [
-  param('id').isMongoId().trim().withMessage('id must be valid MongoDB id.'),
+  // param('id').isMongoId().trim().withMessage('id must be valid MongoDB id.'),
   function (req, res) {
+    console.log(req.params);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log(req.params);
       return apiResponse.validationErrorWithData(
         res,
         'Validation error.',

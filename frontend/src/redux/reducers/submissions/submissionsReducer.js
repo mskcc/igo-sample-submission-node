@@ -61,6 +61,7 @@ function submissionsReducer(state = initialState, action) {
         saved: true,
         submissionToEdit: {
           _id: action.payload._id,
+          gridType: action.payload.gridType,
           serviceId: action.payload.formValues.serviceId,
           material: action.payload.formValues.material,
           application: action.payload.formValues.application,
@@ -90,6 +91,7 @@ function submissionsReducer(state = initialState, action) {
         saved: true,
         submissionToEdit: {
           _id: action.payload._id,
+          gridType: action.payload.gridType,
           serviceId: action.payload.formValues.serviceId,
           material: action.payload.formValues.material,
           application: action.payload.formValues.application,
@@ -169,6 +171,7 @@ function submissionsReducer(state = initialState, action) {
         ...state,
         submissionToEdit: {
           _id: action.payload._id,
+          gridType: action.payload.gridType,
           serviceId: action.payload.formValues.serviceId,
           material: action.payload.formValues.material,
           application: action.payload.formValues.application,

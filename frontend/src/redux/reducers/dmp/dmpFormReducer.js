@@ -1,6 +1,6 @@
 import { dmpFormActions as ActionTypes } from '../../actions';
 import { initialDmpFormState } from '../initialState';
-// import { gridActions as GridActionTypes } from '../../actions/';
+import { gridActions as GridActionTypes } from '../../actions/';
 
 export default function dmpFormReducer(state = initialDmpFormState, action) {
   switch (action.type) {
@@ -121,15 +121,15 @@ export default function dmpFormReducer(state = initialDmpFormState, action) {
     //       numberOfSamples: action.rowNumber
     //     }
     //   };
-    // case GridActionTypes.GET_SUBMISSION_TO_EDIT_SUCCESS:
-    //   let form = action.payload.formValues;
-    //   return {
-    //     ...state,
-    //     selected: {
-    //       ...form,
-    //       serviceId: form.serviceId.replace('IGO-', '')
-    //     }
-    //   };
+    case GridActionTypes.GET_DMP_SUBMISSION_TO_EDIT_SUCCESS:
+      let form = action.payload.formValues;
+      return {
+        ...state,
+        selected: {
+          ...form,
+          // serviceId: form.serviceId.replace('IGO-', '')
+        }
+      };
 
     default:
       return state;

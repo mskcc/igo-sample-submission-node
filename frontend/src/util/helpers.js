@@ -581,7 +581,10 @@ export const checkGridAndForm = (form, grid) => {
   let errors = new Set([]);
 
   let result = { success: true, message: '' };
-  if ('IGO-' + form.serviceId !== grid.serviceId) {
+  if (
+    !(form.serviceId === undefined && grid.serviceId === undefined) &&
+    'IGO-' + form.serviceId !== grid.serviceId
+  ) {
     errors.add(`iLabs Service ID: '${form.serviceId}' vs. '${grid.serviceId}'`);
   }
 

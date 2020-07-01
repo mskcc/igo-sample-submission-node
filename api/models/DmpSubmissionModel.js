@@ -13,9 +13,10 @@ var FormSchema = new mongoose.Schema({
 
 var DmpSubmissionSchema = new mongoose.Schema(
   {
-    username: { type: String, required: true },
+    username: { type: String, required: true },    
     formValues: FormSchema,
     gridValues: { type: Array, required: true },
+    samplesApproved: { type: Number, default: 0 },
     submitted: { type: Boolean, default: false },
     submittedAt: { type: Number, required: false },
     transactionId: { type: Number, required: false },

@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 
-import PropTypes from 'prop-types';
-import Swal from 'sweetalert2';
-
 import { connect } from 'react-redux';
 import {
   gridActions,
@@ -10,15 +7,10 @@ import {
   userActions
 } from '../../redux/actions/';
 import { util, swal } from '../../util';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { UploadGrid } from '../../components';
 
 class UploadGridContainer extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   handleChange = changes => {
     this.props.registerGridChange(changes);
   };
@@ -73,11 +65,13 @@ class UploadGridContainer extends React.Component {
   };
 
   handleSubmit = () => {
-    const { columnFeatures, hiddenColumns, rows } = this.props.grid;
-    const gridType = this.props.grid.gridType;
+    const { columnFeatures, hiddenColumns, rows, gridType } = this.props.grid;
+    // const gridType = this.props.grid.gridType;
     const formValues = this.props[gridType].form.selected;
 
     let match = util.checkGridAndForm(formValues, this.props.grid.form);
+    console.log(match);
+    console.log(gridType);
     if (!match.success) {
       return swal.formGridMismatch(match);
     }

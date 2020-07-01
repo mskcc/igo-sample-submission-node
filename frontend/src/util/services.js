@@ -186,7 +186,7 @@ export const getSubmissions = gridType => {
 };
 
 export const getSubmission = (id, gridType) => {
-  const url = `${Config.NODE_API_ROOT}/submission/${id}/${gridType}`;
+  const url = `${Config.NODE_API_ROOT}/submission/get/${id}/${gridType}`;
   return axios
     .get(url)
     .then(resp => {
@@ -247,6 +247,7 @@ export const createSubmission = data => {
 
 export const updateSubmission = data => {
   const url = `${Config.NODE_API_ROOT}/submission/update`;
+  console.log(data);
   return axios
     .post(url, { ...data })
     .then(resp => {
@@ -368,8 +369,7 @@ export const dryrun = data => {
 
 //  PROMOTE END
 
-
-//  USER 
+//  USER
 export const logout = data => {
   const url = `${Config.AUTH_URL}/api/auth/logout`;
   return axios

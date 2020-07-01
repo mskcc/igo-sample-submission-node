@@ -2,6 +2,7 @@
 
 import axios from 'axios';
 import { updateHeader } from './formActions';
+import { updateDmpHeader } from '../dmp/dmpFormActions';
 import { util, swal, services, excel } from '../../../util';
 
 import { Config } from '../../../config.js';
@@ -218,26 +219,36 @@ export const GET_SUBMISSION_TO_EDIT_FAIL = 'GET_SUBMISSION_TO_EDIT_FAIL';
 export const GET_SUBMISSION_TO_EDIT_SUCCESS = 'GET_SUBMISSION_TO_EDIT_SUCCESS';
 export function populateGridFromSubmission(submissionId, ownProps) {
   return (dispatch, getState) => {
+    let page = ownProps.gridType;
     dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...' });
     services
-      .getSubmission(submissionId, ownProps.gridType)
+      .getSubmission(submissionId, page)
       .then(resp => {
         let submission = resp.payload.submission;
         dispatch(
-          getInitialColumns('upload', submission.formValues),
+          getInitialColumns(page, submission.formValues),
           getState().user.role
         )
-          .then(dispatch(updateHeader(submission.formValues)))
           .then(() => {
+            if (page !== 'dmp') {
+              dispatch(updateHeader(submission.formValues));
+            }
+          })
+          .then(() => {
+            console.log(submission);
+            let type =
+              page === 'dmp'
+                ? GET_DMP_SUBMISSION_TO_EDIT_SUCCESS
+                : GET_SUBMISSION_TO_EDIT_SUCCESS;
             dispatch({
-              type: GET_SUBMISSION_TO_EDIT_SUCCESS,
+              type: type,
               payload: {
                 ...submission,
-                gridType: ownProps.gridType
+                gridType: page
               },
               message: 'Loaded!'
             });
-            return ownProps.history.push('/#/upload');
+            return ownProps.history.push(`/${page}`);
           });
       })
       .catch(error => {
@@ -254,36 +265,38 @@ export const GET_DMP_SUBMISSION_TO_EDIT_FAIL =
   'GET_DMP_SUBMISSION_TO_EDIT_FAIL';
 export const GET_DMP_SUBMISSION_TO_EDIT_SUCCESS =
   'GET_DMP_SUBMISSION_TO_EDIT_SUCCESS';
-export function populateDmpGridFromSubmission(submissionId, ownProps) {
-  return (dispatch, getState) => {
-    dispatch({ type: EDIT_DMP_SUBMISSION, message: 'Loading...' });
-    services
-      .getSubmission(submissionId, ownProps.gridType)
-      .then(resp => {
-        let submission = resp.payload.submission;
+// export function populateDmpGridFromSubmission(submissionId, ownProps) {
+//   return (dispatch, getState) => {
+//     let page = ownProps.gridType;
 
-        dispatch(
-          getInitialColumns('upload', submission.formValues),
-          getState().user.role
-        )
-          .then(dispatch(updateHeader(submission.formValues)))
-          .then(() => {
-            dispatch({
-              type: GET_DMP_SUBMISSION_TO_EDIT_SUCCESS,
-              payload: submission,
-              message: 'Loaded!'
-            });
-            return ownProps.history.push('dmp');
-          });
-      })
-      .catch(error => {
-        return dispatch({
-          type: GET_DMP_SUBMISSION_TO_EDIT_FAIL,
-          error: error
-        });
-      });
-  };
-}
+//     dispatch({ type: EDIT_DMP_SUBMISSION, message: 'Loading...' });
+//     services
+//       .getSubmission(submissionId, page)
+//       .then(resp => {
+//         let submission = resp.payload.submission;
+//         console.log(resp);
+//         dispatch(
+//           getInitialColumns('upload', submission.formValues),
+//           getState().user.role
+//         )
+//           .then(dispatch(updateHeader(submission.formValues)))
+//           .then(() => {
+//             dispatch({
+//               type: GET_DMP_SUBMISSION_TO_EDIT_SUCCESS,
+//               payload: submission,
+//               message: 'Loaded!'
+//             });
+//             return ownProps.history.push('dmp');
+//           });
+//       })
+//       .catch(error => {
+//         return dispatch({
+//           type: GET_DMP_SUBMISSION_TO_EDIT_FAIL,
+//           error: error
+//         });
+//       });
+//   };
+// }
 
 export const HANDLE_PATIENT_ID = 'HANDLE_PATIENT_ID';
 export const HANDLE_PATIENT_ID_FAIL = 'HANDLE_PATIENT_ID_FAIL';

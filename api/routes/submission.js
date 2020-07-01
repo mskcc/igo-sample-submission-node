@@ -6,7 +6,7 @@ var router = express.Router();
 router.get('/list', SubmissionController.list);
 router.get('/grid/:type', SubmissionController.grid);
 router.get('/since/:time', SubmissionController.since);
-router.get('/:id/:type', SubmissionController.submission);
+router.get('/get/:id/:type', SubmissionController.submission);
 router.get('/download/:id', SubmissionController.download);
 router.post('/create', SubmissionController.create);
 router.post('/update', SubmissionController.update);

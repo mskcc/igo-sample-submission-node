@@ -9,7 +9,7 @@ export const GET_SUBMISSIONS_SUCCESS = 'GET_SUBMISSIONS_SUCCESS';
 export function getSubmissions(gridType) {
   return dispatch => {
     dispatch({ type: GET_SUBMISSIONS });
-    
+
     return services
       .getSubmissions(gridType)
       .then(response => {
@@ -64,7 +64,7 @@ export const CREATE_PARTIAL_SUBMISSION_FAIL = 'CREATE_PARTIAL_SUBMISSION_FAIL';
 export const CREATE_PARTIAL_SUBMISSION_SUCCESS =
   'CREATE_PARTIAL_SUBMISSION_SUCCESS';
 export const BUTTON_RESET = 'BUTTON_RESET';
-export function createPartialSubmission() {
+export function createPartialSubmission(page) {
   return (dispatch, getState) => {
     dispatch({ type: CREATE_PARTIAL_SUBMISSION });
     let submitData = util.generateSubmitData(getState(), true);
@@ -75,7 +75,7 @@ export function createPartialSubmission() {
         dispatch({
           type: CREATE_PARTIAL_SUBMISSION_SUCCESS,
           message: 'Saved!',
-          payload: response.payload.submission
+          payload: { ...response.payload.submission, page }
         });
 
         // used to reset saved! msg on button
@@ -97,7 +97,7 @@ export const UPDATE_PARTIAL_SUBMISSION = 'UPDATE_PARTIAL_SUBMISSION';
 export const UPDATE_PARTIAL_SUBMISSION_FAIL = 'UPDATE_PARTIAL_SUBMISSION_FAIL';
 export const UPDATE_PARTIAL_SUBMISSION_SUCCESS =
   'UPDATE_PARTIAL_SUBMISSION_SUCCESS';
-export function updatePartialSubmission() {
+export function updatePartialSubmission(page) {
   return (dispatch, getState) => {
     dispatch({ type: UPDATE_PARTIAL_SUBMISSION });
     let submitData = util.generateSubmitData(getState(), true);
@@ -108,7 +108,7 @@ export function updatePartialSubmission() {
         dispatch({
           type: UPDATE_PARTIAL_SUBMISSION_SUCCESS,
           message: 'Updated!',
-          payload: response.payload.submission
+          payload: { ...response.payload.submission, gridType: page }
         });
         // used to reset saved! msg on button
         return setTimeout(() => {

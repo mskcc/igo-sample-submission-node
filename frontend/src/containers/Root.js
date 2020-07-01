@@ -84,14 +84,14 @@ class Root extends Component {
                     <Route
                       path="/(upload|)"
                       render={routeProps => (
-                        <UploadPage {...routeProps} gridType="igo" />
+                        <UploadPage {...routeProps} gridType="upload" />
                       )}
                     />
                     <Route path="/promote" component={PromotePage} />
                     <Route
                       path="/submissions/igo"
                       render={routeProps => (
-                        <SubmissionsPage {...routeProps} gridType="igo" />
+                        <SubmissionsPage {...routeProps} gridType="upload" />
                       )}
                     />
                     <Route

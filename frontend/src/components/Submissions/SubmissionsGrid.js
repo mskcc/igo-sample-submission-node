@@ -18,10 +18,14 @@ class SubmissionsGrid extends React.Component {
       grid,
       gridType
     } = this.props;
+    let headline =
+      gridType.toUpperCase() === 'UPLOAD'
+        ? 'IGO Submissions'
+        : `${gridType.toUpperCase()} Submissions`;
     return (
       <div className={classes.container}>
         <Typography color="inherit" variant="h6">
-          {gridType.toUpperCase()}  Submissions
+          {headline}
         </Typography>
         <ButtonGroup
           color="primary"

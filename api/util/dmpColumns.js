@@ -123,6 +123,86 @@ export const gridColumns = {
   },
 };
 
+export const submissionColumns = {
+  'Service ID': {
+    name: 'Service ID',
+    data: 'serviceId',
+    readOnly: 'true',
+  },
+  'User ID': {
+    name: 'User',
+    data: 'username',
+    readOnly: 'true',
+  },
+  'Sample Type': {
+    name: 'Sample Type',
+    data: 'sampleType',
+    readOnly: 'true',
+  },
+  Application: {
+    name: 'Application',
+    data: 'application',
+    readOnly: 'true',
+  },
+  '#Samples': {
+    name: '#Samples',
+    data: 'numberOfSamples',
+    readOnly: 'true',
+  },
+  'Submitted to CMO PMs?': {
+    name: 'Submitted to CMO PMs?',
+    data: 'submitted',
+    readOnly: 'true',
+    renderer: 'html',
+  },
+  'Approved': {
+    name: 'Approved',
+    data: 'samplesApproved',
+    readOnly: 'true',
+    renderer: 'html',
+  },
+  'Date Created': {
+    name: 'Created On',
+    data: 'createdAt',
+    readOnly: 'true',
+  },
+  'Date Submitted': {
+    name: 'Submitted On',
+    data: 'submittedAt',
+    readOnly: 'true',
+  },
+  'Transaction ID': {
+    name: 'Transaction ID',
+    data: 'transactionId',
+    readOnly: 'true',
+  },
+  '# Revisions': {
+    name: '# Revisions',
+    data: 'revisions',
+    readOnly: 'true',
+  },
+  Edit: {
+    name: 'Edit',
+    data: 'edit',
+    renderer: 'html',
+  },
+  Unsubmit: {
+    name: 'Unsubmit',
+    data: 'unsubmit',
+    renderer: 'html',
+  },
+  Receipt: {
+    name: 'Receipt',
+    data: 'receipt',
+    renderer: 'html',
+  },
+  Delete: {
+    name: 'Delete',
+    data: 'delete',
+    renderer: 'html',
+  },
+};
+
 export const dmpIntakeForms = {
   'DNA+CustomCapture': [
     ['Tracking ID', 'Required'],
