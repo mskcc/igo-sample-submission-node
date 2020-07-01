@@ -29,6 +29,7 @@ exports.list = [
 
 exports.submission = [
   param('id').isMongoId().withMessage('id must be valid MongoDB ID.'),
+  param('type').exists().withMessage('type must be specified.'),
   function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -38,12 +39,11 @@ exports.submission = [
         errors.array()
       );
     }
-
-    SubmissionModel.findById(ObjectId(req.params.id)).exec(function (
-      err,
-      submission
-    ) {
-      if (err) {
+    let gridType = req.params.type;
+    console.log(gridType);
+    let model = gridType === 'igo' ? SubmissionModel : DmpSubmissionModel;
+    model.findById(ObjectId(req.params.id)).exec(function (err, submission) {
+      if (err || !submission) {
         return apiResponse.errorResponse(res, 'Could not retrieve submission.');
       }
       return apiResponse.successResponseWithData(res, 'Operation success', {
@@ -80,8 +80,21 @@ exports.unsubmit = [
 
 // table for all todo: table for users
 exports.grid = [
+  param('type').exists().withMessage('type must be specified.'),
   function (req, res) {
-    SubmissionModel.find({}, '')
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return apiResponse.validationErrorWithData(
+        res,
+        'Validation error.',
+        errors.array()
+      );
+    }
+    let gridType = req.params.type;
+    
+    let model = gridType === 'igo' ? SubmissionModel : DmpSubmissionModel;
+    model
+      .find({}, '')
       .sort({ createdAt: 'desc' })
       .exec(function (err, submissions) {
         if (err) {
@@ -120,6 +133,7 @@ exports.grid = [
 exports.since = [
   param('time').exists().isInt().withMessage('time limit must be specified.'),
   function (req, res) {
+    console.log(req.params);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return apiResponse.validationErrorWithData(
@@ -194,7 +208,6 @@ exports.create = [
         errors.array()
       );
     }
-    console.log(req.body);
     let formValues = JSON.parse(req.body.formValues);
     let gridValues = JSON.parse(req.body.gridValues);
     let submissionType = req.body.submissionType;

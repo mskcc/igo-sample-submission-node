@@ -10,10 +10,10 @@ export class UploadFormContainer extends React.Component {
   componentDidUpdate(prevProps, prevState) {}
 
   componentDidMount() {
-    let isUploadForm = this.props.formType === 'upload';
-    if (isUploadForm && !this.props.upload.form.initialFetched) {
+    let isIgoForm = this.props.formType === 'igo';
+    if (isIgoForm && !this.props.upload.form.initialFetched) {
       this.props.getInitialState();
-    } else if (!isUploadForm && !this.props.dmp.form.initialFetched) {
+    } else if (!isIgoForm && !this.props.dmp.form.initialFetched) {
       this.props.dmpGetInitialState();
     }
   }
@@ -40,14 +40,14 @@ export class UploadFormContainer extends React.Component {
     if (!selectedSpecies) this.props.clearSpecies();
   };
   handleInputChange = (id, value) => {
-    let isUploadForm = this.props.formType === 'upload';
+    let isIgoForm = this.props.formType === 'igo';
 
     if (value) {
-      isUploadForm
+      isIgoForm
         ? this.props.select(id, value)
         : this.props.dmpSelect(id, value);
     } else {
-      isUploadForm ? this.props.clear(id) : this.props.dmpClear(id);
+      isIgoForm ? this.props.clear(id) : this.props.dmpClear(id);
     }
   };
 
@@ -69,7 +69,7 @@ export class UploadFormContainer extends React.Component {
     } = this.props;
     return (
       <React.Fragment>
-        {formType === 'upload' ? (
+        {formType === 'igo' ? (
           upload.form && upload.form.allMaterials ? (
             <UploadForm
               form={upload.form}

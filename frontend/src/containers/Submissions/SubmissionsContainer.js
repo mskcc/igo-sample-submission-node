@@ -10,7 +10,7 @@ import SubmissionsGrid from '../../components/Submissions/SubmissionsGrid';
 
 export class SubmissionsPage extends Component {
   componentDidMount() {
-    this.props.getSubmissions();
+    this.props.getSubmissions(this.props.gridType);
     // TODO make submissionsSince default once subs are imported
   }
 
@@ -34,19 +34,19 @@ export class SubmissionsPage extends Component {
     }
   };
 
-  handleEdit = (submissionId) => {
+  handleEdit = submissionId => {
     return this.props.populateGridFromSubmission(submissionId, this.props);
   };
 
-  handleUnsubmit = (submissionId) => {
+  handleUnsubmit = submissionId => {
     return this.props.unsubmit(submissionId);
   };
 
   handleReceipt = (submissionId, serviceId) => {
     return this.props.downloadReceipt(submissionId, serviceId);
   };
-  handleDelete = (submissionId) => {
-    swal.confirmDelete().then((decision) => {
+  handleDelete = submissionId => {
+    swal.confirmDelete().then(decision => {
       if (decision) {
         this.props.deleteSubmission(submissionId);
       }
@@ -57,6 +57,7 @@ export class SubmissionsPage extends Component {
     return this.props.submissions.grid.rows.length > 0 ? (
       <SubmissionsGrid
         grid={this.props.submissions.grid}
+        gridType={this.props.gridType}
         handleGridClick={this.handleGridClick}
         handleFilterClick={this.handleFilterClick}
       />
@@ -66,14 +67,14 @@ export class SubmissionsPage extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  submissions: state.submissions,
+const mapStateToProps = state => ({
+  submissions: state.submissions
 });
 
 export default withLocalize(
   connect(mapStateToProps, {
     resetErrorMessage,
     ...gridActions,
-    ...submissionActions,
+    ...submissionActions
   })(SubmissionsPage)
 );

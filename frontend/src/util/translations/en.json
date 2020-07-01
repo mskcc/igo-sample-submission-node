@@ -42,6 +42,8 @@
     "formClear_label": "Clear Form",
     "gridSubmit_label": "Submit To IGO",
     "gridSubmit_tooltip": "Done with all edits? Submit To IGO.",
+    "gridSubmitDmp_label": "Submit",
+    "gridSubmitDmp_tooltip": "Done with all edits? Submit To CMO PMs for DMP approval.",
     "gridSaveNew_label": "Save New Submission",
     "gridSaveNew_tooltip": "Save a submission to retrieve and edit later on. Will not submit to IGO.",
     "gridUpdate_label": "Update Submission",

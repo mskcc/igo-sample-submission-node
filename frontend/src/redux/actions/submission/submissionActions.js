@@ -6,11 +6,12 @@ import moment from 'moment';
 export const GET_SUBMISSIONS = 'GET_SUBMISSIONS';
 export const GET_SUBMISSIONS_FAIL = 'GET_SUBMISSIONS_FAIL';
 export const GET_SUBMISSIONS_SUCCESS = 'GET_SUBMISSIONS_SUCCESS';
-export function getSubmissions() {
+export function getSubmissions(gridType) {
   return dispatch => {
     dispatch({ type: GET_SUBMISSIONS });
-    return axios
-      .get(Config.NODE_API_ROOT + '/submission/grid')
+    
+    return services
+      .getSubmissions(gridType)
       .then(response => {
         return dispatch({
           type: GET_SUBMISSIONS_SUCCESS,
@@ -54,7 +55,6 @@ export function getSubmissionsSince(unit, time) {
           type: GET_SUBMISSIONS_SINCE_FAIL,
           error: error
         });
-        return error;
       });
   };
 }

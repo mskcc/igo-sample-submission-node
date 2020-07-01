@@ -70,7 +70,7 @@ class Root extends Component {
         <Router basename={Config.BASENAME}>
           <div>
             <div className="app">
-              <Header role={this.props.role} loggedIn={this.props.loggedIn} />
+              <Header userRole={this.props.role} />
               {Config.ENV !== 'production' ? <DevTools /> : <div />}
 
               {this.props.common.serverError ? (
@@ -84,19 +84,29 @@ class Root extends Component {
                     <Route
                       path="/(upload|)"
                       render={routeProps => (
-                        <UploadPage {...routeProps} type="upload" />
+                        <UploadPage {...routeProps} gridType="igo" />
                       )}
                     />
                     <Route path="/promote" component={PromotePage} />
-                    <Route path="/submissions" component={SubmissionsPage} />
+                    <Route
+                      path="/submissions/igo"
+                      render={routeProps => (
+                        <SubmissionsPage {...routeProps} gridType="igo" />
+                      )}
+                    />
+                    <Route
+                      path="/submissions/dmp"
+                      render={routeProps => (
+                        <SubmissionsPage {...routeProps} gridType="dmp" />
+                      )}
+                    />
                     <Route
                       path="/dmp"
                       render={routeProps => (
-                        <UploadPage {...routeProps} type="dmp" />
+                        <UploadPage {...routeProps} gridType="dmp" />
                       )}
                     />
                     <Route path="/logout" component={Logout} />
-                    <Route path="/login" component={Login} />
                     <Route path="/error" component={ErrorPage} />
                   </div>{' '}
                   {this.props.common.message &&

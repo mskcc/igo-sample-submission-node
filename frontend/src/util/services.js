@@ -170,8 +170,23 @@ export const downloadGrid = data => {
     });
 };
 
-export const getSubmission = id => {
-  const url = `${Config.NODE_API_ROOT}/submission/${id}`;
+export const getSubmissions = gridType => {
+  const url = `${Config.NODE_API_ROOT}/submission/grid/${gridType}`;
+  return axios
+    .get(url)
+    .then(resp => {
+      return resp;
+    })
+    .catch(error => {
+      throw error;
+    })
+    .then(resp => {
+      return resp;
+    });
+};
+
+export const getSubmission = (id, gridType) => {
+  const url = `${Config.NODE_API_ROOT}/submission/${id}/${gridType}`;
   return axios
     .get(url)
     .then(resp => {

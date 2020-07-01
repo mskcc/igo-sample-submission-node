@@ -25,7 +25,7 @@ export class UploadPage extends Component {
 
   submitRowNumberUpdate = () => {
     let newRowNumber;
-    if (this.props.type === 'dmp') {
+    if (this.props.gridType === 'dmp') {
       newRowNumber = this.props.dmpForm.selected.numberOfSamples;
     } else {
       newRowNumber = this.props.form.selected.numberOfSamples;
@@ -45,15 +45,15 @@ export class UploadPage extends Component {
     return (
       <React.Fragment>
         <UploadFormContainer
-          formType={this.props.type}
+          formType={this.props.gridType}
           handleSubmit={this.handleFormSubmit}
           submitRowNumberUpdate={this.submitRowNumberUpdate}
         />
 
         {this.props.grid.rows.length > 0 &&
-          this.props.type === this.props.grid.gridType && (
+          this.props.gridType === this.props.grid.gridType && (
             <UploadGridContainer
-              gridType={this.props.type}
+              gridType={this.props.gridType}
               handleSubmit={this.handleGridSubmit}
               pasteTooMany={this.pasteTooMany}
             />

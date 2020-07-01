@@ -3,105 +3,146 @@ import { NavLink } from 'react-router-dom';
 import {
   Avatar,
   AppBar,
-  Divider,
+  Menu,
+  MenuItem,
   Toolbar,
   Button,
   Typography,
-  withStyles
+  makeStyles
 } from '@material-ui/core';
 
 import logo from './logo.png';
 
-const Header = ({ classes, loggedIn, role }) => (
-  // <div className={classes.mskccHeader}>
-  <AppBar position="static" title={logo} className={classes.header}>
-    <Toolbar>
-      <Avatar alt="mskcc logo" src={logo} className={classes.avatar} />
+function Header(userRole) {
+  const classes = useStyles();
 
-      <Typography color="inherit" variant="h6" className={classes.title}>
-        IGO Sample Submission
-      </Typography>
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
-      <React.Fragment>
-        <Button>
-          <NavLink
-            to="/upload"
-            activeClassName={classes.active}
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  return (
+    // <div className={classes.mskccHeader}>
+    <AppBar position="static" title={logo} className={classes.header}>
+      <Toolbar>
+        <Avatar alt="mskcc logo" src={logo} className={classes.avatar} />
+
+        <Typography color="inherit" variant="h6" className={classes.title}>
+          IGO Sample Submission
+        </Typography>
+
+        <React.Fragment>
+          <Button>
+            <NavLink
+              to="/upload"
+              activeClassName={classes.active}
+              className={classes.navlink}
+            >
+              <Typography color="inherit" variant="h6">
+                Upload
+              </Typography>
+            </NavLink>
+          </Button>
+          <div className={classes.divider}>&#8226;</div>
+
+          <Button>
+            <NavLink
+              to="/dmp"
+              activeClassName={classes.active}
+              className={classes.navlink}
+            >
+              <Typography color="inherit" variant="h6">
+                DMP
+              </Typography>
+            </NavLink>
+          </Button>
+          <div className={classes.divider}>&#8226;</div>
+          <Button
             className={classes.navlink}
+            aria-controls="simple-menu"
+            aria-haspopup="true"
+            onClick={handleClick}
           >
             <Typography color="inherit" variant="h6">
-              Upload
+              Submissions
             </Typography>
-          </NavLink>
-        </Button>
-        <div className={classes.divider}>&#8226;</div>
-
-        <Button>
-          <NavLink
-            to="/dmp"
-            activeClassName={classes.active}
-            className={classes.navlink}
+          </Button>
+          <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            getContentAnchorEl={null}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
           >
-            <Typography color="inherit" variant="h6">
-              DMP
-            </Typography>
-          </NavLink>
-        </Button>
-        <div className={classes.divider}>&#8226;</div>
-
-        <Button>
-          <NavLink
-            to="/submissions"
-            activeClassName={classes.active}
-            className={classes.navlink}
-          >
-            <Typography color="inherit" variant="h6">
-              My Submissions
-            </Typography>
-          </NavLink>
-        </Button>
-        <div className={classes.divider}>&#8226;</div>
-
-        {role !== '' && role !== 'user' && (
-          <React.Fragment>
-            <Button>
+            <MenuItem onClick={handleClose}>
               <NavLink
-                to="/promote"
-                activeClassName={classes.active}
-                className={classes.navlink}
+                to="/submissions/igo"
+                activeClassName={classes.activeMenu}
+                className={classes.navlinkMenu}
               >
-                <Typography color="inherit" variant="h6">
-                  Promote
+                <Typography color="inherit" variant="subtitle1">
+                  IGO Submissions
                 </Typography>
               </NavLink>
-            </Button>
-            <div className={classes.divider}>&#8226;</div>
-          </React.Fragment>
-        )}
-        <Button>
-          <NavLink
-            to="/logout"
-            activeClassName={classes.active}
-            className={classes.navlink}
-          >
-            <Typography color="inherit" variant="h6">
-              Logout
-            </Typography>
-          </NavLink>
-        </Button>
-        <div className={classes.divider}>&#8226;</div>
-      </React.Fragment>
-    </Toolbar>
-  </AppBar>
+            </MenuItem>
+            <MenuItem onClick={handleClose}>
+              <NavLink
+                to="/submissions/dmp"
+                activeClassName={classes.activeMenu}
+                className={classes.navlinkMenu}
+              >
+                <Typography color="inherit" variant="subtitle1">
+                  DMP Submissions
+                </Typography>
+              </NavLink>
+            </MenuItem>
+          </Menu>
+          <div className={classes.divider}>&#8226;</div>
+          {userRole !== '' && userRole !== 'user' && (
+            <React.Fragment>
+              <Button>
+                <NavLink
+                  to="/promote"
+                  activeClassName={classes.active}
+                  className={classes.navlink}
+                >
+                  <Typography color="inherit" variant="h6">
+                    Promote
+                  </Typography>
+                </NavLink>
+              </Button>
+              <div className={classes.divider}>&#8226;</div>
+            </React.Fragment>
+          )}
+          <Button>
+            <NavLink
+              to="/logout"
+              activeClassName={classes.active}
+              className={classes.navlink}
+            >
+              <Typography color="inherit" variant="h6">
+                Logout
+              </Typography>
+            </NavLink>
+          </Button>
+        </React.Fragment>
+      </Toolbar>
+    </AppBar>
+    //{' '}
+  );
+}
 
-  // </div>
-);
-
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   avatar: {
     marginRight: theme.spacing(3)
   },
-
   header: {
     backgroundColor: theme.palette.primary.logo,
     color: 'white',
@@ -116,16 +157,25 @@ const styles = theme => ({
     textDecoration: 'none',
     marginRight: theme.spacing(1)
   },
+  navlinkMenu: {
+    color: theme.palette.primary.dark,
+    textDecoration: 'none',
+    marginRight: theme.spacing(1)
+  },
   active: {
     color: 'white',
     fontSize: '1em'
   },
 
+  activeMenu: {
+    color: theme.palette.primary.dark,
+    fontSize: '1em'
+  },
   divider: {
     // backgroundColor: 'rgba(255,255,255,0.7)',
     color: 'rgba(255,255,255,1)',
     paddingBottom: '7px'
   }
-});
+}));
 
-export default withStyles(styles)(Header);
+export default Header;

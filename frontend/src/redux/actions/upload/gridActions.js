@@ -220,7 +220,45 @@ export function populateGridFromSubmission(submissionId, ownProps) {
   return (dispatch, getState) => {
     dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...' });
     services
-      .getSubmission(submissionId)
+      .getSubmission(submissionId, ownProps.gridType)
+      .then(resp => {
+        let submission = resp.payload.submission;
+        dispatch(
+          getInitialColumns('upload', submission.formValues),
+          getState().user.role
+        )
+          .then(dispatch(updateHeader(submission.formValues)))
+          .then(() => {
+            dispatch({
+              type: GET_SUBMISSION_TO_EDIT_SUCCESS,
+              payload: {
+                ...submission,
+                gridType: ownProps.gridType
+              },
+              message: 'Loaded!'
+            });
+            return ownProps.history.push('/#/upload');
+          });
+      })
+      .catch(error => {
+        return dispatch({
+          type: GET_SUBMISSION_TO_EDIT_FAIL,
+          error: error
+        });
+      });
+  };
+}
+
+export const EDIT_DMP_SUBMISSION = 'EDIT_DMP_SUBMISSION';
+export const GET_DMP_SUBMISSION_TO_EDIT_FAIL =
+  'GET_DMP_SUBMISSION_TO_EDIT_FAIL';
+export const GET_DMP_SUBMISSION_TO_EDIT_SUCCESS =
+  'GET_DMP_SUBMISSION_TO_EDIT_SUCCESS';
+export function populateDmpGridFromSubmission(submissionId, ownProps) {
+  return (dispatch, getState) => {
+    dispatch({ type: EDIT_DMP_SUBMISSION, message: 'Loading...' });
+    services
+      .getSubmission(submissionId, ownProps.gridType)
       .then(resp => {
         let submission = resp.payload.submission;
 
@@ -231,16 +269,16 @@ export function populateGridFromSubmission(submissionId, ownProps) {
           .then(dispatch(updateHeader(submission.formValues)))
           .then(() => {
             dispatch({
-              type: GET_SUBMISSION_TO_EDIT_SUCCESS,
+              type: GET_DMP_SUBMISSION_TO_EDIT_SUCCESS,
               payload: submission,
               message: 'Loaded!'
             });
-            return ownProps.history.push('upload');
+            return ownProps.history.push('dmp');
           });
       })
       .catch(error => {
         return dispatch({
-          type: GET_SUBMISSION_TO_EDIT_FAIL,
+          type: GET_DMP_SUBMISSION_TO_EDIT_FAIL,
           error: error
         });
       });
@@ -289,19 +327,20 @@ export function handlePatientId(rowIndex) {
           // should never reach this because we check for MRN regex match first - just in case
           return dispatch(handleMRN(patientId, patientIdType, rows, rowIndex));
         default:
-          return dispatch(anonymizeId(patientId, 'investigator', rows, rowIndex));
+          return dispatch(
+            anonymizeId(patientId, 'investigator', rows, rowIndex)
+          );
       }
     }
   };
 }
 
-function anonymizeId(patientId,type, rows, rowIndex) {
+function anonymizeId(patientId, type, rows, rowIndex) {
   return dispatch => {
-    
     return services
       .patientIdToCid({
         patientId: patientId,
-        type: type,
+        type: type
       })
       .then(response => {
         dispatch({

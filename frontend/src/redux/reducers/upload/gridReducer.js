@@ -160,6 +160,7 @@ export default function gridReducer(state = initialGridState, action) {
       return {
         ...state,
         rows: action.payload.gridValues,
+        gridType: action.payload.gridType,
         form: action.payload.formValues
       };
 

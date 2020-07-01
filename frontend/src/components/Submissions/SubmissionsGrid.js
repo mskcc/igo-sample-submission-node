@@ -2,7 +2,7 @@ import { HotTable } from '@handsontable/react';
 
 import 'handsontable/dist/handsontable.full.css';
 import React from 'react';
-import { ButtonGroup, Button, withStyles } from '@material-ui/core';
+import { ButtonGroup, Button, withStyles, Typography } from '@material-ui/core';
 
 class SubmissionsGrid extends React.Component {
   constructor(props) {
@@ -11,9 +11,18 @@ class SubmissionsGrid extends React.Component {
   }
 
   render() {
-    const { classes, handleGridClick, handleFilterClick, grid } = this.props;
+    const {
+      classes,
+      handleGridClick,
+      handleFilterClick,
+      grid,
+      gridType
+    } = this.props;
     return (
       <div className={classes.container}>
+        <Typography color="inherit" variant="h6">
+          {gridType.toUpperCase()}  Submissions
+        </Typography>
         <ButtonGroup
           color="primary"
           size="small"
