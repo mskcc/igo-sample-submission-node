@@ -178,7 +178,7 @@ export const emptyFieldsError = emptyColumns => {
 export const submitSuccess = () => {
   Swal.fire({
     title: 'Submitted!',
-    text: 'Download your Receipt under My Submissions.',
+    text: 'Download your Receipt under Submissions.',
     type: 'success',
     animation: false,
     confirmButtonColor: '#007cba',

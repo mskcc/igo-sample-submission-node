@@ -150,6 +150,8 @@ export const checkEmptyColumns = (columnFeatures, rows, hiddenColumns) => {
           columnFeatures[i].columnHeader === 'Normalized Patient Id')
       ) {
         continue;
+      } else if (columnFeatures[i].type === 'checkbox') {
+        continue;
       } else if (
         columnFeatures[i].optional === false &&
         !rows[j][columnFeatures[i].data]

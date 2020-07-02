@@ -83,9 +83,20 @@ class UploadGridContainer extends React.Component {
       swal.emptyFieldsError(emptyColumns);
       return;
     } else {
-      return gridType === 'dmp'
-        ? this.props.submitDmpSubmission()
-        : this.props.submitSubmission();
+      if (gridType === 'dmp') {
+        if (this.props.user.role !== 'user') {
+          let reviewed = true;
+          return swal
+            .genericDecision(
+              'Publish to DMP?',
+              'Submitting publishes the approved samples to the DMP and you will not be able to edit this submission again. <br> If you are not ready to publish, made changes unrelated to approval or a fixing user errors, use the save button instead.'
+            )
+            .then(
+              decision => decision && this.props.submitDmpSubmission(reviewed)
+            );
+        }
+        return this.props.submitDmpSubmission();
+      } else return this.props.submitSubmission();
     }
   };
 

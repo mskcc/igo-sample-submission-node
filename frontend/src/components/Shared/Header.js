@@ -66,6 +66,8 @@ function Header(userRole) {
             aria-controls="simple-menu"
             aria-haspopup="true"
             onClick={handleClick}
+            onMouseOver={handleClick}
+
           >
             <Typography color="inherit" variant="h6">
               Submissions

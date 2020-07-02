@@ -230,7 +230,7 @@ exports.grid = [
           let columnsResult = results;
 
           let gridPromise = util
-            .generateGrid(columnsResult, res.user.role, formValues, 'dmp')
+            .generateGrid(columnsResult, 'user', formValues, 'dmp')
             .catch((reasons) => {
               return apiResponse.errorResponse(res, reasons);
             });
@@ -401,13 +401,14 @@ exports.export = [
 ];
 
 /**
- * Submits to LIMS Banked Samples
+ * Submits to Sample Submission table, either reviewed (submitted and approved by PM) or unreviewed (by user)
  *
  * @returns {Object}
  */
 exports.submit = [
   body('id').optional().isMongoId().withMessage('id must be valid MongoDB ID.'),
   body('transactionId').isInt().withMessage('id must be Int.'),
+  body('reviewed').isBoolean().withMessage('reviewd must be Boolean.'),
   body('formValues')
     .isJSON()
     .isLength({ min: 1 })
@@ -431,6 +432,7 @@ exports.submit = [
     let formValues = JSON.parse(req.body.formValues);
     let gridValues = JSON.parse(req.body.gridValues);
     let transactionId = req.body.transactionId;
+    let reviewed = req.body.reviewed;
     let id = req.body.id || undefined;
 
     let findOrCreateSubPromise = DmpSubmissionModel.findOrCreateSub(
@@ -446,6 +448,13 @@ exports.submit = [
         submissionToSubmit.submitted = true;
         submissionToSubmit.transactionId = transactionId;
         submissionToSubmit.submittedAt = transactionId;
+        submissionToSubmit.reviewed = reviewed;
+        submissionToSubmit.reviewedAt = reviewed ? transactionId : undefined;
+
+        let approvals = submissionToSubmit.gridValues.filter((element) => {
+          return element.isApproved;
+        });
+        submissionToSubmit.samplesApproved = approvals.length;
         //  save pre LIMS submit so data is safe
         submissionToSubmit.save(function (err) {
           if (err) {
@@ -461,43 +470,6 @@ exports.submit = [
             );
           }
         });
-
-        // let submissionPromise = util.submit(
-        //   submissionToSubmit,
-        //   res.user,
-        //   transactionId
-        // );
-        // Promise.all([submissionPromise])
-        //   .catch((reasons) => {
-        //     return apiResponse.errorResponse(res, reasons);
-        //   })
-        //   .then((results) => {
-        //     if (results.some((x) => x.length === 0)) {
-        //       return apiResponse.errorResponse(res, 'Could not submit.');
-        //     }
-        //     let [submissionResult] = results;
-        //     submissionToSubmit.submitted = true;
-        //     submissionToSubmit.transactionId = transactionId;
-        //     submissionToSubmit.submittedAt = transactionId;
-        //     submissionToSubmit.save(function (err) {
-        //       if (err) {
-        //         return apiResponse.errorResponse(
-        //           res,
-        //           'Submission could not be saved on this site but was submitted to IGO.'
-        //         );
-        //       } else {
-        //         let sendEmail = mailer.sendToPms(submissionToSubmit.formValues);
-        //         if (sendEmail) {
-        //           mailer.sendNotification(submissionToSubmit);
-        //         }
-        //         return apiResponse.successResponseWithData(
-        //           res,
-        //           'Operation success',
-        //           submissionResult
-        //         );
-        //       }
-        //     });
-        //   });
       })
       .catch((reasons) => {
         return apiResponse.errorResponse(res, reasons);

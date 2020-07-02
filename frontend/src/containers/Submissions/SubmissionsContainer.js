@@ -25,6 +25,8 @@ export class SubmissionsPage extends Component {
     let column = this.props.submissions.grid.columnFeatures[coords.col].data;
     if (column === 'edit' && !submitted) {
       this.handleEdit(id);
+    } else if (column === 'review' && submitted) {
+      this.handleEdit(id);
     } else if (column === 'unsubmit' && submitted) {
       this.handleUnsubmit(id);
     } else if (column === 'receipt' && submitted) {

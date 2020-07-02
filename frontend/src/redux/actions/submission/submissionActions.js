@@ -202,11 +202,12 @@ export function submitSubmission() {
 export const DMP_SUBMIT = 'DMP_SUBMIT';
 export const DMP_SUBMIT_FAIL = 'DMP_SUBMIT_FAIL';
 export const DMP_SUBMIT_SUCCESS = 'DMP_SUBMIT_SUCCESS';
-export function submitDmpSubmission() {
+export function submitDmpSubmission(reviewed = false) {
   return (dispatch, getState) => {
     dispatch({ type: DMP_SUBMIT, message: 'Submitting...' });
 
     let data = util.generateSubmitData(getState());
+    data.reviewed = reviewed;
     services
       .submitDmpSubmission(data)
       .then(() => {

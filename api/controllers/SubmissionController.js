@@ -110,7 +110,7 @@ exports.grid = [
         }
         let submissionGridPromise = util.generateSubmissionGrid(
           submissions,
-          res.user.role,
+          'user',
           submissionType
         );
         Promise.all([submissionGridPromise])

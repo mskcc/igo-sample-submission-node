@@ -459,10 +459,12 @@ export function generateSubmissionGrid(submissions, userRole, submissionType) {
 
       if (userRole === 'user') {
         grid.columnHeaders = grid.columnHeaders.filter((element) => {
-          return element !== 'Unsubmit';
+          console.log(element);
+          return element !== 'Unsubmit' && element !== 'Review';
         });
         grid.columnFeatures = grid.columnFeatures.filter((element) => {
-          return element.name !== 'Unsubmit';
+          console.log(element);
+          return element.name !== 'Unsubmit' && element.name !== 'Review';
         });
       }
       let rows = [];
@@ -485,22 +487,44 @@ export function generateSubmissionGrid(submissions, userRole, submissionType) {
             ? parseDate(submission.submittedAt)
             : '',
           // available actions depend on submitted status
-          edit: isSubmitted
-            ? `<span  submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">edit</span>`
-            : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action">edit</span>`,
-          receipt: isSubmitted
-            ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action grid-action">cloud_download</span>`
-            : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">cloud_download</span>`,
-          delete: isSubmitted
-            ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">delete</span>`
-            : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action">delete</span>`,
+          edit: `<span  submitted=${isSubmitted} service-id=${serviceId} submission-id=${
+            submission.id
+          } class="material-icons grid-action${
+            isSubmitted ? '-disabled' : ''
+          }">edit</span>`,
+          receipt: `<span  submitted=${isSubmitted} service-id=${serviceId} submission-id=${
+            submission.id
+          } class="material-icons grid-action${
+            isSubmitted ? '' : '-disabled'
+          }">cloud_download</span>`,
+          delete: `<span  submitted=${isSubmitted} service-id=${serviceId} submission-id=${
+            submission.id
+          } class="material-icons grid-action${
+            isSubmitted ? '-disabled' : ''
+          }">delete</span>`,
         };
 
+        console.log(submissionType);
         if (submissionType === 'dmp') {
+          let isReviewed = submission.reviewed;
           rows[
             i
-          ].samplesApproved = `${submission.samplesApproved}/${submission.formValues.numberOfSamples}`;
+          ].samplesApproved = `${submission.samplesApproved}/${submission.formValues.numberOfSamples} samples`;
+          rows[i].reviewed = isReviewed ? 'yes' : 'no';
+          rows[i].reviewedAt = submission.reviewedAt
+            ? parseDate(submission.reviewedAt)
+            : '';
+          if (userRole !== 'user') {
+            rows[i].review = `<span  submitted=${
+              isSubmitted && !isReviewed
+            } service-id=${serviceId} submission-id=${
+              submission.id
+            } class="material-icons grid-action${
+              isSubmitted && !isReviewed ? '' : '-disabled'
+            }">assignmentturnedin</span>`;
+          }
         }
+
         if (userRole !== 'user') {
           rows[i].unsubmit = !isSubmitted
             ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">undo</span>`

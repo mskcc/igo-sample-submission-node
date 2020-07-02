@@ -214,6 +214,13 @@ export const submissionColumns = {
     renderer: 'html',
   },
 
+  Reviewed: {
+    name: 'Reviewed',
+    data: 'reviewed',
+    readOnly: 'true',
+    renderer: 'html',
+  },
+
   'Date Created': {
     name: 'Created On',
     data: 'createdAt',
@@ -223,6 +230,12 @@ export const submissionColumns = {
   'Date Submitted': {
     name: 'Submitted On',
     data: 'submittedAt',
+    readOnly: 'true',
+  },
+
+  'Date Reviewed': {
+    name: 'Reviewed On',
+    data: 'revieweddAt',
     readOnly: 'true',
   },
 
@@ -242,11 +255,17 @@ export const submissionColumns = {
     data: 'edit',
     renderer: 'html',
   },
+  Review: {
+    name: 'Review',
+    data: 'review',
+    renderer: 'html',
+  },
   Unsubmit: {
     name: 'Unsubmit',
     data: 'unsubmit',
     renderer: 'html',
   },
+
   Receipt: {
     name: 'Receipt',
     data: 'receipt',
