@@ -170,6 +170,7 @@ export default function gridReducer(state = initialGridState, action) {
         ...initialGridState
       };
     case SubmissionActionTypes.SUBMIT_SUCCESS:
+    case SubmissionActionTypes.DMP_SUBMIT_SUCCESS:
       return {
         ...initialGridState
       };

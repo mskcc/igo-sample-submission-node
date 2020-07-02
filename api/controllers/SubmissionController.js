@@ -132,9 +132,9 @@ exports.grid = [
 
 // table for all todo: table for users
 exports.since = [
+  param('type').isLength({ min: 1 }).withMessage('type must be specified.'),
   param('time').exists().isInt().withMessage('time limit must be specified.'),
   function (req, res) {
-    console.log(req.params);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return apiResponse.validationErrorWithData(
@@ -144,7 +144,11 @@ exports.since = [
       );
     }
     let time = req.params.time;
-    SubmissionModel.find({ createdAt: { $gt: time } }, '')
+    let submissionType = req.params.type;
+
+    let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
+    model
+      .find({ createdAt: { $gt: time } }, '')
       .sort({ createdAt: 'desc' })
       .exec(function (err, submissions) {
         if (err || _.isEmpty(submissions)) {
@@ -155,7 +159,8 @@ exports.since = [
         }
         let submissionGridPromise = util.generateSubmissionGrid(
           submissions,
-          res.user.role
+          res.user.role,
+          submissionType
         );
         Promise.all([submissionGridPromise])
           .then((results) => {
@@ -332,10 +337,7 @@ exports.submit = [
     let gridType = req.body.type;
     let model = gridType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
 
-    let findOrCreateSubPromise = model.findOrCreateSub(
-      id,
-      res.user.username
-    );
+    let findOrCreateSubPromise = model.findOrCreateSub(id, res.user.username);
 
     Promise.all([findOrCreateSubPromise])
       .then((results) => {

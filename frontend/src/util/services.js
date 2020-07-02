@@ -185,8 +185,8 @@ export const getSubmissions = submissionType => {
     });
 };
 
-export const getSubmission = (id, gridType) => {
-  const url = `${Config.NODE_API_ROOT}/submission/get/${id}/${gridType}`;
+export const getSubmission = (id, submissionType) => {
+  const url = `${Config.NODE_API_ROOT}/submission/get/${id}/${submissionType}`;
   return axios
     .get(url)
     .then(resp => {
@@ -199,8 +199,8 @@ export const getSubmission = (id, gridType) => {
       return resp;
     });
 };
-export const getSubmissionsSince = time => {
-  const url = `${Config.NODE_API_ROOT}/submission/since/${time}`;
+export const getSubmissionsSince = (time, submissionType) => {
+  const url = `${Config.NODE_API_ROOT}/submission/since/${submissionType}/${time}`;
 
   return axios
     .get(url)
@@ -278,6 +278,21 @@ export const unsubmitSubmission = id => {
 
 export const submitSubmission = data => {
   const url = `${Config.NODE_API_ROOT}/submission/submit`;
+  return axios
+    .post(url, { ...data })
+    .then(resp => {
+      return resp;
+    })
+    .catch(error => {
+      throw error;
+    })
+    .then(resp => {
+      return resp;
+    });
+};
+
+export const submitDmpSubmission = data => {
+  const url = `${Config.NODE_API_ROOT}/dmp/submit`;
   return axios
     .post(url, { ...data })
     .then(resp => {

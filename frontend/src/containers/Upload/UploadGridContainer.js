@@ -70,8 +70,6 @@ class UploadGridContainer extends React.Component {
     const formValues = this.props[gridType].form.selected;
 
     let match = util.checkGridAndForm(formValues, this.props.grid.form);
-    console.log(match);
-    console.log(gridType);
     if (!match.success) {
       return swal.formGridMismatch(match);
     }
@@ -85,7 +83,9 @@ class UploadGridContainer extends React.Component {
       swal.emptyFieldsError(emptyColumns);
       return;
     } else {
-      this.props.submitSubmission();
+      return gridType === 'dmp'
+        ? this.props.submitDmpSubmission()
+        : this.props.submitSubmission();
     }
   };
 

@@ -104,14 +104,17 @@ function submissionsReducer(state = initialState, action) {
       };
 
     case ActionTypes.SUBMIT:
+    case ActionTypes.DMP_SUBMIT:
       return {
         ...state
       };
     case ActionTypes.SUBMIT_FAIL:
+    case ActionTypes.DMP_SUBMIT_FAIL:
       return {
         ...state
       };
     case ActionTypes.SUBMIT_SUCCESS:
+    case ActionTypes.DMP_SUBMIT_SUCCESS:
       return {
         ...initialState
       };

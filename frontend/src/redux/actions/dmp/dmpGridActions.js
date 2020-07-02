@@ -200,37 +200,7 @@ export function increaseRowNumber(prevRowNumber, newRowNumber) {
   };
 }
 
-export const EDIT_SUBMISSION = 'EDIT_SUBMISSION';
-export const DMP_GET_SUBMISSION_TO_EDIT_FAIL =
-  'DMP_GET_SUBMISSION_TO_EDIT_FAIL';
-export const DMP_GET_SUBMISSION_TO_EDIT_SUCCESS =
-  'DMP_GET_SUBMISSION_TO_EDIT_SUCCESS';
-export function populateGridFromSubmission(submissionId, ownProps) {
-  return (dispatch, getState) => {
-    dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...' });
-    services
-      .getSubmission(submissionId)
-      .then(resp => {
-        let submission = resp.payload.submission;
-        dispatch(getInitialColumns(submission.formValues), getState().user.role)
-          .then(dispatch(updateHeader(submission.formValues)))
-          .then(() => {
-            dispatch({
-              type: 'DMP_GET_SUBMISSION_TO_EDIT_SUCCESS',
-              payload: submission,
-              message: 'Loaded!'
-            });
-            return ownProps.history.push('upload');
-          });
-      })
-      .catch(error => {
-        return dispatch({
-          type: 'DMP_GET_SUBMISSION_TO_EDIT_FAIL',
-          error: error
-        });
-      });
-  };
-}
+
 
 export const HANDLE_PATIENT_ID = 'HANDLE_PATIENT_ID';
 export const HANDLE_PATIENT_ID_FAIL = 'HANDLE_PATIENT_ID_FAIL';

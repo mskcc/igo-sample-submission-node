@@ -18,7 +18,7 @@ export class SubmissionsPage extends Component {
     if (all) {
       return this.props.getSubmissions(this.props.gridType);
     }
-    this.props.getSubmissionsSince(unit, time);
+    this.props.getSubmissionsSince(unit, time, this.props.gridType);
   };
 
   handleGridClick = (coords, submitted, id, serviceId) => {
@@ -43,7 +43,11 @@ export class SubmissionsPage extends Component {
   };
 
   handleReceipt = (submissionId, serviceId) => {
-    return this.props.downloadReceipt(submissionId, serviceId, this.props.gridType);
+    return this.props.downloadReceipt(
+      submissionId,
+      serviceId,
+      this.props.gridType
+    );
   };
   handleDelete = submissionId => {
     swal.confirmDelete().then(decision => {

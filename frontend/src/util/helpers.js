@@ -200,7 +200,9 @@ export const generateSubmitData = (state, isPartial = false) => {
   };
   if (!isPartial) {
     data.transactionId = getTransactionId();
-    data.id = state.submissions.submissionToEdit._id;
+    data.id = state.submissions.submissionToEdit
+      ? state.submissions.submissionToEdit._id
+      : undefined;
   }
   data.version = Config.VERSION;
   let rowsWithIndex = rowsWithRowIndex(state.upload.grid.rows);

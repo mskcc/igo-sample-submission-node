@@ -443,7 +443,9 @@ exports.submit = [
         let [submissionToSubmit] = results;
         submissionToSubmit.formValues = formValues;
         submissionToSubmit.gridValues = gridValues;
-
+        submissionToSubmit.submitted = true;
+        submissionToSubmit.transactionId = transactionId;
+        submissionToSubmit.submittedAt = transactionId;
         //  save pre LIMS submit so data is safe
         submissionToSubmit.save(function (err) {
           if (err) {
@@ -451,8 +453,15 @@ exports.submit = [
               res,
               'Submission could not be saved.'
             );
+          } else {
+            return apiResponse.successResponseWithData(
+              res,
+              'Operation success',
+              submissionToSubmit
+            );
           }
         });
+
         // let submissionPromise = util.submit(
         //   submissionToSubmit,
         //   res.user,

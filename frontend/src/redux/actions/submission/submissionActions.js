@@ -29,14 +29,14 @@ export function getSubmissions(submissionType) {
 export const GET_SUBMISSIONS_SINCE = 'GET_SUBMISSIONS_SINCE';
 export const GET_SUBMISSIONS_SINCE_FAIL = 'GET_SUBMISSIONS_SINCE_FAIL';
 export const GET_SUBMISSIONS_SINCE_SUCCESS = 'GET_SUBMISSIONS_SINCE_SUCCESS';
-export function getSubmissionsSince(unit, time) {
+export function getSubmissionsSince(unit, time, submissionType) {
   return dispatch => {
     dispatch({ type: GET_SUBMISSIONS_SINCE });
     let limit = moment()
       .subtract(unit, time)
       .unix();
     services
-      .getSubmissionsSince(limit)
+      .getSubmissionsSince(limit,submissionType)
 
       .then(response => {
         return dispatch({
@@ -198,6 +198,35 @@ export function submitSubmission() {
       });
   };
 }
+
+
+
+export const DMP_SUBMIT = 'DMP_SUBMIT';
+export const DMP_SUBMIT_FAIL = 'DMP_SUBMIT_FAIL';
+export const DMP_SUBMIT_SUCCESS = 'DMP_SUBMIT_SUCCESS';
+export function submitDmpSubmission() {
+  return (dispatch, getState) => {
+    dispatch({ type: DMP_SUBMIT, message: 'Submitting...' });
+
+    let data = util.generateSubmitData(getState());
+    services
+      .submitDmpSubmission(data)
+      .then(() => {
+        dispatch({
+          type: DMP_SUBMIT_SUCCESS
+        });
+        return swal.submitSuccess();
+      })
+      .catch(error => {
+        dispatch({
+          type: DMP_SUBMIT_FAIL,
+          error: error
+        });
+        return error;
+      });
+  };
+}
+
 
 export const DELETE_SUBMISSION = 'DELETE_SUBMISSION';
 export const DELETE_SUBMISSION_FAIL = 'DELETE_SUBMISSION_FAIL';

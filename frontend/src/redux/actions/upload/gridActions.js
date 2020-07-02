@@ -217,6 +217,11 @@ export function increaseRowNumber(prevRowNumber, newRowNumber) {
 export const EDIT_SUBMISSION = 'EDIT_SUBMISSION';
 export const GET_SUBMISSION_TO_EDIT_FAIL = 'GET_SUBMISSION_TO_EDIT_FAIL';
 export const GET_SUBMISSION_TO_EDIT_SUCCESS = 'GET_SUBMISSION_TO_EDIT_SUCCESS';
+export const EDIT_DMP_SUBMISSION = 'EDIT_DMP_SUBMISSION';
+export const GET_DMP_SUBMISSION_TO_EDIT_FAIL =
+  'GET_DMP_SUBMISSION_TO_EDIT_FAIL';
+export const GET_DMP_SUBMISSION_TO_EDIT_SUCCESS =
+  'GET_DMP_SUBMISSION_TO_EDIT_SUCCESS';
 export function populateGridFromSubmission(submissionId, ownProps) {
   return (dispatch, getState) => {
     let page = ownProps.gridType;
@@ -235,7 +240,6 @@ export function populateGridFromSubmission(submissionId, ownProps) {
             }
           })
           .then(() => {
-            console.log(submission);
             let type =
               page === 'dmp'
                 ? GET_DMP_SUBMISSION_TO_EDIT_SUCCESS
@@ -260,43 +264,6 @@ export function populateGridFromSubmission(submissionId, ownProps) {
   };
 }
 
-export const EDIT_DMP_SUBMISSION = 'EDIT_DMP_SUBMISSION';
-export const GET_DMP_SUBMISSION_TO_EDIT_FAIL =
-  'GET_DMP_SUBMISSION_TO_EDIT_FAIL';
-export const GET_DMP_SUBMISSION_TO_EDIT_SUCCESS =
-  'GET_DMP_SUBMISSION_TO_EDIT_SUCCESS';
-// export function populateDmpGridFromSubmission(submissionId, ownProps) {
-//   return (dispatch, getState) => {
-//     let page = ownProps.gridType;
-
-//     dispatch({ type: EDIT_DMP_SUBMISSION, message: 'Loading...' });
-//     services
-//       .getSubmission(submissionId, page)
-//       .then(resp => {
-//         let submission = resp.payload.submission;
-//         console.log(resp);
-//         dispatch(
-//           getInitialColumns('upload', submission.formValues),
-//           getState().user.role
-//         )
-//           .then(dispatch(updateHeader(submission.formValues)))
-//           .then(() => {
-//             dispatch({
-//               type: GET_DMP_SUBMISSION_TO_EDIT_SUCCESS,
-//               payload: submission,
-//               message: 'Loaded!'
-//             });
-//             return ownProps.history.push('dmp');
-//           });
-//       })
-//       .catch(error => {
-//         return dispatch({
-//           type: GET_DMP_SUBMISSION_TO_EDIT_FAIL,
-//           error: error
-//         });
-//       });
-//   };
-// }
 
 export const HANDLE_PATIENT_ID = 'HANDLE_PATIENT_ID';
 export const HANDLE_PATIENT_ID_FAIL = 'HANDLE_PATIENT_ID_FAIL';
