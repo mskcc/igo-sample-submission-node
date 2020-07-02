@@ -167,6 +167,7 @@ function submissionsReducer(state = initialState, action) {
       return { ...state, submissionToEdit: undefined };
 
     case GridActionTypes.GET_SUBMISSION_TO_EDIT_SUCCESS:
+    case GridActionTypes.GET_DMP_SUBMISSION_TO_EDIT_SUCCESS:
       return {
         ...state,
         submissionToEdit: {

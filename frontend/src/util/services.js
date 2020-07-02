@@ -170,8 +170,8 @@ export const downloadGrid = data => {
     });
 };
 
-export const getSubmissions = gridType => {
-  const url = `${Config.NODE_API_ROOT}/submission/grid/${gridType}`;
+export const getSubmissions = submissionType => {
+  const url = `${Config.NODE_API_ROOT}/submission/grid/${submissionType}`;
   return axios
     .get(url)
     .then(resp => {
@@ -291,10 +291,10 @@ export const submitSubmission = data => {
     });
 };
 
-export const deleteSubmission = id => {
+export const deleteSubmission = (id, submissionType) => {
   const url = `${Config.NODE_API_ROOT}/submission/delete`;
   return axios
-    .post(url, { id: id })
+    .post(url, { id: id, type: submissionType })
     .then(resp => {
       return resp;
     })

@@ -12,8 +12,12 @@ const EditPanel = ({ submission, role, classes }) => (
         <br />
         Created by:
         <span className={classes.field}> {submission.username}</span>
-        <br />
-        ID:<span className={classes.field}> {submission.serviceId}</span>
+        {submission.gridType !== 'dmp' && (
+          <span>
+            <br />
+            ID:<span className={classes.field}> {submission.serviceId}</span>
+          </span>
+        )}
         <br />
         Samples:{' '}
         <span className={classes.field}> {submission.numberOfSamples} </span>
@@ -25,8 +29,13 @@ const EditPanel = ({ submission, role, classes }) => (
         <span className={classes.field}>{submission.updatedAt}</span>
         <br />
         <span className={classes.field}> {submission.material} </span>for
-        <span className={classes.field}> {submission.application} </span>in
-        <span className={classes.field}> {submission.container} </span>
+        <span className={classes.field}> {submission.application} </span>
+        {submission.gridType !== 'dmp' && (
+          <span>
+            in
+            <span className={classes.field}> {submission.container} </span>
+          </span>
+        )}
         {role === 'lab_member' && (
           <span className={classes.field}>
             <br />

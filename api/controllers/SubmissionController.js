@@ -272,22 +272,23 @@ exports.update = [
 
     let formValues = JSON.parse(req.body.formValues);
     let gridValues = JSON.parse(req.body.gridValues);
+    let submissionType = req.body.submissionType;
     let id = req.body.id;
-
-    SubmissionModel.findByIdAndUpdate(
-      ObjectId(id),
-      {
-        formValues: formValues,
-        gridValues: gridValues,
-      },
-      { new: true }
-    )
+    let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
+    model
+      .findByIdAndUpdate(
+        ObjectId(id),
+        {
+          formValues: formValues,
+          gridValues: gridValues,
+        },
+        { new: true }
+      )
       .lean()
       .exec(function (err, submission) {
         if (err || !submission) {
           return apiResponse.errorResponse(res, 'Could not update submission.');
         }
-        console.log(submission);
         return apiResponse.successResponseWithData(res, 'Operation success', {
           submission: submission,
         });
@@ -328,7 +329,10 @@ exports.submit = [
     let transactionId = req.body.transactionId;
     let id = req.body.id || undefined;
 
-    let findOrCreateSubPromise = SubmissionModel.findOrCreateSub(
+    let gridType = req.body.type;
+    let model = gridType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
+
+    let findOrCreateSubPromise = model.findOrCreateSub(
       id,
       res.user.username
     );
@@ -393,6 +397,7 @@ exports.submit = [
 
 exports.delete = [
   body('id').isMongoId().trim().withMessage('id must be valid MongoDB id.'),
+  body('type').isLength({ min: 1 }).withMessage('type must be specified.'),
   function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -403,7 +408,10 @@ exports.delete = [
       );
     }
     let id = req.body.id;
-    SubmissionModel.findByIdAndDelete(ObjectId(id)).exec(function (err) {
+    let gridType = req.body.type;
+
+    let model = gridType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
+    model.findByIdAndDelete(ObjectId(id)).exec(function (err) {
       if (err) {
         return apiResponse.errorResponse(res, 'Could not delete submission.');
       }
@@ -415,10 +423,8 @@ exports.delete = [
 exports.download = [
   // param('id').isMongoId().trim().withMessage('id must be valid MongoDB id.'),
   function (req, res) {
-    console.log(req.params);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log(req.params);
       return apiResponse.validationErrorWithData(
         res,
         'Validation error.',

@@ -1,17 +1,15 @@
-import axios from 'axios';
-import { Config } from '../../../config.js';
 import { util, swal, services, excel } from '../../../util';
 import moment from 'moment';
 
 export const GET_SUBMISSIONS = 'GET_SUBMISSIONS';
 export const GET_SUBMISSIONS_FAIL = 'GET_SUBMISSIONS_FAIL';
 export const GET_SUBMISSIONS_SUCCESS = 'GET_SUBMISSIONS_SUCCESS';
-export function getSubmissions(gridType) {
+export function getSubmissions(submissionType) {
   return dispatch => {
     dispatch({ type: GET_SUBMISSIONS });
 
     return services
-      .getSubmissions(gridType)
+      .getSubmissions(submissionType)
       .then(response => {
         return dispatch({
           type: GET_SUBMISSIONS_SUCCESS,
@@ -204,17 +202,17 @@ export function submitSubmission() {
 export const DELETE_SUBMISSION = 'DELETE_SUBMISSION';
 export const DELETE_SUBMISSION_FAIL = 'DELETE_SUBMISSION_FAIL';
 export const DELETE_SUBMISSION_SUCCESS = 'DELETE_SUBMISSION_SUCCESS';
-export function deleteSubmission(id) {
+export function deleteSubmission(id, submissionType) {
   return dispatch => {
     dispatch({ type: DELETE_SUBMISSION });
     services
-      .deleteSubmission(id)
+      .deleteSubmission(id, submissionType)
       .then(() => {
         dispatch({
           type: DELETE_SUBMISSION_SUCCESS,
           message: 'Submission ' + id + ' successfully deleted.'
         });
-        return dispatch(getSubmissions());
+        return dispatch(getSubmissions(submissionType));
       })
       .catch(error => {
         return dispatch({

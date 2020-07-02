@@ -5,7 +5,7 @@ const services = require('../services/services');
 import CacheService from '../util/cache';
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
-// const { constants } = require('../util/constants');
+const DmpSubmissionModel = require('../models/DmpSubmissionModel');
 
 /**
  * Initial State, returns header values for submission form.
@@ -397,5 +397,101 @@ exports.export = [
       excelData,
       fileName: `${res.user.username}-Submission-Grid-${material}-${application}`,
     });
+  },
+];
+
+/**
+ * Submits to LIMS Banked Samples
+ *
+ * @returns {Object}
+ */
+exports.submit = [
+  body('id').optional().isMongoId().withMessage('id must be valid MongoDB ID.'),
+  body('transactionId').isInt().withMessage('id must be Int.'),
+  body('formValues')
+    .isJSON()
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage('formValues must be JSON.'),
+  body('gridValues')
+    .isJSON()
+    .isLength({ min: 1 })
+    .trim()
+    .withMessage('gridValues must be JSON.'),
+  function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return apiResponse.validationErrorWithData(
+        res,
+        'Validation error.',
+        errors.array()
+      );
+    }
+
+    let formValues = JSON.parse(req.body.formValues);
+    let gridValues = JSON.parse(req.body.gridValues);
+    let transactionId = req.body.transactionId;
+    let id = req.body.id || undefined;
+
+    let findOrCreateSubPromise = DmpSubmissionModel.findOrCreateSub(
+      id,
+      res.user.username
+    );
+
+    Promise.all([findOrCreateSubPromise])
+      .then((results) => {
+        let [submissionToSubmit] = results;
+        submissionToSubmit.formValues = formValues;
+        submissionToSubmit.gridValues = gridValues;
+
+        //  save pre LIMS submit so data is safe
+        submissionToSubmit.save(function (err) {
+          if (err) {
+            return apiResponse.errorResponse(
+              res,
+              'Submission could not be saved.'
+            );
+          }
+        });
+        // let submissionPromise = util.submit(
+        //   submissionToSubmit,
+        //   res.user,
+        //   transactionId
+        // );
+        // Promise.all([submissionPromise])
+        //   .catch((reasons) => {
+        //     return apiResponse.errorResponse(res, reasons);
+        //   })
+        //   .then((results) => {
+        //     if (results.some((x) => x.length === 0)) {
+        //       return apiResponse.errorResponse(res, 'Could not submit.');
+        //     }
+        //     let [submissionResult] = results;
+        //     submissionToSubmit.submitted = true;
+        //     submissionToSubmit.transactionId = transactionId;
+        //     submissionToSubmit.submittedAt = transactionId;
+        //     submissionToSubmit.save(function (err) {
+        //       if (err) {
+        //         return apiResponse.errorResponse(
+        //           res,
+        //           'Submission could not be saved on this site but was submitted to IGO.'
+        //         );
+        //       } else {
+        //         let sendEmail = mailer.sendToPms(submissionToSubmit.formValues);
+        //         if (sendEmail) {
+        //           mailer.sendNotification(submissionToSubmit);
+        //         }
+        //         return apiResponse.successResponseWithData(
+        //           res,
+        //           'Operation success',
+        //           submissionResult
+        //         );
+        //       }
+        //     });
+        //   });
+      })
+      .catch((reasons) => {
+        return apiResponse.errorResponse(res, reasons);
+      });
   },
 ];

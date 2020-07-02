@@ -16,7 +16,7 @@ export class SubmissionsPage extends Component {
 
   handleFilterClick = (unit, time, all = false) => {
     if (all) {
-      return this.props.getSubmissions();
+      return this.props.getSubmissions(this.props.gridType);
     }
     this.props.getSubmissionsSince(unit, time);
   };
@@ -39,16 +39,16 @@ export class SubmissionsPage extends Component {
   };
 
   handleUnsubmit = submissionId => {
-    return this.props.unsubmit(submissionId);
+    return this.props.unsubmit(submissionId, this.props.gridType);
   };
 
   handleReceipt = (submissionId, serviceId) => {
-    return this.props.downloadReceipt(submissionId, serviceId);
+    return this.props.downloadReceipt(submissionId, serviceId, this.props.gridType);
   };
   handleDelete = submissionId => {
     swal.confirmDelete().then(decision => {
       if (decision) {
-        this.props.deleteSubmission(submissionId);
+        this.props.deleteSubmission(submissionId, this.props.gridType);
       }
     });
   };
