@@ -279,18 +279,6 @@ export const isEqual = function(value, other) {
   return true;
 };
 
-// export const generatePromoteGridData = responseColumns => {
-//   let grid = { columnFeatures: [], columnHeaders: [], rows: [] }
-//   grid.columnFeatures = generatePromoteColumnFeatures(responseColumns)
-//   grid.columnHeaders = grid.columnFeatures.map(a => a.columnHeader)
-
-//   grid.rows = generatePromoteRows(grid.columnFeatures, 10)
-
-//   // grid.hiddenColumns = hideColumns(grid.columnFeatures, userRole)
-
-//   return grid
-// }
-
 // PROMOTE END
 
 // find submission in user (or all if current user is member/super) submission

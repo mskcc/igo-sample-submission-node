@@ -256,7 +256,6 @@ export const hideColumns = (columns, userRole) => {
         columns.hiddenColumns.push(index);
       }
     });
-    console.log(columns);
     resolve(columns);
   });
 };
@@ -307,6 +306,9 @@ const fillData = (columns, formValues) => {
     for (var i = 0; i < numberOfRows; i++) {
       columns.columnFeatures.map((entry) => {
         rowData[i] = { ...rowData[i], [entry.data]: '' };
+        if (entry.type === 'checkbox') {
+          rowData[i] = { ...rowData[i], [entry.data]: false };
+        }
         if (entry.data === 'species' || entry.data === 'organism') {
           rowData[i] = {
             ...rowData[i],

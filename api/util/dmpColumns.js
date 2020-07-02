@@ -162,6 +162,14 @@ export const gridColumns = {
     columnHeader: 'Additional Info',
     data: 'additionalInfo',
   },
+  'Approved for DMP': {
+    name: 'Approved for DMP',
+    columnHeader: 'Approved for DMP',
+    className: 'htCenter htMiddle',
+    type: 'checkbox',
+    data: 'isApproved',
+    hiddenFrom: 'user',
+  },
 };
 export const submissionColumns = {
   'Service ID': {
@@ -253,6 +261,7 @@ export const submissionColumns = {
 
 export const dmpIntakeForms = {
   'DNA+CustomCapture': [
+    ['Approved for DMP', 'Required'],
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -266,6 +275,7 @@ export const dmpIntakeForms = {
     ['Comments', 'Optional'],
   ],
   'DNA+QC_Pickup': [
+    ['Approved for DMP', 'Required'],
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -279,6 +289,7 @@ export const dmpIntakeForms = {
     ['Comments', 'Optional'],
   ],
   'DNA+TCRSeq': [
+    ['Approved for DMP', 'Required'],
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -292,6 +303,7 @@ export const dmpIntakeForms = {
     ['Comments', 'Optional'],
   ],
   'DNA+HumanWholeGenome': [
+    ['Approved for DMP', 'Required'],
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -305,6 +317,7 @@ export const dmpIntakeForms = {
     ['Comments', 'Optional'],
   ],
   'DNA+IMPACT468': [
+    ['Approved for DMP', 'Required'],
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -318,6 +331,7 @@ export const dmpIntakeForms = {
     ['Comments', 'Optional'],
   ],
   'DNA+ddPCR': [
+    ['Approved for DMP', 'Required'],
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -332,6 +346,7 @@ export const dmpIntakeForms = {
     ['Comments', 'Optional'],
   ],
   'DNA+WholeExomeSequencing': [
+    ['Approved for DMP', 'Required'],
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -356,6 +371,7 @@ export const dmpIntakeForms = {
     ['Comments', 'Optional'],
   ],
   'DNA Library+HumanWholeGenome': [
+    ['Approved for DMP', 'Required'],
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -369,6 +385,7 @@ export const dmpIntakeForms = {
     ['Comments', 'Optional'],
   ],
   'DNA Library+IMPACT468': [
+    ['Approved for DMP', 'Required'],
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -382,6 +399,7 @@ export const dmpIntakeForms = {
     ['Comments', 'Optional'],
   ],
   'DNA Library+ddPCR': [
+    ['Approved for DMP', 'Required'],
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -394,6 +412,7 @@ export const dmpIntakeForms = {
     [' Molecular Pathology Accession Number', 'Optional'],
   ],
   'DNA Library+WholeExomeSequencing': [
+    ['Approved for DMP', 'Required'],
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -418,6 +437,7 @@ export const dmpIntakeForms = {
     ['Comments', 'Optional'],
   ],
   'DNA Library+CustomCapture': [
+    ['Approved for DMP', 'Required'],
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -431,6 +451,7 @@ export const dmpIntakeForms = {
     ['Comments', 'Optional'],
   ],
   'DNA Library+QC_Pickup': [
+    ['Approved for DMP', 'Required'],
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],
@@ -444,6 +465,7 @@ export const dmpIntakeForms = {
     ['Comments', 'Optional'],
   ],
   'DNA Library+TCRSeq': [
+    ['Approved for DMP', 'Required'],
     ['Tracking ID', 'Required'],
     ['DMP Sample ID', 'Required'],
     ['Investigator Patient ID (Study Subject Identifier)', 'Required'],

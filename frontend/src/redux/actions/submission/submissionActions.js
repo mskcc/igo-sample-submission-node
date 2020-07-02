@@ -36,7 +36,7 @@ export function getSubmissionsSince(unit, time, submissionType) {
       .subtract(unit, time)
       .unix();
     services
-      .getSubmissionsSince(limit,submissionType)
+      .getSubmissionsSince(limit, submissionType)
 
       .then(response => {
         return dispatch({
@@ -126,12 +126,12 @@ export function updatePartialSubmission(page) {
 export const UNSUBMIT = 'UNSUBMIT';
 export const UNSUBMIT_FAIL = 'UNSUBMIT_FAIL';
 export const UNSUBMIT_SUCCESS = 'UNSUBMIT_SUCCESS';
-export function unsubmit(id) {
+export function unsubmit(id, submissionType) {
   return dispatch => {
     dispatch({ type: UNSUBMIT });
 
     services
-      .unsubmitSubmission(id)
+      .unsubmitSubmission(id, submissionType)
       .then(() => {
         dispatch({
           type: UNSUBMIT_SUCCESS
@@ -199,8 +199,6 @@ export function submitSubmission() {
   };
 }
 
-
-
 export const DMP_SUBMIT = 'DMP_SUBMIT';
 export const DMP_SUBMIT_FAIL = 'DMP_SUBMIT_FAIL';
 export const DMP_SUBMIT_SUCCESS = 'DMP_SUBMIT_SUCCESS';
@@ -226,7 +224,6 @@ export function submitDmpSubmission() {
       });
   };
 }
-
 
 export const DELETE_SUBMISSION = 'DELETE_SUBMISSION';
 export const DELETE_SUBMISSION_FAIL = 'DELETE_SUBMISSION_FAIL';

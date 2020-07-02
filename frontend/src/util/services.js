@@ -261,10 +261,10 @@ export const updateSubmission = data => {
     });
 };
 
-export const unsubmitSubmission = id => {
+export const unsubmitSubmission = (id, submissionType) => {
   const url = `${Config.NODE_API_ROOT}/submission/unsubmit`;
   return axios
-    .post(url, { id: id })
+    .post(url, { id: id, type: submissionType })
     .then(resp => {
       return resp;
     })

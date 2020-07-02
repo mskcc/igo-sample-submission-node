@@ -55,6 +55,7 @@ exports.submission = [
 
 exports.unsubmit = [
   body('id').isMongoId().withMessage('id must be valid MongoDB ID.'),
+  body('type').isLength({ min: 1 }).withMessage('type must be specified.'),
   function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -65,7 +66,11 @@ exports.unsubmit = [
       );
     }
 
-    SubmissionModel.findByIdAndUpdate(ObjectId(req.body.id), {
+    let submissionType = req.body.type;
+
+    let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
+
+    model.findByIdAndUpdate(ObjectId(req.body.id), {
       submitted: false,
     }).exec(function (err, submission) {
       if (err) {
