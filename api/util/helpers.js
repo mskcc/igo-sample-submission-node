@@ -94,7 +94,7 @@ export function generateGrid(
   limsColumnList,
   userRole,
   formValues,
-  type = 'submit'
+  type = 'upload'
 ) {
   let allColumns = submitColumns;
   if (type == 'dmp') {
@@ -118,15 +118,9 @@ export function generateGrid(
 
     cacheAllPicklists(columnNamesOnly, allColumns)
       .then((picklists) =>
-        fillColumns(
-          columns,
-          limsColumnList,
-          userRole,
-          formValues,
-          picklists,
-          allColumns
-        )
+        fillColumns(columns, limsColumnList, formValues, picklists, allColumns)
       )
+      .then((columns) => hideColumns(columns, userRole))
       .then((columns) => fillData(columns, formValues))
       .catch((reasons) => reject(reasons))
       .then((columns) => {
@@ -143,7 +137,6 @@ export function generateGrid(
 function fillColumns(
   columns,
   limsColumnList,
-  userRole,
   formValues = {},
   picklists,
   allColumns
@@ -202,9 +195,7 @@ function fillColumns(
 
         colDef.error = colDef.error ? colDef.error : 'Invalid format.';
         columns.columnFeatures.push(colDef);
-        if (colDef.hiddenFrom && colDef.hiddenFrom === userRole) {
-          columns.hiddenColumns.push(columns.columnFeatures.length);
-        }
+
         colDef.optional = requiredColumns.includes(columnName) ? false : true;
         colDef.allowEmpty = colDef.optional;
         colDef.className = colDef.optional ? 'optional' : 'required';
@@ -257,6 +248,18 @@ const overwriteContainer = (userContainer, allColumns) => {
   return newContainer;
 };
 
+// generate rows with same autofilled and consecutive wellPos values, only return the additional rows
+export const hideColumns = (columns, userRole) => {
+  return new Promise((resolve) => {
+    columns.columnFeatures.map((element, index) => {
+      if (element.hiddenFrom === userRole) {
+        columns.hiddenColumns.push(index);
+      }
+    });
+    console.log(columns);
+    resolve(columns);
+  });
+};
 // generate rows with same autofilled and consecutive wellPos values, only return the additional rows
 export const generateAdditionalRows = (
   columnFeatures,
@@ -491,8 +494,10 @@ export function generateSubmissionGrid(submissions, userRole, submissionType) {
             : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action">delete</span>`,
         };
 
-        if (submissionType === 'dmp'){
-          rows[i].samplesApproved = `${submission.samplesApproved}/${submission.formValues.numberOfSamples}`;
+        if (submissionType === 'dmp') {
+          rows[
+            i
+          ].samplesApproved = `${submission.samplesApproved}/${submission.formValues.numberOfSamples}`;
         }
         if (userRole !== 'user') {
           rows[i].unsubmit = !isSubmitted

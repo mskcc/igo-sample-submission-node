@@ -22,23 +22,35 @@ export const gridColumns = {
     name: 'Tracking ID',
     columnHeader: 'Tracking ID',
     data: 'trackingId',
+    pattern: validationPatterns.alphanumdash,
+    error: 'Only letters, digits and –, please.',
   },
+
   'DMP Sample ID': {
     name: 'DMP Sample ID',
     pattern: validationPatterns.dmpSampleId,
     columnHeader: 'DMP Sample ID',
     data: 'dmpSampleId',
+    error: 'Only valid DMP Sample IDs, e.g. P-0000000-N00-WES.',
+    sendToDmp: true,
   },
+
   'Investigator Patient ID (Study Subject Identifier)': {
     name: 'Investigator Patient ID (Study Subject Identifier)',
     columnHeader: 'Investigator Patient ID (Study Subject Identifier)',
     data: 'studySubjectIdentifier',
+    pattern: validationPatterns.alphanumdash,
+    error: 'Only letters, digits and –, please.',
   },
+
   'Investigator Sample ID (Study Sample Identifier)': {
     name: 'Investigator Sample ID (Study Sample Identifier)',
     columnHeader: 'Investigator Sample ID (Study Sample Identifier)',
     data: 'studySampleIdentifier',
+    pattern: validationPatterns.userId,
+    error: 'Only letters, digits and –, please.',
   },
+
   'Sample Type': {
     name: 'Sample Type',
     columnHeader: 'Sample Type',
@@ -47,17 +59,23 @@ export const gridColumns = {
     strict: true,
     error: 'Only dropdown options are permitted as values',
     picklistName: 'DmpSampleTypes',
+    sendToDmp: true,
   },
+
   'Project PI': {
     name: 'Project PI',
     columnHeader: 'Project PI',
     data: 'projectPi',
+    sendToDmp: true,
   },
+
   'Project Title': {
     name: 'Project Title',
     columnHeader: 'Project Title',
     data: 'projectTitle',
+    sendToDmp: true,
   },
+
   'DMP to Transfer': {
     name: 'DMP to Transfer',
     columnHeader: 'DMP to Transfer',
@@ -66,11 +84,20 @@ export const gridColumns = {
     type: 'autocomplete',
     strict: true,
     error: 'Only dropdown options are permitted as values',
+    hiddenFrom: 'user',
   },
+
   'Molecular Pathology Accession Number': {
     name: 'Molecular Pathology Accession Number',
     columnHeader: 'Molecular Pathology Accession Number',
     data: 'molecularPathologyAccessionNumber',
+  },
+
+  Comments: {
+    name: 'Comments',
+    columnHeader: 'Comments',
+    data: 'comments',
+    hiddenFrom: 'user',
   },
 
   'Gene and Mutation': {
@@ -87,11 +114,15 @@ export const gridColumns = {
     strict: true,
     error: 'Only dropdown options are permitted as values',
     picklistName: 'DmpCmoSampleApproval',
+    hiddenFrom: 'user',
+    sendToDmp: true,
   },
+
   'Variant Allele Frequency': {
     name: 'Variant Allele Frequency',
     columnHeader: 'Variant Allele Frequency',
     data: 'Variant Allele Frequency',
+    hiddenFrom: 'user',
   },
   Coverage: {
     name: 'Coverage',
@@ -101,39 +132,50 @@ export const gridColumns = {
     strict: true,
     error: 'Only dropdown options are permitted as values',
     picklistName: 'DmpCoverage',
+    hiddenFrom: 'user',
   },
+
   'Investigator Patient ID (Investigator Provided Study Subject Identifier)': {
     name:
       'Investigator Patient ID (Investigator Provided Study Subject Identifier)',
     columnHeader:
       'Investigator Patient ID (Investigator Provided Study Subject Identifier)',
     data: 'investigatorProvidedStudySubjectIdentifier',
+    pattern: validationPatterns.alphanumdash,
+    error: 'Only letters, digits and –, please.',
+    hiddenFrom: 'user',
   },
+
   'Investigator Sample ID (Investigator Provided Study Sample Identifier)': {
     name:
       'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
     columnHeader:
       'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
     data: 'investigatorProvidedStudySampleIdentifier',
+    pattern: validationPatterns.alphanumdash,
+    error: 'Only letters, digits and –, please.',
+    hiddenFrom: 'user',
   },
+
   'Additional Info': {
     name: 'Additional Info',
     columnHeader: 'Additional Info',
     data: 'additionalInfo',
   },
 };
-
 export const submissionColumns = {
   'Service ID': {
     name: 'Service ID',
     data: 'serviceId',
     readOnly: 'true',
   },
+
   'User ID': {
     name: 'User',
     data: 'username',
     readOnly: 'true',
   },
+
   'Sample Type': {
     name: 'Sample Type',
     data: 'sampleType',
@@ -144,38 +186,44 @@ export const submissionColumns = {
     data: 'application',
     readOnly: 'true',
   },
+
   '#Samples': {
     name: '#Samples',
     data: 'numberOfSamples',
     readOnly: 'true',
   },
+
   'Submitted to CMO PMs?': {
     name: 'Submitted to CMO PMs?',
     data: 'submitted',
     readOnly: 'true',
     renderer: 'html',
   },
-  'Approved': {
+  Approved: {
     name: 'Approved',
     data: 'samplesApproved',
     readOnly: 'true',
     renderer: 'html',
   },
+
   'Date Created': {
     name: 'Created On',
     data: 'createdAt',
     readOnly: 'true',
   },
+
   'Date Submitted': {
     name: 'Submitted On',
     data: 'submittedAt',
     readOnly: 'true',
   },
+
   'Transaction ID': {
     name: 'Transaction ID',
     data: 'transactionId',
     readOnly: 'true',
   },
+
   '# Revisions': {
     name: '# Revisions',
     data: 'revisions',
@@ -214,6 +262,8 @@ export const dmpIntakeForms = {
     ['Project Title', 'Required'],
     ['DMP to Transfer', 'Required'],
     ['Molecular Pathology Accession Number', 'Optional'],
+    ['Additional Info', 'Optional'],
+    ['Comments', 'Optional'],
   ],
   'DNA+QC_Pickup': [
     ['Tracking ID', 'Required'],
@@ -225,6 +275,8 @@ export const dmpIntakeForms = {
     ['Project Title', 'Required'],
     ['DMP to Transfer', 'Required'],
     ['Molecular Pathology Accession Number', 'Optional'],
+    ['Additional Info', 'Optional'],
+    ['Comments', 'Optional'],
   ],
   'DNA+TCRSeq': [
     ['Tracking ID', 'Required'],
@@ -236,6 +288,8 @@ export const dmpIntakeForms = {
     ['Project Title', 'Required'],
     ['DMP to Transfer', 'Required'],
     ['Molecular Pathology Accession Number', 'Optional'],
+    ['Additional Info', 'Optional'],
+    ['Comments', 'Optional'],
   ],
   'DNA+HumanWholeGenome': [
     ['Tracking ID', 'Required'],
@@ -247,6 +301,8 @@ export const dmpIntakeForms = {
     ['Project Title', 'Required'],
     ['DMP to Transfer', 'Required'],
     ['Molecular Pathology Accession Number', 'Optional'],
+    ['Additional Info', 'Optional'],
+    ['Comments', 'Optional'],
   ],
   'DNA+IMPACT468': [
     ['Tracking ID', 'Required'],
@@ -258,6 +314,8 @@ export const dmpIntakeForms = {
     ['Project Title', 'Required'],
     ['DMP to Transfer', 'Required'],
     ['Molecular Pathology Accession Number', 'Optional'],
+    ['Additional Info', 'Optional'],
+    ['Comments', 'Optional'],
   ],
   'DNA+ddPCR': [
     ['Tracking ID', 'Required'],
@@ -270,6 +328,8 @@ export const dmpIntakeForms = {
     ['DMP to Transfer', 'Required'],
     ['Gene and Mutation', 'Optional'],
     ['Molecular Pathology Accession Number', 'Optional'],
+    ['Additional Info', 'Optional'],
+    ['Comments', 'Optional'],
   ],
   'DNA+WholeExomeSequencing': [
     ['Tracking ID', 'Required'],
@@ -291,8 +351,9 @@ export const dmpIntakeForms = {
       'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
       'Required',
     ],
-    ['Additional Info', 'Optional'],
     ['Molecular Pathology Accession Number', 'Optional'],
+    ['Additional Info', 'Optional'],
+    ['Comments', 'Optional'],
   ],
   'DNA Library+HumanWholeGenome': [
     ['Tracking ID', 'Required'],
@@ -304,6 +365,8 @@ export const dmpIntakeForms = {
     ['Project Title', 'Required'],
     ['DMP to Transfer', 'Required'],
     ['Molecular Pathology Accession Number', 'Optional'],
+    ['Additional Info', 'Optional'],
+    ['Comments', 'Optional'],
   ],
   'DNA Library+IMPACT468': [
     ['Tracking ID', 'Required'],
@@ -315,6 +378,8 @@ export const dmpIntakeForms = {
     ['Project Title', 'Required'],
     ['DMP to Transfer', 'Required'],
     ['Molecular Pathology Accession Number', 'Optional'],
+    ['Additional Info', 'Optional'],
+    ['Comments', 'Optional'],
   ],
   'DNA Library+ddPCR': [
     ['Tracking ID', 'Required'],
@@ -337,9 +402,8 @@ export const dmpIntakeForms = {
     ['Project PI', 'Required'],
     ['Project Title', 'Required'],
     ['DMP to Transfer', 'Required'],
-    ['Sample Approved by CMO', 'Required'][
-      ('Variant Allele Frequency', 'Required')
-    ],
+    ['Sample Approved by CMO', 'Required'],
+    ['Variant Allele Frequency', 'Required'],
     ['Coverage', 'Required'],
     [
       'Investigator Patient ID (Investigator Provided Study Subject Identifier)',
@@ -349,8 +413,9 @@ export const dmpIntakeForms = {
       'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
       'Required',
     ],
-    ['Additional Info', 'Optional'],
     ['Molecular Pathology Accession Number', 'Optional'],
+    ['Additional Info', 'Optional'],
+    ['Comments', 'Optional'],
   ],
   'DNA Library+CustomCapture': [
     ['Tracking ID', 'Required'],
@@ -362,6 +427,8 @@ export const dmpIntakeForms = {
     ['Project Title', 'Required'],
     ['DMP to Transfer', 'Required'],
     ['Molecular Pathology Accession Number', 'Optional'],
+    ['Additional Info', 'Optional'],
+    ['Comments', 'Optional'],
   ],
   'DNA Library+QC_Pickup': [
     ['Tracking ID', 'Required'],
@@ -373,6 +440,8 @@ export const dmpIntakeForms = {
     ['Project Title', 'Required'],
     ['DMP to Transfer', 'Required'],
     ['Molecular Pathology Accession Number', 'Optional'],
+    ['Additional Info', 'Optional'],
+    ['Comments', 'Optional'],
   ],
   'DNA Library+TCRSeq': [
     ['Tracking ID', 'Required'],
@@ -384,5 +453,7 @@ export const dmpIntakeForms = {
     ['Project Title', 'Required'],
     ['DMP to Transfer', 'Required'],
     ['Molecular Pathology Accession Number', 'Optional'],
+    ['Additional Info', 'Optional'],
+    ['Comments', 'Optional'],
   ],
 };

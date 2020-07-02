@@ -50,6 +50,14 @@ export function dmpSelect(id, value) {
       });
     }
 
+    if (id === 'application' && value === 'WholeExomeSequencing') {
+      return dispatch({
+        type: DMP_SELECT,
+        payload: { id: id, value: value },
+        message: 'Library message TBD.'
+      });
+    }
+
     if (id === 'number_of_samples') {
       if (value > 199) {
         return dispatch({

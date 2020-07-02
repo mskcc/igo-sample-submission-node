@@ -142,11 +142,10 @@ export const updateRows = (formValues, grid) => {
 
 export const checkEmptyColumns = (columnFeatures, rows, hiddenColumns) => {
   let emptyColumns = new Set();
-
   for (let i = 0; i < columnFeatures.length; i++) {
     for (let j = 0; j < rows.length; j++) {
       if (
-        hiddenColumns.columns &&
+        hiddenColumns &&
         (columnFeatures[i].columnHeader === 'CMO Patient Id' ||
           columnFeatures[i].columnHeader === 'Normalized Patient Id')
       ) {
