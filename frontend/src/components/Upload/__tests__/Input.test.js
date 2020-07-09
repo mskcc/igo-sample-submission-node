@@ -7,10 +7,8 @@ const Input = (props) => <TestInput {...props} />;
 const onChange = jest.fn();
 
 describe('Render Input', () => {
-  it('render Input correctly', () => {
-    const InputComponent = renderer
-      .create(<Input onChange={onChange} />)
-      .toJSON();
-    expect(InputComponent).toMatchSnapshot();
-  });
+    it('render Input correctly', () => {
+        const InputComponent = renderer.create(<Input onChange={onChange} />).toJSON();
+        expect(InputComponent).toMatchSnapshot();
+    });
 });

@@ -17,17 +17,17 @@ import Message from './Shared/Message.js';
 import SnackMessage from './Shared/SnackMessage.js';
 
 export {
-  Button,
-  Checkbox,
-  Dropdown,
-  Header,
-  Input,
-  Message,
-  PromoteGrid,
-  SnackMessage,
-  UploadForm,
-  UploadGrid,
-  GridButton,
-  EditPanel,
-  DmpForm
+    Button,
+    Checkbox,
+    Dropdown,
+    Header,
+    Input,
+    Message,
+    PromoteGrid,
+    SnackMessage,
+    UploadForm,
+    UploadGrid,
+    GridButton,
+    EditPanel,
+    DmpForm,
 };

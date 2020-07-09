@@ -25,79 +25,75 @@ const mockStore = configureStore(middlewares);
 
 const flushAllPromises = () => new Promise((resolve) => setImmediate(resolve));
 const UploadPage = (props) => (
-  <Provider store={props.store}>
-    <TestUploadPage />
-  </Provider>
+    <Provider store={props.store}>
+        <TestUploadPage />
+    </Provider>
 );
 
 // TODO first few are basically unit tests, should be moved eventually
 describe('renders UploadPage', () => {
-  beforeEach(function () {
-    moxios.install();
-  });
+    beforeEach(function () {
+        moxios.install();
+    });
 
-  afterEach(function () {
-    moxios.uninstall();
-  });
+    afterEach(function () {
+        moxios.uninstall();
+    });
 
-  it('renders itself and UploadForm correctly', () => {
-    const UploadFormContainerComponent = renderer
-      .create(<UploadPage store={mockStore(initialFullStateMock)} />)
-      .toJSON();
-    expect(UploadFormContainerComponent).toMatchSnapshot();
-  });
+    it('renders itself and UploadForm correctly', () => {
+        const UploadFormContainerComponent = renderer.create(<UploadPage store={mockStore(initialFullStateMock)} />).toJSON();
+        expect(UploadFormContainerComponent).toMatchSnapshot();
+    });
 
-  it('renders UploadForm child', async () => {
-    const store = mockStore(initialFullStateMock);
-    const wrapper = mount(
-      <UploadPage store={mockStore(initialFullStateMock)} />
-    );
-    expect(wrapper.find('UploadForm').exists()).toBe(true);
-  });
-  it('renders UploadGrid', async () => {
-    // const getColumns = jest.fn()
-    const store = mockStore(filledFullStateMock);
-    // let oldState = store.getState()
-    // const gridActions = { getColumns: jest.fn() }
-    const wrapper = mount(
-      <UploadPage
-        store={store}
-        // gridActions={gridActions}
-        // getColumns={getColumns}
-      />
-    );
+    it('renders UploadForm child', async () => {
+        const store = mockStore(initialFullStateMock);
+        const wrapper = mount(<UploadPage store={mockStore(initialFullStateMock)} />);
+        expect(wrapper.find('UploadForm').exists()).toBe(true);
+    });
+    it('renders UploadGrid', async () => {
+        // const getColumns = jest.fn()
+        const store = mockStore(filledFullStateMock);
+        // let oldState = store.getState()
+        // const gridActions = { getColumns: jest.fn() }
+        const wrapper = mount(
+            <UploadPage
+                store={store}
+                // gridActions={gridActions}
+                // getColumns={getColumns}
+            />
+        );
 
-    // request initial state for grid on button click
-    // wrapper
-    //   .find('#upload-form')
-    //   .first()
-    //   .simulate('submit')
-    // await flushAllPromises()
-    // let newStore = store.getState()
-    // console.log(oldState)
-    // console.log(newStore)
-    expect(wrapper.find('UploadGrid').exists()).toBe(true);
+        // request initial state for grid on button click
+        // wrapper
+        //   .find('#upload-form')
+        //   .first()
+        //   .simulate('submit')
+        // await flushAllPromises()
+        // let newStore = store.getState()
+        // console.log(oldState)
+        // console.log(newStore)
+        expect(wrapper.find('UploadGrid').exists()).toBe(true);
 
-    // expect(newStore).not.toEqual(oldState)
-    // console.log(wrapper.find('UploadForm').instance().state)
+        // expect(newStore).not.toEqual(oldState)
+        // console.log(wrapper.find('UploadForm').instance().state)
 
-    // moxios.wait(() => {
-    //   const request = moxios.requests.mostRecent()
-    //   request.respondWith({
-    //     status: 200,
-    //     response: getChoicesForDNALibraryMock,
-    //   })
-    //   let actions = store.getActions()
-    //   console.log(actions)
-    // })
-    // let actions = store.getActions()
-    // console.log(actions)
-    // await flushAllPromises()
-    // wrapper.update()
-    // expect(getColumns).toHaveBeenCalledTimes(1)
-    // console.log(wrapper.find('UploadGrid').instance().state)
-    // expect(actions).toEqual(expectedActions)
-  });
+        // moxios.wait(() => {
+        //   const request = moxios.requests.mostRecent()
+        //   request.respondWith({
+        //     status: 200,
+        //     response: getChoicesForDNALibraryMock,
+        //   })
+        //   let actions = store.getActions()
+        //   console.log(actions)
+        // })
+        // let actions = store.getActions()
+        // console.log(actions)
+        // await flushAllPromises()
+        // wrapper.update()
+        // expect(getColumns).toHaveBeenCalledTimes(1)
+        // console.log(wrapper.find('UploadGrid').instance().state)
+        // expect(actions).toEqual(expectedActions)
+    });
 });
 
 // const UploadFormContainer = props => (

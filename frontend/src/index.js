@@ -15,13 +15,13 @@ import * as serviceWorker from './serviceWorker';
 import './App.scss';
 
 const App = (props) => (
-  <Provider store={store}>
-    <LocalizeProvider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <Root />
-      </PersistGate>
-    </LocalizeProvider>
-  </Provider>
+    <Provider store={store}>
+        <LocalizeProvider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+                <Root />
+            </PersistGate>
+        </LocalizeProvider>
+    </Provider>
 );
 
 ReactDOM.render(<App />, document.getElementById('root'));

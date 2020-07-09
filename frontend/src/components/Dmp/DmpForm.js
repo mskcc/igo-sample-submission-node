@@ -2,297 +2,274 @@ import React from 'react';
 import { Translate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 
-import {
-  FormControl,
-  InputAdornment,
-  Paper,
-  withStyles
-} from '@material-ui/core';
+import { FormControl, InputAdornment, Paper, withStyles } from '@material-ui/core';
 
 import { Button, Checkbox, Dropdown, Input } from '../index';
 
 import { swal } from '../../util';
 
 class DmpForm extends React.Component {
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    this.state = {
-      values: {
-        ...this.props.form.selected
-      },
-      formValid: {
-        material: true,
-        application: true,
-        numberOfSamples: true,
-        sharedWith: true
-      }
+        this.state = {
+            values: {
+                ...this.props.form.selected,
+            },
+            formValid: {
+                material: true,
+                application: true,
+                numberOfSamples: true,
+                sharedWith: true,
+            },
+        };
+    }
+
+    handleDropdownChange = (event) => {
+        this.setState({
+            values: {
+                ...this.state.values,
+                [event.id]: event.value,
+            },
+            formValid: { ...this.state.formValid, [event.id]: true },
+        });
+        this.props.handleInputChange(event.id, event.value);
     };
-  }
 
-  handleDropdownChange = event => {
-    this.setState({
-      values: {
-        ...this.state.values,
-        [event.id]: event.value
-      },
-      formValid: { ...this.state.formValid, [event.id]: true }
-    });
-    this.props.handleInputChange(event.id, event.value);
-  };
+    handleChange = (event) => {
+        this.setState({
+            values: {
+                ...this.state.values,
+                [event.target.id]: event.target.value,
+            },
+            formValid: { ...this.state.formValid, [event.target.id]: true },
+        });
+        this.props.handleInputChange(event.target.id, event.target.value);
+    };
 
-  handleChange = event => {
-    this.setState({
-      values: {
-        ...this.state.values,
-        [event.target.id]: event.target.value
-      },
-      formValid: { ...this.state.formValid, [event.target.id]: true }
-    });
-    this.props.handleInputChange(event.target.id, event.target.value);
-  };
+    handleCheckbox = (name) => (event) => {
+        this.setState({
+            values: { ...this.state.values, [name]: event.target.checked },
+        });
+        if (event.target.checked) {
+            this.props.handleInputChange(name, event.target.checked);
+        } else {
+            this.props.handleInputChange(name, event.target.checked);
+            this.props.handleInputChange('sharedWith', '');
+        }
+    };
 
-  handleCheckbox = name => event => {
-    this.setState({
-      values: { ...this.state.values, [name]: event.target.checked }
-    });
-    if (event.target.checked) {
-      this.props.handleInputChange(name, event.target.checked);
-    } else {
-      this.props.handleInputChange(name, event.target.checked);
-      this.props.handleInputChange('sharedWith', '');
-    }
-  };
+    handleSubmit = (e, handleParentSubmit) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (this.validate()) {
+            handleParentSubmit('dmp', this.state.values);
+        }
+    };
 
-  handleSubmit = (e, handleParentSubmit) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (this.validate()) {
-      handleParentSubmit('dmp', this.state.values);
-    }
-  };
+    validate() {
+        let formValid = this.state.formValid;
+        let isValidOption;
+        let values = this.props.form.selected;
+        for (let value in values) {
+            switch (value) {
+                case 'material':
+                    isValidOption = this.props.form.materials.some(function (el) {
+                        return el === values[value];
+                    });
+                    formValid[value] = isValidOption && values[value].length > 0;
+                    break;
+                case 'application':
+                    isValidOption = this.props.form.applications.some(function (el) {
+                        return el === values[value];
+                    });
+                    formValid[value] = isValidOption && values[value].length > 0;
+                    break;
+                case 'sharedWith':
+                    if (values.isShared) {
+                        if (values.sharedWith === '') {
+                            formValid[value] = false;
+                            break;
+                        }
+                        var emails = values[value].split(',');
+                        var valid = true;
+                        var regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                        for (var i = 0; i < emails.length; i++) {
+                            if (emails[i] === '' || (!regex.test(emails[i].replace(/\s/g, '')) && !emails[i].includes('mskcc'))) {
+                                valid = false;
+                            }
+                        }
+                        formValid[value] = valid;
+                        break;
+                    } else {
+                        formValid[value] = true;
+                        break;
+                    }
 
-  validate() {
-    let formValid = this.state.formValid;
-    let isValidOption;
-    let values = this.props.form.selected;
-    for (let value in values) {
-      switch (value) {
-        case 'material':
-          isValidOption = this.props.form.materials.some(function(el) {
-            return el === values[value];
-          });
-          formValid[value] = isValidOption && values[value].length > 0;
-          break;
-        case 'application':
-          isValidOption = this.props.form.applications.some(function(el) {
-            return el === values[value];
-          });
-          formValid[value] = isValidOption && values[value].length > 0;
-          break;
-        case 'sharedWith':
-          if (values.isShared) {
-            if (values.sharedWith === '') {
-              formValid[value] = false;
-              break;
+                case 'numberOfSamples':
+                    formValid[value] = values[value] > 0;
+                    break;
+                default:
+                    break;
             }
-            var emails = values[value].split(',');
-            var valid = true;
-            var regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            for (var i = 0; i < emails.length; i++) {
-              if (
-                emails[i] === '' ||
-                (!regex.test(emails[i].replace(/\s/g, '')) &&
-                  !emails[i].includes('mskcc'))
-              ) {
-                valid = false;
-              }
-            }
-            formValid[value] = valid;
-            break;
-          } else {
-            formValid[value] = true;
-            break;
-          }
-
-        case 'numberOfSamples':
-          formValid[value] = values[value] > 0;
-          break;
-        default:
-          break;
-      }
+        }
+        this.setState({
+            formValid: {
+                ...formValid,
+            },
+        });
+        // checked all fields, now check form
+        return this.validateForm();
     }
-    this.setState({
-      formValid: {
-        ...formValid
-      }
-    });
-    // checked all fields, now check form
-    return this.validateForm();
-  }
 
-  validateForm() {
-    return (
-      this.state.formValid.material &&
-      this.state.formValid.application &&
-      this.state.formValid.numberOfSamples &&
-      this.state.formValid.sharedWith
-    );
-  }
+    validateForm() {
+        return (
+            this.state.formValid.material &&
+            this.state.formValid.application &&
+            this.state.formValid.numberOfSamples &&
+            this.state.formValid.sharedWith
+        );
+    }
 
-  render() {
-    const {
-      classes,
-      form,
-      handleSubmit,
-      gridIsLoading,
-      nothingToChange,
-      gridNumberOfSamples,
-      submitRowNumberUpdate
-    } = this.props;
-    const { formValid, values } = this.state;
-    console.log(this.props);
-    return (
-      <Translate>
-        {({ translate }) => (
-          <Paper className={classes.container} elevation={1}>
-            <form
-              id="dmp-upload-form"
-              className={classes.form}
-              onSubmit={e => this.handleSubmit(e, handleSubmit)}
-            >
-              <Dropdown
-                id="material"
-                error={!formValid.material}
-                onChange={this.handleDropdownChange}
-                onSelect={this.handleDropdownChange}
-                autofocus={true}
-                items={form.materials.map(option => ({
-                  value: option,
-                  label: option
-                }))}
-                loading={form.formIsLoading}
-                value={{
-                  value: form.selected.material,
-                  label: form.selected.material
-                }}
-              />
+    render() {
+        const { classes, form, handleSubmit, gridIsLoading, nothingToChange, gridNumberOfSamples, submitRowNumberUpdate } = this.props;
+        const { formValid, values } = this.state;
+        console.log(this.props);
+        return (
+            <Translate>
+                {({ translate }) => (
+                    <Paper className={classes.container} elevation={1}>
+                        <form id="dmp-upload-form" className={classes.form} onSubmit={(e) => this.handleSubmit(e, handleSubmit)}>
+                            <Dropdown
+                                id="material"
+                                error={!formValid.material}
+                                onChange={this.handleDropdownChange}
+                                onSelect={this.handleDropdownChange}
+                                autofocus={true}
+                                items={form.materials.map((option) => ({
+                                    value: option,
+                                    label: option,
+                                }))}
+                                loading={form.formIsLoading}
+                                value={{
+                                    value: form.selected.material,
+                                    label: form.selected.material,
+                                }}
+                            />
 
-              <Dropdown
-                id="application"
-                error={!formValid.application}
-                onChange={this.handleDropdownChange}
-                onSelect={this.handleDropdownChange}
-                items={form.applications.map(option => ({
-                  value: option,
-                  label: option
-                }))}
-                loading={form.formIsLoading}
-                value={{
-                  value: form.selected.application,
-                  label: form.selected.application
-                }}
-              />
+                            <Dropdown
+                                id="application"
+                                error={!formValid.application}
+                                onChange={this.handleDropdownChange}
+                                onSelect={this.handleDropdownChange}
+                                items={form.applications.map((option) => ({
+                                    value: option,
+                                    label: option,
+                                }))}
+                                loading={form.formIsLoading}
+                                value={{
+                                    value: form.selected.application,
+                                    label: form.selected.application,
+                                }}
+                            />
 
-              <Input
-                id="numberOfSamples"
-                error={!formValid.numberOfSamples}
-                onChange={this.handleChange}
-                inputProps={{
-                  inputProps: { min: 0 }
-                }}
-                value={form.selected.numberOfSamples}
-              />
+                            <Input
+                                id="numberOfSamples"
+                                error={!formValid.numberOfSamples}
+                                onChange={this.handleChange}
+                                inputProps={{
+                                    inputProps: { min: 0 },
+                                }}
+                                value={form.selected.numberOfSamples}
+                            />
 
-              <FormControl component="fieldset" className={classes.lastItem}>
-                <Checkbox
-                  id="isShared"
-                  checked={form.selected.isShared || false}
-                  onChange={e => this.handleCheckbox('isShared')}
-                />
-                {form.selected.isShared && (
-                  <Input
-                    id="sharedWith"
-                    value={form.selected.sharedWith}
-                    error={!formValid.sharedWith}
-                    type="text"
-                    onChange={this.handleChange}
-                  />
+                            <FormControl component="fieldset" className={classes.lastItem}>
+                                <Checkbox
+                                    id="isShared"
+                                    checked={form.selected.isShared || false}
+                                    onChange={(e) => this.handleCheckbox('isShared')}
+                                />
+                                {form.selected.isShared && (
+                                    <Input
+                                        id="sharedWith"
+                                        value={form.selected.sharedWith}
+                                        error={!formValid.sharedWith}
+                                        type="text"
+                                        onChange={this.handleChange}
+                                    />
+                                )}
+                            </FormControl>
+                        </form>
+                        <div>
+                            {form.selected.numberOfSamples !== gridNumberOfSamples && gridNumberOfSamples > 0 && (
+                                <Button
+                                    color="secondary"
+                                    id="updateNumberOfRows"
+                                    onClick={submitRowNumberUpdate}
+                                    isLoading={false}
+                                    nothingToSubmit={false}
+                                />
+                            )}
+
+                            <Button
+                                color="primary"
+                                id="formSubmit"
+                                formId="dmp-upload-form"
+                                isLoading={gridIsLoading}
+                                nothingToSubmit={nothingToChange}
+                            />
+                        </div>
+                    </Paper>
                 )}
-              </FormControl>
-            </form>
-            <div>
-              {form.selected.numberOfSamples !== gridNumberOfSamples &&
-                gridNumberOfSamples > 0 && (
-                  <Button
-                    color="secondary"
-                    id="updateNumberOfRows"
-                    onClick={submitRowNumberUpdate}
-                    isLoading={false}
-                    nothingToSubmit={false}
-                  />
-                )}
-
-              <Button
-                color="primary"
-                id="formSubmit"
-                formId="dmp-upload-form"
-                isLoading={gridIsLoading}
-                nothingToSubmit={nothingToChange}
-              />
-             
-            </div>
-          </Paper>
-        )}
-      </Translate>
-    );
-  }
+            </Translate>
+        );
+    }
 }
 
-const styles = theme => ({
-  container: {
-    // backgroundColor: "rgba(143, 199, 232, .1)",
-    gridArea: 'form',
-    display: 'grid',
-    justifyItems: 'center',
-    width: '80%',
-    maxWidth: '1700px',
-    margin: '2em auto',
-    padding: '1em',
-    marginBottom: '4em'
-  },
-  form: {
-    display: 'flex',
-    flexWrap: 'wrap'
-  },
+const styles = (theme) => ({
+    container: {
+        // backgroundColor: "rgba(143, 199, 232, .1)",
+        gridArea: 'form',
+        display: 'grid',
+        justifyItems: 'center',
+        width: '80%',
+        maxWidth: '1700px',
+        margin: '2em auto',
+        padding: '1em',
+        marginBottom: '4em',
+    },
+    form: {
+        display: 'flex',
+        flexWrap: 'wrap',
+    },
 
-  lastItem: {
-    flexBasis: '100%',
-    marginTop: '2em',
-    width: 310
-  },
+    lastItem: {
+        flexBasis: '100%',
+        marginTop: '2em',
+        width: 310,
+    },
 
-  dense: {
-    marginTop: 19
-  },
-  menu: {
-    width: 200
-  },
+    dense: {
+        marginTop: 19,
+    },
+    menu: {
+        width: 200,
+    },
 
-  buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12
-  },
-  nothingToChange: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -53,
-    marginLeft: -65
-  }
+    buttonProgress: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        marginTop: -12,
+        marginLeft: -12,
+    },
+    nothingToChange: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        marginTop: -53,
+        marginLeft: -65,
+    },
 });
 
 export default withStyles(styles)(DmpForm);

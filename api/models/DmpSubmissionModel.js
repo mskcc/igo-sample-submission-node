@@ -5,47 +5,47 @@ mongoose.set('useFindAndModify', false);
 var ObjectId = mongoose.Types.ObjectId;
 
 var FormSchema = new mongoose.Schema({
-  sharedWith: { type: String, default: '' },
-  application: { type: String, required: true },
-  material: { type: String, required: true },
-  numberOfSamples: { type: Number, required: true },
+    sharedWith: { type: String, default: '' },
+    application: { type: String, required: true },
+    material: { type: String, required: true },
+    numberOfSamples: { type: Number, required: true },
 });
 
 var DmpSubmissionSchema = new mongoose.Schema(
-  {
-    username: { type: String, required: true },
-    formValues: FormSchema,
-    gridValues: { type: Array, required: true },
-    submitted: { type: Boolean, default: false },
-    submittedAt: { type: Number, required: false },
-    transactionId: { type: Number, required: false },
-    appVersion: { type: String, default: '2.5' },
-    createdAt: Number,
-    updatedAt: Number,
-  },
-  { timestamps: { currentTime: () => Math.floor(Date.now() / 1000) } }
+    {
+        username: { type: String, required: true },
+        formValues: FormSchema,
+        gridValues: { type: Array, required: true },
+        submitted: { type: Boolean, default: false },
+        submittedAt: { type: Number, required: false },
+        transactionId: { type: Number, required: false },
+        appVersion: { type: String, default: '2.5' },
+        createdAt: Number,
+        updatedAt: Number,
+    },
+    { timestamps: { currentTime: () => Math.floor(Date.now() / 1000) } }
 );
 
 DmpSubmissionSchema.static('findOrCreateSub', function (id, username) {
-  return new Promise((resolve, reject) => {
-    if (id) {
-      this.findById(ObjectId(id)).exec(function (err, dbSubmission) {
-        if (err || !dbSubmission) {
-          reject('Could not retrieve submission.');
+    return new Promise((resolve, reject) => {
+        if (id) {
+            this.findById(ObjectId(id)).exec(function (err, dbSubmission) {
+                if (err || !dbSubmission) {
+                    reject('Could not retrieve submission.');
+                } else {
+                    resolve(dbSubmission);
+                }
+            });
         } else {
-          resolve(dbSubmission);
+            resolve(new this({ username: username }));
         }
-      });
-    } else {
-      resolve(new this({ username: username }));
-    }
-  });
+    });
 });
 
 // increase version on update
 DmpSubmissionSchema.pre('findOneAndUpdate', function (next) {
-  this.update({}, { $inc: { __v: 1 } });
-  next();
+    this.update({}, { $inc: { __v: 1 } });
+    next();
 });
 
 module.exports = mongoose.model('DmpSubmission', DmpSubmissionSchema);
