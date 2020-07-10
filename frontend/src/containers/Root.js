@@ -79,7 +79,6 @@ class Root extends Component {
                                 <React.Fragment>
                                     {this.props.common.loading && <CircularProgress color="secondary" size={24} />}
                                     <div>
-<<<<<<< HEAD
                                         <Route
                                             path="/(upload|)"
                                             render={(routeProps) => <UploadPage {...routeProps} gridType="upload" />}
@@ -95,14 +94,6 @@ class Root extends Component {
                                         />
                                         <Route path="/dmp" render={(routeProps) => <UploadPage {...routeProps} gridType="dmp" />} />
                                         <Route path="/logout" component={Logout} />
-=======
-                                        <Route path="/(upload|)" render={(routeProps) => <UploadPage {...routeProps} type="upload" />} />
-                                        <Route path="/promote" component={PromotePage} />
-                                        <Route path="/submissions" component={SubmissionsPage} />
-                                        <Route path="/dmp" render={(routeProps) => <UploadPage {...routeProps} type="dmp" />} />
-                                        <Route path="/logout" component={Logout} />
-                                        <Route path="/login" component={Login} />
->>>>>>> cf6d6f8f0e8e0615fff970429bf6e51a8c2cc483
                                         <Route path="/error" component={ErrorPage} />
                                     </div>{' '}
                                     {this.props.common.message && this.props.common.message.length > 0 ? (

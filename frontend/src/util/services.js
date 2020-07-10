@@ -155,21 +155,6 @@ export const getAdditionalRows = (data) => {
         });
 };
 
-export const getAdditionalRows = (data) => {
-    const url = `${Config.NODE_API_ROOT}/upload/additionalRows`;
-    return axios
-        .post(url, { ...data })
-        .then((resp) => {
-            return resp;
-        })
-        .catch((error) => {
-            throw error;
-        })
-        .then((resp) => {
-            return resp;
-        });
-};
-
 export const getSubmissions = (submissionType) => {
     const url = `${Config.NODE_API_ROOT}/submission/grid/${submissionType}`;
     return axios

@@ -27,11 +27,11 @@ export const generateRows = (columns, formValues, numberToAdd) => {
 };
 
 // Handsontable does its own validation if columns have a validator method
-export const addValidatorToRegexCols = (columnFeatures) => {
-    columnFeatures.map((element) => {
+export const addValidatorToRegexCols = columnFeatures => {
+    columnFeatures.map(element => {
         if ('pattern' in element) {
             let pattern = new RegExp(element.pattern);
-            element.validator = function (value, callback) {
+            element.validator = function(value, callback) {
                 if (pattern.test(value)) {
                     callback(true);
                 } else {
@@ -48,7 +48,7 @@ export const addValidatorToRegexCols = (columnFeatures) => {
 // how many columns will have to be filled, used as end condition
 // i = counter indicating how often I stepped through A-H
 // plateColIndex = plate column
-export const setWellPos = (rows) => {
+export const setWellPos = rows => {
     let plateRows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
     let plateColsLength = 12;
 
@@ -102,7 +102,7 @@ export const diff = (obj1, obj2) => {
     }
     Object.keys(obj1 || {})
         .concat(Object.keys(obj2 || {}))
-        .forEach((key) => {
+        .forEach(key => {
             if (obj2[key] !== obj1[key] && !Object.is(obj1[key], obj2[key])) {
                 result[key] = obj2[key];
             }
@@ -169,7 +169,7 @@ export const generateAdditionalRowData = (columnFeatures, formValues, prevRowNum
         columnFeatures: columnFeaturesJson,
         formValues: formValuesJson,
         prevRowNumber: prevRowNumber,
-        newRowNumber: newRowNumber,
+        newRowNumber: newRowNumber
     };
     return data;
 };
@@ -183,15 +183,11 @@ export const generateSubmitData = (state, isPartial = false) => {
         gridValues: '',
         formValues: '',
         transactionId: '',
-        id: '',
+        id: ''
     };
     if (!isPartial) {
         data.transactionId = getTransactionId();
-<<<<<<< HEAD
         data.id = state.submissions.submissionToEdit ? state.submissions.submissionToEdit._id : undefined;
-=======
-        data.id = state.submissions.submissionToEdit._id;
->>>>>>> cf6d6f8f0e8e0615fff970429bf6e51a8c2cc483
     }
     data.version = Config.VERSION;
     let rowsWithIndex = rowsWithRowIndex(state.upload.grid.rows);
@@ -202,7 +198,7 @@ export const generateSubmitData = (state, isPartial = false) => {
     return data;
 };
 
-export const rowsWithRowIndex = function (rows) {
+export const rowsWithRowIndex = function(rows) {
     for (let i = 0; i < rows.length; i++) {
         rows[i].rowIndex = i + 1;
     }
@@ -210,10 +206,9 @@ export const rowsWithRowIndex = function (rows) {
 };
 
 // PROMOTE
-export const isEqual = function (value, other) {
+export const isEqual = function(value, other) {
     // Get the value type
     var type = Object.prototype.toString.call(value);
-<<<<<<< HEAD
 
     // If the two objects are not the same type, return false
     if (type !== Object.prototype.toString.call(other)) return false;
@@ -227,64 +222,9 @@ export const isEqual = function (value, other) {
     if (valueLen !== otherLen) return false;
 
     // Compare two items
-    var compare = function (item1, item2) {
+    var compare = function(item1, item2) {
         // Get the object type
         var itemType = Object.prototype.toString.call(item1);
-=======
-
-    // If the two objects are not the same type, return false
-    if (type !== Object.prototype.toString.call(other)) return false;
-
-    // If items are not an object or array, return false
-    if (['[object Array]', '[object Object]'].indexOf(type) < 0) return false;
-
-    // Compare the length of the length of the two items
-    var valueLen = type === '[object Array]' ? value.length : Object.keys(value).length;
-    var otherLen = type === '[object Array]' ? other.length : Object.keys(other).length;
-    if (valueLen !== otherLen) return false;
-
-    // Compare two items
-    var compare = function (item1, item2) {
-        // Get the object type
-        var itemType = Object.prototype.toString.call(item1);
-
-        // If an object or array, compare recursively
-        if (['[object Array]', '[object Object]'].indexOf(itemType) >= 0) {
-            if (!isEqual(item1, item2)) return false;
-        }
-
-        // Otherwise, do a simple comparison
-        else {
-            // If the two items are not the same type, return false
-            if (itemType !== Object.prototype.toString.call(item2)) return false;
-
-            // Else if it's a function, convert to a string and compare
-            // Otherwise, just compare
-            if (itemType === '[object Function]') {
-                if (item1.toString() !== item2.toString()) return false;
-            } else {
-                if (item1 !== item2) return false;
-            }
-        }
-    };
-
-    // Compare properties
-    if (type === '[object Array]') {
-        for (var i = 0; i < valueLen; i++) {
-            if (compare(value[i], other[i]) === false) return false;
-        }
-    } else {
-        for (var key in value) {
-            if (value.hasOwnProperty(key)) {
-                if (compare(value[key], other[key]) === false) return false;
-            }
-        }
-    }
-
-    // If nothing failed, return true
-    return true;
-};
->>>>>>> cf6d6f8f0e8e0615fff970429bf6e51a8c2cc483
 
         // If an object or array, compare recursively
         if (['[object Array]', '[object Object]'].indexOf(itemType) >= 0) {
@@ -492,7 +432,7 @@ export const validateGrid = (changes, grid) => {
         }
         let rowIndex = changes[i][0];
         let columnName = changes[i][1];
-        let columnIndex = grid.columnFeatures.findIndex((c) => c.data === columnName);
+        let columnIndex = grid.columnFeatures.findIndex(c => c.data === columnName);
         if (columnIndex === -1) {
             errors.add(
                 'The number of columns you tried to paste is larger than the number of columns on the current grid. The surplus got cut off.'
@@ -565,7 +505,7 @@ export const validateGrid = (changes, grid) => {
     return {
         grid,
         errorMessage: buildErrorMessage(errors),
-        numErrors: errors.size,
+        numErrors: errors.size
     };
 };
 
@@ -574,11 +514,7 @@ export const checkGridAndForm = (form, grid) => {
     let errors = new Set([]);
 
     let result = { success: true, message: '' };
-<<<<<<< HEAD
     if (!(form.serviceId === undefined && grid.serviceId === undefined) && 'IGO-' + form.serviceId !== grid.serviceId) {
-=======
-    if ('IGO-' + form.serviceId !== grid.serviceId) {
->>>>>>> cf6d6f8f0e8e0615fff970429bf6e51a8c2cc483
         errors.add(`iLabs Service ID: '${form.serviceId}' vs. '${grid.serviceId}'`);
     }
 
@@ -624,9 +560,9 @@ export const checkGridAndForm = (form, grid) => {
     return result;
 };
 
-export const buildErrorMessage = (errors) => {
+export const buildErrorMessage = errors => {
     let message = '';
-    errors.forEach((a) => (message = message.concat('<br>' + a + '<br>')));
+    errors.forEach(a => (message = message.concat('<br>' + a + '<br>')));
     return message;
 };
 
@@ -637,7 +573,7 @@ export const getTransactionId = () => {
     return transactionId;
 };
 
-export const parseDate = (mongooseDate) => {
+export const parseDate = mongooseDate => {
     let date = new Date(mongooseDate * 1000);
     let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
     let humanReadable = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} at ${date.getHours()}:${minutes}`;

@@ -197,7 +197,6 @@ export const GET_DMP_SUBMISSION_TO_EDIT_FAIL = 'GET_DMP_SUBMISSION_TO_EDIT_FAIL'
 export const GET_DMP_SUBMISSION_TO_EDIT_SUCCESS = 'GET_DMP_SUBMISSION_TO_EDIT_SUCCESS';
 export function populateGridFromSubmission(submissionId, ownProps) {
     return (dispatch, getState) => {
-<<<<<<< HEAD
         let page = ownProps.gridType;
         dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...' });
         services
@@ -221,23 +220,6 @@ export function populateGridFromSubmission(submissionId, ownProps) {
                             message: 'Loaded!',
                         });
                         return ownProps.history.push(`/${page}`);
-=======
-        dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...' });
-        services
-            .getSubmission(submissionId)
-            .then((resp) => {
-                let submission = resp.payload.submission;
-
-                dispatch(getInitialColumns('upload', submission.formValues), getState().user.role)
-                    .then(dispatch(updateHeader(submission.formValues)))
-                    .then(() => {
-                        dispatch({
-                            type: GET_SUBMISSION_TO_EDIT_SUCCESS,
-                            payload: submission,
-                            message: 'Loaded!',
-                        });
-                        return ownProps.history.push('upload');
->>>>>>> cf6d6f8f0e8e0615fff970429bf6e51a8c2cc483
                     });
             })
             .catch((error) => {
