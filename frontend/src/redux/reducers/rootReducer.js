@@ -13,36 +13,36 @@ import sessionStorage from 'redux-persist/lib/storage/session'; // defaults to l
 import { Config } from '../../config.js';
 
 const persistConfig = {
-  key: 'root',
-  storage: sessionStorage,
-  whitelist: ['upload', 'user', 'submissions', 'promote', 'dmp'],
+    key: 'root',
+    storage: sessionStorage,
+    whitelist: ['upload', 'user', 'submissions', 'promote', 'dmp'],
 };
 
 const appReducer = combineReducers({
-  upload: uploadReducer,
-  dmp: dmpReducer,
-  common: commonReducer,
-  user: userReducer,
-  submissions: submissionsReducer,
-  promote: promoteReducer,
-  localize: localizeReducer,
+    upload: uploadReducer,
+    dmp: dmpReducer,
+    common: commonReducer,
+    user: userReducer,
+    submissions: submissionsReducer,
+    promote: promoteReducer,
+    localize: localizeReducer,
 });
 
 const rootReducer = (state, action) => {
-  if (action.user) {
-    state = {
-      ...state,
-      user: { ...action.user },
-    };
-  }
+    if (action.user) {
+        state = {
+            ...state,
+            user: { ...action.user },
+        };
+    }
 
-  if (action.type === 'LOGOUT_SUCCESS' || action.type === 'LOGOUT_FAIL') {
-    console.log('goodbye');
-    sessionStorage.removeItem('persist:root');
-    window.location.href = `${Config.AUTH_URL}/${Config.HOME_PAGE_PATH}`;
-  }
+    if (action.type === 'LOGOUT_SUCCESS' || action.type === 'LOGOUT_FAIL') {
+        console.log('goodbye');
+        sessionStorage.removeItem('persist:root');
+        window.location.href = `${Config.AUTH_URL}/${Config.HOME_PAGE_PATH}`;
+    }
 
-  return appReducer(state, action);
+    return appReducer(state, action);
 };
 
 export default persistReducer(persistConfig, rootReducer);

@@ -11,7 +11,7 @@ chai.use(chaiHttp);
 
 //Export this to use in multiple files
 module.exports = {
-  chai: chai,
-  server: server,
-  should: should,
+    chai: chai,
+    server: server,
+    should: should,
 };

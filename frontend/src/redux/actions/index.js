@@ -6,12 +6,4 @@ import * as promoteActions from './promote/promoteActions';
 import * as submissionActions from './submission/submissionActions';
 import * as userActions from './user/userActions';
 
-export {
-  commonActions,
-  userActions,
-  dmpFormActions,
-  formActions,
-  gridActions,
-  promoteActions,
-  submissionActions,
-};
+export { commonActions, userActions, dmpFormActions, formActions, gridActions, promoteActions, submissionActions };

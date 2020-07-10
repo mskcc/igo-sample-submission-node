@@ -6,24 +6,24 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Message from '../components/Shared/Message';
 
 class ErrorPage extends React.Component {
-  render() {
-    if (!this.props.error) {
-      return <Redirect to="/upload" />;
-    }
-    return (
-      <React.Fragment>
-        {this.props.message && <Message msg={this.props.message} />}
+    render() {
+        if (!this.props.error) {
+            return <Redirect to="/upload" />;
+        }
+        return (
+            <React.Fragment>
+                {this.props.message && <Message msg={this.props.message} />}
 
-        {this.props.loading && <CircularProgress color="secondary" size={24} />}
-      </React.Fragment>
-    );
-  }
+                {this.props.loading && <CircularProgress color="secondary" size={24} />}
+            </React.Fragment>
+        );
+    }
 }
 const mapStateToProps = (state) => ({
-  ...state.common,
+    ...state.common,
 });
 const mapDispatchToProps = {
-  ...commonActions,
+    ...commonActions,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ErrorPage);

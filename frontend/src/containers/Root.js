@@ -24,140 +24,126 @@ import ErrorPage from './ErrorPage';
 import { Config } from '../config.js';
 
 class Root extends Component {
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    // basic init of localization component
-    this.props.initialize({
-      languages: [{ name: 'English', code: 'en' }],
-      translation: enTranslations,
-      options: {
-        renderToStaticMarkup,
-        renderInnerHtml: false,
-        defaultLanguage: 'en',
-      },
-    });
-  }
-
-  componentDidMount() {
-    // making sure BE and FE versions match - shows info message if not
-    // this.props.checkVersion()
-    // this.props.refreshToken()
-    document.addEventListener('keydown', this.escFunction, false);
-    if (!this.props.username) {
-      this.props.fetchUser();
+        // basic init of localization component
+        this.props.initialize({
+            languages: [{ name: 'English', code: 'en' }],
+            translation: enTranslations,
+            options: {
+                renderToStaticMarkup,
+                renderInnerHtml: false,
+                defaultLanguage: 'en',
+            },
+        });
     }
-  }
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.escFunction, false);
-  }
 
-  handleMsgClose = () => {
-    this.props.resetMessage();
-    // this.props.resetErrorMessage()
-  };
-
-  escFunction = (event) => {
-    if (event.keyCode === 27) {
-      //Do whatever when esc is pressed
-      this.props.resetMessage();
+    componentDidMount() {
+        // making sure BE and FE versions match - shows info message if not
+        // this.props.checkVersion()
+        // this.props.refreshToken()
+        document.addEventListener('keydown', this.escFunction, false);
+        if (!this.props.username) {
+            this.props.fetchUser();
+        }
     }
-  };
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.escFunction, false);
+    }
 
-  render() {
-    return (
-      <MuiThemeProvider theme={theme}>
-        <Router basename={Config.BASENAME}>
-          <div>
-            <div className="app">
-              <Header userRole={this.props.role} />
-              {Config.ENV !== 'production' ? <DevTools /> : <div />}
+    handleMsgClose = () => {
+        this.props.resetMessage();
+        // this.props.resetErrorMessage()
+    };
 
-              {this.props.common.serverError ? (
-                <ErrorPage />
-              ) : (
-                <React.Fragment>
-                  {this.props.common.loading && (
-                    <CircularProgress color="secondary" size={24} />
-                  )}
-                  <div>
-                    <Route
-                      path="/(upload|)"
-                      render={(routeProps) => (
-                        <UploadPage {...routeProps} gridType="upload" />
-                      )}
-                    />
-                    <Route path="/promote" component={PromotePage} />
-                    <Route
-                      path="/submissions/igo"
-                      render={(routeProps) => (
-                        <SubmissionsPage {...routeProps} gridType="upload" />
-                      )}
-                    />
-                    <Route
-                      path="/submissions/dmp"
-                      render={(routeProps) => (
-                        <SubmissionsPage {...routeProps} gridType="dmp" />
-                      )}
-                    />
-                    <Route
-                      path="/dmp"
-                      render={(routeProps) => (
-                        <UploadPage {...routeProps} gridType="dmp" />
-                      )}
-                    />
-                    <Route path="/logout" component={Logout} />
-                    <Route path="/error" component={ErrorPage} />
-                  </div>{' '}
-                  {this.props.common.message &&
-                  this.props.common.message.length > 0 ? (
-                    <span>
-                      <SnackMessage
-                        open
-                        type={this.props.error ? 'error' : 'info'}
-                        message={this.props.common.message}
-                        handleClose={this.handleMsgClose}
-                      />
-                    </span>
-                  ) : null}
-                </React.Fragment>
-              )}
-            </div>
-          </div>
-        </Router>
-      </MuiThemeProvider>
-    );
-  }
+    escFunction = (event) => {
+        if (event.keyCode === 27) {
+            //Do whatever when esc is pressed
+            this.props.resetMessage();
+        }
+    };
+
+    render() {
+        return (
+            <MuiThemeProvider theme={theme}>
+                <Router basename={Config.BASENAME}>
+                    <div>
+                        <div className="app">
+                            <Header userRole={this.props.role} />
+                            {Config.ENV !== 'production' ? <DevTools /> : <div />}
+
+                            {this.props.common.serverError ? (
+                                <ErrorPage />
+                            ) : (
+                                <React.Fragment>
+                                    {this.props.common.loading && <CircularProgress color="secondary" size={24} />}
+                                    <div>
+                                        <Route
+                                            path="/(upload|)"
+                                            render={(routeProps) => <UploadPage {...routeProps} gridType="upload" />}
+                                        />
+                                        <Route path="/promote" component={PromotePage} />
+                                        <Route
+                                            path="/submissions/igo"
+                                            render={(routeProps) => <SubmissionsPage {...routeProps} gridType="upload" />}
+                                        />
+                                        <Route
+                                            path="/submissions/dmp"
+                                            render={(routeProps) => <SubmissionsPage {...routeProps} gridType="dmp" />}
+                                        />
+                                        <Route path="/dmp" render={(routeProps) => <UploadPage {...routeProps} gridType="dmp" />} />
+                                        <Route path="/logout" component={Logout} />
+                                        <Route path="/error" component={ErrorPage} />
+                                    </div>{' '}
+                                    {this.props.common.message && this.props.common.message.length > 0 ? (
+                                        <span>
+                                            <SnackMessage
+                                                open
+                                                type={this.props.error ? 'error' : 'info'}
+                                                message={this.props.common.message}
+                                                handleClose={this.handleMsgClose}
+                                            />
+                                        </span>
+                                    ) : null}
+                                </React.Fragment>
+                            )}
+                        </div>
+                    </div>
+                </Router>
+            </MuiThemeProvider>
+        );
+    }
 }
 
 const mapStateToProps = (state) => ({
-  common: state.common,
-  ...state.user,
+    common: state.common,
+    ...state.user,
 });
 const mapDispatchToProps = {
-  ...commonActions,
-  ...userActions,
+    ...commonActions,
+    ...userActions,
 };
 
 export default withLocalize(connect(mapStateToProps, mapDispatchToProps)(Root));
 
 const theme = createMuiTheme({
-  typography: {
-    useNextVariants: true,
-  },
-  palette: {
-    primary: {
-      logo: '#319ae8',
-      light: '#8FC7E8',
-      main: '#007CBA',
-      dark: '#006098',
+    typography: {
+        useNextVariants: true,
     },
-    secondary: {
-      light: '#F6C65B',
-      main: '#DF4602',
-      dark: '#C24D00',
-    },
+    palette: {
+        primary: {
+            logo: '#319ae8',
+            light: '#8FC7E8',
+            main: '#007CBA',
+            dark: '#006098',
+        },
+        secondary: {
+            light: '#F6C65B',
+            main: '#DF4602',
+            dark: '#C24D00',
+        },
 
-    textSecondary: '#e0e0e0',
-  },
+        textSecondary: '#e0e0e0',
+    },
 });

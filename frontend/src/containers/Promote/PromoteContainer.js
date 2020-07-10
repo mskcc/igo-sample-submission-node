@@ -7,62 +7,52 @@ import { connect } from 'react-redux';
 import { promoteActions } from '../../redux/actions';
 
 class Promote extends Component {
-  componentDidMount() {
-    if (!this.props.promote.initialFetched) {
-      this.props.getPromoteGrid();
+    componentDidMount() {
+        if (!this.props.promote.initialFetched) {
+            this.props.getPromoteGrid();
+        }
     }
-  }
-  promoteSamples = (projectId, requestId, rows) => {
-    let bankedSampleIds = [];
-    let materials = new Set();
-    let serviceId = rows[0].serviceId;
-    rows.map((element) => {
-      bankedSampleIds.push(element.recordId);
-      materials.add(element.sampleType);
-    });
+    promoteSamples = (projectId, requestId, rows) => {
+        let bankedSampleIds = [];
+        let materials = new Set();
+        let serviceId = rows[0].serviceId;
+        rows.map((element) => {
+            bankedSampleIds.push(element.recordId);
+            materials.add(element.sampleType);
+        });
 
-    materials = [...materials].join('_');
-    this.props.promoteDry(
-      projectId,
-      requestId,
-      serviceId,
-      materials,
-      bankedSampleIds
-    );
-  };
-  handleLoad = (queryType, query) => {
-    if (!query) {
-      return swal.alertEmptyLoad(queryType);
-    }
-    if (queryType === 'serviceId') {
-      query = query.toLowerCase().includes('igo-') ? query : `IGO-${query}`;
-    }
-    this.props.loadBankedSamples(queryType, query);
-  };
+        materials = [...materials].join('_');
+        this.props.promoteDry(projectId, requestId, serviceId, materials, bankedSampleIds);
+    };
+    handleLoad = (queryType, query) => {
+        if (!query) {
+            return swal.alertEmptyLoad(queryType);
+        }
+        if (queryType === 'serviceId') {
+            query = query.toLowerCase().includes('igo-') ? query : `IGO-${query}`;
+        }
+        this.props.loadBankedSamples(queryType, query);
+    };
 
-  render() {
-    return (
-      <React.Fragment>
-        {this.props.promote.initialFetched ? (
-          <PromoteGrid
-            promote={this.props.promote}
-            handleLoad={this.handleLoad}
-            promoteSamples={this.promoteSamples}
-          />
-        ) : (
-          <CircularProgress color="secondary" size={35} />
-        )}
-      </React.Fragment>
-    );
-  }
+    render() {
+        return (
+            <React.Fragment>
+                {this.props.promote.initialFetched ? (
+                    <PromoteGrid promote={this.props.promote} handleLoad={this.handleLoad} promoteSamples={this.promoteSamples} />
+                ) : (
+                    <CircularProgress color="secondary" size={35} />
+                )}
+            </React.Fragment>
+        );
+    }
 }
 
 const mapStateToProps = (state) => ({
-  promote: state.promote,
+    promote: state.promote,
 });
 
 const mapDispatchToProps = {
-  ...promoteActions,
+    ...promoteActions,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Promote);

@@ -7,8 +7,8 @@ const onChange = jest.fn();
 const Dropdown = (props) => <TestDropdown onChange={onChange} {...props} />;
 
 describe('Render Dropdown', () => {
-  it('render Dropdown correctly', () => {
-    const DropdownComponent = renderer.create(<Dropdown />).toJSON();
-    expect(DropdownComponent).toMatchSnapshot();
-  });
+    it('render Dropdown correctly', () => {
+        const DropdownComponent = renderer.create(<Dropdown />).toJSON();
+        expect(DropdownComponent).toMatchSnapshot();
+    });
 });

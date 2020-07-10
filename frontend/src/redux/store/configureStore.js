@@ -19,10 +19,7 @@ if (process.env.NODE_ENV === 'production') {
 //   next(action);
 // }
 
-const store = createStore(
-  rootReducer,
-  compose(applyMiddleware(...middleware), DevTools.instrument())
-);
+const store = createStore(rootReducer, compose(applyMiddleware(...middleware), DevTools.instrument()));
 
 let persistor = persistStore(store);
 
