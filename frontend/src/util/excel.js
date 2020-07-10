@@ -33,9 +33,8 @@ export const downloadExcelTest = data => {
 
     let sheetColumns = [];
     // add columns first to be able to reference them by key during formatting step
-    data.columns.map((element, index) => {
-        // console.log(element);
-        sheetColumns.push({ header: element.columnHeader, key: element.data, width: 20 });
+    data.columns.map((columnDef, index) => {
+        sheetColumns.push({ header: columnDef.columnHeader, key: columnDef.data, width: 40 });
     });
     submissionSheet.columns = sheetColumns;
     dropdownSheet.columns = sheetColumns;
@@ -45,14 +44,17 @@ export const downloadExcelTest = data => {
     let tooltipRow = submissionSheet.getRow(2);
     headerRow.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
     headerRow.height = 40;
-    tooltipRow.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-    tooltipRow.height = 100;
+    headerRow.font = { bold: true };
 
-    data.columns.map((element, index) => {
-        let headerCell = headerRow.getCell(`${element.data}`);
-        let tooltipCell = tooltipRow.getCell(`${element.data}`);
-        tooltipCell.value = element.tooltip || '';
-        if ('optional' in element && element.optional) {
+    tooltipRow.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+    tooltipRow.height = 150;
+
+    //  add highlighting for optional columns, add tooltips, add dropdowns
+    data.columns.forEach(columnDef => {
+        let headerCell = headerRow.getCell(`${columnDef.data}`);
+        let tooltipCell = tooltipRow.getCell(`${columnDef.data}`);
+        tooltipCell.value = columnDef.tooltip || '';
+        if ('optional' in columnDef && columnDef.optional) {
             headerCell.fill = {
                 type: 'pattern',
                 pattern: 'solid',
@@ -60,10 +62,20 @@ export const downloadExcelTest = data => {
                 fgColor: { argb: '66A6CE39' }
             };
         }
+
+        if ('source' in columnDef) {
+            console.log(columnDef);
+            columnDef.source.forEach((dropdownOption, index) => {
+                console.log(index);
+                let row = dropdownSheet.getRow(index + 2);
+                let cell = row.getCell(`${columnDef.data}`);
+                cell.value = dropdownOption;
+            });
+        }
     });
-    
+
     // submissionSheet.addRow({ id: 0, ...elementOfColFeatures });
-    data.rows.map((element, index) => {
+    data.rows.forEach((element, index) => {
         console.log(element);
         submissionSheet.addRow({ id: index + 1, ...element });
     });
@@ -73,6 +85,4 @@ export const downloadExcelTest = data => {
         var blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         FileSaver.saveAs(blob, 'test.xlsx');
     });
-
-    
 };
