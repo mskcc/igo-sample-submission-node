@@ -153,7 +153,7 @@ exports.grid = [
                     }
                     let columnsResult = results;
 
-                    let gridPromise = util.generateGrid(columnsResult, 'user', formValues, 'dmp').catch((reasons) => {
+                    let gridPromise = util.generateGrid(columnsResult, res.user.role, formValues, 'dmp').catch((reasons) => {
                         return apiResponse.errorResponse(res, reasons);
                     });
                     gridPromise

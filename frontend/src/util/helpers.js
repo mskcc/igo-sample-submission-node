@@ -187,7 +187,11 @@ export const generateSubmitData = (state, isPartial = false) => {
     };
     if (!isPartial) {
         data.transactionId = getTransactionId();
+<<<<<<< HEAD
         data.id = state.submissions.submissionToEdit ? state.submissions.submissionToEdit._id : undefined;
+=======
+        data.id = state.submissions.submissionToEdit._id;
+>>>>>>> cf6d6f8f0e8e0615fff970429bf6e51a8c2cc483
     }
     data.version = Config.VERSION;
     let rowsWithIndex = rowsWithRowIndex(state.upload.grid.rows);
@@ -209,6 +213,7 @@ export const rowsWithRowIndex = function (rows) {
 export const isEqual = function (value, other) {
     // Get the value type
     var type = Object.prototype.toString.call(value);
+<<<<<<< HEAD
 
     // If the two objects are not the same type, return false
     if (type !== Object.prototype.toString.call(other)) return false;
@@ -225,6 +230,61 @@ export const isEqual = function (value, other) {
     var compare = function (item1, item2) {
         // Get the object type
         var itemType = Object.prototype.toString.call(item1);
+=======
+
+    // If the two objects are not the same type, return false
+    if (type !== Object.prototype.toString.call(other)) return false;
+
+    // If items are not an object or array, return false
+    if (['[object Array]', '[object Object]'].indexOf(type) < 0) return false;
+
+    // Compare the length of the length of the two items
+    var valueLen = type === '[object Array]' ? value.length : Object.keys(value).length;
+    var otherLen = type === '[object Array]' ? other.length : Object.keys(other).length;
+    if (valueLen !== otherLen) return false;
+
+    // Compare two items
+    var compare = function (item1, item2) {
+        // Get the object type
+        var itemType = Object.prototype.toString.call(item1);
+
+        // If an object or array, compare recursively
+        if (['[object Array]', '[object Object]'].indexOf(itemType) >= 0) {
+            if (!isEqual(item1, item2)) return false;
+        }
+
+        // Otherwise, do a simple comparison
+        else {
+            // If the two items are not the same type, return false
+            if (itemType !== Object.prototype.toString.call(item2)) return false;
+
+            // Else if it's a function, convert to a string and compare
+            // Otherwise, just compare
+            if (itemType === '[object Function]') {
+                if (item1.toString() !== item2.toString()) return false;
+            } else {
+                if (item1 !== item2) return false;
+            }
+        }
+    };
+
+    // Compare properties
+    if (type === '[object Array]') {
+        for (var i = 0; i < valueLen; i++) {
+            if (compare(value[i], other[i]) === false) return false;
+        }
+    } else {
+        for (var key in value) {
+            if (value.hasOwnProperty(key)) {
+                if (compare(value[key], other[key]) === false) return false;
+            }
+        }
+    }
+
+    // If nothing failed, return true
+    return true;
+};
+>>>>>>> cf6d6f8f0e8e0615fff970429bf6e51a8c2cc483
 
         // If an object or array, compare recursively
         if (['[object Array]', '[object Object]'].indexOf(itemType) >= 0) {
@@ -514,7 +574,11 @@ export const checkGridAndForm = (form, grid) => {
     let errors = new Set([]);
 
     let result = { success: true, message: '' };
+<<<<<<< HEAD
     if (!(form.serviceId === undefined && grid.serviceId === undefined) && 'IGO-' + form.serviceId !== grid.serviceId) {
+=======
+    if ('IGO-' + form.serviceId !== grid.serviceId) {
+>>>>>>> cf6d6f8f0e8e0615fff970429bf6e51a8c2cc483
         errors.add(`iLabs Service ID: '${form.serviceId}' vs. '${grid.serviceId}'`);
     }
 

@@ -155,8 +155,8 @@ export const getAdditionalRows = (data) => {
         });
 };
 
-export const downloadGrid = (data) => {
-    const url = `${Config.NODE_API_ROOT}/upload/export`;
+export const getAdditionalRows = (data) => {
+    const url = `${Config.NODE_API_ROOT}/upload/additionalRows`;
     return axios
         .post(url, { ...data })
         .then((resp) => {
@@ -247,7 +247,6 @@ export const createSubmission = (data) => {
 
 export const updateSubmission = (data) => {
     const url = `${Config.NODE_API_ROOT}/submission/update`;
-    console.log(data);
     return axios
         .post(url, { ...data })
         .then((resp) => {

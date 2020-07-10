@@ -545,7 +545,6 @@ export const submissionColumns = {
         data: 'unsubmit',
         renderer: 'html',
     },
-
     Receipt: {
         name: 'Receipt',
         data: 'receipt',

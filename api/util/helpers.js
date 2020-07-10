@@ -154,7 +154,6 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
 
                 colDef.error = colDef.error ? colDef.error : 'Invalid format.';
                 columns.columnFeatures.push(colDef);
-
                 colDef.optional = requiredColumns.includes(columnName) ? false : true;
                 colDef.allowEmpty = colDef.optional;
                 colDef.className = colDef.optional ? 'optional' : 'required';
