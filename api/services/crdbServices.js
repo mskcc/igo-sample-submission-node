@@ -71,10 +71,7 @@ exports.verifyCmoId = (cmoId) => {
             })
             .then((connection) => {
                 connection
-                    .execute(
-                        'SELECT pt_mrn, dmp_id FROM crdb_cmo_loj_dmp_map WHERE cmo_id = :cmoId',
-                        [cmoId]
-                    )
+                    .execute('SELECT pt_mrn, dmp_id FROM crdb_cmo_loj_dmp_map WHERE cmo_id = :cmoId', [cmoId])
                     .then(function (result) {
                         connection.close();
                         logger.log('info', 'Successfully retrieved response from CRDB');
@@ -102,10 +99,7 @@ exports.verifyDmpId = (dmpId) => {
             })
             .then((connection) => {
                 connection
-                    .execute(
-                        'SELECT pt_mrn, cmo_id, dmp_id FROM crdb_cmo_loj_dmp_map WHERE dmp_id = :dmpId',
-                        [dmpId]
-                    )
+                    .execute('SELECT pt_mrn, cmo_id, dmp_id FROM crdb_cmo_loj_dmp_map WHERE dmp_id = :dmpId', [dmpId])
                     .then(function (result) {
                         connection.close();
                         logger.log('info', 'Successfully retrieved response from CRDB');

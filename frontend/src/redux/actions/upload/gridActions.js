@@ -439,13 +439,12 @@ export function downloadGrid() {
         let material = getState().upload.grid.form.material;
         let application = getState().upload.grid.form.application;
         let data = {
-            columns:columns,
+            columns: columns,
             rows: rows,
             material: material,
             application: application,
         };
         excel.downloadExcelTest(data);
-        
     };
 }
 

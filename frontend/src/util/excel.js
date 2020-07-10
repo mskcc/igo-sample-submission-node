@@ -11,7 +11,7 @@ export const downloadExcel = (data, fileName) => {
     const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
     const excelBuffer = XLSX.write(wb, {
         bookType: 'xlsx',
-        type: 'array'
+        type: 'array',
     });
     const blob = new Blob([excelBuffer], { type: fileType });
     FileSaver.saveAs(blob, fileName + fileExtension);
@@ -20,7 +20,7 @@ export const downloadExcel = (data, fileName) => {
 //  Export excel with dropdowns
 // All hope abandon, ye who enter here.
 // test: optional/required correct? do the dropdown lists seem correct?
-export const downloadExcelTest = data => {
+export const downloadExcelTest = (data) => {
     let workbook = new Excel.Workbook();
     let fileName = `${data.material}-${data.application}`;
     workbook.creator = 'IGO';
@@ -33,7 +33,7 @@ export const downloadExcelTest = data => {
     let dropdownSheet = workbook.addWorksheet('DropdownOptions');
     let sheetColumns = [];
     // add columns first to be able to reference them by key during formatting step
-    data.columns.forEach(columnDef => {
+    data.columns.forEach((columnDef) => {
         // SKIP hidden columns
         if ('hiddenFrom' in columnDef || columnDef.data === 'indexSequence') {
             return;
@@ -54,7 +54,7 @@ export const downloadExcelTest = data => {
     tooltipRow.height = 150;
 
     // FILL
-    data.columns.forEach(columnDef => {
+    data.columns.forEach((columnDef) => {
         // SKIP hidden columns
         if ('hiddenFrom' in columnDef || columnDef.data === 'indexSequence') {
             return;
@@ -79,13 +79,13 @@ export const downloadExcelTest = data => {
             headerCell.fill = {
                 type: 'pattern',
                 pattern: 'solid',
-                fgColor: { argb: '66A6CE39' }
+                fgColor: { argb: '66A6CE39' },
             };
         } else {
             headerCell.fill = {
                 type: 'pattern',
                 pattern: 'solid',
-                fgColor: { argb: '4D8FC7E8' }
+                fgColor: { argb: '4D8FC7E8' },
             };
         }
 
@@ -132,7 +132,7 @@ export const downloadExcelTest = data => {
             });
         }
     });
-    workbook.xlsx.writeBuffer().then(function(data) {
+    workbook.xlsx.writeBuffer().then(function (data) {
         var blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         FileSaver.saveAs(blob, `${fileName}.xlsx`);
     });

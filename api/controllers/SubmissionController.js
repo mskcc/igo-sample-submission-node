@@ -15,10 +15,7 @@ exports.list = [
             .sort({ createdAt: 'desc' })
             .exec(function (err, submissions) {
                 if (err) {
-                    return apiResponse.errorResponse(
-                        res,
-                        'Could not retrieve submissions.'
-                    );
+                    return apiResponse.errorResponse(res, 'Could not retrieve submissions.');
                 }
                 return apiResponse.successResponseWithData(res, 'Operation success', {
                     submissions,
@@ -32,17 +29,10 @@ exports.submission = [
     function (req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return apiResponse.validationErrorWithData(
-                res,
-                'Validation error.',
-                errors.array()
-            );
+            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
 
-        SubmissionModel.findById(ObjectId(req.params.id)).exec(function (
-            err,
-            submission
-        ) {
+        SubmissionModel.findById(ObjectId(req.params.id)).exec(function (err, submission) {
             if (err) {
                 return apiResponse.errorResponse(res, 'Could not retrieve submission.');
             }
@@ -58,11 +48,7 @@ exports.unsubmit = [
     function (req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return apiResponse.validationErrorWithData(
-                res,
-                'Validation error.',
-                errors.array()
-            );
+            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
 
         SubmissionModel.findByIdAndUpdate(ObjectId(req.body.id), {
@@ -85,29 +71,16 @@ exports.grid = [
             .sort({ createdAt: 'desc' })
             .exec(function (err, submissions) {
                 if (err) {
-                    return apiResponse.errorResponse(
-                        res,
-                        'Could not retrieve submissions.'
-                    );
+                    return apiResponse.errorResponse(res, 'Could not retrieve submissions.');
                 }
-                let submissionGridPromise = util.generateSubmissionGrid(
-                    submissions,
-                    res.user.role
-                );
+                let submissionGridPromise = util.generateSubmissionGrid(submissions, res.user.role);
                 Promise.all([submissionGridPromise])
                     .then((results) => {
                         if (results.some((x) => x.length === 0)) {
-                            return apiResponse.errorResponse(
-                                res,
-                                'Could not retrieve submission grid.'
-                            );
+                            return apiResponse.errorResponse(res, 'Could not retrieve submission grid.');
                         }
                         let [submissionGridResult] = results;
-                        return apiResponse.successResponseWithData(
-                            res,
-                            'Operation success',
-                            submissionGridResult
-                        );
+                        return apiResponse.successResponseWithData(res, 'Operation success', submissionGridResult);
                     })
                     .catch((reasons) => {
                         return apiResponse.errorResponse(res, reasons);
@@ -122,40 +95,23 @@ exports.since = [
     function (req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return apiResponse.validationErrorWithData(
-                res,
-                'Validation error.',
-                errors.array()
-            );
+            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
         let time = req.params.time;
         SubmissionModel.find({ createdAt: { $gt: time } }, '')
             .sort({ createdAt: 'desc' })
             .exec(function (err, submissions) {
                 if (err || _.isEmpty(submissions)) {
-                    return apiResponse.errorResponse(
-                        res,
-                        'Could not retrieve submissions.'
-                    );
+                    return apiResponse.errorResponse(res, 'Could not retrieve submissions.');
                 }
-                let submissionGridPromise = util.generateSubmissionGrid(
-                    submissions,
-                    res.user.role
-                );
+                let submissionGridPromise = util.generateSubmissionGrid(submissions, res.user.role);
                 Promise.all([submissionGridPromise])
                     .then((results) => {
                         if (results.some((x) => x.length === 0)) {
-                            return apiResponse.errorResponse(
-                                res,
-                                'Could not retrieve submission grid.'
-                            );
+                            return apiResponse.errorResponse(res, 'Could not retrieve submission grid.');
                         }
                         let [submissionGridResult] = results;
-                        return apiResponse.successResponseWithData(
-                            res,
-                            'Operation success',
-                            submissionGridResult
-                        );
+                        return apiResponse.successResponseWithData(res, 'Operation success', submissionGridResult);
                     })
                     .catch((reasons) => {
                         return apiResponse.errorResponse(res, reasons);
@@ -170,29 +126,13 @@ exports.since = [
  * @returns {Object}
  */
 exports.create = [
-    body('formValues')
-        .isJSON()
-        .isLength({ min: 1 })
-        .trim()
-        .withMessage('formValues must be JSON.'),
-    body('gridValues')
-        .isJSON()
-        .isLength({ min: 1 })
-        .trim()
-        .withMessage('gridValues must be JSON.'),
-    body('submissionType')
-        .isString()
-        .isLength({ min: 1 })
-        .trim()
-        .withMessage('submissionType must be specified.'),
+    body('formValues').isJSON().isLength({ min: 1 }).trim().withMessage('formValues must be JSON.'),
+    body('gridValues').isJSON().isLength({ min: 1 }).trim().withMessage('gridValues must be JSON.'),
+    body('submissionType').isString().isLength({ min: 1 }).trim().withMessage('submissionType must be specified.'),
     function (req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return apiResponse.validationErrorWithData(
-                res,
-                'Validation error.',
-                errors.array()
-            );
+            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
         console.log(req.body);
         let formValues = JSON.parse(req.body.formValues);
@@ -233,25 +173,13 @@ exports.create = [
  */
 exports.update = [
     body('id').isString().withMessage('id must be String.'),
-    body('formValues')
-        .isJSON()
-        .isLength({ min: 1 })
-        .trim()
-        .withMessage('formValues must be JSON.'),
-    body('gridValues')
-        .isJSON()
-        .isLength({ min: 1 })
-        .trim()
-        .withMessage('gridValues must be JSON.'),
+    body('formValues').isJSON().isLength({ min: 1 }).trim().withMessage('formValues must be JSON.'),
+    body('gridValues').isJSON().isLength({ min: 1 }).trim().withMessage('gridValues must be JSON.'),
     function (req, res) {
-    // console.log(req)
+        // console.log(req)
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return apiResponse.validationErrorWithData(
-                res,
-                'Validation error.',
-                errors.array()
-            );
+            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
 
         let formValues = JSON.parse(req.body.formValues);
@@ -286,25 +214,13 @@ exports.update = [
 exports.submit = [
     body('id').optional().isMongoId().withMessage('id must be valid MongoDB ID.'),
     body('transactionId').isInt().withMessage('id must be Int.'),
-    body('formValues')
-        .isJSON()
-        .isLength({ min: 1 })
-        .trim()
-        .withMessage('formValues must be JSON.'),
-    body('gridValues')
-        .isJSON()
-        .isLength({ min: 1 })
-        .trim()
-        .withMessage('gridValues must be JSON.'),
+    body('formValues').isJSON().isLength({ min: 1 }).trim().withMessage('formValues must be JSON.'),
+    body('gridValues').isJSON().isLength({ min: 1 }).trim().withMessage('gridValues must be JSON.'),
     function (req, res) {
         console.log(req.body);
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return apiResponse.validationErrorWithData(
-                res,
-                'Validation error.',
-                errors.array()
-            );
+            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
 
         let formValues = JSON.parse(req.body.formValues);
@@ -312,10 +228,7 @@ exports.submit = [
         let transactionId = req.body.transactionId;
         let id = req.body.id || undefined;
 
-        let findOrCreateSubPromise = SubmissionModel.findOrCreateSub(
-            id,
-            res.user.username
-        );
+        let findOrCreateSubPromise = SubmissionModel.findOrCreateSub(id, res.user.username);
 
         Promise.all([findOrCreateSubPromise])
             .then((results) => {
@@ -326,17 +239,10 @@ exports.submit = [
                 //  save pre LIMS submit so data is safe
                 submissionToSubmit.save(function (err) {
                     if (err) {
-                        return apiResponse.errorResponse(
-                            res,
-                            'Submission could not be saved.'
-                        );
+                        return apiResponse.errorResponse(res, 'Submission could not be saved.');
                     }
                 });
-                let submissionPromise = util.submit(
-                    submissionToSubmit,
-                    res.user,
-                    transactionId
-                );
+                let submissionPromise = util.submit(submissionToSubmit, res.user, transactionId);
                 Promise.all([submissionPromise]).then((results) => {
                     if (results.some((x) => x.length === 0)) {
                         return apiResponse.errorResponse(res, 'Could not submit.');
@@ -347,20 +253,13 @@ exports.submit = [
                     submissionToSubmit.submittedAt = transactionId;
                     submissionToSubmit.save(function (err) {
                         if (err) {
-                            return apiResponse.errorResponse(
-                                res,
-                                'Submission could not be saved on this site but was submitted to IGO.'
-                            );
+                            return apiResponse.errorResponse(res, 'Submission could not be saved on this site but was submitted to IGO.');
                         } else {
                             let sendEmail = mailer.sendToPms(submissionToSubmit.formValues);
                             if (sendEmail) {
                                 mailer.sendNotification(submissionToSubmit);
                             }
-                            return apiResponse.successResponseWithData(
-                                res,
-                                'Operation success',
-                                submissionResult
-                            );
+                            return apiResponse.successResponseWithData(res, 'Operation success', submissionResult);
                         }
                     });
                 });
@@ -376,11 +275,7 @@ exports.delete = [
     function (req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return apiResponse.validationErrorWithData(
-                res,
-                'Validation error.',
-                errors.array()
-            );
+            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
         let id = req.body.id;
         SubmissionModel.findByIdAndDelete(ObjectId(id)).exec(function (err) {
@@ -397,21 +292,14 @@ exports.download = [
     function (req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return apiResponse.validationErrorWithData(
-                res,
-                'Validation error.',
-                errors.array()
-            );
+            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
         let id = req.params.id;
         SubmissionModel.findById(ObjectId(id))
             .lean()
             .exec(function (err, submission) {
                 if (err) {
-                    return apiResponse.errorResponse(
-                        res,
-                        'Could not retrieve submission.'
-                    );
+                    return apiResponse.errorResponse(res, 'Could not retrieve submission.');
                 }
                 let excelData = util.generateSubmissionExcel(submission, res.user.role);
 

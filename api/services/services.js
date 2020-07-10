@@ -128,10 +128,7 @@ exports.getBarcodes = () => {
 };
 
 exports.getMaterials = (application) => {
-    const url = `${LIMS_URL}/getIntakeTerms?recipe=${application.replace(
-        '/',
-        '_PIPI_SLASH_'
-    )}`;
+    const url = `${LIMS_URL}/getIntakeTerms?recipe=${application.replace('/', '_PIPI_SLASH_')}`;
     logger.log('info', `Sending request to ${url}`);
     return axios
         .get(url, {
@@ -152,10 +149,7 @@ exports.getMaterials = (application) => {
 };
 
 exports.getApplications = (material) => {
-    const url = `${LIMS_URL}/getIntakeTerms?type=${material.replace(
-        '/',
-        '_PIPI_SLASH_'
-    )}`;
+    const url = `${LIMS_URL}/getIntakeTerms?type=${material.replace('/', '_PIPI_SLASH_')}`;
     logger.log('info', `Sending request to ${url}`);
     return axios
         .get(url, {
@@ -176,10 +170,10 @@ exports.getApplications = (material) => {
         });
 };
 exports.getColumns = (material, application) => {
-    const url = `${LIMS_URL}/getIntakeTerms?type=${material.replace(
+    const url = `${LIMS_URL}/getIntakeTerms?type=${material.replace('/', '_PIPI_SLASH_')}&recipe=${application.replace(
         '/',
         '_PIPI_SLASH_'
-    )}&recipe=${application.replace('/', '_PIPI_SLASH_')}`;
+    )}`;
     logger.log('info', `Sending request to ${url}`);
     return axios
         .get(url, {

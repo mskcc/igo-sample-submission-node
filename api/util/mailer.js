@@ -37,7 +37,7 @@ exports.sendNotification = function (submission) {
         subject: `[IGO Submission] ${submission.formValues.serviceId}`,
         content: `The following ${submission.formValues.material} samples were submitted to IGO for ${submission.formValues.application} by ${submission.username} under service id ${submission.formValues.serviceId}.  <br> ${sampleIdsString} `,
         footer:
-      '<br><br><br>Thank you, <br><br><a href="http://cmo.mskcc.org/cmo/igo/">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br>Follow us on <a href="https://www.instagram.com/genomics212/?hl=en">Instagram</a> and <a href="https://twitter.com/genomics212?lang=en">Twitter</a>!<br>',
+            '<br><br><br>Thank you, <br><br><a href="http://cmo.mskcc.org/cmo/igo/">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br>Follow us on <a href="https://www.instagram.com/genomics212/?hl=en">Instagram</a> and <a href="https://twitter.com/genomics212?lang=en">Twitter</a>!<br>',
     };
     // // send mail with defined transport object
     // // visit https://nodemailer.com/ for more options
@@ -52,9 +52,7 @@ exports.sendNotification = function (submission) {
 };
 
 exports.sendToPms = (submissionFormValues) => {
-    let isPmApp = constants.cmoPmEmailApplications.includes(
-        submissionFormValues.application
-    );
+    let isPmApp = constants.cmoPmEmailApplications.includes(submissionFormValues.application);
     let isHuman = submissionFormValues.species === 'Human';
     if (isHuman && isPmApp) {
         return true;

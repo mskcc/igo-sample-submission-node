@@ -103,17 +103,13 @@ export const gridColumns = {
         picklistName: 'DmpCoverage',
     },
     'Investigator Patient ID (Investigator Provided Study Subject Identifier)': {
-        name:
-      'Investigator Patient ID (Investigator Provided Study Subject Identifier)',
-        columnHeader:
-      'Investigator Patient ID (Investigator Provided Study Subject Identifier)',
+        name: 'Investigator Patient ID (Investigator Provided Study Subject Identifier)',
+        columnHeader: 'Investigator Patient ID (Investigator Provided Study Subject Identifier)',
         data: 'investigatorProvidedStudySubjectIdentifier',
     },
     'Investigator Sample ID (Investigator Provided Study Sample Identifier)': {
-        name:
-      'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
-        columnHeader:
-      'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
+        name: 'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
+        columnHeader: 'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
         data: 'investigatorProvidedStudySampleIdentifier',
     },
     'Additional Info': {
@@ -203,14 +199,8 @@ export const dmpIntakeForms = {
         ['Sample Approved by CMO', 'Required'],
         ['Variant Allele Frequency', 'Required'],
         ['Coverage', 'Required'],
-        [
-            'Investigator Patient ID (Investigator Provided Study Subject Identifier)',
-            'Required',
-        ],
-        [
-            'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
-            'Required',
-        ],
+        ['Investigator Patient ID (Investigator Provided Study Subject Identifier)', 'Required'],
+        ['Investigator Sample ID (Investigator Provided Study Sample Identifier)', 'Required'],
         ['Additional Info', 'Optional'],
         ['Molecular Pathology Accession Number', 'Optional'],
     ],
@@ -257,18 +247,10 @@ export const dmpIntakeForms = {
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
         ['DMP to Transfer', 'Required'],
-        ['Sample Approved by CMO', 'Required'][
-            ('Variant Allele Frequency', 'Required')
-        ],
+        ['Sample Approved by CMO', 'Required'][('Variant Allele Frequency', 'Required')],
         ['Coverage', 'Required'],
-        [
-            'Investigator Patient ID (Investigator Provided Study Subject Identifier)',
-            'Required',
-        ],
-        [
-            'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
-            'Required',
-        ],
+        ['Investigator Patient ID (Investigator Provided Study Subject Identifier)', 'Required'],
+        ['Investigator Sample ID (Investigator Provided Study Sample Identifier)', 'Required'],
         ['Additional Info', 'Optional'],
         ['Molecular Pathology Accession Number', 'Optional'],
     ],

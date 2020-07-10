@@ -33,7 +33,7 @@ export const gridColumns = {
         pattern: validationPatterns.micronicTubeBarcode,
         error: 'Micronic tubes have a ten digit barcode.',
         tooltip:
-      'Micronic tubes have been provided to you in advance by the Sample and Project Management Team. The barcode can be found on the side of the tube or can be read by a reader on the bottom of the tube.',
+            'Micronic tubes have been provided to you in advance by the Sample and Project Management Team. The barcode can be found on the side of the tube or can be read by a reader on the bottom of the tube.',
     },
     'Block/Slide/TubeID': {
         name: 'Block/Slide/TubeID',
@@ -43,7 +43,7 @@ export const gridColumns = {
         pattern: '^.{1,35}$',
         error: 'Only letters, digits and –, please.',
         tooltip:
-      'The identifier on your tube, block or slide.  You can paste in directly from excel, and there are no formatting rules.  Please be as correct as possible, and ensure your tubes, blocks and slides are labeled clearly.',
+            'The identifier on your tube, block or slide.  You can paste in directly from excel, and there are no formatting rules.  Please be as correct as possible, and ensure your tubes, blocks and slides are labeled clearly.',
     },
     'Plate ID': {
         name: 'Plate ID',
@@ -54,7 +54,7 @@ export const gridColumns = {
         // error:
         //   'Only letters, digits and –, please. Must begin with "MSK-" followed by 10 characters.',
         tooltip:
-      'The Plate ID is the barcode on the side of your plate, and it begins with MSK-. Please scan or carefully type the barcode into this field for all samples on this plate.',
+            'The Plate ID is the barcode on the side of your plate, and it begins with MSK-. Please scan or carefully type the barcode into this field for all samples on this plate.',
     },
     'Well Position': {
         name: 'Well Position',
@@ -62,8 +62,7 @@ export const gridColumns = {
         data: 'wellPosition',
         readOnly: true,
         pattern: validationPatterns.wellPosition,
-        tooltip:
-      'Fill Plate by Column. It must have at least one letter followed by a number',
+        tooltip: 'Fill Plate by Column. It must have at least one letter followed by a number',
         error: 'Well Position must have at least one letter followed by a number',
     },
     'Known Genetic Alterations': {
@@ -78,9 +77,9 @@ export const gridColumns = {
         data: 'userId',
         pattern: validationPatterns.userId,
         tooltip:
-      'The Sample ID stays with your sample for its lifetime. Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively.Cannot contain "sample" or "IGO-".',
+            'The Sample ID stays with your sample for its lifetime. Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively.Cannot contain "sample" or "IGO-".',
         error:
-      'Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively. Cannot contain "sample" or "IGO-".',
+            'Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively. Cannot contain "sample" or "IGO-".',
         uniqueError: 'Sample ID needs to be unique.',
         containsSampleError: 'Sample ID cannot contain the word "sample" or "IGO-.',
     },
@@ -115,7 +114,7 @@ export const gridColumns = {
         columnHeader: 'Preservation',
         data: 'preservation',
         tooltip:
-      'The preservation method of your material is critical to understanding how to process your samples and anticipate issues.  Please complete as accurately as possible. If your preservation is not listed, please contact IGO',
+            'The preservation method of your material is critical to understanding how to process your samples and anticipate issues.  Please complete as accurately as possible. If your preservation is not listed, please contact IGO',
         editableCellTemplate: 'ui-grid/dropdownEditor',
         //  editor select is a simpler version of type dropdown
         //  "editor": "select",
@@ -128,8 +127,7 @@ export const gridColumns = {
         name: 'Sample Origin',
         columnHeader: 'Sample Origin',
         data: 'sampleOrigin',
-        tooltip:
-      'The sample origin is important for analysis.  Please complete as accurately as possible.',
+        tooltip: 'The sample origin is important for analysis.  Please complete as accurately as possible.',
         editableCellTemplate: 'ui-grid/dropdownEditor',
         //  editor select is a simpler version of type dropdown
         //  "editor": "select",
@@ -142,8 +140,7 @@ export const gridColumns = {
         name: 'Specimen Type',
         columnHeader: 'Specimen Type',
         data: 'specimenType',
-        tooltip:
-      'The specimen type is important for analysis.  Please complete as accurately as possible.',
+        tooltip: 'The specimen type is important for analysis.  Please complete as accurately as possible.',
         editableCellTemplate: 'ui-grid/dropdownEditor',
         //  editor select is a simpler version of type dropdown
         //  "editor": "select",
@@ -157,7 +154,7 @@ export const gridColumns = {
         columnHeader: 'Sequencing Read Length',
         data: 'sequencingReadLength',
         tooltip:
-      'If you are unsure of what read length is needed, please contact your data analyst or IGO.  There are different read lengths for different applications and we are happy to suggest a length. If you do not see your read length listed, please contact IGO immediately',
+            'If you are unsure of what read length is needed, please contact your data analyst or IGO.  There are different read lengths for different applications and we are happy to suggest a length. If you do not see your read length listed, please contact IGO immediately',
         //  FIXME
         editableCellTemplate: 'ui-grid/dropdownEditor',
         //  editor select is a simpler version of type dropdown
@@ -172,7 +169,7 @@ export const gridColumns = {
         columnHeader: 'Reads Requested/Coverage',
         data: 'requestedReads',
         tooltip:
-      'Please tell us how many reads you would us to generate per sample.  If you are submitting for custom capture or whole exome capture, please tell us how much coverage you would like.  If you are submitting pre-made libraries, you must request by lane.  If you are using a custom sequencing primer, you must request an entire flow cell. Please contact IGO if you have any questions',
+            'Please tell us how many reads you would us to generate per sample.  If you are submitting for custom capture or whole exome capture, please tell us how much coverage you would like.  If you are submitting pre-made libraries, you must request by lane.  If you are using a custom sequencing primer, you must request an entire flow cell. Please contact IGO if you have any questions',
         editableCellTemplate: 'ui-grid/dropdownEditor',
         //  editor select is a simpler version of type dropdown
         //  "editor": "select",
@@ -189,14 +186,14 @@ export const gridColumns = {
         pattern: validationPatterns.alphanum,
         error: 'Index ID is not known to IGO.',
         tooltip:
-      'This list represents barcodes that are already registered with IGO.  Please select from the list.  If you are submitting custom barcodes, you must pre-register them with IGO, and confirm your design and construct in advance.  Once you have identified the barcode by name, the sequence will appear in the adjacent field.  Please confirm that the sequence is expected based on your documentation.',
+            'This list represents barcodes that are already registered with IGO.  Please select from the list.  If you are submitting custom barcodes, you must pre-register them with IGO, and confirm your design and construct in advance.  Once you have identified the barcode by name, the sequence will appear in the adjacent field.  Please confirm that the sequence is expected based on your documentation.',
     },
     'Barcode Position': {
         name: 'Barcode Position',
         columnHeader: 'Barcode Position',
         data: 'barcodePosition',
         tooltip:
-      'Please let us know what position the barcode is expected to be found.  Standard Illumina Index barcodes are located in position 42-46',
+            'Please let us know what position the barcode is expected to be found.  Standard Illumina Index barcodes are located in position 42-46',
     },
     'Index Sequence': {
         name: 'Index Sequence',
@@ -210,8 +207,7 @@ export const gridColumns = {
         name: 'Nucleic Acid Type to Extract',
         columnHeader: 'Nucleic Acid Type to Extract',
         data: 'naToExtract',
-        tooltip:
-      'For samples submitted for extraction, please tell us what we should extract out of the material.',
+        tooltip: 'For samples submitted for extraction, please tell us what we should extract out of the material.',
         editableCellTemplate: 'ui-grid/dropdownEditor',
         //  editor select is a simpler version of type dropdown
         //  "editor": "select",
@@ -226,7 +222,7 @@ export const gridColumns = {
         columnHeader: 'Cell Count',
         data: 'cellCount',
         tooltip:
-      'Please tell us the number of cells in your sorted population.  This number is important for us to provide you with the best extraction results.',
+            'Please tell us the number of cells in your sorted population.  This number is important for us to provide you with the best extraction results.',
         pattern: validationPatterns.number,
         error: 'Numbers only, please.',
     },
@@ -237,7 +233,7 @@ export const gridColumns = {
         pattern: validationPatterns.number,
         error: 'Numbers only, please.',
         tooltip:
-      'Please provide us with the volume of sample in microliters.  Please note there are different requirements for each application, and if you have any questions, please contact IGO.',
+            'Please provide us with the volume of sample in microliters.  Please note there are different requirements for each application, and if you have any questions, please contact IGO.',
     },
     'Concentration (ng/uL)': {
         name: 'Concentration (ng/uL)',
@@ -245,8 +241,7 @@ export const gridColumns = {
         data: 'concentration',
         pattern: validationPatterns.number,
         error: 'Numbers only, please.',
-        tooltip:
-      'You must supply this in nanograms per microliter.  If you are unsure, please provide us with an approximation.',
+        tooltip: 'You must supply this in nanograms per microliter.  If you are unsure, please provide us with an approximation.',
     },
     Quantity: {
         name: 'Quantity of Tubes',
@@ -256,7 +251,7 @@ export const gridColumns = {
         error: 'Numbers only, please.',
         //  "type": "number",
         tooltip:
-      'Number of Tubes per sample.  If you are submitting slides, please use this field to tell us how many slides per sample you will submit.',
+            'Number of Tubes per sample.  If you are submitting slides, please use this field to tell us how many slides per sample you will submit.',
     },
     'Quantity of Tubes': {
         name: 'Quantity of Tubes',
@@ -266,7 +261,7 @@ export const gridColumns = {
         error: 'Numbers only, please.',
         //  "type": "number",
         tooltip:
-      'Number of Tubes per sample.  If you are submitting slides, please use this field to tell us how many slides per sample you will submit.',
+            'Number of Tubes per sample.  If you are submitting slides, please use this field to tell us how many slides per sample you will submit.',
     },
     'Assay(s)': {
         name: 'Assay(s)',
@@ -276,7 +271,7 @@ export const gridColumns = {
         error: 'Only dropdown options are permitted as values',
         strict: true,
         tooltip:
-      'This field is multi-select.  If you are submitting one sample for multiple assays, please select the first, followed by the second, than the third, in the order of priority.',
+            'This field is multi-select.  If you are submitting one sample for multiple assays, please select the first, followed by the second, than the third, in the order of priority.',
         editableCellTemplate: 'uiMultiSelect',
         picklistName: 'ddPCR+Assay',
         allowInvalid: true,
@@ -290,7 +285,7 @@ export const gridColumns = {
         error: 'Only dropdown options are permitted as values',
         strict: true,
         tooltip:
-      'This field is multi-select.  If you are submitting one sample for multiple assays, please select the first, followed by the second, than the third, in the order of priority.',
+            'This field is multi-select.  If you are submitting one sample for multiple assays, please select the first, followed by the second, than the third, in the order of priority.',
         editableCellTemplate: 'uiMultiSelect',
         picklistName: 'ddPCR+Assay',
         allowInvalid: true,
@@ -306,23 +301,7 @@ export const gridColumns = {
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
-        source: [
-            'Normal',
-            '1%',
-            '5%',
-            '10%',
-            '15%',
-            '20%',
-            '30%',
-            '40%',
-            '50%',
-            '60%',
-            '70%',
-            '80%',
-            '90%',
-            '95%',
-            '100%',
-        ],
+        source: ['Normal', '1%', '5%', '10%', '15%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '95%', '100%'],
     },
     'Collection Year': {
         name: 'Collection Year',
@@ -344,14 +323,14 @@ export const gridColumns = {
         error: 'Only OncoTree Tumor IDs or exact dropdown options are permitted.',
         strict: true,
         picklistName: 'tumorType',
-        tooltip: 'Tumor types taken from http://oncotree.mskcc.org/'
+        tooltip: 'Tumor types taken from http://oncotree.mskcc.org/',
     },
     'Sample Class': {
         name: 'Sample Class',
         columnHeader: 'Sample Class',
         data: 'sampleClass',
         tooltip:
-      'Please provide us with detailed information about the Tumor or Normal status, and please be as precise as possible.  This value is critical for data analysis.',
+            'Please provide us with detailed information about the Tumor or Normal status, and please be as precise as possible.  This value is critical for data analysis.',
         editableCellTemplate: 'ui-grid/dropdownEditor',
         //  editor select is a simpler version of type dropdown
         //  "editor": "select",
@@ -373,7 +352,7 @@ export const gridColumns = {
         data: 'patientId',
         pattern: validationPatterns.alphanumdash,
         tooltip:
-      'For non-MSKCC patient samples, mouse samples, or cell lines without patient origin, please use this field to provide us with group names i.e. compare this group (A) with this group (B). For CMO projects, fill out something unique and correspond with your PM for more information.',
+            'For non-MSKCC patient samples, mouse samples, or cell lines without patient origin, please use this field to provide us with group names i.e. compare this group (A) with this group (B). For CMO projects, fill out something unique and correspond with your PM for more information.',
     },
     'Normalized Patient Id': {
         name: 'Normalized Patient Id',
@@ -396,7 +375,7 @@ export const gridColumns = {
         columnHeader: 'Sex',
         data: 'gender',
         tooltip:
-      'Sex information is important for calling Copy-Number Variations on sex chromosome (X,Y) genes.  Without this information, you may miss important data during analysis.  If you have any questions, please contact Platform Informatics',
+            'Sex information is important for calling Copy-Number Variations on sex chromosome (X,Y) genes.  Without this information, you may miss important data during analysis.  If you have any questions, please contact Platform Informatics',
         editableCellTemplate: 'ui-grid/dropdownEditor',
 
         type: 'autocomplete',
@@ -465,8 +444,7 @@ export const formattingAdjustments = {
         pattern: validationPatterns.mrn,
         columnHeader: 'MRN',
         tooltip: 'The patient MRN.',
-        error:
-      'MRN is incorrectly formatted, please correct, or speak to a project manager if unsure.',
+        error: 'MRN is incorrectly formatted, please correct, or speak to a project manager if unsure.',
         type: 'text',
     },
     'DMP ID': {
@@ -474,7 +452,7 @@ export const formattingAdjustments = {
         columnHeader: 'DMP ID',
         tooltip: 'The patient DMP ID.',
         error:
-      'DMP ID is incorrectly formatted, please correct, or speak to a project manager if unsure. The usual DMP Patient ID format is P-0000000.',
+            'DMP ID is incorrectly formatted, please correct, or speak to a project manager if unsure. The usual DMP Patient ID format is P-0000000.',
         type: 'text',
     },
     'CMO ID': {
@@ -482,14 +460,14 @@ export const formattingAdjustments = {
         columnHeader: 'CMO ID',
         tooltip: 'The patient CMO ID.',
         error:
-      'CMO ID is incorrectly formatted, please correct, or speak to a project manager if unsure. The usual DMP ID format is C-A1B2C3 or C-A1B2C3.',
+            'CMO ID is incorrectly formatted, please correct, or speak to a project manager if unsure. The usual DMP ID format is C-A1B2C3 or C-A1B2C3.',
         type: 'text',
     },
     'Non-MSK Patients': {
         pattern: validationPatterns.alphanumDash,
         columnHeader: 'Patient ID',
         error:
-      'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
+            'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
     },
     'Cell Lines, not from Patients': {
         columnHeader: 'Cell Line Name',
@@ -497,14 +475,12 @@ export const formattingAdjustments = {
     'Strain or Line Name': {
         pattern: validationPatterns.alphanumFour,
         columnHeader: 'Strain or Line Name',
-        error:
-      'Invalid format. Please use at least four alpha-numeric characters. Every 8 digit ID is considered a MRN.',
+        error: 'Invalid format. Please use at least four alpha-numeric characters. Every 8 digit ID is considered a MRN.',
     },
     'Grouping ID': {
         pattern: validationPatterns.groupingId,
         columnHeader: 'Grouping ID',
-        error:
-      'Invalid format. Please use at least four alpha-numeric characters. Every 8 digit ID is considered a MRN.',
+        error: 'Invalid format. Please use at least four alpha-numeric characters. Every 8 digit ID is considered a MRN.',
     },
 };
 export const submissionColumns = {
@@ -631,14 +607,7 @@ export const formColumns = {
     },
 };
 
-export const noShowColumns = [
-    'rowIndex',
-    '_id',
-    'altServiceId',
-    'groupingChecked',
-    'cmoPatientId',
-    'normalizedPatientId',
-];
+export const noShowColumns = ['rowIndex', '_id', 'altServiceId', 'groupingChecked', 'cmoPatientId', 'normalizedPatientId'];
 
 export const noShowEmptyColumns = ['patientIdType', 'sharedWith'];
 
@@ -764,20 +733,16 @@ export const dmpColumns = {
     },
 
     'Investigator Patient ID (Investigator Provided Study Subject Identifier)': {
-        name:
-      'Investigator Patient ID (Investigator Provided Study Subject Identifier)',
-        columnHeader:
-      'Investigator Patient ID (Investigator Provided Study Subject Identifier)',
+        name: 'Investigator Patient ID (Investigator Provided Study Subject Identifier)',
+        columnHeader: 'Investigator Patient ID (Investigator Provided Study Subject Identifier)',
         data: 'patientId',
         pattern: validationPatterns.alphanumdash,
         error: 'Only letters, digits and –, please.',
     },
 
     'Investigator Sample ID (Investigator Provided Study Sample Identifier)': {
-        name:
-      'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
-        columnHeader:
-      'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
+        name: 'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
+        columnHeader: 'Investigator Sample ID (Investigator Provided Study Sample Identifier)',
         data: 'userId',
         pattern: validationPatterns.alphanumdash,
         error: 'Only letters, digits and –, please.',

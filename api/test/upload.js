@@ -34,14 +34,13 @@ describe('Upload', () => {
     // };
 
     /*
-   * Test the /GET route
-   */
+     * Test the /GET route
+     */
     describe('/GET headerValues', () => {
         it('it should GET initial header values', (done) => {
-            chai
-                .request(server)
+            chai.request(server)
                 .get('/api/upload/headerValues')
-            // .set("Authorization", "Bearer " + userTestData.token)
+                // .set("Authorization", "Bearer " + userTestData.token)
                 .end((err, res) => {
                     // if LIMS up and running in test env
                     if (res.status === 200) {
@@ -55,9 +54,7 @@ describe('Upload', () => {
                         done();
                     } else {
                         res.should.have.status(500);
-                        res.body.should.have
-                            .property('message')
-                            .eql('Could not retrieve picklists from LIMS.');
+                        res.body.should.have.property('message').eql('Could not retrieve picklists from LIMS.');
                         done();
                     }
                 });
@@ -66,10 +63,9 @@ describe('Upload', () => {
     describe('/GET materialsAndSpecies', () => {
         it('it should GET materials and species for recipe', (done) => {
             let recipe = 'HumanWholeGenome';
-            chai
-                .request(server)
+            chai.request(server)
                 .get('/api/upload/materialsAndSpecies?recipe=' + recipe)
-            // .set("Authorization", "Bearer " + userTestData.token)
+                // .set("Authorization", "Bearer " + userTestData.token)
                 .end((err, res) => {
                     // if LIMS up and running in test env
                     if (res.status === 200) {
@@ -79,24 +75,13 @@ describe('Upload', () => {
                         res.body.data.should.have.property('materials');
                         res.body.data.should.have
                             .property('materials')
-                            .eql([
-                                'Blocks/Slides',
-                                'Blood',
-                                'Cells',
-                                'cfDNA',
-                                'DNA',
-                                'other',
-                                'Tissue',
-                                'Buffy Coat',
-                            ]);
+                            .eql(['Blocks/Slides', 'Blood', 'Cells', 'cfDNA', 'DNA', 'other', 'Tissue', 'Buffy Coat']);
                         res.body.data.should.have.property('species').eql(['Human']);
 
                         done();
                     } else {
                         res.should.have.status(500);
-                        res.body.should.have
-                            .property('message')
-                            .eql(`Could not retrieve materials and species for '${recipe}'.`);
+                        res.body.should.have.property('message').eql(`Could not retrieve materials and species for '${recipe}'.`);
                         done();
                     }
                 });
@@ -106,10 +91,9 @@ describe('Upload', () => {
     describe('/GET applicationsAndContainers', () => {
         it('it should GET materials and species for material', (done) => {
             let material = 'Cells';
-            chai
-                .request(server)
+            chai.request(server)
                 .get('/api/upload/applicationsAndContainers?material=' + material)
-            // .set("Authorization", "Bearer " + userTestData.token)
+                // .set("Authorization", "Bearer " + userTestData.token)
                 .end((err, res) => {
                     // if LIMS up and running in test env
                     if (res.status === 200) {
@@ -119,18 +103,12 @@ describe('Upload', () => {
                         res.body.data.should.have.property('applications');
                         res.body.data.applications.should.be.a('array');
                         res.body.data.applications.should.have.length(34);
-                        res.body.data.should.have
-                            .property('containers')
-                            .eql(['Plates', 'Blocks/Slides/Tubes']);
+                        res.body.data.should.have.property('containers').eql(['Plates', 'Blocks/Slides/Tubes']);
 
                         done();
                     } else {
                         res.should.have.status(500);
-                        res.body.should.have
-                            .property('message')
-                            .eql(
-                                `Could not retrieve applications and containers for '${material}'.`
-                            );
+                        res.body.should.have.property('message').eql(`Could not retrieve applications and containers for '${material}'.`);
                         done();
                     }
                 });
@@ -139,10 +117,9 @@ describe('Upload', () => {
     describe('/GET picklist', () => {
         it('it should GET picklist', (done) => {
             let picklist = 'Cells';
-            chai
-                .request(server)
+            chai.request(server)
                 .get('/api/upload/picklist?picklist=' + picklist)
-            // .set("Authorization", "Bearer " + userTestData.token)
+                // .set("Authorization", "Bearer " + userTestData.token)
                 .end((err, res) => {
                     // if LIMS up and running in test env
                     if (res.status === 200) {
@@ -155,9 +132,7 @@ describe('Upload', () => {
                         done();
                     } else {
                         res.should.have.status(500);
-                        res.body.should.have
-                            .property('message')
-                            .eql(`Could not retrieve picklist '${picklist}'.`);
+                        res.body.should.have.property('message').eql(`Could not retrieve picklist '${picklist}'.`);
                         done();
                     }
                 });

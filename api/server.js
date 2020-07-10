@@ -7,10 +7,8 @@ var cors = require('cors');
 var cookieParser = require('cookie-parser');
 
 const winston = require('winston');
-const { format,  loggers } = require('winston');
+const { format, loggers } = require('winston');
 const { combine, timestamp, prettyPrint } = format;
-
-
 
 loggers.add('logger', {
     level: 'info',
@@ -31,7 +29,7 @@ var mongoose = require('mongoose');
 mongoose
     .connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
-    //don't show the log when it is test
+        //don't show the log when it is test
         if (process.env.NODE_ENV !== 'test') {
             console.log('Connected to %s', MONGODB_URL);
             console.log('App is running ... \n');
@@ -74,9 +72,7 @@ const corsConfig = {
 app.use(cors(corsConfig));
 
 if (process.env.NODE_ENV !== 'test') {
-    app.use(
-        morgan(':method :url :status :res[content-length] - :response-time ms')
-    );
+    app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 }
 
 var apiRouter = require('./routes/api');

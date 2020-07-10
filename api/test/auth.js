@@ -24,12 +24,11 @@ describe('Auth', () => {
     };
 
     /*
-   * Test the /POST route
-   */
+     * Test the /POST route
+     */
     describe('/POST Login', () => {
         it('it should respond with Invalid Username or Password.', (done) => {
-            chai
-                .request(server)
+            chai.request(server)
                 .post('/api/auth/login')
                 .send({
                     username: testData.username,
@@ -37,21 +36,18 @@ describe('Auth', () => {
                 })
                 .end((err, res) => {
                     res.should.have.status(401);
-                    res.body.should.have
-                        .property('message')
-                        .eql('Invalid username or password. Please try again.');
+                    res.body.should.have.property('message').eql('Invalid username or password. Please try again.');
                     done();
                 });
         });
     });
 
     /*
-   * Test the /POST route
-   */
+     * Test the /POST route
+     */
     describe('/POST Login', () => {
         it('it should respond with missing param warning.', (done) => {
-            chai
-                .request(server)
+            chai.request(server)
                 .post('/api/auth/login')
                 .send({
                     password: testData.password,

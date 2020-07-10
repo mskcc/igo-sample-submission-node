@@ -1,12 +1,6 @@
 export const constants = {
     containers: ['Plates', 'Micronic Barcoded Tubes', 'Blocks/Slides/Tubes'],
-    headerPicklists: [
-        'Recipe',
-        'Exemplar+Sample+Types',
-        'Species',
-        'PatientIDTypes',
-        'PatientIdTypesSpecified',
-    ],
+    headerPicklists: ['Recipe', 'Exemplar+Sample+Types', 'Species', 'PatientIDTypes', 'PatientIdTypesSpecified'],
     containersByMaterial: {
         Tissue: ['Blocks/Slides/Tubes'],
         Cells: ['Plates', 'Blocks/Slides/Tubes'],
@@ -23,14 +17,7 @@ export const constants = {
         other: ['Plates', 'Micronic Barcoded Tubes', 'Blocks/Slides/Tubes'],
     },
 
-    humanApplications: [
-        'expanded_genomics ',
-        'msk-access',
-        'hemepact',
-        'archer',
-        'impact4',
-        'humanwholegenome',
-    ],
+    humanApplications: ['expanded_genomics ', 'msk-access', 'hemepact', 'archer', 'impact4', 'humanwholegenome'],
 
     mouseApplications: ['mousewholegenome ', 'm-impact_v1'],
 
@@ -38,12 +25,5 @@ export const constants = {
 
     logger: 'sample-sub',
 
-    cmoPmEmailApplications: [
-        'HemePACT_v4',
-        'HumanWholeGenome',
-        'IMPACT410',
-        'IMPACT468',
-        'MSK-ACCESS_v1',
-        'WholeExomeSequencing',
-    ],
+    cmoPmEmailApplications: ['HemePACT_v4', 'HumanWholeGenome', 'IMPACT410', 'IMPACT468', 'MSK-ACCESS_v1', 'WholeExomeSequencing'],
 };

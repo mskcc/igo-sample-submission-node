@@ -12,7 +12,7 @@ export const DMP_REGISTER_GRID_CHANGE_PRE_VALIDATE = 'DMP_REGISTER_GRID_CHANGE_P
 
 export const DMP_REGISTER_GRID_CHANGE_POST_VALIDATE = 'DMP_REGISTER_GRID_CHANGE_POST_VALIDATE';
 export const RESET_MESSAGE = 'RESET_MESSAGE';
-export const dmpRegisterGridChange = changes => {
+export const dmpRegisterGridChange = (changes) => {
     return (dispatch, getState) => {
         let result = validateGrid(changes, getState().dmp.grid);
         // dispatch({ type: RESET_MESSAGE })
@@ -23,23 +23,23 @@ export const dmpRegisterGridChange = changes => {
             return dispatch({
                 type: DMP_REGISTER_GRID_CHANGE_POST_VALIDATE,
                 payload: result,
-                message: 'reset'
+                message: 'reset',
             });
         } else {
             return dispatch({
                 type: DMP_REGISTER_GRID_CHANGE_POST_VALIDATE,
                 payload: result,
-                message: result.errorMessage.replace(/<br>/g, '')
+                message: result.errorMessage.replace(/<br>/g, ''),
             });
         }
     };
 };
 
 export const preValidate = () => {
-    return dispatch => {
+    return (dispatch) => {
         dispatch({
             type: DMP_REGISTER_GRID_CHANGE_PRE_VALIDATE,
-            message: 'Pasting large set, please be patient.'
+            message: 'Pasting large set, please be patient.',
         });
     };
 };
@@ -86,7 +86,7 @@ export function dmpGetColumns(formValues) {
                     type: DMP_UPDATE_NUM_OF_ROWS_SUCCESS,
                     message: 'Number of rows updated.',
                     rows: rows,
-                    form: formValues
+                    form: formValues,
                 });
             } else {
                 Swal.fire({
@@ -98,8 +98,8 @@ export function dmpGetColumns(formValues) {
                     animation: false,
                     confirmButtonColor: '#df4602',
                     cancelButtonColor: '#007cba',
-                    confirmButtonText: 'Yes, re-generate!'
-                }).then(result => {
+                    confirmButtonText: 'Yes, re-generate!',
+                }).then((result) => {
                     if (result.value) {
                         return dispatch(getInitialColumns(formValues, getState().user.role));
                     } else {
@@ -112,15 +112,15 @@ export function dmpGetColumns(formValues) {
 }
 
 export function dmpGetInitialColumns(formValues, userRole) {
-    return dispatch => {
+    return (dispatch) => {
         dispatch({ type: DMP_GET_INITIAL_COLUMNS });
         let material = formValues.material;
         let application = formValues.application;
         return axios
             .post(Config.NODE_API_ROOT + '/upload/grid', {
-                ...formValues
+                ...formValues,
             })
-            .then(response => {
+            .then((response) => {
                 let data = response.payload;
                 return dispatch({
                     type: DMP_GET_COLUMNS_SUCCESS,
@@ -129,15 +129,15 @@ export function dmpGetInitialColumns(formValues, userRole) {
                     hiddenColumns: data.hiddenColumns,
                     rows: data.rowData,
                     form: formValues,
-                    message: 'Grid generated for ' + material + ' for ' + application + '. Green columns are optional.'
+                    message: 'Grid generated for ' + material + ' for ' + application + '. Green columns are optional.',
                 });
             })
-            .catch(error => {
+            .catch((error) => {
                 return dispatch({
                     type: DMP_GET_COLUMNS_FAIL,
                     error: error,
                     application: application,
-                    material: material
+                    material: material,
                 });
             });
     };
@@ -151,7 +151,7 @@ export function decreaseRowNumber(change, newRowNumber) {
         return dispatch({
             type: DECREASE_ROW_NUMBER_SUCCESS,
             rows: newRows,
-            rowNumber: newRowNumber
+            rowNumber: newRowNumber,
         });
     };
 }
@@ -166,18 +166,18 @@ export function increaseRowNumber(prevRowNumber, newRowNumber) {
         let data = util.generateAdditionalRowData(columnFeatures, formValues, prevRowNumber, newRowNumber);
         services
             .getAdditionalRows(data)
-            .then(resp => {
+            .then((resp) => {
                 return dispatch({
                     type: INCREASE_ROW_NUMBER_SUCCESS,
                     additionalRows: resp.payload.additionalRows,
                     rowNumber: newRowNumber,
-                    message: 'Loaded!'
+                    message: 'Loaded!',
                 });
             })
-            .catch(error => {
+            .catch((error) => {
                 return dispatch({
                     type: INCREASE_ROW_NUMBER_FAIL,
-                    error: error
+                    error: error,
                 });
             });
     };
@@ -191,7 +191,7 @@ export function populateGridFromSubmission(submissionId, ownProps) {
         dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...' });
         services
             .getSubmission(submissionId)
-            .then(resp => {
+            .then((resp) => {
                 let submission = resp.payload.submission;
                 dispatch(getInitialColumns(submission.formValues), getState().user.role)
                     .then(dispatch(updateHeader(submission.formValues)))
@@ -199,15 +199,15 @@ export function populateGridFromSubmission(submissionId, ownProps) {
                         dispatch({
                             type: 'DMP_GET_SUBMISSION_TO_EDIT_SUCCESS',
                             payload: submission,
-                            message: 'Loaded!'
+                            message: 'Loaded!',
                         });
                         return ownProps.history.push('upload');
                     });
             })
-            .catch(error => {
+            .catch((error) => {
                 return dispatch({
                     type: 'DMP_GET_SUBMISSION_TO_EDIT_FAIL',
-                    error: error
+                    error: error,
                 });
             });
     };
@@ -221,12 +221,12 @@ export function handlePatientId(rowIndex) {
         let patientId = getState().dmp.grid.rows[rowIndex].patientId;
         let normalizedPatientID = '';
         let rows = getState().dmp.grid.rows;
-        let patientIdType = getState().dmp.grid.columnFeatures.find(element => element.data === 'patientId');
+        let patientIdType = getState().dmp.grid.columnFeatures.find((element) => element.data === 'patientId');
         dispatch({ type: 'HANDLE_PATIENT_ID' });
         if (patientId === '') {
             return dispatch({
                 type: HANDLE_PATIENT_ID_SUCCESS,
-                rows: redactMRN(rows, rowIndex, '', '', '')
+                rows: redactMRN(rows, rowIndex, '', '', ''),
             });
         }
         // handle as MRN whenever 8 digit id is entered
@@ -241,27 +241,27 @@ export function handlePatientId(rowIndex) {
             dispatch({
                 type: HANDLE_PATIENT_ID_FAIL,
                 message: `${patientIdType.columnHeader}: ${patientIdType.error}`,
-                rows: redactMRN(rows, rowIndex, '', '', '')
+                rows: redactMRN(rows, rowIndex, '', '', ''),
             });
         } else {
             normalizedPatientID = util.normalizePatientId(patientId, patientIdType, getState().user.username);
             return services
                 .mrnToCid({
-                    patientId: normalizedPatientID
+                    patientId: normalizedPatientID,
                 })
 
-                .then(response => {
+                .then((response) => {
                     dispatch({
                         type: HANDLE_PATIENT_ID_SUCCESS,
-                        rows: util.createPatientId(rows, rowIndex, response.payload.patientId, normalizedPatientID)
+                        rows: util.createPatientId(rows, rowIndex, response.payload.patientId, normalizedPatientID),
                     });
                     dispatch({ type: DMP_REGISTER_GRID_CHANGE });
                 })
-                .catch(error => {
+                .catch((error) => {
                     dispatch({
                         type: HANDLE_PATIENT_ID_FAIL,
                         error: error,
-                        rows: redactMRN(rows, rowIndex, '', '', '')
+                        rows: redactMRN(rows, rowIndex, '', '', ''),
                     });
                 });
         }
@@ -277,21 +277,21 @@ export function handleMRN(rowIndex, patientId) {
         let rows = getState().dmp.grid.rows;
         return axios
             .post(Config.NODE_API_ROOT + '/upload/crdbId', {
-                patientId: patientId
+                patientId: patientId,
             })
-            .then(response => {
+            .then((response) => {
                 dispatch({
                     type: HANDLE_MRN_SUCCESS,
                     message: 'MRN redacted.',
-                    rows: redactMRN(rows, rowIndex, response.payload.patientId, 'MRN REDACTED', response.payload.sex)
+                    rows: redactMRN(rows, rowIndex, response.payload.patientId, 'MRN REDACTED', response.payload.sex),
                 });
                 dispatch({ type: DMP_REGISTER_GRID_CHANGE });
             })
-            .catch(error => {
+            .catch((error) => {
                 dispatch({
                     type: HANDLE_MRN_FAIL,
                     error: error,
-                    rows: redactMRN(rows, rowIndex, '', '', '')
+                    rows: redactMRN(rows, rowIndex, '', '', ''),
                 });
                 return error;
             });
@@ -305,7 +305,7 @@ export function handleAssay(rowIndex, colIndex, oldValue, newValue) {
     return (dispatch, getState) => {
         return dispatch({
             type: HANDLE_ASSAY_SUCCESS,
-            rows: appendAssay(getState().dmp.grid.rows, rowIndex, oldValue, newValue, getState().dmp.grid.columnFeatures[colIndex].source)
+            rows: appendAssay(getState().dmp.grid.rows, rowIndex, oldValue, newValue, getState().dmp.grid.columnFeatures[colIndex].source),
         });
     };
 }
@@ -323,7 +323,7 @@ export function handleTumorType(rowIndex, colIndex, oldValue, newValue) {
                 rowIndex,
                 oldValue,
                 newValue
-            )
+            ),
         });
     };
 }
@@ -335,7 +335,7 @@ export function handleClear() {
     return (dispatch, getState) => {
         return dispatch({
             type: HANDLE_CLEAR_SUCCESS,
-            rows: generateRows(getState().dmp.grid.columnFeatures, getState().dmp.grid.form, getState().dmp.grid.rows.length)
+            rows: generateRows(getState().dmp.grid.columnFeatures, getState().dmp.grid.form, getState().dmp.grid.rows.length),
         });
     };
 }
@@ -348,12 +348,12 @@ export function handleIndex(colIndex, rowIndex, newValue) {
         if (indexSeq.success) {
             return dispatch({
                 type: HANDLE_INDEX_SUCCESS,
-                rows: indexSeq.rows
+                rows: indexSeq.rows,
             });
         } else {
             return dispatch({
                 type: HANDLE_INDEX_FAIL,
-                message: 'Index Sequence could not be found. Are you sure the Index ID is correct?'
+                message: 'Index Sequence could not be found. Are you sure the Index ID is correct?',
             });
         }
     };
@@ -371,20 +371,20 @@ export function downloadGrid() {
         let data = {
             grid: gridJson,
             material: material,
-            application: application
+            application: application,
         };
         services
             .downloadGrid(data)
-            .then(response => {
+            .then((response) => {
                 excel.downloadExcel(response.payload.excelData, response.payload.fileName);
                 return dispatch({
-                    type: DOWNLOAD_GRID_SUCCESS
+                    type: DOWNLOAD_GRID_SUCCESS,
                 });
             })
-            .catch(error => {
+            .catch((error) => {
                 return dispatch({
                     type: DOWNLOAD_GRID_FAIL,
-                    error: error
+                    error: error,
                 });
             });
     };
@@ -394,5 +394,5 @@ export const RESET_GRID_ERROR_MESSAGE = 'RESET_GRID_ERROR_MESSAGE';
 
 // Resets the currently visible error message.
 export const resetGridErrorMessage = () => ({
-    type: RESET_GRID_ERROR_MESSAGE
+    type: RESET_GRID_ERROR_MESSAGE,
 });

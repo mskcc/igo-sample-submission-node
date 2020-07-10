@@ -25,12 +25,9 @@ exports.getContainers = (material) => {
 };
 
 exports.getSpecies = (recipe) => {
-    if (constants.humanApplications.includes(recipe.toLowerCase()))
-        return ['Human'];
-    if (constants.mouseApplications.includes(recipe.toLowerCase()))
-        return ['Mouse'];
-    if (constants.humanOrMouseApplications.includes(recipe.toLowerCase()))
-        return ['Human', 'Mouse'];
+    if (constants.humanApplications.includes(recipe.toLowerCase())) return ['Human'];
+    if (constants.mouseApplications.includes(recipe.toLowerCase())) return ['Mouse'];
+    if (constants.humanOrMouseApplications.includes(recipe.toLowerCase())) return ['Human', 'Mouse'];
     else {
         return [];
     }
@@ -46,14 +43,9 @@ const cacheAllPicklists = (limsColumns, allColumns) => {
         let picklists = {};
         limsColumns.map((columnName) => {
             if (!allColumns.gridColumns[columnName]) {
-                logger.log(
-                    'info',
-                    `Column '${columnName}' not found in possible columns.`
-                );
+                logger.log('info', `Column '${columnName}' not found in possible columns.`);
                 if (!allColumns.deprecatedColumns.includes(columnName)) {
-                    reject(
-                        `Column '${columnName}' not found in possible or deprecated columns.`
-                    );
+                    reject(`Column '${columnName}' not found in possible or deprecated columns.`);
                 }
             } else {
                 let picklist = allColumns.gridColumns[columnName].picklistName;
@@ -61,19 +53,11 @@ const cacheAllPicklists = (limsColumns, allColumns) => {
                 if (picklist !== undefined) {
                     picklists[picklist] = [];
                     if (picklist === 'barcodes') {
-                        picklistPromises.push(
-                            cache.get(picklist + '-Picklist', () => services.getBarcodes())
-                        );
+                        picklistPromises.push(cache.get(picklist + '-Picklist', () => services.getBarcodes()));
                     } else if (picklist === 'tumorType') {
-                        picklistPromises.push(
-                            cache.get(picklist + '-Picklist', () => services.getOnco())
-                        );
+                        picklistPromises.push(cache.get(picklist + '-Picklist', () => services.getOnco()));
                     } else {
-                        picklistPromises.push(
-                            cache.get(picklist + '-Picklist', () =>
-                                services.getPicklist(picklist)
-                            )
-                        );
+                        picklistPromises.push(cache.get(picklist + '-Picklist', () => services.getPicklist(picklist)));
                     }
                 }
             }
@@ -90,12 +74,7 @@ const cacheAllPicklists = (limsColumns, allColumns) => {
     });
 };
 
-export function generateGrid(
-    limsColumnList,
-    userRole,
-    formValues,
-    type = 'submit'
-) {
+export function generateGrid(limsColumnList, userRole, formValues, type = 'submit') {
     let allColumns = submitColumns;
     if (type == 'dmp') {
         allColumns = dmpColumns;
@@ -117,16 +96,7 @@ export function generateGrid(
         let columnNamesOnly = getColumnNamesFromLimsCols(limsColumnList);
 
         cacheAllPicklists(columnNamesOnly, allColumns)
-            .then((picklists) =>
-                fillColumns(
-                    columns,
-                    limsColumnList,
-                    userRole,
-                    formValues,
-                    picklists,
-                    allColumns
-                )
-            )
+            .then((picklists) => fillColumns(columns, limsColumnList, userRole, formValues, picklists, allColumns))
             .then((columns) => fillData(columns, formValues))
             .catch((reasons) => reject(reasons))
             .then((columns) => {
@@ -140,14 +110,7 @@ export function generateGrid(
     });
 }
 
-function fillColumns(
-    columns,
-    limsColumnList,
-    userRole,
-    formValues = {},
-    picklists,
-    allColumns
-) {
+function fillColumns(columns, limsColumnList, userRole, formValues = {}, picklists, allColumns) {
     return new Promise((resolve, reject) => {
         let requiredColumns = [];
         limsColumnList.map((item) => {
@@ -160,25 +123,13 @@ function fillColumns(
 
             let colDef = allColumns.gridColumns[columnName];
             if (!colDef) {
-                logger.log(
-                    'info',
-                    `Column '${columnName}' not found in possible columns.`
-                );
+                logger.log('info', `Column '${columnName}' not found in possible columns.`);
                 if (!allColumns.deprecatedColumns.includes(columnName)) {
-                    logger.log(
-                        'info',
-                        `Column '${columnName}' not found in possible or deprecated columns.`
-                    );
-                    reject(
-                        `Column '${columnName}' not found in possible or deprecated columns.`
-                    );
+                    logger.log('info', `Column '${columnName}' not found in possible or deprecated columns.`);
+                    reject(`Column '${columnName}' not found in possible or deprecated columns.`);
                 }
             } else {
-                if (
-                    colDef.container &&
-          colDef.container !== formValues.container &&
-          formValues.application !== 'Expanded_Genomics'
-                ) {
+                if (colDef.container && colDef.container !== formValues.container && formValues.application !== 'Expanded_Genomics') {
                     colDef = overwriteContainer(formValues.container, allColumns);
                 }
 
@@ -212,25 +163,16 @@ function fillColumns(
 
             if (index === limsColumnList.length - 1) {
                 // if plate column present but not WellPos, add WellPos
-                if (
-                    columns.columnFeatures[0].data === 'plateId' &&
-          columns.columnFeatures[1].data !== 'wellPosition'
-                ) {
-                    columns.columnFeatures.unshift(
-                        allColumns.gridColumns['Well Position']
-                    );
+                if (columns.columnFeatures[0].data === 'plateId' && columns.columnFeatures[1].data !== 'wellPosition') {
+                    columns.columnFeatures.unshift(allColumns.gridColumns['Well Position']);
                 }
                 // if plate column not present but WellPos is, remove WellPos
-                if (
-                    formValues.container !== 'Plates' &&
-          columns.columnFeatures[1].data === 'wellPosition'
-                ) {
+                if (formValues.container !== 'Plates' && columns.columnFeatures[1].data === 'wellPosition') {
                     columns.columnFeatures[1] = columns.columnFeatures[0];
                     columns.columnFeatures.shift();
                 }
                 columns.columnHeaders = columns.columnFeatures.map(
-                    (a) =>
-                        `<span class='${a.className}' title='${a.tooltip}'>${a.columnHeader}</span>`
+                    (a) => `<span class='${a.className}' title='${a.tooltip}'>${a.columnHeader}</span>`
                 );
                 resolve(columns);
             }
@@ -242,31 +184,26 @@ function fillColumns(
 const overwriteContainer = (userContainer, allColumns) => {
     let newContainer;
     switch (userContainer) {
-    case 'Plates':
-        newContainer = allColumns.gridColumns['Plate ID'];
-        break;
-    case 'Micronic Barcoded Tubes':
-        newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
-        break;
-    case 'Blocks/Slides/Tubes':
-        newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
-        break;
-    default:
-        return `Container '${userContainer}' not found.`;
+        case 'Plates':
+            newContainer = allColumns.gridColumns['Plate ID'];
+            break;
+        case 'Micronic Barcoded Tubes':
+            newContainer = allColumns.gridColumns['Micronic Tube Barcode'];
+            break;
+        case 'Blocks/Slides/Tubes':
+            newContainer = allColumns.gridColumns['Block/Slide/TubeID'];
+            break;
+        default:
+            return `Container '${userContainer}' not found.`;
     }
     return newContainer;
 };
 
 // generate rows with same autofilled and consecutive wellPos values, only return the additional rows
-export const generateAdditionalRows = (
-    columnFeatures,
-    formValues,
-    prevRowNumber,
-    newRowNumber
-) => {
+export const generateAdditionalRows = (columnFeatures, formValues, prevRowNumber, newRowNumber) => {
     return new Promise((resolve) => {
-    // making sure the formValue sample number is the most recent one
-    //  important for changing the row number on paste rather than through form select
+        // making sure the formValue sample number is the most recent one
+        //  important for changing the row number on paste rather than through form select
         formValues.numberOfSamples = newRowNumber;
         let columns = { columnFeatures: columnFeatures, formValues: formValues };
         fillAdditionalRows(columns, formValues).then((columns) => {
@@ -337,20 +274,14 @@ const fillData = (columns, formValues) => {
                     }
                 }
                 if (entry.data === 'specimenType') {
-                    if (
-                        formValues.material === 'Blood' ||
-            formValues.material === 'Buffy Coat'
-                    ) {
+                    if (formValues.material === 'Blood' || formValues.material === 'Buffy Coat') {
                         rowData[i] = {
                             ...rowData[i],
                             specimenType: 'Blood',
                         };
                     }
                 }
-                if (
-                    entry.data === 'patientId' &&
-          entry.columnHeader === 'Cell Line Name'
-                ) {
+                if (entry.data === 'patientId' && entry.columnHeader === 'Cell Line Name') {
                     rowData[i] = { ...rowData[i], specimenType: 'CellLine' };
                 }
             });
@@ -395,8 +326,7 @@ const setWellPos = (columns) => {
                 }
                 if (rows[j + plateRows.length * i]) {
                     // fill row at position plateRows * number of plates you did this with already
-                    rows[j + plateRows.length * i].wellPosition =
-            plateRows[j] + plateColIndex;
+                    rows[j + plateRows.length * i].wellPosition = plateRows[j] + plateColIndex;
                 } else {
                     break;
                 }
@@ -411,13 +341,7 @@ const setWellPos = (columns) => {
 };
 
 // patient id validation depends on user selected id type
-function choosePatientIdValidator(
-    patientIdType,
-    patientIdTypeSpecified,
-    species,
-    groupingChecked,
-    allColumns
-) {
+function choosePatientIdValidator(patientIdType, patientIdTypeSpecified, species, groupingChecked, allColumns) {
     let formattingAdjustments = allColumns.formattingAdjustments;
 
     if (species === 'Mouse' || species === 'Mouse_GeneticallyModified') {
@@ -429,8 +353,7 @@ function choosePatientIdValidator(
     } else {
         if (
             species === 'Human' &&
-      (patientIdType === 'MSK-Patients (or derived from MSK Patients)' ||
-        patientIdType === 'Both MSK-Patients and Non-MSK Patients')
+            (patientIdType === 'MSK-Patients (or derived from MSK Patients)' || patientIdType === 'Both MSK-Patients and Non-MSK Patients')
         ) {
             return formattingAdjustments[patientIdTypeSpecified];
         } else {
@@ -443,9 +366,7 @@ export function generateSubmissionGrid(submissions, userRole) {
     return new Promise((resolve, reject) => {
         try {
             let grid = { columnHeaders: [], rows: [], columnFeatures: [] };
-            grid.columnHeaders = Object.keys(submitColumns.submissionColumns).map(
-                (a) => submitColumns.submissionColumns[a].name
-            );
+            grid.columnHeaders = Object.keys(submitColumns.submissionColumns).map((a) => submitColumns.submissionColumns[a].name);
             grid.columnFeatures = Object.values(submitColumns.submissionColumns);
 
             if (userRole === 'user') {
@@ -472,9 +393,7 @@ export function generateSubmissionGrid(submissions, userRole) {
                     submitted: isSubmitted ? 'yes' : 'no',
                     revisions: submission.__v,
                     createdAt: parseDate(submission.createdAt),
-                    submittedAt: submission.submittedAt
-                        ? parseDate(submission.submittedAt)
-                        : '',
+                    submittedAt: submission.submittedAt ? parseDate(submission.submittedAt) : '',
                     // available actions depend on submitted status
                     edit: isSubmitted
                         ? `<span  submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">edit</span>`
@@ -506,9 +425,7 @@ export function generateSubmissionGrid(submissions, userRole) {
 function parseDate(mongooseDate) {
     let date = new Date(mongooseDate * 1000);
     let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
-    let humanReadable = `${
-        date.getMonth() + 1
-    }/${date.getDate()}/${date.getFullYear()} at ${date.getHours()}:${minutes}`;
+    let humanReadable = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} at ${date.getHours()}:${minutes}`;
     return humanReadable;
 }
 
@@ -567,11 +484,7 @@ export function submit(submission, user, transactionId) {
                         resolve(submittedSamples);
                     }
                 })
-                .catch((err) =>
-                    reject(
-                        `Submit failed at sample ${bankedSample.userId}, index ${bankedSample.rowIndex}. ${err}`
-                    )
-                );
+                .catch((err) => reject(`Submit failed at sample ${bankedSample.userId}, index ${bankedSample.rowIndex}. ${err}`));
         }
     });
 }
@@ -586,10 +499,7 @@ export function generateSubmissionExcel(submission, role) {
     Object.keys(submission.formValues).map((element) => {
         let colDef = submitColumns.formColumns[element] || '';
         let isNoShowCol = isUser && submitColumns.noShowColumns.includes(element);
-        let isNoShowEmptyCol =
-      isUser &&
-      submitColumns.noShowEmptyColumns.includes(element) &&
-      submission.formValues[element] === '';
+        let isNoShowEmptyCol = isUser && submitColumns.noShowEmptyColumns.includes(element) && submission.formValues[element] === '';
         if (!isNoShowCol && !isNoShowEmptyCol) {
             let colName = colDef.columnHeader || element;
             sheetFormData[colName] = submission.formValues[element];
@@ -664,10 +574,7 @@ export function generatePromoteGrid(limsColumnOrdering) {
             let columnName = element.split(':')[1];
             // If we recognize the column, attach the feature and add it to the list used for picklist generation
             if (columnName in submitColumns.gridColumns) {
-                promoteColFeature = Object.assign(
-                    {},
-                    submitColumns.gridColumns[columnName]
-                );
+                promoteColFeature = Object.assign({}, submitColumns.gridColumns[columnName]);
             } else {
                 logger.log('info', `${columnName} not found`);
                 promoteColFeature = {
@@ -680,19 +587,12 @@ export function generatePromoteGrid(limsColumnOrdering) {
         });
         grid.columnFeatures.map((promoteColFeature) => {
             promoteColFeature.readOnly = true;
-            promoteColFeature.error = promoteColFeature.error
-                ? promoteColFeature.error
-                : 'Invalid format.';
+            promoteColFeature.error = promoteColFeature.error ? promoteColFeature.error : 'Invalid format.';
             grid.rowData[0][promoteColFeature.data] = '';
         });
-        grid.columnHeaders = grid.columnFeatures.map(
-            (a) =>
-                `<span class='${a.className}' title='${a.tooltip}'>${a.columnHeader}</span>`
-        );
+        grid.columnHeaders = grid.columnFeatures.map((a) => `<span class='${a.className}' title='${a.tooltip}'>${a.columnHeader}</span>`);
         const selectCol = submitColumns.promoteSelect;
-        grid.columnHeaders.unshift(
-            '<span class="material-icons select-col" title="check">check</span>'
-        );
+        grid.columnHeaders.unshift('<span class="material-icons select-col" title="check">check</span>');
         grid.columnFeatures.unshift(selectCol);
         grid.rowData[0][selectCol.data] = false;
         resolve(grid);
@@ -719,16 +619,7 @@ export function loadBankedSamples(queryType, query) {
     });
 }
 
-export function promote(
-    transactionId,
-    requestId,
-    projectId,
-    serviceId,
-    materials,
-    bankedSampleIds,
-    user,
-    dryrun
-) {
+export function promote(transactionId, requestId, projectId, serviceId, materials, bankedSampleIds, user, dryrun) {
     return new Promise((resolve, reject) => {
         let data = {
             transactionId: transactionId,
@@ -747,7 +638,6 @@ export function promote(
                 resolve(response);
             })
             .catch((err) => {
-
                 reject(err);
             });
     });
@@ -768,9 +658,7 @@ export function handleDmpId(dmpId) {
             .verifyDmpId(dmpId)
             .then((response) => {
                 if (!response.CMO_ID) {
-                    reject(
-                        `Could not verify ID ${dmpId}. If possible, enter MRN for this patient instead.`
-                    );
+                    reject(`Could not verify ID ${dmpId}. If possible, enter MRN for this patient instead.`);
                 }
                 result.cmoPatientId = response.CMO_ID;
                 resolve(result);
