@@ -16,7 +16,7 @@ class SubmissionsGrid extends React.Component {
       handleGridClick,
       handleFilterClick,
       grid,
-      gridType
+      gridType,
     } = this.props;
     let headline =
       gridType.toUpperCase() === 'UPLOAD'
@@ -84,7 +84,7 @@ class SubmissionsGrid extends React.Component {
   }
 }
 
-const styles = theme => ({
+const styles = (theme) => ({
   // container: { width: '80vw' }
 });
 export default withStyles(styles)(SubmissionsGrid);

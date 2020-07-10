@@ -16,7 +16,7 @@ class Promote extends Component {
     let bankedSampleIds = [];
     let materials = new Set();
     let serviceId = rows[0].serviceId;
-    rows.map(element => {
+    rows.map((element) => {
       bankedSampleIds.push(element.recordId);
       materials.add(element.sampleType);
     });
@@ -57,12 +57,12 @@ class Promote extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  promote: state.promote
+const mapStateToProps = (state) => ({
+  promote: state.promote,
 });
 
 const mapDispatchToProps = {
-  ...promoteActions
+  ...promoteActions,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Promote);

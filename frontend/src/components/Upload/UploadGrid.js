@@ -26,7 +26,7 @@ class UploadGrid extends React.Component {
       submissionToEdit,
       handleAssay,
       handleTumorType,
-      handlePatientId
+      handlePatientId,
     } = this.props;
     return (
       <div>
@@ -160,7 +160,7 @@ class UploadGrid extends React.Component {
   }
 }
 
-const styles = theme => ({
+const styles = (theme) => ({
   container: {
     display: 'grid',
     justifyItems: 'center',
@@ -168,17 +168,17 @@ const styles = theme => ({
     marginLeft: theme.spacing(2),
     width: '95vw',
     overflow: 'hidden',
-    marginBottom: '5em'
+    marginBottom: '5em',
   },
   submission: {},
   tooltipCell: {
     fontSize: '.8em',
     color: 'black !important',
-    backgroundColor: '#cfd8dc !important'
+    backgroundColor: '#cfd8dc !important',
   },
   submit: {
-    width: '30px'
-  }
+    width: '30px',
+  },
 });
 
 export default withStyles(styles)(UploadGrid);

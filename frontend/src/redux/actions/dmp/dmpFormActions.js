@@ -17,19 +17,19 @@ export function dmpGetInitialState() {
       dispatch({ type: REQUEST_DMP_HEADER });
       return services
         .getHeaderValues('dmp')
-        .then(response => {
+        .then((response) => {
           dispatch({
             type: DMP_HEADER_SUCCESS,
             materials: response.payload.materials,
             applications: response.payload.applications,
-            user: response.payload.user
+            user: response.payload.user,
           });
           return response;
         })
-        .catch(error =>
+        .catch((error) =>
           dispatch({
             type: DMP_HEADER_FAIL,
-            error: error
+            error: error,
           })
         );
     }
@@ -41,12 +41,12 @@ export const UPDATE_HEADER = 'UPDATE_HEADER';
 export const DMP_SELECT = 'DMP_SELECT';
 
 export function dmpSelect(id, value) {
-  return dispatch => {
+  return (dispatch) => {
     if (id === 'service_id') {
       return dispatch({
         type: DMP_SELECT,
         payload: { id: id, value: value },
-        message: 'Service Id updated.'
+        message: 'Service Id updated.',
       });
     }
 
@@ -54,7 +54,7 @@ export function dmpSelect(id, value) {
       return dispatch({
         type: DMP_SELECT,
         payload: { id: id, value: value },
-        message: 'Library message TBD.'
+        message: 'Library message TBD.',
       });
     }
 
@@ -64,7 +64,7 @@ export function dmpSelect(id, value) {
           type: DMP_SELECT,
           payload: { id: id, value: value },
           message:
-            'A sample set this large might lead to performance issues. We recommend keeping it below 200 and submitting mutliple requests if necessary.'
+            'A sample set this large might lead to performance issues. We recommend keeping it below 200 and submitting mutliple requests if necessary.',
         });
       }
     } else {
@@ -76,13 +76,13 @@ export function dmpSelect(id, value) {
 export const DMP_CLEAR = 'DMP_CLEAR';
 
 export function dmpClear(id) {
-  return dispatch => {
+  return (dispatch) => {
     return dispatch({ type: DMP_CLEAR, payload: { id: id } });
   };
 }
 export const DMP_CLEAR_FORM = 'DMP_CLEAR_FORM';
 export function dmpClearForm() {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({ type: DMP_CLEAR_FORM });
     dispatch(dmpGetInitialState()).then(() => {
       window.location.reload();
@@ -93,7 +93,7 @@ export function dmpClearForm() {
 export const DMP_CLEARED = 'DMP_CLEARED';
 // timeout for CLEARED to show user loading animation to indicate change
 export const cleared = () => {
-  return dispatch => {
+  return (dispatch) => {
     return setTimeout(() => {
       dispatch({ type: DMP_CLEARED });
     }, 500);
@@ -108,7 +108,7 @@ export const dmpCheckForChange = (field, value) => {
     ) {
       dispatch({
         type: 'MESSAGE',
-        message: 'Make sure to re-generate your table to persist this change.'
+        message: 'Make sure to re-generate your table to persist this change.',
       });
     }
   };

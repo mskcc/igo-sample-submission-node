@@ -308,7 +308,8 @@ export const gridMock = {
 
       data: 'tubeId',
       error: 'Invalid format.',
-      editableCellTemplate: '<div><form name="inputForm"><input class="form-control inputheight" type="INPUT_TYPE" ng-class="\'colt\' + col.uid" ui-grid-editor ng-model="MODEL_COL_FIELD" ng-paste="grid.appScope.handleCellPaste($event)"></form></div>',
+      editableCellTemplate:
+        '<div><form name="inputForm"><input class="form-control inputheight" type="INPUT_TYPE" ng-class="\'colt\' + col.uid" ui-grid-editor ng-model="MODEL_COL_FIELD" ng-paste="grid.appScope.handleCellPaste($event)"></form></div>',
       headerCellClass: 'required',
       tooltip:
         'The identifier on your tube, block or slide.  You can paste in directly from excel, and there are no formatting rules.  Please be as correct as possible, and ensure your tubes, blocks and slides are labeled clearly.',
@@ -319,7 +320,8 @@ export const gridMock = {
 
       data: 'userId',
       error: 'Invalid format.',
-      editableCellTemplate: '<div><form name="inputForm"><input class="form-control inputheight" type="INPUT_TYPE" ng-class="\'colt\' + col.uid" ui-grid-editor ng-model="MODEL_COL_FIELD" ng-paste="grid.appScope.handleCellPaste($event)"></form></div>',
+      editableCellTemplate:
+        '<div><form name="inputForm"><input class="form-control inputheight" type="INPUT_TYPE" ng-class="\'colt\' + col.uid" ui-grid-editor ng-model="MODEL_COL_FIELD" ng-paste="grid.appScope.handleCellPaste($event)"></form></div>',
       headerCellClass: 'required',
       tooltip:
         'The Sample ID stays with your sample for its lifetime. Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively.',

@@ -6,7 +6,7 @@ import {
   FormControl,
   InputAdornment,
   Paper,
-  withStyles
+  withStyles,
 } from '@material-ui/core';
 
 import { Button, Checkbox, Dropdown, Input } from '../index';
@@ -19,7 +19,7 @@ class UploadForm extends React.Component {
 
     this.state = {
       values: {
-        ...this.props.form.selected
+        ...this.props.form.selected,
       },
       formValid: {
         material: true,
@@ -30,8 +30,8 @@ class UploadForm extends React.Component {
         container: true,
         patientIdType: true,
         patientIdTypeSpecified: true,
-        sharedWith: true
-      }
+        sharedWith: true,
+      },
     };
   }
 
@@ -53,29 +53,29 @@ class UploadForm extends React.Component {
           'Both MSK-Patients and Non-MSK Patients')
     );
   };
-  handleDropdownChange = event => {
+  handleDropdownChange = (event) => {
     this.setState({
       values: {
         ...this.state.values,
-        [event.id]: event.value
+        [event.id]: event.value,
       },
-      formValid: { ...this.state.formValid, [event.id]: true }
+      formValid: { ...this.state.formValid, [event.id]: true },
     });
     this.props.handleInputChange(event.id, event.value);
   };
 
-  handleChange = event => {
+  handleChange = (event) => {
     this.setState({
       values: {
         ...this.state.values,
-        [event.target.id]: event.target.value
+        [event.target.id]: event.target.value,
       },
-      formValid: { ...this.state.formValid, [event.target.id]: true }
+      formValid: { ...this.state.formValid, [event.target.id]: true },
     });
     this.props.handleInputChange(event.target.id, event.target.value);
   };
 
-  handleServiceIdCheck = name => event => {
+  handleServiceIdCheck = (name) => (event) => {
     var date = new Date();
     var timestamp = date.getTime();
 
@@ -83,10 +83,10 @@ class UploadForm extends React.Component {
       values: {
         ...this.state.values,
         serviceId: timestamp,
-        [name]: event.target.checked
+        [name]: event.target.checked,
       },
 
-      formValid: { ...this.state.formValid, serviceId: true }
+      formValid: { ...this.state.formValid, serviceId: true },
     });
     if (event.target.checked) {
       this.props.handleInputChange('serviceId', timestamp);
@@ -97,9 +97,9 @@ class UploadForm extends React.Component {
       this.props.handleInputChange('altServiceId', false);
     }
   };
-  handleCheckbox = name => event => {
+  handleCheckbox = (name) => (event) => {
     this.setState({
-      values: { ...this.state.values, [name]: event.target.checked }
+      values: { ...this.state.values, [name]: event.target.checked },
     });
     if (event.target.checked) {
       this.props.handleInputChange(name, event.target.checked);
@@ -116,7 +116,7 @@ class UploadForm extends React.Component {
       handleParentSubmit('upload', {
         ...this.state.values,
 
-        serviceId: 'IGO-' + this.state.values.serviceId.toString()
+        serviceId: 'IGO-' + this.state.values.serviceId.toString(),
       });
     }
   };
@@ -139,7 +139,7 @@ class UploadForm extends React.Component {
           // validate whether selected value in dynamic fields is in controlled options
           // (could fail if user was extremely quick to select
           // invalid material/app combination)
-          isValidOption = this.props.form.filteredMaterials.some(function(el) {
+          isValidOption = this.props.form.filteredMaterials.some(function (el) {
             return el === values[value];
           });
 
@@ -147,7 +147,7 @@ class UploadForm extends React.Component {
           break;
 
         case 'application':
-          isValidOption = this.props.form.filteredApplications.some(function(
+          isValidOption = this.props.form.filteredApplications.some(function (
             el
           ) {
             return el === values[value];
@@ -157,14 +157,16 @@ class UploadForm extends React.Component {
           break;
 
         case 'container':
-          isValidOption = this.props.form.filteredContainers.some(function(el) {
+          isValidOption = this.props.form.filteredContainers.some(function (
+            el
+          ) {
             return el === values[value];
           });
           formValid[value] = isValidOption && values[value].length > 0;
           break;
 
         case 'species':
-          isValidOption = this.props.form.filteredSpecies.some(function(el) {
+          isValidOption = this.props.form.filteredSpecies.some(function (el) {
             return el === values[value];
           });
           formValid[value] = isValidOption && values[value].length > 0;
@@ -173,7 +175,7 @@ class UploadForm extends React.Component {
         case 'patientIdType':
           // only validate if species mandates a format, else value will be disregarded anyway
           if (this.showPatientIdTypeDropdown()) {
-            isValidOption = this.props.form.patientIdTypes.some(function(el) {
+            isValidOption = this.props.form.patientIdTypes.some(function (el) {
               return el === values[value];
             });
             formValid[value] = isValidOption && values[value].length > 0;
@@ -186,7 +188,7 @@ class UploadForm extends React.Component {
           // only validate if species mandates a format, else value will be disregarded anyway
           if (this.showPatientIdTypeSpecDropdown()) {
             isValidOption = this.props.form.patientIdTypesSpecified.some(
-              function(el) {
+              function (el) {
                 return el === values[value];
               }
             );
@@ -231,8 +233,8 @@ class UploadForm extends React.Component {
     }
     this.setState({
       formValid: {
-        ...formValid
-      }
+        ...formValid,
+      },
     });
     // checked all fields, now check form
     return this.validateForm();
@@ -264,7 +266,7 @@ class UploadForm extends React.Component {
       gridIsLoading,
       nothingToChange,
       gridNumberOfSamples,
-      submitRowNumberUpdate
+      submitRowNumberUpdate,
     } = this.props;
     const { formValid, values } = this.state;
 
@@ -275,7 +277,7 @@ class UploadForm extends React.Component {
             <form
               id="upload-form"
               className={classes.form}
-              onSubmit={e => this.handleSubmit(e, handleSubmit)}
+              onSubmit={(e) => this.handleSubmit(e, handleSubmit)}
             >
               <Dropdown
                 id="material"
@@ -283,15 +285,15 @@ class UploadForm extends React.Component {
                 onSelect={handleMaterialChange}
                 onChange={this.handleDropdownChange}
                 autofocus={true}
-                items={form.filteredMaterials.map(option => ({
+                items={form.filteredMaterials.map((option) => ({
                   value: option,
-                  label: option
+                  label: option,
                 }))}
                 loading={form.formIsLoading}
                 dynamic
                 value={{
                   value: form.selected.material,
-                  label: form.selected.material
+                  label: form.selected.material,
                 }}
               />
 
@@ -300,15 +302,15 @@ class UploadForm extends React.Component {
                 error={!formValid.application}
                 onSelect={handleApplicationChange}
                 onChange={this.handleDropdownChange}
-                items={form.filteredApplications.map(option => ({
+                items={form.filteredApplications.map((option) => ({
                   value: option,
-                  label: option
+                  label: option,
                 }))}
                 loading={form.formIsLoading}
                 dynamic
                 value={{
                   value: form.selected.application,
-                  label: form.selected.application
+                  label: form.selected.application,
                 }}
               />
               <FormControl component="fieldset">
@@ -319,13 +321,13 @@ class UploadForm extends React.Component {
                   onChange={this.handleDropdownChange}
                   dynamic
                   loading={form.formIsLoading}
-                  items={form.filteredSpecies.map(option => ({
+                  items={form.filteredSpecies.map((option) => ({
                     value: option,
-                    label: option
+                    label: option,
                   }))}
                   value={{
                     value: form.selected.species,
-                    label: form.selected.species
+                    label: form.selected.species,
                   }}
                   ic
                 />
@@ -333,7 +335,7 @@ class UploadForm extends React.Component {
                   <Checkbox
                     id="groupingCheckbox"
                     checked={form.selected.groupingChecked}
-                    onChange={e => this.handleCheckbox('groupingChecked')}
+                    onChange={(e) => this.handleCheckbox('groupingChecked')}
                   />
                 )}
               </FormControl>
@@ -343,13 +345,13 @@ class UploadForm extends React.Component {
                   id="patientIdType"
                   error={!formValid.patientIdType}
                   onChange={this.handleDropdownChange}
-                  items={form.patientIdTypes.map(option => ({
+                  items={form.patientIdTypes.map((option) => ({
                     value: option,
-                    label: option
+                    label: option,
                   }))}
                   value={{
                     value: form.selected.patientIdType,
-                    label: form.selected.patientIdType
+                    label: form.selected.patientIdType,
                   }}
                 />
               )}
@@ -358,13 +360,13 @@ class UploadForm extends React.Component {
                   id="patientIdTypeSpecified"
                   error={!formValid.patientIdTypeSpecified}
                   onChange={this.handleDropdownChange}
-                  items={form.patientIdTypesSpecified.map(option => ({
+                  items={form.patientIdTypesSpecified.map((option) => ({
                     value: option,
-                    label: option
+                    label: option,
                   }))}
                   value={{
                     value: form.selected.patientIdTypeSpecified,
-                    label: form.selected.patientIdTypeSpecified
+                    label: form.selected.patientIdTypeSpecified,
                   }}
                 />
               )}
@@ -373,14 +375,14 @@ class UploadForm extends React.Component {
                 id="container"
                 error={!formValid.container}
                 onChange={this.handleDropdownChange}
-                items={form.filteredContainers.map(option => ({
+                items={form.filteredContainers.map((option) => ({
                   value: option,
-                  label: option
+                  label: option,
                 }))}
                 loading={form.formIsLoading}
                 value={{
                   value: form.selected.container,
-                  label: form.selected.container
+                  label: form.selected.container,
                 }}
               />
 
@@ -389,7 +391,7 @@ class UploadForm extends React.Component {
                 error={!formValid.numberOfSamples}
                 onChange={this.handleChange}
                 inputProps={{
-                  inputProps: { min: 0 }
+                  inputProps: { min: 0 },
                 }}
                 value={form.selected.numberOfSamples}
               />
@@ -403,7 +405,7 @@ class UploadForm extends React.Component {
                     disabled: form.selected.altServiceId,
                     startAdornment: (
                       <InputAdornment position="start">IGO-</InputAdornment>
-                    )
+                    ),
                   }}
                 />
                 {!form.selected.application.includes('COVID') && (
@@ -419,7 +421,7 @@ class UploadForm extends React.Component {
                 <Checkbox
                   id="isShared"
                   checked={form.selected.isShared || false}
-                  onChange={e => this.handleCheckbox('isShared')}
+                  onChange={(e) => this.handleCheckbox('isShared')}
                 />
                 {form.selected.isShared && (
                   <Input
@@ -479,7 +481,7 @@ UploadForm.defaultProps = {
     formIsLoading: false,
     filteredContainers: [
       { id: 'Plates', value: 'Plates' },
-      { id: 'Micronic Barcoded Tubes', value: 'Micronic Barcoded Tubes' }
+      { id: 'Micronic Barcoded Tubes', value: 'Micronic Barcoded Tubes' },
     ],
 
     allSpecies: [{ id: 'test', value: 'test' }],
@@ -492,7 +494,7 @@ UploadForm.defaultProps = {
       container: '',
       patientIdType: '',
       groupingChecked: false,
-      altServiceId: false
+      altServiceId: false,
     },
 
     handleSubmit: () => {},
@@ -500,18 +502,18 @@ UploadForm.defaultProps = {
     handleMaterialChange: () => {},
     handleSpeciesChange: () => {},
     gridIsLoading: () => {},
-    nothingToChange: () => {}
-  }
+    nothingToChange: () => {},
+  },
 };
 
 UploadForm.propTypes = {
   form: PropTypes.object.isRequired,
   handleSubmit: PropTypes.func,
   handleApplicationChange: PropTypes.func,
-  handleMaterialChange: PropTypes.func
+  handleMaterialChange: PropTypes.func,
 };
 
-const styles = theme => ({
+const styles = (theme) => ({
   container: {
     // backgroundColor: "rgba(143, 199, 232, .1)",
     gridArea: 'form',
@@ -521,24 +523,24 @@ const styles = theme => ({
     maxWidth: '1700px',
     margin: '2em auto',
     padding: '1em',
-    marginBottom: '4em'
+    marginBottom: '4em',
   },
   form: {
     display: 'flex',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
 
   lastItem: {
     flexBasis: '100%',
     marginTop: '2em',
-    width: 310
+    width: 310,
   },
 
   dense: {
-    marginTop: 19
+    marginTop: 19,
   },
   menu: {
-    width: 200
+    width: 200,
   },
 
   buttonProgress: {
@@ -546,15 +548,15 @@ const styles = theme => ({
     top: '50%',
     left: '50%',
     marginTop: -12,
-    marginLeft: -12
+    marginLeft: -12,
   },
   nothingToChange: {
     position: 'absolute',
     top: '50%',
     left: '50%',
     marginTop: -53,
-    marginLeft: -65
-  }
+    marginLeft: -65,
+  },
 });
 
 export default withStyles(styles)(UploadForm);

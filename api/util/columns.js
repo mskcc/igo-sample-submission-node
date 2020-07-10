@@ -344,7 +344,7 @@ export const gridColumns = {
     error: 'Only OncoTree Tumor IDs or exact dropdown options are permitted.',
     strict: true,
     picklistName: 'tumorType',
-    tooltip: 'Tumor types taken from http://oncotree.mskcc.org/'
+    tooltip: 'Tumor types taken from http://oncotree.mskcc.org/',
   },
   'Sample Class': {
     name: 'Sample Class',
@@ -569,7 +569,7 @@ export const submissionColumns = {
     data: 'unsubmit',
     renderer: 'html',
   },
-  
+
   Receipt: {
     name: 'Receipt',
     data: 'receipt',

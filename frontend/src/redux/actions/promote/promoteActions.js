@@ -21,16 +21,16 @@ export function getPromoteGrid() {
       dispatch({ type: REQUEST_INITIAL_STATE_PROMOTE });
       services
         .promoteGrid()
-        .then(response => {
+        .then((response) => {
           return dispatch({
             type: RECEIVE_INITIAL_STATE_PROMOTE_SUCCESS,
-            grid: response.payload
+            grid: response.payload,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           return dispatch({
             type: RECEIVE_INITIAL_STATE_PROMOTE_FAIL,
-            error: error
+            error: error,
           });
         });
     }
@@ -48,29 +48,29 @@ export function loadBankedSamples(queryType, query) {
   return (dispatch, getState) => {
     dispatch({
       type: REQUEST_BANKED_SAMPLES,
-      message: `Fetching Banked Samples for ${queryType}: ${query}...`
+      message: `Fetching Banked Samples for ${queryType}: ${query}...`,
     });
 
     services
       .loadBankedSamples(queryType, query)
-      .then(response => {
+      .then((response) => {
         // need to go with rowBackup and isEqual comparison to decide if changes happened because
         // handsontable changes do not trigger redux events
         let samples = response.payload.samples;
-        let rows = samples.map(a => Object.assign({}, a));
-        let rowsBackup = samples.map(a => Object.assign({}, a));
+        let rows = samples.map((a) => Object.assign({}, a));
+        let rowsBackup = samples.map((a) => Object.assign({}, a));
         dispatch({
           type: RECEIVE_BANKED_SAMPLES_SUCCESS,
           rows: util.rowsWithRowIndex(rows),
           rowsBackup: util.rowsWithRowIndex(rowsBackup),
-          message: 'clear'
+          message: 'clear',
         });
         return response;
       })
-      .catch(error =>
+      .catch((error) =>
         dispatch({
           type: RECEIVE_BANKED_SAMPLES_FAIL,
-          error: error
+          error: error,
         })
       );
   };
@@ -89,10 +89,10 @@ export function promoteDry(
   materials,
   bankedSampleIds
 ) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({
       type: PROMOTE_DRYRUN,
-      message: 'Determining promote method...'
+      message: 'Determining promote method...',
     });
     let transactionId = util.getTransactionId();
     services
@@ -103,14 +103,14 @@ export function promoteDry(
         materials,
         bankedSampleIds: [bankedSampleIds[0]],
         dryrun: true,
-        transactionId
+        transactionId,
       })
-      .then(response => {
+      .then((response) => {
         dispatch({
           type: PROMOTE_DRYRUN_SUCCESS,
-          message: 'clear'
+          message: 'clear',
         });
-        swal.dryRunSuccess(response.payload.message).then(decision => {
+        swal.dryRunSuccess(response.payload.message).then((decision) => {
           if (decision) {
             dispatch(
               promoteForReal(
@@ -125,10 +125,10 @@ export function promoteDry(
           }
         });
       })
-      .catch(error => {
+      .catch((error) => {
         return dispatch({
           type: PROMOTE_DRYRUN_FAIL,
-          error: error
+          error: error,
         });
       });
   };
@@ -147,11 +147,11 @@ export function promoteForReal(
   bankedSampleIds,
   transactionId
 ) {
-  return dispatch => {
+  return (dispatch) => {
     // let rows = getState().promote.rows
     dispatch({
       type: PROMOTE_FORREAL,
-      message: 'Promoting...'
+      message: 'Promoting...',
     });
     services
       .promote({
@@ -161,15 +161,15 @@ export function promoteForReal(
         materials,
         bankedSampleIds: [bankedSampleIds],
         dryrun: false,
-        transactionId
+        transactionId,
       })
-      .then(response => {
+      .then((response) => {
         dispatch({ type: PROMOTE_FORREAL_SUCCESS, message: 'clear' });
         swal.genericMessage('success', response.payload.message);
       })
-      .catch(error => {
+      .catch((error) => {
         dispatch({ type: PROMOTE_FORREAL_FAIL, message: 'clear' });
-        
+
         let message = error.payload.message;
         if (message.includes('already been promoted')) {
           message = message.replace(
@@ -181,4 +181,3 @@ export function promoteForReal(
       });
   };
 }
-

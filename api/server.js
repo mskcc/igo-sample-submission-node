@@ -7,10 +7,8 @@ var cors = require('cors');
 var cookieParser = require('cookie-parser');
 
 const winston = require('winston');
-const { format,  loggers } = require('winston');
+const { format, loggers } = require('winston');
 const { combine, timestamp, prettyPrint } = format;
-
-
 
 loggers.add('logger', {
   level: 'info',

@@ -49,39 +49,39 @@ const Button = ({ id, onClick, isLoading, done, title, classes, color }) => (
   </Translate>
 );
 
-const styles = theme => ({
+const styles = (theme) => ({
   button: {
     margin: theme.spacing(1),
     minWidth: 250,
-    maxWidth: 250
+    maxWidth: 250,
   },
   promoteButton: {
     margin: theme.spacing(1),
     minWidth: 310,
-    maxWidth: 310
+    maxWidth: 310,
   },
   wrapper: {
     margin: theme.spacing(1),
-    position: 'relative'
+    position: 'relative',
   },
 
   tooltip: {
-    fontSize: '15px'
+    fontSize: '15px',
   },
   buttonProgress: {
     position: 'absolute',
     top: '50%',
     left: '50%',
     marginTop: -12,
-    marginLeft: -12
+    marginLeft: -12,
   },
   nothingToSubmit: {
     position: 'absolute',
     top: '50%',
     left: '50%',
     marginTop: -53,
-    marginLeft: -65
-  }
+    marginLeft: -65,
+  },
 });
 
 export default withStyles(styles)(Button);

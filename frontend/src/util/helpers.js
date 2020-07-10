@@ -31,11 +31,11 @@ export const generateRows = (columns, formValues, numberToAdd) => {
 };
 
 // Handsontable does its own validation if columns have a validator method
-export const addValidatorToRegexCols = columnFeatures => {
-  columnFeatures.map(element => {
+export const addValidatorToRegexCols = (columnFeatures) => {
+  columnFeatures.map((element) => {
     if ('pattern' in element) {
       let pattern = new RegExp(element.pattern);
-      element.validator = function(value, callback) {
+      element.validator = function (value, callback) {
         if (pattern.test(value)) {
           callback(true);
         } else {
@@ -52,7 +52,7 @@ export const addValidatorToRegexCols = columnFeatures => {
 // how many columns will have to be filled, used as end condition
 // i = counter indicating how often I stepped through A-H
 // plateColIndex = plate column
-export const setWellPos = rows => {
+export const setWellPos = (rows) => {
   let plateRows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   let plateColsLength = 12;
 
@@ -107,7 +107,7 @@ export const diff = (obj1, obj2) => {
   }
   Object.keys(obj1 || {})
     .concat(Object.keys(obj2 || {}))
-    .forEach(key => {
+    .forEach((key) => {
       if (obj2[key] !== obj1[key] && !Object.is(obj1[key], obj2[key])) {
         result[key] = obj2[key];
       }
@@ -183,7 +183,7 @@ export const generateAdditionalRowData = (
     columnFeatures: columnFeaturesJson,
     formValues: formValuesJson,
     prevRowNumber: prevRowNumber,
-    newRowNumber: newRowNumber
+    newRowNumber: newRowNumber,
   };
   return data;
 };
@@ -197,7 +197,7 @@ export const generateSubmitData = (state, isPartial = false) => {
     gridValues: '',
     formValues: '',
     transactionId: '',
-    id: ''
+    id: '',
   };
   if (!isPartial) {
     data.transactionId = getTransactionId();
@@ -214,7 +214,7 @@ export const generateSubmitData = (state, isPartial = false) => {
   return data;
 };
 
-export const rowsWithRowIndex = function(rows) {
+export const rowsWithRowIndex = function (rows) {
   for (let i = 0; i < rows.length; i++) {
     rows[i].rowIndex = i + 1;
   }
@@ -222,7 +222,7 @@ export const rowsWithRowIndex = function(rows) {
 };
 
 // PROMOTE
-export const isEqual = function(value, other) {
+export const isEqual = function (value, other) {
   // Get the value type
   var type = Object.prototype.toString.call(value);
 
@@ -240,7 +240,7 @@ export const isEqual = function(value, other) {
   if (valueLen !== otherLen) return false;
 
   // Compare two items
-  var compare = function(item1, item2) {
+  var compare = function (item1, item2) {
     // Get the object type
     var itemType = Object.prototype.toString.call(item1);
 
@@ -460,7 +460,9 @@ export const validateGrid = (changes, grid) => {
     }
     let rowIndex = changes[i][0];
     let columnName = changes[i][1];
-    let columnIndex = grid.columnFeatures.findIndex(c => c.data === columnName);
+    let columnIndex = grid.columnFeatures.findIndex(
+      (c) => c.data === columnName
+    );
     if (columnIndex === -1) {
       errors.add(
         'The number of columns you tried to paste is larger than the number of columns on the current grid. The surplus got cut off.'
@@ -563,7 +565,7 @@ export const validateGrid = (changes, grid) => {
   return {
     grid,
     errorMessage: buildErrorMessage(errors),
-    numErrors: errors.size
+    numErrors: errors.size,
   };
 };
 
@@ -621,9 +623,9 @@ export const checkGridAndForm = (form, grid) => {
   return result;
 };
 
-export const buildErrorMessage = errors => {
+export const buildErrorMessage = (errors) => {
   let message = '';
-  errors.forEach(a => (message = message.concat('<br>' + a + '<br>')));
+  errors.forEach((a) => (message = message.concat('<br>' + a + '<br>')));
   return message;
 };
 
@@ -634,10 +636,11 @@ export const getTransactionId = () => {
   return transactionId;
 };
 
-export const parseDate = mongooseDate => {
+export const parseDate = (mongooseDate) => {
   let date = new Date(mongooseDate * 1000);
   let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
-  let humanReadable = `${date.getMonth() +
-    1}/${date.getDate()}/${date.getFullYear()} at ${date.getHours()}:${minutes}`;
+  let humanReadable = `${
+    date.getMonth() + 1
+  }/${date.getDate()}/${date.getFullYear()} at ${date.getHours()}:${minutes}`;
   return humanReadable;
 };

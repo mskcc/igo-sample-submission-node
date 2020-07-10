@@ -7,7 +7,7 @@ export default function formReducer(state = initialFormState, action) {
     case ActionTypes.REQUEST_INITIAL_STATE:
       return {
         ...state,
-        formIsLoading: true
+        formIsLoading: true,
       };
 
     case ActionTypes.RECEIVE_INITIAL_STATE_SUCCESS:
@@ -24,7 +24,7 @@ export default function formReducer(state = initialFormState, action) {
         allContainers: action.form_data.containers,
         filteredContainers: action.form_data.containers,
         patientIdTypes: action.form_data.patientIdTypes,
-        patientIdTypesSpecified: action.form_data.patientIdTypesSpecified
+        patientIdTypesSpecified: action.form_data.patientIdTypesSpecified,
       };
 
     case ActionTypes.RECEIVE_INITIAL_STATE_FAIL:
@@ -32,25 +32,25 @@ export default function formReducer(state = initialFormState, action) {
         ...state,
         initialFetched: false,
         error: action.error,
-        formIsLoading: false
+        formIsLoading: false,
       };
 
     case ActionTypes.INITIAL_STATE_RETRIEVED:
       return {
         ...state,
-        formIsLoading: false
+        formIsLoading: false,
       };
 
     case ActionTypes.REQUEST_MATERIALS_AND_APPLICATIONS:
       return {
         ...state,
-        formIsLoading: true
+        formIsLoading: true,
       };
 
     case ActionTypes.RECEIVE_MATERIALS_AND_APPLICATIONS_FAIL:
       return {
         ...state,
-        error: action.error
+        error: action.error,
       };
 
     case ActionTypes.SELECT:
@@ -59,8 +59,8 @@ export default function formReducer(state = initialFormState, action) {
         formIsLoading: false,
         selected: {
           ...state.selected,
-          [action.payload.id]: action.payload.value
-        }
+          [action.payload.id]: action.payload.value,
+        },
       };
     case ActionTypes.CLEAR:
       if (
@@ -72,16 +72,16 @@ export default function formReducer(state = initialFormState, action) {
           ...state,
           selected: {
             ...state.selected,
-            [action.payload.id]: false
-          }
+            [action.payload.id]: false,
+          },
         };
       } else {
         return {
           ...state,
           selected: {
             ...state.selected,
-            [action.payload.id]: ''
-          }
+            [action.payload.id]: '',
+          },
         };
       }
 
@@ -89,12 +89,12 @@ export default function formReducer(state = initialFormState, action) {
       return {
         ...state,
         initialFetched: false,
-        selected: { ...initialFormState.selected }
+        selected: { ...initialFormState.selected },
       };
     case ActionTypes.SELECT_MATERIAL:
       return {
         ...state,
-        selected: { ...state.selected, material: action.selectedMaterial }
+        selected: { ...state.selected, material: action.selectedMaterial },
       };
 
     case ActionTypes.SELECT_APPLICATION:
@@ -102,14 +102,14 @@ export default function formReducer(state = initialFormState, action) {
         ...state,
         selected: {
           ...state.selected,
-          application: action.selectedApplication
-        }
+          application: action.selectedApplication,
+        },
       };
 
     case ActionTypes.REQUEST_DATA_FOR_APPLICATION:
       return {
         ...state,
-        formIsLoading: true
+        formIsLoading: true,
       };
     case ActionTypes.RECEIVE_DATA_FOR_APPLICATION_SUCCESS:
       return action.species.length > 0
@@ -117,7 +117,7 @@ export default function formReducer(state = initialFormState, action) {
             ...state,
             formIsLoading: false,
             filteredMaterials: action.materials,
-            filteredSpecies: action.species
+            filteredSpecies: action.species,
             // does not update input value quite yet,so don't change to allow validation to pick it up
             // selected: { ...state.selected, species: action.species[0].id },
           }
@@ -125,19 +125,19 @@ export default function formReducer(state = initialFormState, action) {
             ...state,
             formIsLoading: false,
             filteredMaterials: action.materials,
-            filteredSpecies: state.allSpecies
+            filteredSpecies: state.allSpecies,
           };
     case ActionTypes.RECEIVE_DATA_FOR_APPLICATION_FAIL:
       return {
         ...state,
         formIsLoading: false,
-        error: action.error
+        error: action.error,
       };
 
     case ActionTypes.REQUEST_APPLICATIONS_FOR_MATERIAL:
       return {
         ...state,
-        formIsLoading: true
+        formIsLoading: true,
       };
     case ActionTypes.RECEIVE_APPLICATIONS_FOR_MATERIAL_SUCCESS:
       return action.containers.length > 0
@@ -145,7 +145,7 @@ export default function formReducer(state = initialFormState, action) {
             ...state,
             formIsLoading: false,
             filteredApplications: action.applications,
-            filteredContainers: action.containers
+            filteredContainers: action.containers,
             // does not update input value quite yet,so don't change to allow validation to pick it up
             // selected: { ...state.selected, container: action.containers[0].id },
           }
@@ -153,13 +153,13 @@ export default function formReducer(state = initialFormState, action) {
             ...state,
             formIsLoading: false,
             filteredApplications: action.applications,
-            filteredContainers: state.allContainers
+            filteredContainers: state.allContainers,
           };
     case ActionTypes.RECEIVE_APPLICATIONS_FOR_MATERIAL_FAIL:
       return {
         ...state,
         formIsLoading: false,
-        error: action.error
+        error: action.error,
       };
 
     case ActionTypes.CLEAR_SPECIES:
@@ -168,33 +168,33 @@ export default function formReducer(state = initialFormState, action) {
         selected: {
           ...state.selected,
           patientIdType: '',
-          patientIdTypesSpecified: ''
-        }
+          patientIdTypesSpecified: '',
+        },
       };
     case ActionTypes.REQUEST_PICKLIST:
       return {
         ...state,
-        formIsLoading: true
+        formIsLoading: true,
       };
     case ActionTypes.RECEIVE_PICKLIST_SUCCESS:
       return {
         ...state,
         formIsLoading: false,
 
-        [action.listname]: action.picklist
+        [action.listname]: action.picklist,
       };
 
     case ActionTypes.RECEIVE_PICKLIST_FAIL:
       return {
         ...state,
         formIsLoading: false,
-        error: action.error
+        error: action.error,
       };
 
     case ActionTypes.REQUEST_COLUMNS:
       return {
         ...state,
-        formIsLoading: true
+        formIsLoading: true,
       };
     case ActionTypes.RECEIVE_COLUMNS_SUCCESS:
       return {
@@ -203,15 +203,15 @@ export default function formReducer(state = initialFormState, action) {
         columns: {
           ...state.columns,
 
-          ...[action.columns]
-        }
+          ...[action.columns],
+        },
       };
 
     case ActionTypes.RECEIVE_COLUMNS_FAIL:
       return {
         ...state,
         formIsLoading: false,
-        error: action.error
+        error: action.error,
       };
 
     case ActionTypes.CLEAR_MATERIAL:
@@ -220,7 +220,7 @@ export default function formReducer(state = initialFormState, action) {
         filteredApplications: state.allApplications,
         filteredContainers: state.allContainers,
         selected: { ...state.selected, material: '' },
-        formIsLoading: true
+        formIsLoading: true,
       };
     case ActionTypes.CLEAR_APPLICATION:
       return {
@@ -228,20 +228,20 @@ export default function formReducer(state = initialFormState, action) {
         filteredMaterials: state.allMaterials,
         filteredSpecies: state.allSpecies,
         selected: { ...state.selected, application: '' },
-        formIsLoading: true
+        formIsLoading: true,
       };
     case ActionTypes.CLEARED:
       return {
         ...state,
-        formIsLoading: false
+        formIsLoading: false,
       };
     case GridActionTypes.INCREASE_ROW_NUMBER_SUCCESS:
       return {
         ...state,
         selected: {
           ...state.selected,
-          numberOfSamples: action.rowNumber
-        }
+          numberOfSamples: action.rowNumber,
+        },
       };
     case GridActionTypes.GET_SUBMISSION_TO_EDIT_SUCCESS:
       let form = action.payload.formValues;
@@ -249,8 +249,8 @@ export default function formReducer(state = initialFormState, action) {
         ...state,
         selected: {
           ...form,
-          serviceId: form.serviceId.replace('IGO-', '')
-        }
+          serviceId: form.serviceId.replace('IGO-', ''),
+        },
       };
 
     default:

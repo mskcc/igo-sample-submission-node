@@ -12,12 +12,12 @@ import Snackbar from '@material-ui/core/Snackbar';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
-const styles = theme => ({
+const styles = (theme) => ({
   close: {
     padding: 0,
     top: 0,
     right: 0,
-    position: 'absolute'
+    position: 'absolute',
   },
   // error: {
   //   color: theme.palette.textSecondary,
@@ -26,13 +26,13 @@ const styles = theme => ({
   success: {
     backgroundColor: theme.palette.secondary.light,
     fontSize: '1em',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   error: {
     backgroundColor: theme.palette.error.dark,
     fontSize: '1em',
 
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   info: {
     backgroundColor: theme.palette.secondary.dark,
@@ -43,13 +43,13 @@ const styles = theme => ({
   warning: {
     fontSize: '1em',
     fontWeight: 'bold',
-    backgroundColor: theme.palette.secondary.dark
-  }
+    backgroundColor: theme.palette.secondary.dark,
+  },
 });
 
 class SimpleSnackbar extends React.Component {
   state = {
-    open: true
+    open: true,
   };
 
   handleClose = (event, reason) => {
@@ -73,7 +73,7 @@ class SimpleSnackbar extends React.Component {
         onClose={this.handleClose}
         ContentProps={{
           'aria-describedby': 'message-id',
-          className: variant ? classes[variant] : classes.info
+          className: variant ? classes[variant] : classes.info,
         }}
         message={<span id="message-id">{message}</span>}
         action={[
@@ -85,7 +85,7 @@ class SimpleSnackbar extends React.Component {
             onClick={this.handleClose}
           >
             <CloseIcon />
-          </IconButton>
+          </IconButton>,
         ]}
       />
     );
@@ -93,7 +93,7 @@ class SimpleSnackbar extends React.Component {
 }
 
 SimpleSnackbar.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(SimpleSnackbar);

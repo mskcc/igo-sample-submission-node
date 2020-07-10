@@ -7,7 +7,7 @@ export default function dmpFormReducer(state = initialDmpFormState, action) {
     case ActionTypes.REQUEST_DMP_HEADER:
       return {
         ...state,
-        formIsLoading: true
+        formIsLoading: true,
       };
 
     case ActionTypes.DMP_HEADER_SUCCESS:
@@ -16,7 +16,7 @@ export default function dmpFormReducer(state = initialDmpFormState, action) {
         formIsLoading: false,
         initialFetched: true,
         materials: action.materials,
-        applications: action.applications
+        applications: action.applications,
       };
 
     case ActionTypes.DMP_HEADER_FAIL:
@@ -24,19 +24,19 @@ export default function dmpFormReducer(state = initialDmpFormState, action) {
         ...state,
         initialFetched: false,
         error: action.error,
-        formIsLoading: false
+        formIsLoading: false,
       };
 
     case ActionTypes.DMP_HEADER_RETRIEVED:
       return {
         ...state,
-        formIsLoading: false
+        formIsLoading: false,
       };
 
     case ActionTypes.REQUEST_MATERIALS_AND_APPLICATIONS:
       return {
         ...state,
-        formIsLoading: true
+        formIsLoading: true,
       };
 
     case ActionTypes.DMP_SELECT:
@@ -44,29 +44,29 @@ export default function dmpFormReducer(state = initialDmpFormState, action) {
         ...state,
         selected: {
           ...state.selected,
-          [action.payload.id]: action.payload.value
-        }
+          [action.payload.id]: action.payload.value,
+        },
       };
     case ActionTypes.CLEAR:
       return {
         ...state,
         selected: {
           ...state.selected,
-          [action.payload.id]: ''
-        }
+          [action.payload.id]: '',
+        },
       };
 
     case ActionTypes.CLEAR_FORM:
       return {
         ...state,
         initialFetched: false,
-        selected: { ...initialDmpFormState.selected }
+        selected: { ...initialDmpFormState.selected },
       };
 
     case ActionTypes.REQUEST_PICKLIST:
       return {
         ...state,
-        formIsLoading: true
+        formIsLoading: true,
       };
     case ActionTypes.RECEIVE_PICKLIST_SUCCESS:
       return {
@@ -74,21 +74,21 @@ export default function dmpFormReducer(state = initialDmpFormState, action) {
         formIsLoading: false,
         picklists: {
           ...state.picklists,
-          [action.listname]: action.picklist
-        }
+          [action.listname]: action.picklist,
+        },
       };
 
     case ActionTypes.RECEIVE_PICKLIST_FAIL:
       return {
         ...state,
         formIsLoading: false,
-        error: action.error
+        error: action.error,
       };
 
     case ActionTypes.REQUEST_COLUMNS:
       return {
         ...state,
-        formIsLoading: true
+        formIsLoading: true,
       };
     case ActionTypes.RECEIVE_COLUMNS_SUCCESS:
       return {
@@ -97,21 +97,21 @@ export default function dmpFormReducer(state = initialDmpFormState, action) {
         columns: {
           ...state.columns,
 
-          ...[action.columns]
-        }
+          ...[action.columns],
+        },
       };
 
     case ActionTypes.RECEIVE_COLUMNS_FAIL:
       return {
         ...state,
         formIsLoading: false,
-        error: action.error
+        error: action.error,
       };
 
     case ActionTypes.CLEARED:
       return {
         ...state,
-        formIsLoading: false
+        formIsLoading: false,
       };
     // case GridActionTypes.INCREASE_ROW_NUMBER_SUCCESS:
     //   return {
@@ -128,7 +128,7 @@ export default function dmpFormReducer(state = initialDmpFormState, action) {
         selected: {
           ...form,
           // serviceId: form.serviceId.replace('IGO-', '')
-        }
+        },
       };
 
     default:

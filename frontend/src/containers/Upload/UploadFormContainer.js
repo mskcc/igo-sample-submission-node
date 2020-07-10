@@ -18,7 +18,7 @@ export class UploadFormContainer extends React.Component {
     }
   }
 
-  handleMaterialChange = selectedMaterial => {
+  handleMaterialChange = (selectedMaterial) => {
     if (selectedMaterial) {
       // get possible applications for this material
       this.props.getApplicationsForMaterial(selectedMaterial);
@@ -27,7 +27,7 @@ export class UploadFormContainer extends React.Component {
     }
   };
 
-  handleApplicationChange = selectedApplication => {
+  handleApplicationChange = (selectedApplication) => {
     if (selectedApplication) {
       // get possible ,materials for this application
       this.props.getMaterialsForApplication(selectedApplication);
@@ -36,7 +36,7 @@ export class UploadFormContainer extends React.Component {
     }
   };
 
-  handleSpeciesChange = selectedSpecies => {
+  handleSpeciesChange = (selectedSpecies) => {
     if (!selectedSpecies) this.props.clearSpecies();
   };
   handleInputChange = (id, value) => {
@@ -52,7 +52,7 @@ export class UploadFormContainer extends React.Component {
   };
 
   handleClear = () => {
-    swal.confirmClear().then(decision => {
+    swal.confirmClear().then((decision) => {
       if (decision) {
         this.props.clearForm();
       }
@@ -65,7 +65,7 @@ export class UploadFormContainer extends React.Component {
       dmp,
       formType,
       handleSubmit,
-      submitRowNumberUpdate
+      submitRowNumberUpdate,
     } = this.props;
     return (
       <React.Fragment>
@@ -114,17 +114,17 @@ UploadFormContainer.defaultProps = {
   handleApplicationChange: () => {},
   handleSpeciesChange: () => {},
   handleInputChange: () => {},
-  handleClear: () => {}
+  handleClear: () => {},
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   upload: state.upload,
-  dmp: state.dmp
+  dmp: state.dmp,
 });
 
 const mapDispatchToProps = {
   ...formActions,
-  ...dmpFormActions
+  ...dmpFormActions,
 };
 
 export default connect(

@@ -8,7 +8,7 @@ import {
   Toolbar,
   Button,
   Typography,
-  makeStyles
+  makeStyles,
 } from '@material-ui/core';
 
 import logo from './logo.png';
@@ -18,7 +18,7 @@ function Header(userRole) {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleClick = event => {
+  const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -67,7 +67,6 @@ function Header(userRole) {
             aria-haspopup="true"
             onClick={handleClick}
             onMouseOver={handleClick}
-
           >
             <Typography color="inherit" variant="h6">
               Submissions
@@ -141,43 +140,43 @@ function Header(userRole) {
   );
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   avatar: {
-    marginRight: theme.spacing(3)
+    marginRight: theme.spacing(3),
   },
   header: {
     backgroundColor: theme.palette.primary.logo,
     color: 'white',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   title: {
-    marginRight: theme.spacing(3)
+    marginRight: theme.spacing(3),
   },
 
   navlink: {
     color: theme.palette.textSecondary,
     textDecoration: 'none',
-    marginRight: theme.spacing(1)
+    marginRight: theme.spacing(1),
   },
   navlinkMenu: {
     color: theme.palette.primary.dark,
     textDecoration: 'none',
-    marginRight: theme.spacing(1)
+    marginRight: theme.spacing(1),
   },
   active: {
     color: 'white',
-    fontSize: '1em'
+    fontSize: '1em',
   },
 
   activeMenu: {
     color: theme.palette.primary.dark,
-    fontSize: '1em'
+    fontSize: '1em',
   },
   divider: {
     // backgroundColor: 'rgba(255,255,255,0.7)',
     color: 'rgba(255,255,255,1)',
-    paddingBottom: '7px'
-  }
+    paddingBottom: '7px',
+  },
 }));
 
 export default Header;

@@ -10,32 +10,32 @@ export const RECEIVE_CHECK_VERSION_FAIL = 'RECEIVE_CHECK_VERSION_FAIL';
 export const RECEIVE_SERVER_ERROR = 'RECEIVE_SERVER_ERROR';
 
 export function checkVersion() {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({ type: REQUEST_CHECK_VERSION });
     return axios
       .get(Config.API_ROOT + '/checkVersion?', {
         params: {
-          version: Config.VERSION
-        }
+          version: Config.VERSION,
+        },
       })
-      .then(response => {
+      .then((response) => {
         return dispatch({
           type: RECEIVE_CHECK_VERSION_SUCCESS,
-          data: response.data
+          data: response.data,
         });
       })
 
-      .catch(error => {
+      .catch((error) => {
         if (error.response) {
           dispatch({
             type: SERVER_ERROR,
             serverError: true,
-            error: error
+            error: error,
           });
         } else {
           dispatch({
             type: SERVER_ERROR,
-            serverError: true
+            serverError: true,
           });
         }
       });
@@ -47,12 +47,12 @@ export const SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE';
 
 // Resets the currently visible error message.
 export const setErrorMessage = () => ({
-  type: SET_ERROR_MESSAGE
+  type: SET_ERROR_MESSAGE,
 });
 
 // Resets the currently visible error message.
 export const resetErrorMessage = () => ({
-  type: RESET_ERROR_MESSAGE
+  type: RESET_ERROR_MESSAGE,
 });
 
 export const RESET_MESSAGE = 'RESET_MESSAGE';
@@ -60,11 +60,11 @@ export const SET_MESSAGE = 'SET_MESSAGE';
 
 // Resets the currently visible error message.
 export const setMessage = () => ({
-  type: SET_MESSAGE
+  type: SET_MESSAGE,
 });
 
 // Resets the currently visible error message.
 export const resetMessage = () => ({
   type: RESET_MESSAGE,
-  message: 'clear'
+  message: 'clear',
 });

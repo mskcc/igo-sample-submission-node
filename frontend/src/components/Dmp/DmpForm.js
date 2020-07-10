@@ -6,7 +6,7 @@ import {
   FormControl,
   InputAdornment,
   Paper,
-  withStyles
+  withStyles,
 } from '@material-ui/core';
 
 import { Button, Checkbox, Dropdown, Input } from '../index';
@@ -19,42 +19,42 @@ class DmpForm extends React.Component {
 
     this.state = {
       values: {
-        ...this.props.form.selected
+        ...this.props.form.selected,
       },
       formValid: {
         material: true,
         application: true,
         numberOfSamples: true,
-        sharedWith: true
-      }
+        sharedWith: true,
+      },
     };
   }
 
-  handleDropdownChange = event => {
+  handleDropdownChange = (event) => {
     this.setState({
       values: {
         ...this.state.values,
-        [event.id]: event.value
+        [event.id]: event.value,
       },
-      formValid: { ...this.state.formValid, [event.id]: true }
+      formValid: { ...this.state.formValid, [event.id]: true },
     });
     this.props.handleInputChange(event.id, event.value);
   };
 
-  handleChange = event => {
+  handleChange = (event) => {
     this.setState({
       values: {
         ...this.state.values,
-        [event.target.id]: event.target.value
+        [event.target.id]: event.target.value,
       },
-      formValid: { ...this.state.formValid, [event.target.id]: true }
+      formValid: { ...this.state.formValid, [event.target.id]: true },
     });
     this.props.handleInputChange(event.target.id, event.target.value);
   };
 
-  handleCheckbox = name => event => {
+  handleCheckbox = (name) => (event) => {
     this.setState({
-      values: { ...this.state.values, [name]: event.target.checked }
+      values: { ...this.state.values, [name]: event.target.checked },
     });
     if (event.target.checked) {
       this.props.handleInputChange(name, event.target.checked);
@@ -79,13 +79,13 @@ class DmpForm extends React.Component {
     for (let value in values) {
       switch (value) {
         case 'material':
-          isValidOption = this.props.form.materials.some(function(el) {
+          isValidOption = this.props.form.materials.some(function (el) {
             return el === values[value];
           });
           formValid[value] = isValidOption && values[value].length > 0;
           break;
         case 'application':
-          isValidOption = this.props.form.applications.some(function(el) {
+          isValidOption = this.props.form.applications.some(function (el) {
             return el === values[value];
           });
           formValid[value] = isValidOption && values[value].length > 0;
@@ -124,8 +124,8 @@ class DmpForm extends React.Component {
     }
     this.setState({
       formValid: {
-        ...formValid
-      }
+        ...formValid,
+      },
     });
     // checked all fields, now check form
     return this.validateForm();
@@ -148,7 +148,7 @@ class DmpForm extends React.Component {
       gridIsLoading,
       nothingToChange,
       gridNumberOfSamples,
-      submitRowNumberUpdate
+      submitRowNumberUpdate,
     } = this.props;
     const { formValid, values } = this.state;
     console.log(this.props);
@@ -159,7 +159,7 @@ class DmpForm extends React.Component {
             <form
               id="dmp-upload-form"
               className={classes.form}
-              onSubmit={e => this.handleSubmit(e, handleSubmit)}
+              onSubmit={(e) => this.handleSubmit(e, handleSubmit)}
             >
               <Dropdown
                 id="material"
@@ -167,14 +167,14 @@ class DmpForm extends React.Component {
                 onChange={this.handleDropdownChange}
                 onSelect={this.handleDropdownChange}
                 autofocus={true}
-                items={form.materials.map(option => ({
+                items={form.materials.map((option) => ({
                   value: option,
-                  label: option
+                  label: option,
                 }))}
                 loading={form.formIsLoading}
                 value={{
                   value: form.selected.material,
-                  label: form.selected.material
+                  label: form.selected.material,
                 }}
               />
 
@@ -183,14 +183,14 @@ class DmpForm extends React.Component {
                 error={!formValid.application}
                 onChange={this.handleDropdownChange}
                 onSelect={this.handleDropdownChange}
-                items={form.applications.map(option => ({
+                items={form.applications.map((option) => ({
                   value: option,
-                  label: option
+                  label: option,
                 }))}
                 loading={form.formIsLoading}
                 value={{
                   value: form.selected.application,
-                  label: form.selected.application
+                  label: form.selected.application,
                 }}
               />
 
@@ -199,7 +199,7 @@ class DmpForm extends React.Component {
                 error={!formValid.numberOfSamples}
                 onChange={this.handleChange}
                 inputProps={{
-                  inputProps: { min: 0 }
+                  inputProps: { min: 0 },
                 }}
                 value={form.selected.numberOfSamples}
               />
@@ -208,7 +208,7 @@ class DmpForm extends React.Component {
                 <Checkbox
                   id="isShared"
                   checked={form.selected.isShared || false}
-                  onChange={e => this.handleCheckbox('isShared')}
+                  onChange={(e) => this.handleCheckbox('isShared')}
                 />
                 {form.selected.isShared && (
                   <Input
@@ -240,7 +240,6 @@ class DmpForm extends React.Component {
                 isLoading={gridIsLoading}
                 nothingToSubmit={nothingToChange}
               />
-             
             </div>
           </Paper>
         )}
@@ -249,7 +248,7 @@ class DmpForm extends React.Component {
   }
 }
 
-const styles = theme => ({
+const styles = (theme) => ({
   container: {
     // backgroundColor: "rgba(143, 199, 232, .1)",
     gridArea: 'form',
@@ -259,24 +258,24 @@ const styles = theme => ({
     maxWidth: '1700px',
     margin: '2em auto',
     padding: '1em',
-    marginBottom: '4em'
+    marginBottom: '4em',
   },
   form: {
     display: 'flex',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
 
   lastItem: {
     flexBasis: '100%',
     marginTop: '2em',
-    width: 310
+    width: 310,
   },
 
   dense: {
-    marginTop: 19
+    marginTop: 19,
   },
   menu: {
-    width: 200
+    width: 200,
   },
 
   buttonProgress: {
@@ -284,15 +283,15 @@ const styles = theme => ({
     top: '50%',
     left: '50%',
     marginTop: -12,
-    marginLeft: -12
+    marginLeft: -12,
   },
   nothingToChange: {
     position: 'absolute',
     top: '50%',
     left: '50%',
     marginTop: -53,
-    marginLeft: -65
-  }
+    marginLeft: -65,
+  },
 });
 
 export default withStyles(styles)(DmpForm);

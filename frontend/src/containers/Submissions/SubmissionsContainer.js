@@ -36,11 +36,11 @@ export class SubmissionsPage extends Component {
     }
   };
 
-  handleEdit = submissionId => {
+  handleEdit = (submissionId) => {
     return this.props.populateGridFromSubmission(submissionId, this.props);
   };
 
-  handleUnsubmit = submissionId => {
+  handleUnsubmit = (submissionId) => {
     return this.props.unsubmit(submissionId, this.props.gridType);
   };
 
@@ -51,8 +51,8 @@ export class SubmissionsPage extends Component {
       this.props.gridType
     );
   };
-  handleDelete = submissionId => {
-    swal.confirmDelete().then(decision => {
+  handleDelete = (submissionId) => {
+    swal.confirmDelete().then((decision) => {
       if (decision) {
         this.props.deleteSubmission(submissionId, this.props.gridType);
       }
@@ -73,14 +73,14 @@ export class SubmissionsPage extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  submissions: state.submissions
+const mapStateToProps = (state) => ({
+  submissions: state.submissions,
 });
 
 export default withLocalize(
   connect(mapStateToProps, {
     resetErrorMessage,
     ...gridActions,
-    ...submissionActions
+    ...submissionActions,
   })(SubmissionsPage)
 );

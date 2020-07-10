@@ -70,16 +70,21 @@ exports.unsubmit = [
 
     let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
 
-    model.findByIdAndUpdate(ObjectId(req.body.id), {
-      submitted: false,
-    }).exec(function (err, submission) {
-      if (err) {
-        return apiResponse.errorResponse(res, 'Could not retrieve submission.');
-      }
-      return apiResponse.successResponseWithData(res, 'Operation success', {
-        submission,
+    model
+      .findByIdAndUpdate(ObjectId(req.body.id), {
+        submitted: false,
+      })
+      .exec(function (err, submission) {
+        if (err) {
+          return apiResponse.errorResponse(
+            res,
+            'Could not retrieve submission.'
+          );
+        }
+        return apiResponse.successResponseWithData(res, 'Operation success', {
+          submission,
+        });
       });
-    });
   },
 ];
 

@@ -29,5 +29,5 @@ export {
   UploadGrid,
   GridButton,
   EditPanel,
-  DmpForm
+  DmpForm,
 };

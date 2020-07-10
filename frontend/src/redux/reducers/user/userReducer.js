@@ -1,6 +1,6 @@
 import {
   formActions as FormActionTypes,
-  userActions as ActionTypes
+  userActions as ActionTypes,
 } from '../../actions';
 import FileSaver from 'file-saver';
 const initialState = {
@@ -10,7 +10,7 @@ const initialState = {
   saved: false,
   submissionsTable: {},
   isSaving: false,
-  role: ''
+  role: '',
 };
 
 function userReducer(state = initialState, action) {

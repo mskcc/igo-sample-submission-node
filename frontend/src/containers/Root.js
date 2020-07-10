@@ -34,8 +34,8 @@ class Root extends Component {
       options: {
         renderToStaticMarkup,
         renderInnerHtml: false,
-        defaultLanguage: 'en'
-      }
+        defaultLanguage: 'en',
+      },
     });
   }
 
@@ -57,7 +57,7 @@ class Root extends Component {
     // this.props.resetErrorMessage()
   };
 
-  escFunction = event => {
+  escFunction = (event) => {
     if (event.keyCode === 27) {
       //Do whatever when esc is pressed
       this.props.resetMessage();
@@ -83,26 +83,26 @@ class Root extends Component {
                   <div>
                     <Route
                       path="/(upload|)"
-                      render={routeProps => (
+                      render={(routeProps) => (
                         <UploadPage {...routeProps} gridType="upload" />
                       )}
                     />
                     <Route path="/promote" component={PromotePage} />
                     <Route
                       path="/submissions/igo"
-                      render={routeProps => (
+                      render={(routeProps) => (
                         <SubmissionsPage {...routeProps} gridType="upload" />
                       )}
                     />
                     <Route
                       path="/submissions/dmp"
-                      render={routeProps => (
+                      render={(routeProps) => (
                         <SubmissionsPage {...routeProps} gridType="dmp" />
                       )}
                     />
                     <Route
                       path="/dmp"
-                      render={routeProps => (
+                      render={(routeProps) => (
                         <UploadPage {...routeProps} gridType="dmp" />
                       )}
                     />
@@ -130,34 +130,34 @@ class Root extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   common: state.common,
-  ...state.user
+  ...state.user,
 });
 const mapDispatchToProps = {
   ...commonActions,
-  ...userActions
+  ...userActions,
 };
 
 export default withLocalize(connect(mapStateToProps, mapDispatchToProps)(Root));
 
 const theme = createMuiTheme({
   typography: {
-    useNextVariants: true
+    useNextVariants: true,
   },
   palette: {
     primary: {
       logo: '#319ae8',
       light: '#8FC7E8',
       main: '#007CBA',
-      dark: '#006098'
+      dark: '#006098',
     },
     secondary: {
       light: '#F6C65B',
       main: '#DF4602',
-      dark: '#C24D00'
+      dark: '#C24D00',
     },
 
-    textSecondary: '#e0e0e0'
-  }
+    textSecondary: '#e0e0e0',
+  },
 });

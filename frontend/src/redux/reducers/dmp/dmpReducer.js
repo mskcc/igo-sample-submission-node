@@ -4,6 +4,6 @@ import dmpFormReducer from './dmpFormReducer';
 // // import gridReducer from './gridReducer';
 
 export default combineReducers({
-  form: dmpFormReducer
+  form: dmpFormReducer,
   //   grid: gridReducer,
 });

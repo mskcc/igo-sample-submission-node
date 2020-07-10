@@ -7,7 +7,7 @@ const initialState = {
   saved: false,
   grid: { columnHeaders: [], rows: [], columnFeatures: [] },
   isSaving: false,
-  submissionToEdit: undefined
+  submissionToEdit: undefined,
 };
 
 function submissionsReducer(state = initialState, action) {
@@ -15,7 +15,7 @@ function submissionsReducer(state = initialState, action) {
     case ActionTypes.GET_SUBMISSIONS:
       return {
         ...state,
-        loading: true
+        loading: true,
       };
     case ActionTypes.GET_SUBMISSIONS_FAIL:
       return { ...state, loading: false };
@@ -24,13 +24,13 @@ function submissionsReducer(state = initialState, action) {
       return {
         ...state,
         grid: action.payload,
-        loading: false
+        loading: false,
       };
 
     case ActionTypes.GET_SUBMISSIONS_SINCE:
       return {
         ...state,
-        loading: true
+        loading: true,
       };
     case ActionTypes.GET_SUBMISSIONS_SINCE_FAIL:
       return { ...state, loading: false };
@@ -39,19 +39,19 @@ function submissionsReducer(state = initialState, action) {
       return {
         ...state,
         grid: action.payload,
-        loading: false
+        loading: false,
       };
 
     case ActionTypes.CREATE_PARTIAL_SUBMISSION:
       return {
         ...state,
-        isSaving: true
+        isSaving: true,
       };
     case ActionTypes.CREATE_PARTIAL_SUBMISSION_FAIL:
       return {
         ...state,
         isSaving: false,
-        submissionToEdit: undefined
+        submissionToEdit: undefined,
       };
 
     case ActionTypes.CREATE_PARTIAL_SUBMISSION_SUCCESS:
@@ -69,19 +69,19 @@ function submissionsReducer(state = initialState, action) {
           container: action.payload.formValues.container,
           username: action.payload.username,
           createdAt: util.parseDate(action.payload.createdAt),
-          updatedAt: util.parseDate(action.payload.updatedAt)
-        }
+          updatedAt: util.parseDate(action.payload.updatedAt),
+        },
       };
 
     case ActionTypes.UPDATE_PARTIAL_SUBMISSION:
       return {
         ...state,
-        isSaving: true
+        isSaving: true,
       };
     case ActionTypes.UPDATE_PARTIAL_SUBMISSION_FAIL:
       return {
         ...state,
-        isSaving: false
+        isSaving: false,
       };
 
     case ActionTypes.UPDATE_PARTIAL_SUBMISSION_SUCCESS:
@@ -99,36 +99,36 @@ function submissionsReducer(state = initialState, action) {
           container: action.payload.formValues.container,
           username: action.payload.username,
           createdAt: util.parseDate(action.payload.createdAt),
-          updatedAt: util.parseDate(action.payload.updatedAt)
-        }
+          updatedAt: util.parseDate(action.payload.updatedAt),
+        },
       };
 
     case ActionTypes.SUBMIT:
     case ActionTypes.DMP_SUBMIT:
       return {
-        ...state
+        ...state,
       };
     case ActionTypes.SUBMIT_FAIL:
     case ActionTypes.DMP_SUBMIT_FAIL:
       return {
-        ...state
+        ...state,
       };
     case ActionTypes.SUBMIT_SUCCESS:
     case ActionTypes.DMP_SUBMIT_SUCCESS:
       return {
-        ...initialState
+        ...initialState,
       };
 
     case ActionTypes.EDIT_SUBMISSION:
       return {
-        ...state
+        ...state,
         // loading: true,
       };
 
     case ActionTypes.DELETE_SUBMISSION:
       return {
         ...state,
-        isSaving: true
+        isSaving: true,
       };
     case ActionTypes.DELETE_SUBMISSION_FAIL:
       return { ...state, isSaving: false };
@@ -137,7 +137,7 @@ function submissionsReducer(state = initialState, action) {
       return {
         ...state,
         isSaving: false,
-        saved: true
+        saved: true,
       };
 
     case ActionTypes.BUTTON_RESET: {
@@ -146,16 +146,16 @@ function submissionsReducer(state = initialState, action) {
 
     case ActionTypes.DOWNLOAD_RECEIPT:
       return {
-        ...state
+        ...state,
       };
 
     case ActionTypes.DOWNLOAD_RECEIPT_FAIL:
       return {
-        ...state
+        ...state,
       };
     case ActionTypes.DOWNLOAD_RECEIPT_SUCCESS:
       return {
-        ...state
+        ...state,
       };
 
     //  STRANGER DANGER
@@ -183,8 +183,8 @@ function submissionsReducer(state = initialState, action) {
           container: action.payload.formValues.container,
           username: action.payload.username,
           createdAt: util.parseDate(action.payload.createdAt),
-          updatedAt: util.parseDate(action.payload.updatedAt)
-        }
+          updatedAt: util.parseDate(action.payload.updatedAt),
+        },
       };
 
     default:

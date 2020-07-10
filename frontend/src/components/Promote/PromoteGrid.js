@@ -5,7 +5,7 @@ import {
   Paper,
   IconButton,
   InputBase,
-  InputAdornment
+  InputAdornment,
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { HotTable } from '@handsontable/react';
@@ -20,19 +20,19 @@ class PromoteGrid extends Component {
       serviceId: '',
       investigator: '',
       requestId: '',
-      projectId: ''
+      projectId: '',
     };
     this.hotTableComponent = React.createRef();
   }
 
-  handleChange = event => {
+  handleChange = (event) => {
     this.setState({
       ...this.state,
-      [event.target.id]: event.target.value
+      [event.target.id]: event.target.value,
     });
   };
 
-  handleLoad = queryType => {
+  handleLoad = (queryType) => {
     let query = this.state[queryType];
     this.props.handleLoad(queryType, query);
   };
@@ -41,7 +41,7 @@ class PromoteGrid extends Component {
     var selected = this.hotTableComponent.current.hotInstance.getSelected();
     if (selected) {
       var selectedRows = [];
-      this.props.promote.rows.map(row => {
+      this.props.promote.rows.map((row) => {
         if (row.select) {
           selectedRows.push(row);
         }
@@ -76,7 +76,7 @@ class PromoteGrid extends Component {
                 value={this.state.serviceId}
                 placeholder="Service ID"
                 onChange={this.handleChange}
-                onKeyPress={event => {
+                onKeyPress={(event) => {
                   if (event.key === 'Enter') {
                     this.handleLoad('serviceId');
                   }
@@ -85,7 +85,7 @@ class PromoteGrid extends Component {
               <Divider className={classes.divider} orientation="vertical" />
               <IconButton
                 className={classes.iconButton}
-                onClick={e => this.handleLoad('serviceId')}
+                onClick={(e) => this.handleLoad('serviceId')}
                 aria-label="search"
               >
                 <SearchIcon />
@@ -98,7 +98,7 @@ class PromoteGrid extends Component {
                 value={this.state.investigator}
                 placeholder="Investigator"
                 onChange={this.handleChange}
-                onKeyPress={event => {
+                onKeyPress={(event) => {
                   if (event.key === 'Enter') {
                     this.handleLoad('investigator');
                   }
@@ -107,7 +107,7 @@ class PromoteGrid extends Component {
               <Divider className={classes.divider} orientation="vertical" />
               <IconButton
                 className={classes.iconButton}
-                onClick={e => this.handleLoad('investigator')}
+                onClick={(e) => this.handleLoad('investigator')}
                 aria-label="search"
               >
                 <SearchIcon />
@@ -189,39 +189,39 @@ class PromoteGrid extends Component {
   }
 }
 
-const styles = theme => ({
+const styles = (theme) => ({
   container: {
     display: 'grid',
     gridTemplateAreas: '"actions" "grid"',
     marginLeft: theme.spacing(2),
     width: '95vw',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   actions: {
     display: 'grid',
-    gridTemplateAreas: '"load submit"'
+    gridTemplateAreas: '"load submit"',
   },
   load: {
     gridArea: 'load',
     alignSelf: 'center',
-    justifySelf: 'center'
+    justifySelf: 'center',
   },
   loadPaper: {
     display: 'flex',
     margin: '1em',
     height: 'min-content',
     width: 'max-content',
-    border: '2px solid lightgray'
+    border: '2px solid lightgray',
   },
   divider: {
-    height: 50
+    height: 50,
   },
   iconButton: {
-    padding: 10
+    padding: 10,
   },
   input: {
     marginLeft: theme.spacing(1),
-    flex: 1
+    flex: 1,
   },
   submit: {
     borderLeft: '1px solid lightgray',
@@ -229,17 +229,17 @@ const styles = theme => ({
     gridTemplateAreas: '"inputs buttons"',
     width: 'min-content',
     alignItems: 'center',
-    gridColumnGap: '2em'
+    gridColumnGap: '2em',
   },
   btn: {
-    width: 350
+    width: 350,
   },
 
   tooltipCell: {
     fontSize: '.8em',
     color: 'black !important',
-    backgroundColor: '#cfd8dc !important'
-  }
+    backgroundColor: '#cfd8dc !important',
+  },
 });
 
 export default withStyles(styles)(PromoteGrid);

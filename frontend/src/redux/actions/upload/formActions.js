@@ -30,16 +30,16 @@ export function getInitialState() {
       dispatch({ type: REQUEST_INITIAL_STATE });
       return services
         .getHeaderValues('upload')
-        .then(response => {
+        .then((response) => {
           return dispatch({
             type: RECEIVE_INITIAL_STATE_SUCCESS,
             form_data: response.payload,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           return dispatch({
             type: RECEIVE_INITIAL_STATE_FAIL,
-            error: error
+            error: error,
           });
         });
     }
@@ -61,7 +61,7 @@ export function getMaterialsForApplication(
   selectedApplication,
   checkForMismatch = true
 ) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({ type: SELECT_APPLICATION, selectedApplication });
     dispatch({ type: REQUEST_DATA_FOR_APPLICATION });
     checkForMismatch &&
@@ -70,20 +70,20 @@ export function getMaterialsForApplication(
       .get(Config.NODE_API_ROOT + '/upload/materialsAndSpecies', {
         params: {
           // weird, legacy slash workaround, has to be changed in /LimsRest/getIntakeTerms
-          recipe: selectedApplication
-        }
+          recipe: selectedApplication,
+        },
       })
-      .then(response => {
+      .then((response) => {
         return dispatch({
           type: RECEIVE_DATA_FOR_APPLICATION_SUCCESS,
           materials: response.payload.materials,
-          species: response.payload.species
+          species: response.payload.species,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         return dispatch({
           type: RECEIVE_DATA_FOR_APPLICATION_FAIL,
-          error: error
+          error: error,
         });
       });
   };
@@ -92,7 +92,7 @@ export function getMaterialsForApplication(
 export const UPDATE_HEADER = 'UPDATE_HEADER';
 
 export function updateHeader(formValues) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch(getApplicationsForMaterial(formValues.material, false));
     dispatch(getMaterialsForApplication(formValues.application, false));
   };
@@ -101,7 +101,7 @@ export function updateHeader(formValues) {
 export const SELECT = 'SELECT';
 
 export function select(id, value, checkForMismatch = true) {
-  return dispatch => {
+  return (dispatch) => {
     if (
       id === 'species' ||
       id === 'container' ||
@@ -111,14 +111,14 @@ export function select(id, value, checkForMismatch = true) {
       checkForMismatch && dispatch(checkForChange(id, value));
       return dispatch({
         type: SELECT,
-        payload: { id: id, value: value }
+        payload: { id: id, value: value },
       });
     }
     if (id === 'service_id') {
       return dispatch({
         type: SELECT,
         payload: { id: id, value: value },
-        message: 'Service Id updated.'
+        message: 'Service Id updated.',
       });
     }
 
@@ -128,7 +128,7 @@ export function select(id, value, checkForMismatch = true) {
           type: SELECT,
           payload: { id: id, value: value },
           message:
-            'A sample set this large might lead to performance issues. We recommend keeping it below 200 and submitting mutliple requests if necessary.'
+            'A sample set this large might lead to performance issues. We recommend keeping it below 200 and submitting mutliple requests if necessary.',
         });
       }
     }
@@ -137,7 +137,7 @@ export function select(id, value, checkForMismatch = true) {
         type: SELECT,
         payload: { id: id, value: value },
         message:
-          'Select any container in the dropdown, you’ll be able to specify multiple containers in the submission grid.'
+          'Select any container in the dropdown, you’ll be able to specify multiple containers in the submission grid.',
       });
     } else {
       return dispatch({ type: SELECT, payload: { id: id, value: value } });
@@ -148,13 +148,13 @@ export function select(id, value, checkForMismatch = true) {
 export const CLEAR = 'CLEAR';
 
 export function clear(id) {
-  return dispatch => {
+  return (dispatch) => {
     return dispatch({ type: CLEAR, payload: { id: id } });
   };
 }
 export const CLEAR_FORM = 'CLEAR_FORM';
 export function clearForm() {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({ type: CLEAR_FORM });
     dispatch(getInitialState()).then(() => {
       window.location.reload();
@@ -179,27 +179,27 @@ export function getApplicationsForMaterial(
   selectedMaterial,
   checkForMismatch = true
 ) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({ type: SELECT_MATERIAL, selectedMaterial });
     dispatch({ type: REQUEST_APPLICATIONS_FOR_MATERIAL });
     checkForMismatch && dispatch(checkForChange('material', selectedMaterial));
     return axios
       .get(Config.NODE_API_ROOT + '/upload/applicationsAndContainers', {
         params: {
-          material: selectedMaterial
-        }
+          material: selectedMaterial,
+        },
       })
-      .then(response => {
+      .then((response) => {
         return dispatch({
           type: RECEIVE_APPLICATIONS_FOR_MATERIAL_SUCCESS,
           applications: response.payload.applications,
-          containers: response.payload.containers
+          containers: response.payload.containers,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         return dispatch({
           type: RECEIVE_APPLICATIONS_FOR_MATERIAL_FAIL,
-          error: error
+          error: error,
         });
       });
   };
@@ -226,7 +226,7 @@ export const clearApplication = () => {
 export const CLEARED = 'CLEARED';
 // timeout for CLEARED to show user loading animation to indicate change
 export const cleared = () => {
-  return dispatch => {
+  return (dispatch) => {
     return setTimeout(() => {
       dispatch({ type: CLEARED });
     }, 500);
@@ -241,7 +241,7 @@ export const checkForChange = (field, value) => {
     ) {
       dispatch({
         type: MESSAGE,
-        message: 'Make sure to re-generate your table to persist this change.'
+        message: 'Make sure to re-generate your table to persist this change.',
       });
     }
   };

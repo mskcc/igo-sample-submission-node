@@ -11,7 +11,7 @@ export const downloadExcel = (data, fileName) => {
   const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
   const excelBuffer = XLSX.write(wb, {
     bookType: 'xlsx',
-    type: 'array'
+    type: 'array',
   });
   const blob = new Blob([excelBuffer], { type: fileType });
   FileSaver.saveAs(blob, fileName + fileExtension);
