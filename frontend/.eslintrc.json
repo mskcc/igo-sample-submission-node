@@ -3,7 +3,7 @@
   "plugins": ["prettier"],
   "rules": {
     "quotes": [
-      "error",
+      "warn",
       "single"
     ],
 

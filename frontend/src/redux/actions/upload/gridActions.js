@@ -434,28 +434,18 @@ export const DOWNLOAD_GRID_SUCCESS = 'DOWNLOAD_GRID_SUCCESS';
 export function downloadGrid() {
     return (dispatch, getState) => {
         dispatch({ type: DOWNLOAD_GRID });
-        let gridJson = JSON.stringify(getState().upload.grid.rows);
+        let rows = getState().upload.grid.rows;
+        let columns = getState().upload.grid.columnFeatures;
         let material = getState().upload.grid.form.material;
         let application = getState().upload.grid.form.application;
         let data = {
-            grid: gridJson,
+            columns:columns,
+            rows: rows,
             material: material,
             application: application,
         };
-        services
-            .downloadGrid(data)
-            .then((response) => {
-                excel.downloadExcel(response.payload.excelData, response.payload.fileName);
-                return dispatch({
-                    type: DOWNLOAD_GRID_SUCCESS,
-                });
-            })
-            .catch((error) => {
-                return dispatch({
-                    type: DOWNLOAD_GRID_FAIL,
-                    error: error,
-                });
-            });
+        excel.downloadExcelTest(data);
+        
     };
 }
 

@@ -12,6 +12,21 @@ class UploadGrid extends React.Component {
         this.hotTableComponent = React.createRef();
     }
 
+    // test = () => {
+    //   this.hotTableComponent.current.hotInstance.getPlugin('exportFile').downloadFile('csv', {
+    //         bom: false,
+    //         columnDelimiter: ',',
+    //         columnHeaders: false,
+    //         exportHiddenColumns: true,
+    //         exportHiddenRows: true,
+    //         fileExtension: 'csv',
+    //         filename: 'Handsontable-CSV-file_[YYYY]-[MM]-[DD]',
+    //         mimeType: 'text/csv',
+    //         rowDelimiter: '\r\n',
+    //         rowHeaders: true
+    //     });
+    // };
+
     render() {
         const {
             classes,
@@ -51,6 +66,7 @@ class UploadGrid extends React.Component {
                             nothingToSubmit={false}
                             color="primary"
                         />
+                        {/* <GridButton id="gridExportTest" onClick={this.test} isLoading={false} nothingToSubmit={false} color="primary" /> */}
                         <GridButton
                             id="gridClear"
                             onClick={this.props.handleClear}
