@@ -34,15 +34,12 @@ class Root extends Component {
             options: {
                 renderToStaticMarkup,
                 renderInnerHtml: false,
-                defaultLanguage: 'en',
-            },
+                defaultLanguage: 'en'
+            }
         });
     }
 
     componentDidMount() {
-        // making sure BE and FE versions match - shows info message if not
-        // this.props.checkVersion()
-        // this.props.refreshToken()
         document.addEventListener('keydown', this.escFunction, false);
         if (!this.props.username) {
             this.props.fetchUser();
@@ -57,7 +54,7 @@ class Root extends Component {
         // this.props.resetErrorMessage()
     };
 
-    escFunction = (event) => {
+    escFunction = event => {
         if (event.keyCode === 27) {
             //Do whatever when esc is pressed
             this.props.resetMessage();
@@ -79,20 +76,17 @@ class Root extends Component {
                                 <React.Fragment>
                                     {this.props.common.loading && <CircularProgress color="secondary" size={24} />}
                                     <div>
-                                        <Route
-                                            path="/(upload|)"
-                                            render={(routeProps) => <UploadPage {...routeProps} gridType="upload" />}
-                                        />
+                                        <Route path="/(upload|)" render={routeProps => <UploadPage {...routeProps} gridType="upload" />} />
                                         <Route path="/promote" component={PromotePage} />
                                         <Route
                                             path="/submissions/igo"
-                                            render={(routeProps) => <SubmissionsPage {...routeProps} gridType="upload" />}
+                                            render={routeProps => <SubmissionsPage {...routeProps} gridType="upload" />}
                                         />
                                         <Route
                                             path="/submissions/dmp"
-                                            render={(routeProps) => <SubmissionsPage {...routeProps} gridType="dmp" />}
+                                            render={routeProps => <SubmissionsPage {...routeProps} gridType="dmp" />}
                                         />
-                                        <Route path="/dmp" render={(routeProps) => <UploadPage {...routeProps} gridType="dmp" />} />
+                                        <Route path="/dmp" render={routeProps => <UploadPage {...routeProps} gridType="dmp" />} />
                                         <Route path="/logout" component={Logout} />
                                         <Route path="/error" component={ErrorPage} />
                                     </div>{' '}
@@ -116,34 +110,34 @@ class Root extends Component {
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
     common: state.common,
-    ...state.user,
+    ...state.user
 });
 const mapDispatchToProps = {
     ...commonActions,
-    ...userActions,
+    ...userActions
 };
 
 export default withLocalize(connect(mapStateToProps, mapDispatchToProps)(Root));
 
 const theme = createMuiTheme({
     typography: {
-        useNextVariants: true,
+        useNextVariants: true
     },
     palette: {
         primary: {
             logo: '#319ae8',
             light: '#8FC7E8',
             main: '#007CBA',
-            dark: '#006098',
+            dark: '#006098'
         },
         secondary: {
             light: '#F6C65B',
             main: '#DF4602',
-            dark: '#C24D00',
+            dark: '#C24D00'
         },
 
-        textSecondary: '#e0e0e0',
-    },
+        textSecondary: '#e0e0e0'
+    }
 });

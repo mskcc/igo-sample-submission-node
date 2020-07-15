@@ -537,6 +537,15 @@ export const checkGridAndForm = (form, grid) => {
         '${grid.patientIdType}'`
         );
     }
+
+    if (form.patientIdTypeSpecified !== grid.patientIdTypeSpecified) {
+        errors.add(
+            `Patient ID Type (specified): 
+        '${form.patientIdTypeSpecified}'
+         vs. 
+        '${grid.patientIdTypeSpecified}'`
+        );
+    }
     if (form.groupingChecked !== grid.groupingChecked) {
         errors.add(
             `Groups pairs or replicates: 

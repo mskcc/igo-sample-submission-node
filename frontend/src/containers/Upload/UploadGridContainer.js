@@ -7,10 +7,10 @@ import { util, swal } from '../../util';
 import { UploadGrid } from '../../components';
 
 class UploadGridContainer extends React.Component {
-    handleChange = (changes) => {
+    handleChange = changes => {
         this.props.registerGridChange(changes);
     };
-    handleMRN = (rowIndex) => {
+    handleMRN = rowIndex => {
         this.props.handleMRN(rowIndex);
     };
     handleIndex = (colIndex, rowIndex, newValue) => {
@@ -25,7 +25,7 @@ class UploadGridContainer extends React.Component {
     };
 
     handleClear = () => {
-        swal.confirmGridClear().then((decision) => {
+        swal.confirmGridClear().then(decision => {
             decision && this.props.handleClear();
         });
     };
@@ -40,7 +40,7 @@ class UploadGridContainer extends React.Component {
             return swal.formGridMismatch(match);
         }
 
-        this.props.createPartialSubmission(this.props.grid);
+        this.props.createPartialSubmission(gridType);
     };
 
     handleUpdate = () => {
@@ -53,9 +53,9 @@ class UploadGridContainer extends React.Component {
             return swal.formGridMismatch(match);
         }
 
-        swal.confirmUpdate().then((decision) => {
+        swal.confirmUpdate().then(decision => {
             if (decision) {
-                this.props.updatePartialSubmission(this.props.updatePartialSubmission);
+                this.props.updatePartialSubmission(gridType);
             }
         });
     };
@@ -83,7 +83,7 @@ class UploadGridContainer extends React.Component {
                             'Publish to DMP?',
                             'Submitting publishes the approved samples to the DMP and you will not be able to edit this submission again. <br> If you are not ready to publish, made changes unrelated to approval or a fixing user errors, use the save button instead.'
                         )
-                        .then((decision) => decision && this.props.submitDmpSubmission(reviewed));
+                        .then(decision => decision && this.props.submitDmpSubmission(reviewed));
                 }
                 return this.props.submitDmpSubmission();
             } else return this.props.submitSubmission();
@@ -131,23 +131,23 @@ UploadGridContainer.defaultProps = {
     handleSave: () => {},
     preValidate: () => {},
     handlePatientId: () => {},
-    handleClear: () => {},
+    handleClear: () => {}
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
     grid: state.upload.grid,
     form: state.upload.form,
     upload: state.upload,
     dmp: state.dmp,
 
     submissionToEdit: state.submissions.submissionToEdit,
-    user: state.user,
+    user: state.user
 });
 
 const mapDispatchToProps = {
     ...gridActions,
     ...submissionActions,
-    ...userActions,
+    ...userActions
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UploadGridContainer);

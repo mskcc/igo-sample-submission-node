@@ -33,7 +33,6 @@ exports.submission = [
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
         let submissionType = req.params.type;
-        console.log(submissionType);
         let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
         model.findById(ObjectId(req.params.id)).exec(function (err, submission) {
             if (err || !submission) {

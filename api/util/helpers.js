@@ -384,11 +384,9 @@ export function generateSubmissionGrid(submissions, userRole, submissionType) {
 
             if (userRole === 'user') {
                 grid.columnHeaders = grid.columnHeaders.filter((element) => {
-                    console.log(element);
                     return element !== 'Unsubmit' && element !== 'Review';
                 });
                 grid.columnFeatures = grid.columnFeatures.filter((element) => {
-                    console.log(element);
                     return element.name !== 'Unsubmit' && element.name !== 'Review';
                 });
             }
@@ -421,7 +419,6 @@ export function generateSubmissionGrid(submissions, userRole, submissionType) {
                     } class="material-icons grid-action${isSubmitted ? '-disabled' : ''}">delete</span>`,
                 };
 
-                console.log(submissionType);
                 if (submissionType === 'dmp') {
                     let isReviewed = submission.reviewed;
                     rows[i].samplesApproved = `${submission.samplesApproved}/${submission.formValues.numberOfSamples} samples`;

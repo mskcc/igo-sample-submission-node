@@ -108,7 +108,8 @@ exports.promote = [
                     promoteResult = result;
                     return apiResponse.successResponse(res, promoteResult);
                 } else {
-                    return apiResponse.successResponse(res, `Successfully promoted ${bankedSampleIds}`);
+                    promoteResult = result;
+                    return apiResponse.successResponse(res, promoteResult);
                 }
             })
             .catch(function (err) {

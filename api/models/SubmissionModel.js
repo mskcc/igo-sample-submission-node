@@ -13,6 +13,7 @@ var FormSchema = new mongoose.Schema({
     material: { type: String, required: true },
     numberOfSamples: { type: Number, required: true },
     patientIdType: { type: String, required: false },
+    patientIdTypeSpecified: { type: String, required: false },
     serviceId: { type: String, required: true },
     species: { type: String, required: true },
 });

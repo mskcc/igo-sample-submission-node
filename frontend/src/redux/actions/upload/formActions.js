@@ -213,7 +213,7 @@ export const cleared = () => {
 
 export const checkForChange = (field, value) => {
     return (dispatch, getState) => {
-        if (getState().upload.grid.form[field] && getState().upload.grid.form[field] !== value) {
+        if (!getState().upload.grid.form[field] || getState().upload.grid.form[field] !== value) {
             dispatch({
                 type: MESSAGE,
                 message: 'Make sure to re-generate your table to persist this change.',
