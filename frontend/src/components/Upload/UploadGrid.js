@@ -32,48 +32,48 @@ class UploadGrid extends React.Component {
             <div>
                 <div className={classes.container}>
                     {submissionToEdit && submissionToEdit.gridType === gridType && (
-                        <EditPanel userRole="lab_member" submission={submissionToEdit} />
+                        <EditPanel userRole='lab_member' submission={submissionToEdit} />
                     )}
                     <div className={classes.buttons}>
                         {gridType === 'upload' ? (
-                            <GridButton id="gridSubmit" onClick={handleSubmit} isLoading={false} nothingToSubmit={false} color="primary" />
+                            <GridButton id='gridSubmit' onClick={handleSubmit} isLoading={false} nothingToSubmit={false} color='primary' />
                         ) : (
                             <GridButton
-                                id="gridSubmitDmp"
+                                id='gridSubmitDmp'
                                 onClick={handleSubmit}
                                 isLoading={false}
                                 nothingToSubmit={false}
-                                color="primary"
+                                color='primary'
                             />
                         )}
                         {submissionToEdit && (
                             <GridButton
-                                id="gridUpdate"
+                                id='gridUpdate'
                                 onClick={handleUpdate}
                                 isLoading={user.isSaving}
                                 done={user.saved}
-                                color="primary"
+                                color='primary'
                             />
                         )}
-                        <GridButton id="gridSaveNew" onClick={handleSave} isLoading={user.isSaving} done={user.saved} color="primary" />
+                        <GridButton id='gridSaveNew' onClick={handleSave} isLoading={user.isSaving} done={user.saved} color='primary' />
                         <GridButton
-                            id="gridExport"
+                            id='gridExport'
                             onClick={this.props.handleDownload}
                             isLoading={false}
                             nothingToSubmit={false}
-                            color="primary"
+                            color='primary'
                         />
                         <GridButton
-                            id="gridClear"
+                            id='gridClear'
                             onClick={this.props.handleClear}
                             isLoading={false}
                             nothingToSubmit={false}
-                            color="secondary"
+                            color='secondary'
                         />
                     </div>
                     <HotTable
-                        licenseKey="non-commercial-and-evaluation"
-                        id="hot"
+                        licenseKey='non-commercial-and-evaluation'
+                        id='hot'
                         data={grid.rows}
                         colHeaders={grid.columnHeaders}
                         columns={grid.columnFeatures}
@@ -125,8 +125,8 @@ class UploadGrid extends React.Component {
                                 }
                             }
                         }}
-                        width="95%"
-                        stretchH="all"
+                        width='95%'
+                        stretchH='all'
                         // height="10%"
                         height={() => {
                             if (grid.rows.length >= 25) return '700';

@@ -21,11 +21,11 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 describe('upload grid actions', () => {
-    beforeEach(function () {
+    beforeEach(function() {
         moxios.install();
     });
 
-    afterEach(function () {
+    afterEach(function() {
         moxios.uninstall();
     });
 

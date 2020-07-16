@@ -75,9 +75,9 @@ class SimpleSnackbar extends React.Component {
                     'aria-describedby': 'message-id',
                     className: variant ? classes[variant] : classes.info,
                 }}
-                message={<span id="message-id">{message}</span>}
+                message={<span id='message-id'>{message}</span>}
                 action={[
-                    <IconButton key="close" aria-label="Close" color="inherit" className={classes.close} onClick={this.handleClose}>
+                    <IconButton key='close' aria-label='Close' color='inherit' className={classes.close} onClick={this.handleClose}>
                         <CloseIcon />
                     </IconButton>,
                 ]}

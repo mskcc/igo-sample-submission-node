@@ -15,10 +15,10 @@ class SubmissionsGrid extends React.Component {
         let headline = gridType.toUpperCase() === 'UPLOAD' ? 'IGO Submissions' : `${gridType.toUpperCase()} Submissions`;
         return (
             <div className={classes.container}>
-                <Typography color="inherit" variant="h6">
+                <Typography color='inherit' variant='h6'>
                     {headline}
                 </Typography>
-                <ButtonGroup color="primary" size="small" aria-label="small outlined primary button group">
+                <ButtonGroup color='primary' size='small' aria-label='small outlined primary button group'>
                     <Button onClick={() => handleFilterClick('months', 1)}>Last Month</Button>
                     <Button onClick={() => handleFilterClick('months', 3)}>Last 3 Months</Button>
                     <Button onClick={() => handleFilterClick('years', 1)}>Last Year</Button>
@@ -27,19 +27,19 @@ class SubmissionsGrid extends React.Component {
                 </ButtonGroup>
 
                 <HotTable
-                    licenseKey="non-commercial-and-evaluation"
-                    id="hot"
+                    licenseKey='non-commercial-and-evaluation'
+                    id='hot'
                     ref={this.hotTableComponent}
                     data={grid.rows}
                     colHeaders={grid.columnHeaders}
                     rowHeaders={true}
                     readOnly
-                    className="htCenter"
+                    className='htCenter'
                     columns={grid.columnFeatures}
                     // stretchH="all"
-                    width="95%"
-                    filters="true"
-                    columnSorting="true"
+                    width='95%'
+                    filters='true'
+                    columnSorting='true'
                     dropdownMenu={['filter_by_value', 'filter_action_bar']}
                     // make actions clickable
                     afterOnCellMouseDown={(event, coords, TD) => {

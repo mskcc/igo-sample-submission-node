@@ -2,19 +2,17 @@ import React from 'react';
 import { Translate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 
-import { FormControl, InputAdornment, Paper, withStyles } from '@material-ui/core';
+import { FormControl, Paper, withStyles } from '@material-ui/core';
 
 import { Button, Checkbox, Dropdown, Input } from '../index';
-
-import { swal } from '../../util';
 
 class DmpForm extends React.Component {
     constructor(props) {
         super(props);
-
+        const { form } = this.props;
         this.state = {
             values: {
-                ...this.props.form.selected,
+                ...form.selected,
             },
             formValid: {
                 material: true,
@@ -26,6 +24,7 @@ class DmpForm extends React.Component {
     }
 
     handleDropdownChange = (event) => {
+        const { handleInputChange } = this.props;
         this.setState({
             values: {
                 ...this.state.values,
@@ -33,10 +32,12 @@ class DmpForm extends React.Component {
             },
             formValid: { ...this.state.formValid, [event.id]: true },
         });
-        this.props.handleInputChange(event.id, event.value);
+        handleInputChange(event.id, event.value);
     };
 
     handleChange = (event) => {
+        const { handleInputChange } = this.props;
+
         this.setState({
             values: {
                 ...this.state.values,
@@ -44,18 +45,20 @@ class DmpForm extends React.Component {
             },
             formValid: { ...this.state.formValid, [event.target.id]: true },
         });
-        this.props.handleInputChange(event.target.id, event.target.value);
+        handleInputChange(event.target.id, event.target.value);
     };
 
     handleCheckbox = (name) => (event) => {
+        const { handleInputChange } = this.props;
+
         this.setState({
             values: { ...this.state.values, [name]: event.target.checked },
         });
         if (event.target.checked) {
-            this.props.handleInputChange(name, event.target.checked);
+            handleInputChange(name, event.target.checked);
         } else {
-            this.props.handleInputChange(name, event.target.checked);
-            this.props.handleInputChange('sharedWith', '');
+            handleInputChange(name, event.target.checked);
+            handleInputChange('sharedWith', '');
         }
     };
 
@@ -68,19 +71,20 @@ class DmpForm extends React.Component {
     };
 
     validate() {
+        const { form } = this.props;
         let formValid = this.state.formValid;
         let isValidOption;
-        let values = this.props.form.selected;
+        let values = form.selected;
         for (let value in values) {
             switch (value) {
                 case 'material':
-                    isValidOption = this.props.form.materials.some(function (el) {
+                    isValidOption = form.materials.some(function(el) {
                         return el === values[value];
                     });
                     formValid[value] = isValidOption && values[value].length > 0;
                     break;
                 case 'application':
-                    isValidOption = this.props.form.applications.some(function (el) {
+                    isValidOption = form.applications.some(function(el) {
                         return el === values[value];
                     });
                     formValid[value] = isValidOption && values[value].length > 0;
@@ -134,14 +138,13 @@ class DmpForm extends React.Component {
     render() {
         const { classes, form, handleSubmit, gridIsLoading, nothingToChange, gridNumberOfSamples, submitRowNumberUpdate } = this.props;
         const { formValid, values } = this.state;
-        console.log(this.props);
         return (
             <Translate>
                 {({ translate }) => (
                     <Paper className={classes.container} elevation={1}>
-                        <form id="dmp-upload-form" className={classes.form} onSubmit={(e) => this.handleSubmit(e, handleSubmit)}>
+                        <form id='dmp-upload-form' className={classes.form} onSubmit={(e) => this.handleSubmit(e, handleSubmit)}>
                             <Dropdown
-                                id="material"
+                                id='material'
                                 error={!formValid.material}
                                 onChange={this.handleDropdownChange}
                                 onSelect={this.handleDropdownChange}
@@ -158,7 +161,7 @@ class DmpForm extends React.Component {
                             />
 
                             <Dropdown
-                                id="application"
+                                id='application'
                                 error={!formValid.application}
                                 onChange={this.handleDropdownChange}
                                 onSelect={this.handleDropdownChange}
@@ -174,7 +177,7 @@ class DmpForm extends React.Component {
                             />
 
                             <Input
-                                id="numberOfSamples"
+                                id='numberOfSamples'
                                 error={!formValid.numberOfSamples}
                                 onChange={this.handleChange}
                                 inputProps={{
@@ -183,18 +186,18 @@ class DmpForm extends React.Component {
                                 value={form.selected.numberOfSamples}
                             />
 
-                            <FormControl component="fieldset" className={classes.lastItem}>
+                            <FormControl component='fieldset' className={classes.lastItem}>
                                 <Checkbox
-                                    id="isShared"
+                                    id='isShared'
                                     checked={form.selected.isShared || false}
                                     onChange={(e) => this.handleCheckbox('isShared')}
                                 />
                                 {form.selected.isShared && (
                                     <Input
-                                        id="sharedWith"
+                                        id='sharedWith'
                                         value={form.selected.sharedWith}
                                         error={!formValid.sharedWith}
-                                        type="text"
+                                        type='text'
                                         onChange={this.handleChange}
                                     />
                                 )}
@@ -203,8 +206,8 @@ class DmpForm extends React.Component {
                         <div>
                             {form.selected.numberOfSamples !== gridNumberOfSamples && gridNumberOfSamples > 0 && (
                                 <Button
-                                    color="secondary"
-                                    id="updateNumberOfRows"
+                                    color='secondary'
+                                    id='updateNumberOfRows'
                                     onClick={submitRowNumberUpdate}
                                     isLoading={false}
                                     nothingToSubmit={false}
@@ -212,9 +215,9 @@ class DmpForm extends React.Component {
                             )}
 
                             <Button
-                                color="primary"
-                                id="formSubmit"
-                                formId="dmp-upload-form"
+                                color='primary'
+                                id='formSubmit'
+                                formId='dmp-upload-form'
                                 isLoading={gridIsLoading}
                                 nothingToSubmit={nothingToChange}
                             />
@@ -225,6 +228,38 @@ class DmpForm extends React.Component {
         );
     }
 }
+
+DmpForm.propTypes = {
+    classes: PropTypes.shape({
+        container: PropTypes.any,
+        form: PropTypes.any,
+        lastItem: PropTypes.any,
+    }),
+    form: PropTypes.shape({
+        applications: PropTypes.shape({
+            map: PropTypes.func,
+            some: PropTypes.func,
+        }),
+        formIsLoading: PropTypes.any,
+        materials: PropTypes.shape({
+            map: PropTypes.func,
+            some: PropTypes.func,
+        }),
+        selected: PropTypes.shape({
+            application: PropTypes.any,
+            isShared: PropTypes.bool,
+            material: PropTypes.any,
+            numberOfSamples: PropTypes.any,
+            sharedWith: PropTypes.string,
+        }),
+    }),
+    gridIsLoading: PropTypes.any,
+    gridNumberOfSamples: PropTypes.number,
+    handleInputChange: PropTypes.func,
+    handleSubmit: PropTypes.any,
+    nothingToChange: PropTypes.any,
+    submitRowNumberUpdate: PropTypes.any,
+};
 
 const styles = (theme) => ({
     container: {

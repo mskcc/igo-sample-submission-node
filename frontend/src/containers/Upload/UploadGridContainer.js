@@ -1,101 +1,112 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
-import { gridActions, submissionActions, userActions } from '../../redux/actions/';
-import { util, swal } from '../../util';
+import { gridActions, submissionActions, userActions } from '../../redux/actions';
 
+import { util, swal } from '../../util';
 import { UploadGrid } from '../../components';
 
-class UploadGridContainer extends React.Component {
-    handleChange = changes => {
-        this.props.registerGridChange(changes);
+class UploadGridContainer extends Component {
+    handleChange = (changes) => {
+        const { registerGridChange } = this.props;
+        return registerGridChange(changes);
     };
-    handleMRN = rowIndex => {
-        this.props.handleMRN(rowIndex);
+    handleMRN = (rowIndex) => {
+        const { handleMRN } = this.props;
+        return handleMRN(rowIndex);
     };
     handleIndex = (colIndex, rowIndex, newValue) => {
-        this.props.handleIndex(colIndex, rowIndex, newValue);
+        const { handleIndex } = this.props;
+        return handleIndex(colIndex, rowIndex, newValue);
     };
     handleAssay = (rowIndex, colIndex, oldValue, newValue) => {
-        this.props.handleAssay(rowIndex, colIndex, oldValue, newValue);
+        const { handleAssay } = this.props;
+        return handleAssay(rowIndex, colIndex, oldValue, newValue);
     };
 
     handleTumorType = (rowIndex, colIndex, oldValue, newValue) => {
-        this.props.handleTumorType(rowIndex, colIndex, oldValue, newValue);
+        const { handleTumorType } = this.props;
+        return handleTumorType(rowIndex, colIndex, oldValue, newValue);
     };
 
     handleClear = () => {
-        swal.confirmGridClear().then(decision => {
-            decision && this.props.handleClear();
+        const { handleClear } = this.props;
+        swal.confirmGridClear().then((decision) => {
+            decision && handleClear();
         });
     };
 
     handleSave = () => {
         // Check if current form was the one used to generate grid
-        const gridType = this.props.grid.gridType;
+        const { grid, createPartialSubmission } = this.props;
+        // grid.gridType is the type used to generate this grid
+        const gridType = grid.gridType;
         const formValues = this.props[gridType].form.selected;
 
-        let match = util.checkGridAndForm(formValues, this.props.grid.form);
+        const match = util.checkGridAndForm(formValues, grid.form);
         if (!match.success) {
             return swal.formGridMismatch(match);
         }
 
-        this.props.createPartialSubmission(gridType);
+        return createPartialSubmission(gridType);
     };
 
     handleUpdate = () => {
+        const { grid, updatePartialSubmission } = this.props;
         // Check if current form was the one used to generate grid
-        const gridType = this.props.grid.gridType;
+        const gridType = grid.gridType;
         const formValues = this.props[gridType].form.selected;
 
-        let match = util.checkGridAndForm(formValues, this.props.grid.form);
+        const match = util.checkGridAndForm(formValues, grid.form);
         if (!match.success) {
             return swal.formGridMismatch(match);
         }
 
-        swal.confirmUpdate().then(decision => {
+        swal.confirmUpdate().then((decision) => {
             if (decision) {
-                this.props.updatePartialSubmission(gridType);
+                return updatePartialSubmission(gridType);
             }
         });
     };
 
     handleSubmit = () => {
-        const { columnFeatures, hiddenColumns, rows, gridType } = this.props.grid;
-        // const gridType = this.props.grid.gridType;
-        const formValues = this.props[gridType].form.selected;
+        const { grid, user, submitSubmission, submitDmpSubmission } = this.props;
+        const formValues = this.props[grid.gridType].form.selected;
 
-        let match = util.checkGridAndForm(formValues, this.props.grid.form);
+        const match = util.checkGridAndForm(formValues, grid.form);
         if (!match.success) {
             return swal.formGridMismatch(match);
         }
-        let emptyColumns = util.checkEmptyColumns(columnFeatures, rows, hiddenColumns);
+        let emptyColumns = util.checkEmptyColumns(grid.columnFeatures, grid.rows, grid.hiddenColumns);
 
         if (emptyColumns.size > 0) {
             swal.emptyFieldsError(emptyColumns);
             return;
         } else {
-            if (gridType === 'dmp') {
-                if (this.props.user.role !== 'user') {
+            if (grid.gridType === 'dmp') {
+                if (user.role !== 'user') {
+                    // TODO depends on backend ingo
                     let reviewed = true;
                     return swal
                         .genericDecision(
                             'Publish to DMP?',
                             'Submitting publishes the approved samples to the DMP and you will not be able to edit this submission again. <br> If you are not ready to publish, made changes unrelated to approval or a fixing user errors, use the save button instead.'
                         )
-                        .then(decision => decision && this.props.submitDmpSubmission(reviewed));
+                        .then((decision) => decision && submitDmpSubmission(reviewed));
                 }
-                return this.props.submitDmpSubmission();
-            } else return this.props.submitSubmission();
+                return submitDmpSubmission();
+            } else return submitSubmission();
         }
     };
 
     handleDownload = () => {
-        return this.props.downloadGrid();
+        const { downloadGrid } = this.props;
+        return downloadGrid();
     };
 
     render() {
-        const { grid, gridType, user, submissionToEdit } = this.props;
+        const { grid, gridType, user, submissionToEdit, preValidate, handlePatientId, pasteTooMany } = this.props;
         return grid.rows.length > 0 ? (
             <UploadGrid
                 grid={grid}
@@ -111,14 +122,38 @@ class UploadGridContainer extends React.Component {
                 handleSave={this.handleSave}
                 handleUpdate={this.handleUpdate}
                 handleDownload={this.handleDownload}
-                preValidate={this.props.preValidate}
-                handlePatientId={this.props.handlePatientId}
+                preValidate={preValidate}
+                handlePatientId={handlePatientId}
                 handleClear={this.handleClear}
-                pasteTooMany={this.props.pasteTooMany}
+                pasteTooMany={pasteTooMany}
             />
         ) : null;
     }
 }
+
+UploadGridContainer.propTypes = {
+    createPartialSubmission: PropTypes.func,
+    downloadGrid: PropTypes.func,
+    grid: PropTypes.object,
+    gridType: PropTypes.string,
+    handleAssay: PropTypes.func,
+    handleChange: PropTypes.func,
+    handleClear: PropTypes.func,
+    handleIndex: PropTypes.func,
+    handleMRN: PropTypes.func,
+    handlePatientId: PropTypes.func,
+    handleSave: PropTypes.func,
+    handleSubmit: PropTypes.func,
+    handleTumorType: PropTypes.func,
+    pasteTooMany: PropTypes.func,
+    preValidate: PropTypes.func,
+    registerGridChange: PropTypes.func,
+    submissionToEdit: PropTypes.object,
+    submitDmpSubmission: PropTypes.func,
+    submitSubmission: PropTypes.func,
+    updatePartialSubmission: PropTypes.func,
+    user: PropTypes.object,
+};
 
 UploadGridContainer.defaultProps = {
     grid: {},
@@ -131,23 +166,23 @@ UploadGridContainer.defaultProps = {
     handleSave: () => {},
     preValidate: () => {},
     handlePatientId: () => {},
-    handleClear: () => {}
+    handleClear: () => {},
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     grid: state.upload.grid,
     form: state.upload.form,
     upload: state.upload,
     dmp: state.dmp,
 
     submissionToEdit: state.submissions.submissionToEdit,
-    user: state.user
+    user: state.user,
 });
 
 const mapDispatchToProps = {
     ...gridActions,
     ...submissionActions,
-    ...userActions
+    ...userActions,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UploadGridContainer);

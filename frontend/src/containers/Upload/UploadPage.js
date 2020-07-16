@@ -10,57 +10,78 @@ import UploadGridContainer from './UploadGridContainer';
 
 export class UploadPage extends Component {
     handleFormSubmit = (page, formValues) => {
-        this.props.getColumns(page, formValues);
+        const { getColumns } = this.props;
+        getColumns(page, formValues);
     };
 
-    handleGridSubmit = (formValues) => {
-        this.props.addGridToBankedSample(this.props);
+    handleGridSubmit = () => {
+        const { addGridToBankedSample } = this.props;
+        addGridToBankedSample(this.props);
     };
 
     pasteTooMany = (newRowNumber) => {
-        const prevRowNumber = this.props.grid.form.numberOfSamples;
-        this.props.increaseRowNumber(prevRowNumber, newRowNumber);
+        const { grid, increaseRowNumber } = this.props;
+        const prevRowNumber = grid.form.numberOfSamples;
+        increaseRowNumber(prevRowNumber, newRowNumber);
         swal.tooManyRowsPasteAlert();
     };
 
     submitRowNumberUpdate = () => {
         let newRowNumber;
-        if (this.props.gridType === 'dmp') {
-            newRowNumber = this.props.dmpForm.selected.numberOfSamples;
+        const { gridType, dmpForm, form, grid, decreaseRowNumber, increaseRowNumber } = this.props;
+        if (gridType === 'dmp') {
+            newRowNumber = dmpForm.selected.numberOfSamples;
         } else {
-            newRowNumber = this.props.form.selected.numberOfSamples;
+            newRowNumber = form.selected.numberOfSamples;
         }
-        const prevRowNumber = this.props.grid.form.numberOfSamples;
+        const prevRowNumber = grid.form.numberOfSamples;
         const change = newRowNumber - prevRowNumber;
 
         if (change < 0) {
-            return this.props.decreaseRowNumber(change, newRowNumber);
+            return decreaseRowNumber(change, newRowNumber);
         }
         if (change > 0) {
-            return this.props.increaseRowNumber(prevRowNumber, newRowNumber);
+            return increaseRowNumber(prevRowNumber, newRowNumber);
         }
     };
 
     render() {
+        const { gridType, grid } = this.props;
         return (
             <React.Fragment>
                 <UploadFormContainer
-                    formType={this.props.gridType}
+                    formType={gridType}
                     handleSubmit={this.handleFormSubmit}
                     submitRowNumberUpdate={this.submitRowNumberUpdate}
                 />
 
-                {this.props.grid.rows.length > 0 && this.props.gridType === this.props.grid.gridType && (
-                    <UploadGridContainer
-                        gridType={this.props.gridType}
-                        handleSubmit={this.handleGridSubmit}
-                        pasteTooMany={this.pasteTooMany}
-                    />
+                {/* grid.gridType is the type used to generate this grid */}
+                {grid.rows.length > 0 && gridType === grid.gridType && (
+                    <UploadGridContainer gridType={gridType} handleSubmit={this.handleGridSubmit} pasteTooMany={this.pasteTooMany} />
                 )}
             </React.Fragment>
         );
     }
 }
+
+UploadPage.propTypes = {
+    addGridToBankedSample: PropTypes.func,
+    decreaseRowNumber: PropTypes.func,
+    dmpForm: PropTypes.shape({
+        selected: PropTypes.shape({
+            numberOfSamples: PropTypes.number,
+        }),
+    }),
+    form: PropTypes.shape({
+        selected: PropTypes.shape({
+            numberOfSamples: PropTypes.number,
+        }),
+    }),
+    getColumns: PropTypes.func,
+    grid: PropTypes.object,
+    gridType: PropTypes.string,
+    increaseRowNumber: PropTypes.func,
+};
 
 UploadPage.defaultProps = {
     grid: {},

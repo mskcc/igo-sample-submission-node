@@ -1,51 +1,73 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { PromoteGrid } from '../../components';
-import 'handsontable/dist/handsontable.full.css';
-import { swal } from '../../util';
+
 import { connect } from 'react-redux';
 import { promoteActions } from '../../redux/actions';
 
+import CircularProgress from '@material-ui/core/CircularProgress';
+import 'handsontable/dist/handsontable.full.css';
+
+import { swal } from '../../util';
+
+import { PromoteGrid } from '../../components';
+
 class Promote extends Component {
     componentDidMount() {
-        if (!this.props.promote.initialFetched) {
-            this.props.getPromoteGrid();
-        }
+        const { promote, getPromoteGrid } = this.props;
+        if (!promote.initialFetched) return getPromoteGrid();
+        return;
     }
+
     promoteSamples = (projectId, requestId, rows) => {
-        let bankedSampleIds = [];
+        const { promoteDry } = this.props;
+        const bankedSampleIds = [];
+        const { serviceId } = rows[0];
         let materials = new Set();
-        let serviceId = rows[0].serviceId;
         rows.map((element) => {
             bankedSampleIds.push(element.recordId);
             materials.add(element.sampleType);
         });
 
         materials = [...materials].join('_');
-        this.props.promoteDry(projectId, requestId, serviceId, materials, bankedSampleIds);
+        return promoteDry(projectId, requestId, serviceId, materials, bankedSampleIds);
     };
+
     handleLoad = (queryType, query) => {
-        if (!query) {
+        const { loadBankedSamples } = this.props;
+        let queryString = query;
+
+        if (!queryString) {
             return swal.alertEmptyLoad(queryType);
         }
         if (queryType === 'serviceId') {
-            query = query.toLowerCase().includes('igo-') ? query : `IGO-${query}`;
+            queryString = query.toLowerCase().includes('igo-') ? query : `IGO-${query}`;
         }
-        this.props.loadBankedSamples(queryType, query);
+        return loadBankedSamples(queryType, queryString);
     };
 
     render() {
+        const { promote } = this.props;
+
         return (
             <React.Fragment>
-                {this.props.promote.initialFetched ? (
-                    <PromoteGrid promote={this.props.promote} handleLoad={this.handleLoad} promoteSamples={this.promoteSamples} />
+                {promote.initialFetched ? (
+                    <PromoteGrid promote={promote} handleLoad={this.handleLoad} promoteSamples={this.promoteSamples} />
                 ) : (
-                    <CircularProgress color="secondary" size={35} />
+                    <CircularProgress color='secondary' size={35} />
                 )}
             </React.Fragment>
         );
     }
 }
+
+Promote.propTypes = {
+    getPromoteGrid: PropTypes.func,
+    loadBankedSamples: PropTypes.func,
+    promote: PropTypes.shape({
+        initialFetched: PropTypes.any,
+    }),
+    promoteDry: PropTypes.func,
+};
 
 const mapStateToProps = (state) => ({
     promote: state.promote,

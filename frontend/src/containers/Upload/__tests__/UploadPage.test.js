@@ -32,11 +32,11 @@ const UploadPage = (props) => (
 
 // TODO first few are basically unit tests, should be moved eventually
 describe('renders UploadPage', () => {
-    beforeEach(function () {
+    beforeEach(function() {
         moxios.install();
     });
 
-    afterEach(function () {
+    afterEach(function() {
         moxios.uninstall();
     });
 

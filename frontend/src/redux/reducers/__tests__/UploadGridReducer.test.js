@@ -9,7 +9,7 @@ const gridTestStore = initialGridStateMock;
 describe('upload grid reducers', () => {
     it('returns the initial state', () => {
         // using lengths since jest has some issue with empty arrays showing up as undefined in matchers
-        expect(gridReducer(undefined, {}).length).toEqual(gridTestStore.length);
+        expect(gridReducer(undefined, {}).length).toEqÎual(gridTestStore.length);
     });
 
     it('handles UPDATE_NUM_OF_ROWS_SUCCESS', () => {

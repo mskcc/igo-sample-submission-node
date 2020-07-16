@@ -1,28 +1,31 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-import { withLocalize } from 'react-localize-redux';
 import { connect } from 'react-redux';
-import { swal } from '../../util';
+import { withLocalize } from 'react-localize-redux';
 import { gridActions, submissionActions } from '../../redux/actions';
 import { resetErrorMessage } from '../../redux/actions/commonActions';
+
+import { swal } from '../../util';
 
 import SubmissionsGrid from '../../components/Submissions/SubmissionsGrid';
 
 export class SubmissionsPage extends Component {
     componentDidMount() {
-        this.props.getSubmissions(this.props.gridType);
+        const { getSubmissions, gridType } = this.props;
+        getSubmissions(gridType);
         // TODO make submissionsSince default once subs are imported
     }
 
     handleFilterClick = (unit, time, all = false) => {
-        if (all) {
-            return this.props.getSubmissions(this.props.gridType);
-        }
-        this.props.getSubmissionsSince(unit, time, this.props.gridType);
+        const { getSubmissions, getSubmissionsSince, gridType } = this.props;
+        if (all) return getSubmissions(gridType);
+        return getSubmissionsSince(unit, time, gridType);
     };
 
     handleGridClick = (coords, submitted, id, serviceId) => {
-        let column = this.props.submissions.grid.columnFeatures[coords.col].data;
+        const { submissions } = this.props;
+        const column = submissions.grid.columnFeatures[coords.col].data;
         if (column === 'edit' && !submitted) {
             this.handleEdit(id);
         } else if (column === 'review' && submitted) {
@@ -37,29 +40,36 @@ export class SubmissionsPage extends Component {
     };
 
     handleEdit = (submissionId) => {
-        return this.props.populateGridFromSubmission(submissionId, this.props);
+        const { populateGridFromSubmission } = this.props;
+        return populateGridFromSubmission(submissionId, this.props);
     };
 
     handleUnsubmit = (submissionId) => {
-        return this.props.unsubmit(submissionId, this.props.gridType);
+        const { unsubmit, gridType } = this.props;
+        return unsubmit(submissionId, gridType);
     };
 
     handleReceipt = (submissionId, serviceId) => {
-        return this.props.downloadReceipt(submissionId, serviceId, this.props.gridType);
+        const { downloadReceipt, gridType } = this.props;
+        return downloadReceipt(submissionId, serviceId, gridType);
     };
+
     handleDelete = (submissionId) => {
+        const { deleteSubmission, gridType } = this.props;
         swal.confirmDelete().then((decision) => {
             if (decision) {
-                this.props.deleteSubmission(submissionId, this.props.gridType);
+                deleteSubmission(submissionId, gridType);
             }
         });
     };
 
     render() {
-        return this.props.submissions.grid.rows.length > 0 ? (
+        const { submissions, gridType } = this.props;
+
+        return submissions.grid.rows.length > 0 ? (
             <SubmissionsGrid
-                grid={this.props.submissions.grid}
-                gridType={this.props.gridType}
+                grid={submissions.grid}
+                gridType={gridType}
                 handleGridClick={this.handleGridClick}
                 handleFilterClick={this.handleFilterClick}
             />
@@ -68,6 +78,22 @@ export class SubmissionsPage extends Component {
         );
     }
 }
+
+SubmissionsPage.propTypes = {
+    deleteSubmission: PropTypes.func,
+    downloadReceipt: PropTypes.func,
+    getSubmissions: PropTypes.func,
+    getSubmissionsSince: PropTypes.func,
+    gridType: PropTypes.string,
+    populateGridFromSubmission: PropTypes.func,
+    submissions: PropTypes.shape({
+        grid: PropTypes.shape({
+            columnFeatures: PropTypes.object,
+            rows: PropTypes.array,
+        }),
+    }),
+    unsubmit: PropTypes.func,
+};
 
 const mapStateToProps = (state) => ({
     submissions: state.submissions,

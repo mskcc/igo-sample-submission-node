@@ -1,10 +1,22 @@
 {
-  "extends": ["react-app", "prettier"],
+  "extends": ["react-app", "prettier", "airbnb"],
   "plugins": ["prettier"],
   "rules": {
+    "react/jsx-filename-extension": [0],
+    "import/no-named-as-default": 0,
+    "react/jsx-indent": "off",
+    "react/jsx-indent-props": "off",
+    "comma-dangle": "off",
+    "max-len": "off",
+    "jsx-quotes": "off",
+
     "quotes": [
       "warn",
       "single"
+    ],
+    "indent": [
+      "warn",
+      4
     ],
 
 

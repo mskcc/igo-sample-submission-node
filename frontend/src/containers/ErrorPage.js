@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { commonActions } from '../redux/actions';
@@ -7,18 +8,25 @@ import Message from '../components/Shared/Message';
 
 class ErrorPage extends React.Component {
     render() {
-        if (!this.props.error) {
-            return <Redirect to="/upload" />;
+        const { error, message, loading } = this.props;
+        if (!error) {
+            return <Redirect to='/upload' />;
         }
         return (
             <React.Fragment>
-                {this.props.message && <Message msg={this.props.message} />}
+                {message && <Message msg={message} />}
 
-                {this.props.loading && <CircularProgress color="secondary" size={24} />}
+                {loading && <CircularProgress color='secondary' size={24} />}
             </React.Fragment>
         );
     }
 }
+
+ErrorPage.propTypes = {
+    error: PropTypes.bool,
+    loading: PropTypes.bool,
+    message: PropTypes.string,
+};
 const mapStateToProps = (state) => ({
     ...state.common,
 });

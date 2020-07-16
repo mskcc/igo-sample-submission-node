@@ -14,17 +14,16 @@ const Button = ({ id, formId, isLoading, nothingToSubmit, title, color, classes,
             <React.Fragment>
                 {/* <Grow in={true}> */}
                 <MuiButton
-                    variant="contained"
-                    type="submit"
+                    variant='contained'
+                    type='submit'
                     form={formId}
                     className={classes.button}
                     color={color}
                     // disabled={isLoading}
-                    onClick={onClick}
-                >
+                    onClick={onClick}>
                     {translate('buttons.' + id + '_label')}
 
-                    {isLoading && <CircularProgress color="inherit" size={24} className={classes.buttonProgress} />}
+                    {isLoading && <CircularProgress color='inherit' size={24} className={classes.buttonProgress} />}
                 </MuiButton>
                 {/* </Grow> */}
                 <Fade in={nothingToSubmit}>

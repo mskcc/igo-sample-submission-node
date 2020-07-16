@@ -17,7 +17,7 @@ const styles = (theme) => ({
 const Message = ({ type, msg, classes }) => (
     <div>
         <Paper className={classes.container} elevation={1}>
-            <Typography component="p">{msg}</Typography>
+            <Typography component='p'>{msg}</Typography>
         </Paper>
     </div>
 );

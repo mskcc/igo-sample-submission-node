@@ -11,7 +11,7 @@ export const downloadExcel = (data, fileName) => {
     const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
     const excelBuffer = XLSX.write(wb, {
         bookType: 'xlsx',
-        type: 'array'
+        type: 'array',
     });
     const blob = new Blob([excelBuffer], { type: fileType });
     FileSaver.saveAs(blob, fileName + fileExtension);
@@ -20,7 +20,7 @@ export const downloadExcel = (data, fileName) => {
 //  Export excel with dropdowns
 // All hope abandon, ye who enter here.
 // test: optional/required correct? do the dropdown lists seem correct?
-export const downloadExcelTest = data => {
+export const downloadExcelTest = (data) => {
     let workbook = new Excel.Workbook();
     let fileName = `${data.material}-${data.application}`;
     workbook.creator = 'IGO';
@@ -33,12 +33,16 @@ export const downloadExcelTest = data => {
     let dropdownSheet = workbook.addWorksheet('DropdownOptions');
     let sheetColumns = [];
     // add columns first to be able to reference them by key during formatting step
-    data.columns.forEach(columnDef => {
+    data.columns.forEach((columnDef) => {
         // SKIP hidden columns
         if ('hiddenFrom' in columnDef || columnDef.data === 'indexSequence') {
             return;
         }
-        sheetColumns.push({ header: columnDef.columnHeader, key: columnDef.data, width: 40 });
+        sheetColumns.push({
+            header: columnDef.columnHeader,
+            key: columnDef.data,
+            width: 40,
+        });
     });
     submissionSheet.columns = sheetColumns;
     dropdownSheet.columns = sheetColumns;
@@ -46,15 +50,23 @@ export const downloadExcelTest = data => {
     //  format header and tooltips
     let headerRow = submissionSheet.getRow(1);
     let tooltipRow = submissionSheet.getRow(2);
-    headerRow.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+    headerRow.alignment = {
+        vertical: 'middle',
+        horizontal: 'center',
+        wrapText: true,
+    };
     headerRow.height = 40;
     headerRow.font = { bold: true };
 
-    tooltipRow.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+    tooltipRow.alignment = {
+        vertical: 'middle',
+        horizontal: 'center',
+        wrapText: true,
+    };
     tooltipRow.height = 150;
 
     // FILL
-    data.columns.forEach(columnDef => {
+    data.columns.forEach((columnDef) => {
         // SKIP hidden columns
         if ('hiddenFrom' in columnDef || columnDef.data === 'indexSequence') {
             return;
@@ -79,13 +91,13 @@ export const downloadExcelTest = data => {
             headerCell.fill = {
                 type: 'pattern',
                 pattern: 'solid',
-                fgColor: { argb: '66A6CE39' }
+                fgColor: { argb: '66A6CE39' },
             };
         } else {
             headerCell.fill = {
                 type: 'pattern',
                 pattern: 'solid',
-                fgColor: { argb: '4D8FC7E8' }
+                fgColor: { argb: '4D8FC7E8' },
             };
         }
 
@@ -131,7 +143,7 @@ export const downloadExcelTest = data => {
                             formulae: [rangeString],
                             operator: 'equal',
                             showErrorMessage: true,
-                            error: 'Dropwdown options only, please.'
+                            error: 'Dropwdown options only, please.',
                         };
                     }
                 }
@@ -139,7 +151,9 @@ export const downloadExcelTest = data => {
         }
     });
     workbook.xlsx.writeBuffer().then(function(data) {
-        var blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        var blob = new Blob([data], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
         FileSaver.saveAs(blob, `${fileName}.xlsx`);
     });
 };

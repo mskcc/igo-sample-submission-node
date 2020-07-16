@@ -54,12 +54,12 @@ class PromoteGrid extends Component {
             <div className={classes.container}>
                 <div className={classes.actions}>
                     <div className={classes.load}>
-                        <Paper component="form" className={classes.loadPaper}>
+                        <Paper component='form' className={classes.loadPaper}>
                             <InputBase
                                 className={classes.input}
-                                id="serviceId"
+                                id='serviceId'
                                 value={this.state.serviceId}
-                                placeholder="Service ID"
+                                placeholder='Service ID'
                                 onChange={this.handleChange}
                                 onKeyPress={(event) => {
                                     if (event.key === 'Enter') {
@@ -67,17 +67,17 @@ class PromoteGrid extends Component {
                                     }
                                 }}
                             />
-                            <Divider className={classes.divider} orientation="vertical" />
-                            <IconButton className={classes.iconButton} onClick={(e) => this.handleLoad('serviceId')} aria-label="search">
+                            <Divider className={classes.divider} orientation='vertical' />
+                            <IconButton className={classes.iconButton} onClick={(e) => this.handleLoad('serviceId')} aria-label='search'>
                                 <SearchIcon />
                             </IconButton>
                         </Paper>
-                        <Paper component="form" className={classes.loadPaper}>
+                        <Paper component='form' className={classes.loadPaper}>
                             <InputBase
                                 className={classes.input}
-                                id="investigator"
+                                id='investigator'
                                 value={this.state.investigator}
-                                placeholder="Investigator"
+                                placeholder='Investigator'
                                 onChange={this.handleChange}
                                 onKeyPress={(event) => {
                                     if (event.key === 'Enter') {
@@ -85,8 +85,8 @@ class PromoteGrid extends Component {
                                     }
                                 }}
                             />
-                            <Divider className={classes.divider} orientation="vertical" />
-                            <IconButton className={classes.iconButton} onClick={(e) => this.handleLoad('investigator')} aria-label="search">
+                            <Divider className={classes.divider} orientation='vertical' />
+                            <IconButton className={classes.iconButton} onClick={(e) => this.handleLoad('investigator')} aria-label='search'>
                                 <SearchIcon />
                             </IconButton>
                         </Paper>
@@ -94,27 +94,27 @@ class PromoteGrid extends Component {
 
                     <div className={classes.submit}>
                         <div>
-                            <FormControl component="fieldset">
-                                <Input id="projectId" value={this.state.projectId} onChange={this.handleChange} type="text" />
+                            <FormControl component='fieldset'>
+                                <Input id='projectId' value={this.state.projectId} onChange={this.handleChange} type='text' />
                             </FormControl>
-                            <FormControl component="fieldset">
-                                <Input id="requestId" value={this.state.requestId} onChange={this.handleChange} type="text" />
+                            <FormControl component='fieldset'>
+                                <Input id='requestId' value={this.state.requestId} onChange={this.handleChange} type='text' />
                             </FormControl>
                         </div>
                         <div>
                             <GridButton
-                                id="promoteSelected"
+                                id='promoteSelected'
                                 onClick={this.promoteSelected}
                                 isLoading={false}
                                 nothingToSubmit={false}
-                                color="secondary"
+                                color='secondary'
                             />
                             <GridButton
-                                id="promoteAll"
+                                id='promoteAll'
                                 onClick={this.promoteAll}
                                 isLoading={promote.promoteIsLoading}
                                 nothingToSubmit={false}
-                                color="primary"
+                                color='primary'
                             />
                         </div>
                     </div>
@@ -122,10 +122,10 @@ class PromoteGrid extends Component {
                 <div className={classes.grid}>
                     {promote.rows && (
                         <HotTable
-                            licenseKey="non-commercial-and-evaluation"
-                            id="hot"
-                            filters="true"
-                            columnSorting="true"
+                            licenseKey='non-commercial-and-evaluation'
+                            id='hot'
+                            filters='true'
+                            columnSorting='true'
                             dropdownMenu={['filter_by_value', 'filter_action_bar']}
                             data={promote.rows}
                             colHeaders={promote.columns}
@@ -138,7 +138,7 @@ class PromoteGrid extends Component {
                             ref={this.hotTableComponent}
                             // width='95%'
                             // stretchH='all'
-                            selectionMode="multiple"
+                            selectionMode='multiple'
                             outsideClickDeselects={false}
                             height={() => {
                                 if (promote.rows.length >= 25) return '700';

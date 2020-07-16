@@ -1,59 +1,59 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-import { swal } from '../../util';
 import { connect } from 'react-redux';
-import { formActions, dmpFormActions } from '../../redux/actions/';
+import { formActions, dmpFormActions } from '../../redux/actions';
 
+import { swal } from '../../util';
 import { DmpForm, UploadForm } from '../../components';
 
-export class UploadFormContainer extends React.Component {
-    componentDidUpdate(prevProps, prevState) {}
-
+export class UploadFormContainer extends Component {
     componentDidMount() {
-        let isIgoForm = this.props.formType === 'upload';
-        if (isIgoForm && !this.props.upload.form.initialFetched) {
-            this.props.getInitialState();
-        } else if (!isIgoForm && !this.props.dmp.form.initialFetched) {
-            this.props.dmpGetInitialState();
-        }
+        const { formType, upload, dmp, getInitialState, dmpGetInitialState } = this.props;
+        const isIgoForm = formType === 'upload';
+        if (isIgoForm && !upload.form.initialFetched) return getInitialState();
+        if (!isIgoForm && !dmp.form.initialFetched) return dmpGetInitialState();
+        return;
     }
 
     handleMaterialChange = (selectedMaterial) => {
+        const { getApplicationsForMaterial, clearMaterial } = this.props;
         if (selectedMaterial) {
             // get possible applications for this material
-            this.props.getApplicationsForMaterial(selectedMaterial);
+            getApplicationsForMaterial(selectedMaterial);
         } else {
-            this.props.clearMaterial();
+            clearMaterial();
         }
     };
 
     handleApplicationChange = (selectedApplication) => {
+        const { getMaterialsForApplication, clearApplication } = this.props;
         if (selectedApplication) {
             // get possible ,materials for this application
-            this.props.getMaterialsForApplication(selectedApplication);
+            getMaterialsForApplication(selectedApplication);
         } else {
-            this.props.clearApplication();
+            clearApplication();
         }
     };
 
     handleSpeciesChange = (selectedSpecies) => {
-        if (!selectedSpecies) this.props.clearSpecies();
+        const { clearSpecies } = this.props;
+        if (!selectedSpecies) clearSpecies();
     };
     handleInputChange = (id, value) => {
-        let isIgoForm = this.props.formType === 'upload';
-
+        const { formType, select, dmpSelect, clear, dmpClear } = this.props;
+        const isIgoForm = formType === 'upload';
         if (value) {
-            isIgoForm ? this.props.select(id, value) : this.props.dmpSelect(id, value);
+            isIgoForm ? select(id, value) : dmpSelect(id, value);
         } else {
-            isIgoForm ? this.props.clear(id) : this.props.dmpClear(id);
+            isIgoForm ? clear(id) : dmpClear(id);
         }
     };
 
     handleClear = () => {
+        const { clearForm } = this.props;
         swal.confirmClear().then((decision) => {
-            if (decision) {
-                this.props.clearForm();
-            }
+            if (decision) clearForm();
         });
     };
 
@@ -85,7 +85,6 @@ export class UploadFormContainer extends React.Component {
                         handleInputChange={this.handleInputChange}
                         submitRowNumberUpdate={submitRowNumberUpdate}
                         gridIsLoading={upload.grid.gridIsLoading}
-                        // gridIsLoading={dmp.grid.gridIsLoading}
                         nothingToChange={upload.grid.nothingToChange}
                         gridNumberOfSamples={upload.grid.form.numberOfSamples}
                         form={dmp.form}
@@ -96,17 +95,49 @@ export class UploadFormContainer extends React.Component {
     }
 }
 
-UploadFormContainer.defaultProps = {
-    getInitialState: () => {},
-    form: {},
-    gridIsLoading: false,
-    nothingToChange: false,
-    handleSubmit: () => {},
-    handleMaterialChange: () => {},
-    handleApplicationChange: () => {},
-    handleSpeciesChange: () => {},
-    handleInputChange: () => {},
-    handleClear: () => {},
+UploadFormContainer.propTypes = {
+    clear: PropTypes.func,
+    clearApplication: PropTypes.func,
+    clearForm: PropTypes.func,
+    clearMaterial: PropTypes.func,
+    clearSpecies: PropTypes.func,
+    dmp: PropTypes.shape({
+        form: PropTypes.shape({
+            initialFetched: PropTypes.bool,
+        }),
+    }),
+    dmpClear: PropTypes.func,
+    dmpGetInitialState: PropTypes.func,
+    dmpSelect: PropTypes.func,
+    form: PropTypes.object,
+    formType: PropTypes.string,
+    getApplicationsForMaterial: PropTypes.func,
+    getInitialState: PropTypes.func,
+    getMaterialsForApplication: PropTypes.func,
+    gridIsLoading: PropTypes.bool,
+    handleApplicationChange: PropTypes.func,
+    handleClear: PropTypes.func,
+    handleInputChange: PropTypes.func,
+    handleMaterialChange: PropTypes.func,
+    handleSpeciesChange: PropTypes.func,
+    handleSubmit: PropTypes.func,
+    nothingToChange: PropTypes.bool,
+    select: PropTypes.func,
+    submitRowNumberUpdate: PropTypes.func,
+    upload: PropTypes.shape({
+        form: PropTypes.shape({
+            allMaterials: PropTypes.array,
+            initialFetched: PropTypes.bool,
+            nothingToChange: PropTypes.bool,
+        }),
+        grid: PropTypes.shape({
+            form: PropTypes.shape({
+                numberOfSamples: PropTypes.number,
+            }),
+            gridIsLoading: PropTypes.bool,
+            nothingToChange: PropTypes.bool,
+        }),
+    }),
 };
 
 const mapStateToProps = (state) => ({

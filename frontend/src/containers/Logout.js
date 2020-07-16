@@ -9,7 +9,7 @@ class Logout extends React.Component {
     }
 
     render() {
-        return <CircularProgress color="secondary" size={24} />;
+        return <CircularProgress color='secondary' size={24} />;
     }
 }
 const mapStateToProps = (state) => ({

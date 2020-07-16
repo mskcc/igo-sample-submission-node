@@ -18,18 +18,18 @@ function Header(userRole) {
     };
     return (
         // <div className={classes.mskccHeader}>
-        <AppBar position="static" title={logo} className={classes.header}>
+        <AppBar position='static' title={logo} className={classes.header}>
             <Toolbar>
-                <Avatar alt="mskcc logo" src={logo} className={classes.avatar} />
+                <Avatar alt='mskcc logo' src={logo} className={classes.avatar} />
 
-                <Typography color="inherit" variant="h6" className={classes.title}>
+                <Typography color='inherit' variant='h6' className={classes.title}>
                     IGO Sample Submission
                 </Typography>
 
                 <React.Fragment>
                     <Button>
-                        <NavLink to="/upload" activeClassName={classes.active} className={classes.navlink}>
-                            <Typography color="inherit" variant="h6">
+                        <NavLink to='/upload' activeClassName={classes.active} className={classes.navlink}>
+                            <Typography color='inherit' variant='h6'>
                                 Upload
                             </Typography>
                         </NavLink>
@@ -37,8 +37,8 @@ function Header(userRole) {
                     <div className={classes.divider}>&#8226;</div>
 
                     <Button>
-                        <NavLink to="/dmp" activeClassName={classes.active} className={classes.navlink}>
-                            <Typography color="inherit" variant="h6">
+                        <NavLink to='/dmp' activeClassName={classes.active} className={classes.navlink}>
+                            <Typography color='inherit' variant='h6'>
                                 DMP
                             </Typography>
                         </NavLink>
@@ -46,35 +46,33 @@ function Header(userRole) {
                     <div className={classes.divider}>&#8226;</div>
                     <Button
                         className={classes.navlink}
-                        aria-controls="simple-menu"
-                        aria-haspopup="true"
+                        aria-controls='simple-menu'
+                        aria-haspopup='true'
                         onClick={handleClick}
-                        onMouseOver={handleClick}
-                    >
-                        <Typography color="inherit" variant="h6">
+                        onMouseOver={handleClick}>
+                        <Typography color='inherit' variant='h6'>
                             Submissions
                         </Typography>
                     </Button>
                     <Menu
-                        id="simple-menu"
+                        id='simple-menu'
                         anchorEl={anchorEl}
                         getContentAnchorEl={null}
                         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                         transformOrigin={{ vertical: 'top', horizontal: 'center' }}
                         keepMounted
                         open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                    >
+                        onClose={handleClose}>
                         <MenuItem onClick={handleClose}>
-                            <NavLink to="/submissions/igo" activeClassName={classes.activeMenu} className={classes.navlinkMenu}>
-                                <Typography color="inherit" variant="subtitle1">
+                            <NavLink to='/submissions/igo' activeClassName={classes.activeMenu} className={classes.navlinkMenu}>
+                                <Typography color='inherit' variant='subtitle1'>
                                     IGO Submissions
                                 </Typography>
                             </NavLink>
                         </MenuItem>
                         <MenuItem onClick={handleClose}>
-                            <NavLink to="/submissions/dmp" activeClassName={classes.activeMenu} className={classes.navlinkMenu}>
-                                <Typography color="inherit" variant="subtitle1">
+                            <NavLink to='/submissions/dmp' activeClassName={classes.activeMenu} className={classes.navlinkMenu}>
+                                <Typography color='inherit' variant='subtitle1'>
                                     DMP Submissions
                                 </Typography>
                             </NavLink>
@@ -84,8 +82,8 @@ function Header(userRole) {
                     {userRole !== '' && userRole !== 'user' && (
                         <React.Fragment>
                             <Button>
-                                <NavLink to="/promote" activeClassName={classes.active} className={classes.navlink}>
-                                    <Typography color="inherit" variant="h6">
+                                <NavLink to='/promote' activeClassName={classes.active} className={classes.navlink}>
+                                    <Typography color='inherit' variant='h6'>
                                         Promote
                                     </Typography>
                                 </NavLink>
@@ -94,8 +92,8 @@ function Header(userRole) {
                         </React.Fragment>
                     )}
                     <Button>
-                        <NavLink to="/logout" activeClassName={classes.active} className={classes.navlink}>
-                            <Typography color="inherit" variant="h6">
+                        <NavLink to='/logout' activeClassName={classes.active} className={classes.navlink}>
+                            <Typography color='inherit' variant='h6'>
                                 Logout
                             </Typography>
                         </NavLink>

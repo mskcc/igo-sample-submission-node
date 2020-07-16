@@ -14,11 +14,11 @@ const middlewares = [thunk, multi];
 const mockStore = configureStore(middlewares);
 
 describe('upload form actions', () => {
-    beforeEach(function () {
+    beforeEach(function() {
         moxios.install();
     });
 
-    afterEach(function () {
+    afterEach(function() {
         moxios.uninstall();
     });
     it('should execute clearMaterial', () => {

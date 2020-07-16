@@ -19,17 +19,15 @@ const Button = ({ id, onClick, isLoading, done, title, classes, color }) => (
                             ? translate('buttons.' + id + '_label')
                             : translate('buttons.' + id + '_tooltip')
                     }
-                    classes={{ tooltip: classes.tooltip }}
-                >
+                    classes={{ tooltip: classes.tooltip }}>
                     <MuiButton
-                        variant="contained"
-                        type="submit"
+                        variant='contained'
+                        type='submit'
                         onClick={onClick}
                         className={id.includes('promote') ? classes.promoteButton : classes.button}
                         id={id}
                         color={color}
-                        disabled={isLoading}
-                    >
+                        disabled={isLoading}>
                         {done ? translate('buttons.' + id + '_msg') : translate('buttons.' + id + '_label')}
                     </MuiButton>
                 </Tooltip>

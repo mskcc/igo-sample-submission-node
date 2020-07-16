@@ -27,12 +27,12 @@ const CheckboxComponent = ({ id, value, onChange, classes, checked, hasHelptext 
                     classes={{ label: classes.label }}
                     control={
                         <Checkbox
-                            icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                            checkedIcon={<CheckBoxIcon fontSize="small" />}
+                            icon={<CheckBoxOutlineBlankIcon fontSize='small' />}
+                            checkedIcon={<CheckBoxIcon fontSize='small' />}
                             checked={checked}
                             onChange={onChange(id)}
                             value={id}
-                            fontSize="small"
+                            fontSize='small'
                         />
                     }
                     label={translate('upload.form.' + id + '_label')}
@@ -43,7 +43,7 @@ const CheckboxComponent = ({ id, value, onChange, classes, checked, hasHelptext 
                         <Fade in={checked}>
                             <Card className={classes.card}>
                                 <CardContent className={classes.content}>
-                                    <Typography color="textSecondary">{translate('upload.form.' + id + '_helptext')} </Typography>
+                                    <Typography color='textSecondary'>{translate('upload.form.' + id + '_helptext')} </Typography>
                                 </CardContent>
                             </Card>
                         </Fade>
