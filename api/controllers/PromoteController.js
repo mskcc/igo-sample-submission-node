@@ -93,73 +93,49 @@ exports.load = [
     }
   },
 ];
-/**
- * Submits to LIMS Banked Samples
- *
- * @returns {Object}
- */
 exports.promote = [
-  body('requestId')
-    .optional()
-    .isString()
-    .withMessage('RequestId must be String.'),
-  body('projectId')
-    .optional()
-    .isString()
-    .withMessage('ProjectId must be String.'),
-  body('serviceId')
-    .optional()
-    .isString()
-    .withMessage('ServiceId must be String.'),
-  body('materials').isString().withMessage('materials must be String.'),
-  body('dryrun').isBoolean().withMessage('dryrun must be Boolean.'),
-  body('transactionId').isInt().withMessage('transactionId must be Int.'),
-  body('bankedSampleIds')
-    .isArray()
-    .isLength({ min: 1 })
-    .trim()
-    .withMessage('bankedSampleId must be array of recordIds.'),
-  function (req, res) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return apiResponse.validationErrorWithData(
-        res,
-        'Validation error.',
-        errors.array()
-      );
-    }
-    let transactionId = req.body.transactionId;
-    let requestId = req.body.requestId;
-    let projectId = req.body.projectId;
-    let serviceId = req.body.serviceId;
-    let materials = req.body.materials;
-    let bankedSampleIds = req.body.bankedSampleIds;
-    let dryrun = req.body.dryrun;
-    let promotePromise = util.promote(
-      transactionId,
-      requestId,
-      projectId,
-      serviceId,
-      materials,
-      bankedSampleIds,
-      res.user.username,
-      dryrun
-    );
-    promotePromise
-      .then((result) => {
-        let promoteResult;
-        if (dryrun) {
-          promoteResult = result;
-          return apiResponse.successResponse(res, promoteResult);
-        } else {
-          return apiResponse.successResponse(
-            res,
-            `Successfully promoted ${bankedSampleIds}`
-          );
+    body('requestId').optional().isString().withMessage('RequestId must be String.'),
+    body('projectId').optional().isString().withMessage('ProjectId must be String.'),
+    body('serviceId').optional().isString().withMessage('ServiceId must be String.'),
+    body('materials').isString().withMessage('materials must be String.'),
+    body('dryrun').isBoolean().withMessage('dryrun must be Boolean.'),
+    body('transactionId').isInt().withMessage('transactionId must be Int.'),
+    body('bankedSampleIds').isArray().isLength({ min: 1 }).trim().withMessage('bankedSampleId must be array of recordIds.'),
+    function (req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
-      })
-      .catch(function (err) {
-        return apiResponse.errorResponse(res, err);
-      });
-  },
+        let transactionId = req.body.transactionId;
+        let requestId = req.body.requestId;
+        let projectId = req.body.projectId;
+        let serviceId = req.body.serviceId;
+        let materials = req.body.materials;
+        let bankedSampleIds = req.body.bankedSampleIds;
+        let dryrun = req.body.dryrun;
+        let promotePromise = util.promote(
+            transactionId,
+            requestId,
+            projectId,
+            serviceId,
+            materials,
+            bankedSampleIds,
+            res.user.username,
+            dryrun
+        );
+        promotePromise
+            .then((result) => {
+                let promoteResult;
+                if (dryrun) {
+                    promoteResult = result;
+                    return apiResponse.successResponse(res, promoteResult);
+                } else {
+                    promoteResult = result;
+                    return apiResponse.successResponse(res, promoteResult);
+                }
+            })
+            .catch(function (err) {
+                return apiResponse.errorResponse(res, err);
+            });
+    },
 ];
