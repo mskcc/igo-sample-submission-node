@@ -161,6 +161,7 @@ export const generateAdditionalRowData = (columnFeatures, formValues, prevRowNum
         columnFeaturesCopy[index] = { data: '', columnHeader: '' };
         columnFeaturesCopy[index].data = element.data;
         columnFeaturesCopy[index].columnHeader = element.columnHeader;
+        columnFeaturesCopy[index].type = element.type;
     });
     // send only data and columnHeader values to api
     let columnFeaturesJson = JSON.stringify(columnFeaturesCopy);
