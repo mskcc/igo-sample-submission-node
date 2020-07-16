@@ -88,7 +88,7 @@ SubmissionsPage.propTypes = {
     populateGridFromSubmission: PropTypes.func,
     submissions: PropTypes.shape({
         grid: PropTypes.shape({
-            columnFeatures: PropTypes.object,
+            columnFeatures: PropTypes.array,
             rows: PropTypes.array,
         }),
     }),

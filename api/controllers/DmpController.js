@@ -2,6 +2,7 @@ const apiResponse = require('../util/apiResponse');
 const { body, query, validationResult } = require('express-validator');
 const util = require('../util/helpers');
 const services = require('../services/services');
+const { authenticate } = require('../middlewares/jwt');
 import CacheService from '../util/cache';
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
@@ -13,6 +14,7 @@ const DmpSubmissionModel = require('../models/DmpSubmissionModel');
  * @returns {Object}
  */
 exports.headerValues = [
+    authenticate,
     function (req, res) {
         const materialPicklist = 'DmpMaterials';
         const applicationsPicklist = 'DmpApplications';
@@ -44,6 +46,7 @@ exports.headerValues = [
  * @returns {Object}
  */
 exports.materialsAndSpecies = [
+    authenticate,
     query('recipe').isLength({ min: 1 }).trim().withMessage('Recipe must be specified.'),
     function (req, res) {
         const errors = validationResult(req);
@@ -74,6 +77,7 @@ exports.materialsAndSpecies = [
  * @returns {Object}
  */
 exports.applicationsAndContainers = [
+    authenticate,
     query('material').isLength({ min: 1 }).trim().withMessage('Material must be specified.'),
     function (req, res) {
         try {
@@ -104,6 +108,7 @@ exports.applicationsAndContainers = [
 ];
 
 exports.picklist = [
+    authenticate,
     query('picklist').isLength({ min: 1 }).trim().withMessage('Picklist must be specified.'),
     function (req, res) {
         try {
@@ -132,6 +137,7 @@ exports.picklist = [
 ];
 
 exports.grid = [
+    authenticate,
     body('application').isLength({ min: 1 }).trim().withMessage('Application must be present.'),
     body('material').isLength({ min: 1 }).trim().withMessage('Material must be present.'),
     body('numberOfSamples').isLength({ min: 1 }).trim().withMessage('NumberOfSamples must be present.'),
@@ -173,6 +179,7 @@ exports.grid = [
 ];
 
 exports.crdbId = [
+    authenticate,
     body('patientId').isLength({ min: 1 }).trim().withMessage('patientId must be specified.'),
     function (req, res) {
         try {
@@ -206,6 +213,7 @@ exports.crdbId = [
 ];
 
 exports.additionalRows = [
+    authenticate,
     body('formValues').isJSON().isLength({ min: 1 }).trim().withMessage('formValues must be JSON.'),
     body('columnFeatures').isJSON().isLength({ min: 1 }).trim().withMessage('columnFeatures must be JSON.'),
     body('prevRowNumber').isInt().isLength({ min: 1 }).trim().withMessage('prevRowNumber must be int.'),
@@ -241,6 +249,7 @@ exports.additionalRows = [
 ];
 
 exports.export = [
+    authenticate,
     body('grid').isJSON().isLength({ min: 1 }).trim().withMessage('grid must be JSON.'),
     body('application').isLength({ min: 1 }).trim().withMessage('Application must be present.'),
     body('material').isLength({ min: 1 }).trim().withMessage('Material must be present.'),
@@ -267,6 +276,7 @@ exports.export = [
  * @returns {Object}
  */
 exports.submit = [
+    authenticate,
     body('id').optional().isMongoId().withMessage('id must be valid MongoDB ID.'),
     body('transactionId').isInt().withMessage('id must be Int.'),
     body('reviewed').isBoolean().withMessage('reviewd must be Boolean.'),
@@ -297,10 +307,7 @@ exports.submit = [
                 submissionToSubmit.reviewed = reviewed;
                 submissionToSubmit.reviewedAt = reviewed ? transactionId : undefined;
 
-                let approvals = submissionToSubmit.gridValues.filter((element) => {
-                    return element.isApproved;
-                });
-                submissionToSubmit.samplesApproved = approvals.length;
+                // submissionToSubmit.samplesApproved = approvals.length;
                 //  save pre LIMS submit so data is safe
                 submissionToSubmit.save(function (err) {
                     if (err) {
@@ -312,6 +319,35 @@ exports.submit = [
             })
             .catch((reasons) => {
                 return apiResponse.errorResponse(res, reasons);
+            });
+    },
+];
+
+// TODO time cutoff?
+exports.readyForDmp = [
+    // query('picklist').isLength({ min: 1 }).trim().withMessage('Picklist must be specified.'),
+    function (req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
+        }
+        const model = DmpSubmissionModel;
+        const filter = { reviewed: true };
+        const sort = { createdAt: 'desc' };
+        delete res.user;
+        model
+            .find(filter)
+            .sort(sort)
+            .exec(function (err, submissions) {
+                if (err || !submissions) {
+                    return apiResponse.errorResponse(res, 'Could not retrieve submission.');
+                }
+
+                util.filterReadyForDmp(submissions).then((submissions) => {
+                    return apiResponse.successResponseWithData(res, 'Operation success', {
+                        submissions,
+                    });
+                });
             });
     },
 ];

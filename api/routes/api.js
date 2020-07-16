@@ -12,10 +12,10 @@ var app = express();
 app.use('/upload/', authenticate, uploadRouter);
 app.use('/submission/', authenticate, submissionRouter);
 app.use('/promote/', authenticate, promoteRouter);
-app.use('/dmp/', authenticate, dmpRouter);
+// app.use('/dmp/', authenticate, dmpRouter);
 // app.use('/upload/',  uploadRouter);
 // app.use('/submission/',  submissionRouter);
 // app.use('/promote/',  promoteRouter);
-// app.use('/dmp/',  dmpRouter);
+app.use('/dmp/',  dmpRouter);
 
 module.exports = app;

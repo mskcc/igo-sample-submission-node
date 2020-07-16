@@ -91,7 +91,7 @@ exports.grid = [
                 if (err) {
                     return apiResponse.errorResponse(res, 'Could not retrieve submissions.');
                 }
-                let submissionGridPromise = util.generateSubmissionGrid(submissions, 'user', submissionType);
+                let submissionGridPromise = util.generateSubmissionGrid(submissions, 'cmo_pm', submissionType);
                 Promise.all([submissionGridPromise])
                     .then((results) => {
                         if (results.some((x) => x.length === 0)) {

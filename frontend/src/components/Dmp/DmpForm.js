@@ -254,7 +254,7 @@ DmpForm.propTypes = {
         }),
     }),
     gridIsLoading: PropTypes.any,
-    gridNumberOfSamples: PropTypes.number,
+    gridNumberOfSamples: PropTypes.any,
     handleInputChange: PropTypes.func,
     handleSubmit: PropTypes.any,
     nothingToChange: PropTypes.any,

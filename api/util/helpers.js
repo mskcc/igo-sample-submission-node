@@ -4,6 +4,8 @@ const { logger } = require('../util/winston');
 const { constants } = require('./constants');
 const submitColumns = require('./columns');
 import CacheService from './cache';
+import { createLogger } from 'winston';
+import { submission } from '../controllers/SubmissionController';
 const dmpColumns = require('./dmpColumns');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
@@ -215,6 +217,7 @@ export const generateAdditionalRows = (columnFeatures, formValues, prevRowNumber
         //  important for changing the row number on paste rather than through form select
         formValues.numberOfSamples = newRowNumber;
         let columns = { columnFeatures: columnFeatures, formValues: formValues };
+
         fillAdditionalRows(columns, formValues).then((columns) => {
             //delete all old rows
             prevRowNumber = parseInt(prevRowNumber);
@@ -250,6 +253,7 @@ const fillData = (columns, formValues) => {
         for (var i = 0; i < numberOfRows; i++) {
             columns.columnFeatures.map((entry) => {
                 rowData[i] = { ...rowData[i], [entry.data]: '' };
+                console.log(entry);
                 if (entry.type === 'checkbox') {
                     rowData[i] = { ...rowData[i], [entry.data]: false };
                 }
@@ -420,8 +424,11 @@ export function generateSubmissionGrid(submissions, userRole, submissionType) {
                 };
 
                 if (submissionType === 'dmp') {
+                    const samplesApproved = submission.gridValues.filter((element) => {
+                        return element.isApproved;
+                    });
                     let isReviewed = submission.reviewed;
-                    rows[i].samplesApproved = `${submission.samplesApproved}/${submission.formValues.numberOfSamples} samples`;
+                    rows[i].samplesApproved = `${samplesApproved.length}/${submission.formValues.numberOfSamples} samples`;
                     rows[i].reviewed = isReviewed ? 'yes' : 'no';
                     rows[i].reviewedAt = submission.reviewedAt ? parseDate(submission.reviewedAt) : '';
                     if (userRole !== 'user') {
@@ -742,5 +749,31 @@ export function getDmpColumns(material, application) {
         } else {
             reject(`Could not retrieve grid for '${material}' and '${application}'.`);
         }
+    });
+}
+
+export function filterReadyForDmp(submissions) {
+    return new Promise((resolve, reject) => {
+        //  only add samples that were approved
+        // let filteredSubmissions = Object.assign({}, submissions);
+        let filteredSubmissions = [];
+        submissions.forEach(function (submission, index) {
+            // console.log(submission.gridValues.filter((element) => element.isApproved));
+            let test = submission.gridValues.filter((element) => element.isApproved);
+            filteredSubmissions[index] = {}
+            filteredSubmissions[index].gridValues = test;
+            console.log(filteredSubmissions);
+            // if (!submission.gridValues.isApproved) {
+            //     filteredSubmissions[index].gridValues = submission;
+            // }
+            if (index === submissions.length - 1) resolve(filteredSubmissions);
+        });
+        // const combination = `${material}+${application}`;
+        // const columns = dmpColumns.dmpIntakeForms[combination];
+        // if (filteredSubmissions) {
+        //     resolve(filteredSubmissions);
+        // } else {
+        //     reject(`Could not filter for approved submissions.`);
+        // }
     });
 }

@@ -4,6 +4,7 @@ const DmpController = require('../controllers/DmpController');
 var router = express.Router();
 
 router.get('/headerValues', DmpController.headerValues);
+router.get('/readyForDmp', DmpController.readyForDmp);
 // router.get('/picklist', DmpController.picklist);
 router.post('/grid', DmpController.grid);
 router.post('/submit', DmpController.submit);

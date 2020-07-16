@@ -69,12 +69,12 @@ UploadPage.propTypes = {
     decreaseRowNumber: PropTypes.func,
     dmpForm: PropTypes.shape({
         selected: PropTypes.shape({
-            numberOfSamples: PropTypes.number,
+            numberOfSamples: PropTypes.string,
         }),
     }),
     form: PropTypes.shape({
         selected: PropTypes.shape({
-            numberOfSamples: PropTypes.number,
+            numberOfSamples: PropTypes.string,
         }),
     }),
     getColumns: PropTypes.func,

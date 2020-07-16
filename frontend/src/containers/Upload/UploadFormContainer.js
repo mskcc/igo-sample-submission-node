@@ -132,7 +132,7 @@ UploadFormContainer.propTypes = {
         }),
         grid: PropTypes.shape({
             form: PropTypes.shape({
-                numberOfSamples: PropTypes.number,
+                numberOfSamples: PropTypes.string,
             }),
             gridIsLoading: PropTypes.bool,
             nothingToChange: PropTypes.bool,

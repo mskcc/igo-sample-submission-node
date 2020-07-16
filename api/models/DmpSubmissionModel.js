@@ -16,7 +16,7 @@ var DmpSubmissionSchema = new mongoose.Schema(
         username: { type: String, required: true },
         formValues: FormSchema,
         gridValues: { type: Array, required: true },
-        samplesApproved: { type: Number, default: 0 },
+        // samplesApproved: { type: Number, default: 0 },
         submitted: { type: Boolean, default: false },
         submittedAt: { type: Number, required: false },
         reviewed: { type: Boolean, default: false },
