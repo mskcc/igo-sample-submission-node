@@ -28,7 +28,7 @@ const formatBarcodes = function (resp) {
     const data = resp.data || [];
     let barcodes = {};
     data.map((element) => {
-        barcodes[element.barcodId.toLowerCase()] = element.barcodeTag;
+        barcodes[element.barcodId] = element.barcodeTag;
     });
     return barcodes;
 };

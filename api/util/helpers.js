@@ -599,7 +599,11 @@ export function generatePromoteGrid(limsColumnOrdering) {
             let promoteColFeature = {};
             let columnName = element.split(':')[1];
             // If we recognize the column, attach the feature and add it to the list used for picklist generation
-            if (columnName in submitColumns.gridColumns) {
+            console.log(columnName);
+            if (columnName === 'Index') {
+                promoteColFeature = Object.assign({}, submitColumns.gridColumns[columnName]);
+                promoteColFeature.data = 'barcodeId';
+            } else if (columnName in submitColumns.gridColumns) {
                 promoteColFeature = Object.assign({}, submitColumns.gridColumns[columnName]);
             } else {
                 logger.log('info', `${columnName} not found`);

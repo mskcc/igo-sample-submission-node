@@ -29,6 +29,10 @@ class Promote extends Component {
         });
 
         materials = [...materials].join('_');
+
+        if (rows[0].index != '') {
+            materials += '_DNA Library';
+        }
         return promoteDry(projectId, requestId, serviceId, materials, bankedSampleIds);
     };
 

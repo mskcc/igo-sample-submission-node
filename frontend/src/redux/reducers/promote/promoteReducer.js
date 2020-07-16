@@ -25,7 +25,7 @@ export default function uploadFormReducer(state = initialPromoteState, action) {
             return {
                 ...state,
                 rows: action.rows,
-                rowsBackup: action.rowsBackup,
+                // rowsBackup: action.rowsBackup,
                 promoteIsLoading: false,
             };
 

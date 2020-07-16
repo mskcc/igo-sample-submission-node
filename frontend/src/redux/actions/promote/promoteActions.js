@@ -54,11 +54,11 @@ export function loadBankedSamples(queryType, query) {
                 // handsontable changes do not trigger redux events
                 let samples = response.payload.samples;
                 let rows = samples.map((a) => Object.assign({}, a));
-                let rowsBackup = samples.map((a) => Object.assign({}, a));
+                // let rowsBackup = samples.map((a) => Object.assign({}, a));
                 dispatch({
                     type: RECEIVE_BANKED_SAMPLES_SUCCESS,
                     rows: util.rowsWithRowIndex(rows),
-                    rowsBackup: util.rowsWithRowIndex(rowsBackup),
+                    // rowsBackup: util.rowsWithRowIndex(rowsBackup),
                     message: 'clear',
                 });
                 return response;
