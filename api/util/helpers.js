@@ -64,15 +64,19 @@ const cacheAllPicklists = (limsColumns, allColumns) => {
                 }
             }
         });
-        Promise.all(picklistPromises).then((results) => {
-            if (results.some((x) => x.length === 0)) {
-                reject('Could not cache picklists.');
-            }
-            Object.keys(picklists).map((element, index) => {
-                picklists[element] = results[index];
+        Promise.all(picklistPromises)
+            .catch((error) => reject(error))
+            .then((results) => {
+                console.log(results);
+                if (!results || results.some((x) => x.length === 0)) {
+                    reject('Could not cache picklists.');
+                    return;
+                }
+                Object.keys(picklists).map((element, index) => {
+                    picklists[element] = results[index];
+                });
+                resolve(picklists);
             });
-            resolve(picklists);
-        });
     });
 };
 
@@ -101,7 +105,6 @@ export function generateGrid(limsColumnList, userRole, formValues, type = 'uploa
             .then((picklists) => fillColumns(columns, limsColumnList, formValues, picklists, allColumns))
             .then((columns) => hideColumns(columns, userRole))
             .then((columns) => fillData(columns, formValues))
-            .catch((reasons) => reject(reasons))
             .then((columns) => {
                 if (columns.columnFeatures.some((x) => x.data === 'wellPosition')) {
                     setWellPos(columns).then(resolve(columns));
@@ -109,7 +112,10 @@ export function generateGrid(limsColumnList, userRole, formValues, type = 'uploa
                     resolve(columns);
                 }
             })
-            .catch((reasons) => reject(reasons));
+            .catch((reasons) => {
+                reject(reasons);
+                return;
+            });
     });
 }
 
@@ -606,7 +612,6 @@ export function generatePromoteGrid(limsColumnOrdering) {
             let promoteColFeature = {};
             let columnName = element.split(':')[1];
             // If we recognize the column, attach the feature and add it to the list used for picklist generation
-            console.log(columnName);
             if (columnName === 'Index') {
                 promoteColFeature = Object.assign({}, submitColumns.gridColumns[columnName]);
                 promoteColFeature.data = 'barcodeId';
@@ -649,7 +654,6 @@ export function loadBankedSamples(queryType, query) {
             .loadBankedSamples(queryType, query)
             .then((response) => {
                 // TODO: Clean out some data like in old rex?
-                console.log('helper');
                 resolve(response);
             })
             .catch((reasons) => reject(reasons));
@@ -705,41 +709,6 @@ export function handleDmpId(dmpId) {
     });
 }
 
-// export function generateDmpGrid(userRole, formValues) {
-//   return new Promise((resolve, reject) => {
-//     let columns = {
-//       columnFeatures: [],
-//       rowData: [],
-//       columnHeaders: [],
-//       hiddenColumns: [],
-//     };
-
-//     //   if (!limsColumnList) {
-//     //     reject('Invalid Combination.');
-//     //   }
-//     //   // combinations with no optional columns return an empty element we need to filter out
-//     //   limsColumnList = limsColumnList.filter((element) => element[0] !== '');
-//     //   let columnNamesOnly = limsColumnList.map((element) => {
-//     //     return element[0];
-//     //   });
-
-//     //   cacheAllPicklists(columnNamesOnly)
-//     //     .then((picklists) =>
-//     //       fillColumns(columns, limsColumnList, userRole, formValues, picklists)
-//     //     )
-//     //     .then((columns) => fillData(columns, formValues))
-//     //     .catch((reasons) => reject(reasons))
-//     //     .then((columns) => {
-//     //       if (columns.columnFeatures.some((x) => x.data === 'wellPosition')) {
-//     //         setWellPos(columns).then(resolve(columns));
-//     //       } else {
-//     //         resolve(columns);
-//     //       }
-//     //     })
-//     //     .catch((reasons) => reject(reasons));
-//   });
-// }
-
 export function getDmpColumns(material, application) {
     return new Promise((resolve, reject) => {
         const combination = `${material}+${application}`;
@@ -751,29 +720,52 @@ export function getDmpColumns(material, application) {
         }
     });
 }
-
-export function filterReadyForDmp(submissions) {
+export function publishDmpData(submissions) {
+    // cmorequests will be array of objects with each objects being on submission with an array of samples
     return new Promise((resolve, reject) => {
+        let dmpData = {
+            cmoRequests: [],
+            cmoResponseId: getTransactionId(),
+            dmpRequestId: getTransactionId(),
+            requestTime: getTransactionId(),
+        };
+
+        filterForApprovedSamples(dmpData, submissions).then((dmpData) => resolve(dmpData));
+        //     generateDmpIds(submissions).then((submissions) => formatDmpData(submissions).then((submissions) => resolve(submissions)))
+        // );
+    });
+}
+
+export function filterForApprovedSamples(dmpData, submissions) {
+    return new Promise((resolve, reject) => {
+        var filteredDmpData = dmpData;
         //  only add samples that were approved
         // let filteredSubmissions = Object.assign({}, submissions);
+        let requests = submissions;
         let filteredSubmissions = [];
-        submissions.forEach(function (submission, index) {
-            // console.log(submission.gridValues.filter((element) => element.isApproved));
-            let test = submission.gridValues.filter((element) => element.isApproved);
-            filteredSubmissions[index] = {}
-            filteredSubmissions[index].gridValues = test;
-            console.log(filteredSubmissions);
-            // if (!submission.gridValues.isApproved) {
-            //     filteredSubmissions[index].gridValues = submission;
-            // }
-            if (index === submissions.length - 1) resolve(filteredSubmissions);
+        // for each request, get rid of unapproved samples
+        requests.forEach(function (request, index) {
+            const samples = request.gridValues;
+            let filteredRequest = Object.assign({}, request);
+
+            const approvedSamples = samples.filter((sample) => sample.isApproved);
+
+            if (approvedSamples.length > 0) {
+                filteredRequest.samples = approvedSamples;
+                delete filteredRequest.gridValues;
+                console.log(filteredRequest);
+                
+                filteredDmpData.cmoRequests.push(filteredRequest);
+            }
+            if (index === requests.length - 1) {
+                // filteredDmpData.cmoRequests = filteredDmpData.cmoRequests.filter((element) => element);
+                resolve(filteredDmpData);
+            }
         });
-        // const combination = `${material}+${application}`;
-        // const columns = dmpColumns.dmpIntakeForms[combination];
-        // if (filteredSubmissions) {
-        //     resolve(filteredSubmissions);
-        // } else {
-        //     reject(`Could not filter for approved submissions.`);
-        // }
     });
+}
+function getTransactionId() {
+    const now = Date.now();
+    const transactionId = Math.floor(now / 1000);
+    return transactionId;
 }

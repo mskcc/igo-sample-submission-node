@@ -154,21 +154,18 @@ exports.grid = [
             let columnsPromise = cache.get(`${material}-${application}-Columns`, () => util.getDmpColumns(material, application));
             columnsPromise
                 .then((results) => {
-                    if (results.some((x) => x.length === 0)) {
+                    if (!results || results.some((x) => x.length === 0)) {
                         return apiResponse.errorResponse(res, `Could not retrieve grid for '${material}' and '${application}'.`);
                     }
                     let columnsResult = results;
-
-                    let gridPromise = util.generateGrid(columnsResult, res.user.role, formValues, 'dmp').catch((reasons) => {
-                        return apiResponse.errorResponse(res, reasons);
-                    });
+                    let gridPromise = util.generateGrid(columnsResult, res.user.role, formValues, 'dmp');
                     gridPromise
-                        .catch((reasons) => {
-                            return apiResponse.errorResponse(res, reasons);
-                        })
                         .then((results) => {
                             let gridResult = results;
                             return apiResponse.successResponseWithData(res, 'Operation success', gridResult);
+                        })
+                        .catch((reasons) => {
+                           return apiResponse.errorResponse(res, reasons);
                         });
                 })
                 .catch((reasons) => {
@@ -324,6 +321,7 @@ exports.submit = [
 ];
 
 // TODO time cutoff?
+// PUT cmoRequest and dmpResponse IDs in with the smaples in DMP table
 exports.readyForDmp = [
     // query('picklist').isLength({ min: 1 }).trim().withMessage('Picklist must be specified.'),
     function (req, res) {
@@ -338,12 +336,13 @@ exports.readyForDmp = [
         model
             .find(filter)
             .sort(sort)
+            .lean()
             .exec(function (err, submissions) {
                 if (err || !submissions) {
                     return apiResponse.errorResponse(res, 'Could not retrieve submission.');
                 }
 
-                util.filterReadyForDmp(submissions).then((submissions) => {
+                util.publishDmpData(submissions).then((submissions) => {
                     return apiResponse.successResponseWithData(res, 'Operation success', {
                         submissions,
                     });

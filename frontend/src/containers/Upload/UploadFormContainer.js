@@ -109,7 +109,7 @@ UploadFormContainer.propTypes = {
     dmpClear: PropTypes.func,
     dmpGetInitialState: PropTypes.func,
     dmpSelect: PropTypes.func,
-    form: PropTypes.object,
+    form: PropTypes.array,
     formType: PropTypes.string,
     getApplicationsForMaterial: PropTypes.func,
     getInitialState: PropTypes.func,
@@ -132,7 +132,7 @@ UploadFormContainer.propTypes = {
         }),
         grid: PropTypes.shape({
             form: PropTypes.shape({
-                numberOfSamples: PropTypes.string,
+                numberOfSamples: PropTypes.any,
             }),
             gridIsLoading: PropTypes.bool,
             nothingToChange: PropTypes.bool,

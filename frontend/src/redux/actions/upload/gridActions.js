@@ -118,6 +118,7 @@ export function getColumns(page, formValues) {
 
 export function getInitialColumns(page, formValues, userRole) {
     return (dispatch) => {
+        
         dispatch({ type: GET_INITIAL_COLUMNS });
         let material = formValues.material;
         let application = formValues.application;
@@ -139,12 +140,13 @@ export function getInitialColumns(page, formValues, userRole) {
                 });
             })
             .catch((error) => {
-                return dispatch({
+                dispatch({
                     type: GET_COLUMNS_FAIL,
                     error: error,
                     application: application,
                     material: material,
                 });
+                return error;
             });
     };
 }
@@ -220,6 +222,12 @@ export function populateGridFromSubmission(submissionId, ownProps) {
                             message: 'Loaded!',
                         });
                         return ownProps.history.push(`/${page}`);
+                    })
+                    .catch((error) => {
+                        return dispatch({
+                            type: GET_SUBMISSION_TO_EDIT_FAIL,
+                            error: error,
+                        });
                     });
             })
             .catch((error) => {

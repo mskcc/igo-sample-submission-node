@@ -91,7 +91,7 @@ class UploadGridContainer extends Component {
                     return swal
                         .genericDecision(
                             'Publish to DMP?',
-                            'Submitting publishes the approved samples to the DMP and you will not be able to edit this submission again. <br> If you are not ready to publish, made changes unrelated to approval or a fixing user errors, use the save button instead.'
+                            'Submitting publishes the approved samples to the DMP and you will not be able to edit this submission again. <br> If you are not ready to publish, made changes unrelated to approval or fixing user errors, use the save button instead.'
                         )
                         .then((decision) => decision && submitDmpSubmission(reviewed));
                 }
