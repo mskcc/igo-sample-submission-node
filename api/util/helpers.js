@@ -67,7 +67,6 @@ const cacheAllPicklists = (limsColumns, allColumns) => {
         Promise.all(picklistPromises)
             .catch((error) => reject(error))
             .then((results) => {
-                console.log(results);
                 if (!results || results.some((x) => x.length === 0)) {
                     reject('Could not cache picklists.');
                     return;
@@ -259,7 +258,6 @@ const fillData = (columns, formValues) => {
         for (var i = 0; i < numberOfRows; i++) {
             columns.columnFeatures.map((entry) => {
                 rowData[i] = { ...rowData[i], [entry.data]: '' };
-                console.log(entry);
                 if (entry.type === 'checkbox') {
                     rowData[i] = { ...rowData[i], [entry.data]: false };
                 }
@@ -615,6 +613,10 @@ export function generatePromoteGrid(limsColumnOrdering) {
             if (columnName === 'Index') {
                 promoteColFeature = Object.assign({}, submitColumns.gridColumns[columnName]);
                 promoteColFeature.data = 'barcodeId';
+            }
+            if (columnName === 'Reads Requested/Coverage') {
+                promoteColFeature = Object.assign({}, submitColumns.gridColumns[columnName]);
+                promoteColFeature.data = 'readSummary';
             } else if (columnName in submitColumns.gridColumns) {
                 promoteColFeature = Object.assign({}, submitColumns.gridColumns[columnName]);
             } else {
@@ -753,8 +755,7 @@ export function filterForApprovedSamples(dmpData, submissions) {
             if (approvedSamples.length > 0) {
                 filteredRequest.samples = approvedSamples;
                 delete filteredRequest.gridValues;
-                console.log(filteredRequest);
-                
+
                 filteredDmpData.cmoRequests.push(filteredRequest);
             }
             if (index === requests.length - 1) {
