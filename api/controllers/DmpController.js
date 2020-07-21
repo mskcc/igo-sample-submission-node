@@ -332,7 +332,7 @@ exports.readyForDmp = [
         const model = DmpSubmissionModel;
         const filter = { reviewed: true };
         const sort = { createdAt: 'desc' };
-        delete res.user;
+        
         model
             .find(filter)
             .sort(sort)
@@ -342,10 +342,8 @@ exports.readyForDmp = [
                     return apiResponse.errorResponse(res, 'Could not retrieve submission.');
                 }
 
-                util.publishDmpData(submissions).then((submissions) => {
-                    return apiResponse.successResponseWithData(res, 'Operation success', {
-                        submissions,
-                    });
+                util.publishDmpData(submissions).then((dmpData) => {
+                    return res.status(200).json(dmpData)
                 });
             });
     },

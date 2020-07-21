@@ -109,7 +109,7 @@ export const gridColumns = {
     'Sample Approved by CMO': {
         name: 'Sample Approved by CMO',
         columnHeader: 'Sample Approved by CMO',
-        data: 'Sample Approved by CMO',
+        data: 'sampleApprovedByCmo',
         type: 'autocomplete',
         strict: true,
         error: 'Only dropdown options are permitted as values',

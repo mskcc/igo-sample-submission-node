@@ -727,9 +727,6 @@ export function publishDmpData(submissions) {
     return new Promise((resolve, reject) => {
         let dmpData = {
             cmoRequests: [],
-            cmoResponseId: getTransactionId(),
-            dmpRequestId: getTransactionId(),
-            requestTime: getTransactionId(),
         };
 
         filterForApprovedSamples(dmpData, submissions).then((dmpData) => resolve(dmpData));
@@ -748,16 +745,26 @@ export function filterForApprovedSamples(dmpData, submissions) {
         // for each request, get rid of unapproved samples
         requests.forEach(function (request, index) {
             const samples = request.gridValues;
-            let filteredRequest = Object.assign({}, request);
+            let filteredRequest = {};
 
             const approvedSamples = samples.filter((sample) => sample.isApproved);
+            approvedSamples.forEach(function (sample) {
+                sample.recordStatus = 'new';
+                delete sample.molecularPathologyAccessionNumber;
+                delete sample.rowIndex;
+                delete sample.isApproved;
+            });
 
             if (approvedSamples.length > 0) {
+                // approvedSamples.length == 1 && console.log(approvedSamples);
+                filteredRequest.cmoResponseId = request.submittedAt;
+                filteredRequest.dmpRequestId = request.submittedAt;
+                filteredRequest.requestTime = getTransactionId();
                 filteredRequest.samples = approvedSamples;
-                delete filteredRequest.gridValues;
 
+                approvedSamples.length == 1 && console.log(filteredRequest.samples);
                 filteredDmpData.cmoRequests.push(filteredRequest);
-            }
+            } else return;
             if (index === requests.length - 1) {
                 // filteredDmpData.cmoRequests = filteredDmpData.cmoRequests.filter((element) => element);
                 resolve(filteredDmpData);
