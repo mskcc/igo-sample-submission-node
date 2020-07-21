@@ -77,7 +77,10 @@ const formatOncoData = function (resp) {
                 single_record.value = values[single_value];
             }
         }
-        return oncotree.sort();
+        oncotree = oncotree.sort();
+        oncotree.unshift('Normal');
+
+        return oncotree;
     }
 };
 
