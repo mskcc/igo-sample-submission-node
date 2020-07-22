@@ -4,8 +4,7 @@ const { logger } = require('../util/winston');
 const { constants } = require('./constants');
 const submitColumns = require('./columns');
 import CacheService from './cache';
-import { createLogger } from 'winston';
-import { submission } from '../controllers/SubmissionController';
+import { v4 as uuidv4 } from 'uuid';
 const dmpColumns = require('./dmpColumns');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
@@ -722,10 +721,13 @@ export function getDmpColumns(material, application) {
         }
     });
 }
-export function publishDmpData(submissions) {
+export function publishDmpData(submissions, dmpRequestId) {
     // cmorequests will be array of objects with each objects being on submission with an array of samples
     return new Promise((resolve, reject) => {
         let dmpData = {
+            dmpRequestId: dmpRequestId,
+            cmoResponseId: uuidv4(),
+            requestTime: getTransactionId(),
             cmoRequests: [],
         };
 
@@ -741,28 +743,25 @@ export function filterForApprovedSamples(dmpData, submissions) {
         //  only add samples that were approved
         // let filteredSubmissions = Object.assign({}, submissions);
         let requests = submissions;
-        let filteredSubmissions = [];
         // for each request, get rid of unapproved samples
         requests.forEach(function (request, index) {
             const samples = request.gridValues;
             let filteredRequest = {};
+            let material = getDmpSpecimenType(request.formValues.material);
+            let igoId = request._id;
 
             const approvedSamples = samples.filter((sample) => sample.isApproved);
             approvedSamples.forEach(function (sample) {
                 sample.recordStatus = 'new';
+                sample.specimenType = material;
                 delete sample.molecularPathologyAccessionNumber;
                 delete sample.rowIndex;
                 delete sample.isApproved;
             });
 
             if (approvedSamples.length > 0) {
-                // approvedSamples.length == 1 && console.log(approvedSamples);
-                filteredRequest.cmoResponseId = request.submittedAt;
-                filteredRequest.dmpRequestId = request.submittedAt;
-                filteredRequest.requestTime = getTransactionId();
+                filteredRequest.requestId = igoId;
                 filteredRequest.samples = approvedSamples;
-
-                approvedSamples.length == 1 && console.log(filteredRequest.samples);
                 filteredDmpData.cmoRequests.push(filteredRequest);
             } else return;
             if (index === requests.length - 1) {
@@ -774,6 +773,13 @@ export function filterForApprovedSamples(dmpData, submissions) {
 }
 function getTransactionId() {
     const now = Date.now();
-    const transactionId = Math.floor(now / 1000);
+    const transactionId = Math.floor(now);
     return transactionId;
+}
+
+function getDmpSpecimenType(material) {
+    let dmpMaterial = 'unknown';
+    if (material === 'DNA Library') dmpMaterial = 'Library';
+    if (material === 'DNA') dmpMaterial = 'gDNA';
+    return dmpMaterial;
 }

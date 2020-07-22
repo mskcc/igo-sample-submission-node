@@ -165,7 +165,7 @@ exports.grid = [
                             return apiResponse.successResponseWithData(res, 'Operation success', gridResult);
                         })
                         .catch((reasons) => {
-                           return apiResponse.errorResponse(res, reasons);
+                            return apiResponse.errorResponse(res, reasons);
                         });
                 })
                 .catch((reasons) => {
@@ -323,16 +323,17 @@ exports.submit = [
 // TODO time cutoff?
 // PUT cmoRequest and dmpResponse IDs in with the smaples in DMP table
 exports.readyForDmp = [
-    // query('picklist').isLength({ min: 1 }).trim().withMessage('Picklist must be specified.'),
+    query('dmpRequestId').isUUID().trim().withMessage('dmpRequestId must be valid GUID.'),
     function (req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
+        const dmpRequestId = req.query.dmpRequestId;
         const model = DmpSubmissionModel;
         const filter = { reviewed: true };
         const sort = { createdAt: 'desc' };
-        
+
         model
             .find(filter)
             .sort(sort)
@@ -342,8 +343,8 @@ exports.readyForDmp = [
                     return apiResponse.errorResponse(res, 'Could not retrieve submission.');
                 }
 
-                util.publishDmpData(submissions).then((dmpData) => {
-                    return res.status(200).json(dmpData)
+                util.publishDmpData(submissions, dmpRequestId).then((dmpData) => {
+                    return res.status(200).json(dmpData);
                 });
             });
     },
