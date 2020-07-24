@@ -37,8 +37,8 @@ exports.headerValues = [
                 };
                 return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
             })
-            .catch((error) => {
-                return apiResponse.errorResponse(error, 'Could not retrieve picklists from LIMS.');
+            .catch(() => {
+                return apiResponse.errorResponse(res, 'Could not retrieve picklists from LIMS.');
             });
     },
 ];
@@ -195,6 +195,42 @@ exports.mrnToCid = [
                 let patientId = req.body.patientId.replace(/^\s+|\s+$/g, '');
 
                 let patientIdPromise = crdbServices.getCrdbId(patientId);
+
+                Promise.all([patientIdPromise])
+                    .catch(function (err) {
+                        return apiResponse.errorResponse(res, err);
+                    })
+                    .then((results) => {
+                        if (results.some((x) => x.length === 0)) {
+                            return apiResponse.errorResponse(res, 'Could not anonymize ID.');
+                        }
+                        let [patientIdResult] = results;
+                        let responseObject = {
+                            ...patientIdResult,
+                            normalizedPatientId: 'MRN REDACTED',
+                        };
+                        return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
+                    });
+            }
+        } catch (err) {
+            return apiResponse.errorResponse(res, err);
+        }
+    },
+];
+
+// MRN to C-ID
+exports.mrnToDmpId = [
+    body('patientId').isLength({ min: 1 }).trim().withMessage('patientId must be specified.'),
+    function (req, res) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
+            } else {
+                // remove leading and trailing whitespaces just in case
+                let patientId = req.body.patientId.replace(/^\s+|\s+$/g, '');
+
+                let patientIdPromise = crdbServices.mrnToDmpId(patientId);
 
                 Promise.all([patientIdPromise])
                     .catch(function (err) {
