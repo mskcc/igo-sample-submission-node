@@ -137,6 +137,24 @@ class UploadGrid extends React.Component {
                             else if (grid.rows.length >= 5) return '450';
                             else if (grid.rows.length < 5) return '350';
                         }}
+                        // beforeAutofill={function(start, end, data) {
+                        //     console.log('beforeAutofill');
+                        //     for (var k = 0; k <= end.col - start.col; k++) {
+                        //         var str = data[0][k],
+                        //             matches = str.match(/\d+$/),
+                        //             number;
+
+                        //         let init = parseInt(matches[0], 10) + 1;
+                        //         let strInit = data[0][k].replace(matches[0], '');
+                        //         data[0][k] = strInit + init;
+                        //         for (var i = 1; i <= end.row - start.row; i++) {
+                        //             if (!data[i]) {
+                        //                 data.push(data[0].slice());
+                        //             }
+                        //             data[i][k] = strInit + (init + i);
+                        //         }
+                        //     }
+                        // }}
                     />
                 </div>
             </div>
