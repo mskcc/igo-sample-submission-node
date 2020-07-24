@@ -215,7 +215,8 @@ exports.submit = (bankedSample) => {
         .catch((error) => {
             logger.log('info', `Error retrieving response from ${url}`);
             if (error.response) {
-                throw error.response.data.message;
+                
+                throw error.response.data;
             } else {
                 throw error;
             }
