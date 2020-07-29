@@ -47,7 +47,7 @@ export default function dmpFormReducer(state = initialDmpFormState, action) {
                     [action.payload.id]: action.payload.value,
                 },
             };
-        case ActionTypes.CLEAR:
+        case ActionTypes.DMP_CLEAR:
             return {
                 ...state,
                 selected: {
@@ -56,7 +56,7 @@ export default function dmpFormReducer(state = initialDmpFormState, action) {
                 },
             };
 
-        case ActionTypes.CLEAR_FORM:
+        case ActionTypes.DMP_CLEAR_FORM:
             return {
                 ...state,
                 initialFetched: false,
