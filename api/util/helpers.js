@@ -5,6 +5,7 @@ const { constants } = require('./constants');
 const submitColumns = require('./columns');
 import CacheService from './cache';
 import { v4 as uuidv4 } from 'uuid';
+import { error } from 'winston';
 const dmpColumns = require('./dmpColumns');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
@@ -384,6 +385,23 @@ function choosePatientIdValidator(patientIdType, patientIdTypeSpecified, species
 export function generateSubmissionGrid(submissions, userRole, submissionType) {
     return new Promise((resolve, reject) => {
         let gridColumns = submissionType === 'dmp' ? dmpColumns.submissionColumns : submitColumns.submissionColumns;
+
+        fillSubmissionGrid(submissions, userRole, gridColumns)
+            .then((grid) => {
+                if (submissionType === 'dmp') {
+                    return addDmpColsToSubmissionGrid(submissions, grid, userRole)
+                        .then((dmpGrid) => resolve(dmpGrid))
+                        .catch((error) => reject(error));
+                } else {
+                    resolve(grid);
+                }
+            })
+            .catch((error) => reject(error));
+    });
+}
+
+export function fillSubmissionGrid(submissions, userRole, gridColumns) {
+    return new Promise((resolve, reject) => {
         try {
             let grid = { columnHeaders: [], rows: [], columnFeatures: [] };
             grid.columnHeaders = Object.keys(gridColumns).map((a) => gridColumns[a].name);
@@ -426,25 +444,10 @@ export function generateSubmissionGrid(submissions, userRole, submissionType) {
                     } class="material-icons grid-action${isSubmitted ? '-disabled' : ''}">delete</span>`,
                 };
 
-                if (submissionType === 'dmp') {
-                    const samplesApproved = submission.gridValues.filter((element) => {
-                        return element.isApproved;
-                    });
-                    let isReviewed = submission.reviewed;
-                    rows[i].samplesApproved = `${samplesApproved.length}/${submission.formValues.numberOfSamples} samples`;
-                    rows[i].reviewed = isReviewed ? 'yes' : 'no';
-                    rows[i].reviewedAt = submission.reviewedAt ? parseDate(submission.reviewedAt) : '';
-                    if (userRole !== 'user') {
-                        rows[i].review = `<span  submitted=${isSubmitted && !isReviewed} service-id=${serviceId} submission-id=${
-                            submission.id
-                        } class="material-icons grid-action${isSubmitted && !isReviewed ? '' : '-disabled'}">assignmentturnedin</span>`;
-                    }
-                }
-
                 if (userRole !== 'user') {
-                    rows[i].unsubmit = !isSubmitted
-                        ? `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action-disabled">undo</span>`
-                        : `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${submission.id} class="material-icons grid-action">undo</span>`;
+                    rows[i].unsubmit = `<span submitted=${isSubmitted} service-id=${serviceId} submission-id=${
+                        submission.id
+                    } class="material-icons grid-action${isSubmitted ? '' : '-disabled'}">undo</span>`;
                 }
 
                 if (rows.length === submissions.length) {
@@ -454,6 +457,81 @@ export function generateSubmissionGrid(submissions, userRole, submissionType) {
             }
         } catch (err) {
             reject(err);
+        }
+    });
+}
+
+// queries DMP endpoint for past week
+// DMP results look like
+// {
+//     runDate: '05-27-2020',
+//     result: 'Success',
+//     content: {
+//       'TrackingId List': [
+//         '20200529LM',
+//         '20200713AH',
+//         '20200709NS'
+//       ]
+//     }
+//   }
+
+export function getAvailableProjectsFromDmp() {
+    return new Promise((resolve, reject) => {
+        // console.log(last7Days());
+        // const datesToFetch = last7Days();
+        const datesToFetch = ['05-20-2020', '05-21-2020', '05-23-2020', '05-24-2020', '05-25-2020', '05-26-2020', '05-27-2020'];
+        let promises = [];
+        datesToFetch.forEach((date) => promises.push(services.getAvailableProjectsFromDmp(date)));
+
+        Promise.all(promises)
+            .then((results) => {
+                try {
+                    let trackingIds = new Set();
+                    results.forEach((idList) => {
+                        idList.content['TrackingId List'].forEach((id) => trackingIds.add(id));
+                    });
+                    console.log(trackingIds);
+                } catch (error) {
+                    reject('Unexpected DMP result format.');
+                }
+            })
+            .catch((error) => reject('Error retrieving data from the DMP.'));
+    });
+}
+export function addDmpColsToSubmissionGrid(submissions, grid, userRole) {
+    return new Promise((resolve) => {
+        let dmpGrid = grid;
+        let rows = dmpGrid.rows;
+        for (let i = 0; i < submissions.length; i++) {
+            let submission = submissions[i];
+            let serviceId = submission.formValues.serviceId;
+
+            let isSubmitted = submission.submitted;
+
+            const samplesApproved = submission.gridValues.filter((element) => {
+                return element.isApproved;
+            });
+            let isReviewed = submission.reviewed;
+            rows[i].samplesApproved = `${samplesApproved.length}/${submission.formValues.numberOfSamples} samples`;
+            rows[i].reviewed = isReviewed ? 'yes' : 'no';
+            rows[i].reviewedAt = submission.reviewedAt ? parseDate(submission.reviewedAt) : '';
+            rows[i].reviewedBy = submission.reviewedBy ? submission.reviewedBy : '';
+            rows[i].trackingId = submission.gridValues[0].trackingId;
+            let isAvailable = true;
+            rows[i].pullFromDmp = `<span submitted=${isReviewed} service-id=${serviceId} submission-id=${
+                submission.id
+            } class="material-icons grid-action${isSubmitted && isAvailable ? '' : '-disabled'}">system_update_alt</span>`;
+
+            if (userRole !== 'user') {
+                rows[i].review = `<span  submitted=${isSubmitted && !isReviewed} service-id=${serviceId} submission-id=${
+                    submission.id
+                } class="material-icons grid-action${isSubmitted && !isReviewed ? '' : '-disabled'}">assignment_turned_in</span>`;
+            }
+
+            if (rows.length === submissions.length) {
+                grid.rows = rows;
+                resolve(grid);
+            }
         }
     });
 }
@@ -670,7 +748,7 @@ export function promote(transactionId, requestId, projectId, serviceId, material
             serviceId: serviceId,
             materials: materials,
             bankedId: bankedSampleIds,
-            igoUser: process.env.API_USER,
+            igoUser: user,
             user: user,
             dryrun: dryrun,
         };
@@ -782,4 +860,14 @@ function getDmpSpecimenType(material) {
     if (material === 'DNA Library') dmpMaterial = 'Library';
     if (material === 'DNA') dmpMaterial = 'gDNA';
     return dmpMaterial;
+}
+function last7Days() {
+    return '0123456'.split('').map(function (n) {
+        var d = new Date();
+        d.setDate(d.getDate() - n);
+
+        return (function (day, month, year) {
+            return [day < 10 ? '0' + day : day, month < 10 ? '0' + month : month, year].join('-');
+        })(d.getDate(), d.getMonth(), d.getFullYear());
+    });
 }

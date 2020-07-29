@@ -303,6 +303,7 @@ exports.submit = [
                 submissionToSubmit.submittedAt = transactionId;
                 submissionToSubmit.reviewed = reviewed;
                 submissionToSubmit.reviewedAt = reviewed ? transactionId : undefined;
+                submissionToSubmit.reviewedBy = reviewed ? res.user.username : undefined;
 
                 // submissionToSubmit.samplesApproved = approvals.length;
                 //  save pre LIMS submit so data is safe
@@ -347,5 +348,23 @@ exports.readyForDmp = [
                     return res.status(200).json(dmpData);
                 });
             });
+    },
+];
+
+// Query DMP and update submissions accordingly
+exports.updateDmpStatus = [
+    function (req, res) {
+        let dmpPromise = util.generateAdditionalRows(columnFeatures, formValues, prevRowNumber, newRowNumber);
+
+        Promise.all([rowPromise]).then((results) => {
+            if (results.some((x) => x.length === 0)) {
+                return apiResponse.errorResponse(res, 'Could not retrieve autofilled row.');
+            }
+            let [additionalRows] = results;
+            let responseObject = {
+                additionalRows,
+            };
+            return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
+        });
     },
 ];

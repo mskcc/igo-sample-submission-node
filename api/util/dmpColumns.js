@@ -24,6 +24,8 @@ export const gridColumns = {
         data: 'trackingId',
         pattern: validationPatterns.alphanumdash,
         error: 'Only letters, digits and –, please.',
+        sendToDmp: true,
+        hiddenFrom: 'user',
     },
 
     'DMP Sample ID': {
@@ -168,9 +170,9 @@ export const gridColumns = {
     },
 };
 export const submissionColumns = {
-    'Service ID': {
-        name: 'Service ID',
-        data: 'serviceId',
+    'Tracking ID': {
+        name: 'Tracking ID',
+        data: 'trackingId',
         readOnly: 'true',
     },
 
@@ -216,6 +218,17 @@ export const submissionColumns = {
         readOnly: 'true',
         renderer: 'html',
     },
+    'Reviewed By': {
+        name: 'Reviewed By',
+        data: 'reviewedBy',
+        readOnly: 'true',
+    },
+
+    'Date Reviewed': {
+        name: 'Reviewed On',
+        data: 'reviewedAt',
+        readOnly: 'true',
+    },
 
     'Date Created': {
         name: 'Created On',
@@ -226,12 +239,6 @@ export const submissionColumns = {
     'Date Submitted': {
         name: 'Submitted On',
         data: 'submittedAt',
-        readOnly: 'true',
-    },
-
-    'Date Reviewed': {
-        name: 'Reviewed On',
-        data: 'revieweddAt',
         readOnly: 'true',
     },
 
@@ -256,6 +263,13 @@ export const submissionColumns = {
         data: 'review',
         renderer: 'html',
     },
+    'Pull From DMP': {
+        name: 'Check DMP',
+        data: 'pullFromDmp',
+        readOnly: 'true',
+        renderer: 'html',
+    },
+
     Unsubmit: {
         name: 'Unsubmit',
         data: 'unsubmit',

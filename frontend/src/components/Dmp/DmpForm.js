@@ -50,7 +50,7 @@ class DmpForm extends React.Component {
 
     handleCheckbox = (name) => (event) => {
         const { handleInputChange } = this.props;
-
+        console.log(event.target.checked);
         this.setState({
             values: { ...this.state.values, [name]: event.target.checked },
         });
@@ -59,6 +59,18 @@ class DmpForm extends React.Component {
         } else {
             handleInputChange(name, event.target.checked);
             handleInputChange('sharedWith', '');
+        }
+    };
+
+       handleCheckbox = (name) => (event) => {
+        this.setState({
+            values: { ...this.state.values, [name]: event.target.checked },
+        });
+        if (event.target.checked) {
+            this.props.handleInputChange(name, event.target.checked);
+        } else {
+            this.props.handleInputChange(name, event.target.checked);
+            this.props.handleInputChange('sharedWith', '');
         }
     };
 
@@ -236,15 +248,9 @@ DmpForm.propTypes = {
         lastItem: PropTypes.any,
     }),
     form: PropTypes.shape({
-        applications: PropTypes.shape({
-            map: PropTypes.func,
-            some: PropTypes.func,
-        }),
+        applications: PropTypes.array,
         formIsLoading: PropTypes.any,
-        materials: PropTypes.shape({
-            map: PropTypes.func,
-            some: PropTypes.func,
-        }),
+        materials: PropTypes.array,
         selected: PropTypes.shape({
             application: PropTypes.any,
             isShared: PropTypes.bool,

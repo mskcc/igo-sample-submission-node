@@ -275,21 +275,6 @@ export const submitSubmission = (data) => {
         });
 };
 
-export const submitDmpSubmission = (data) => {
-    const url = `${Config.NODE_API_ROOT}/dmp/submit`;
-    return axios
-        .post(url, { ...data })
-        .then((resp) => {
-            return resp;
-        })
-        .catch((error) => {
-            throw error;
-        })
-        .then((resp) => {
-            return resp;
-        });
-};
-
 export const deleteSubmission = (id, submissionType) => {
     const url = `${Config.NODE_API_ROOT}/submission/delete`;
     return axios
@@ -399,3 +384,35 @@ export const fetchUser = (data) => {
         });
 };
 //  USER END
+
+// DMP
+
+export const submitDmpSubmission = (data) => {
+    const url = `${Config.NODE_API_ROOT}/dmp/submit`;
+    return axios
+        .post(url, { ...data })
+        .then((resp) => {
+            return resp;
+        })
+        .catch((error) => {
+            throw error;
+        })
+        .then((resp) => {
+            return resp;
+        });
+};
+
+export const updateDmpStatus = () => {
+    const url = `${Config.NODE_API_ROOT}/dmp/updateStatus`;
+    return axios
+        .get(url)
+        .then((resp) => {
+            return resp;
+        })
+        .catch((error) => {
+            throw error;
+        })
+        .then((resp) => {
+            return resp;
+        });
+};

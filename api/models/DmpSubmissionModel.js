@@ -21,6 +21,7 @@ var DmpSubmissionSchema = new mongoose.Schema(
         submittedAt: { type: Number, required: false },
         reviewed: { type: Boolean, default: false },
         reviewedAt: { type: Number, required: false },
+        reviewedBy: { type: String, required: false },
         transactionId: { type: Number, required: false },
         appVersion: { type: String, default: '2.5' },
         createdAt: Number,

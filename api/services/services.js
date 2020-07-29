@@ -8,17 +8,24 @@ const LIMS_AUTH = {
     password: process.env.LIMS_PASSWORD,
 };
 const LIMS_URL = process.env.LIMS_URL;
-
+const DMP_URL = process.env.DMP_URL;
 const ONCO_URL = process.env.ONCO_URL;
 const CRDB_URL = process.env.CRDB_URL;
 const CRDB_USERNAME = process.env.CRDB_USERNAME;
 const CRDB_PASSWORD = process.env.CRDB_PASSWORD;
 const CRDB_SERVER_ID = process.env.CRDB_SERVER_ID;
 
+const AXIOS_TIMEOUT = parseInt(process.env.AXIOS_TIMEOUT);
+
 // LIMS is authorized. Avoids certificate verification & "unable to verify the first certificate in nodejs" errors
 const agent = new https.Agent({
     rejectUnauthorized: false,
 });
+
+const axiosConfig = {
+    timeout: AXIOS_TIMEOUT,
+    httpsAgent: agent,
+};
 
 const formatData = function (resp) {
     const data = resp.data || [];
@@ -90,7 +97,7 @@ exports.getPicklist = (listname) => {
     return axios
         .get(url, {
             auth: { ...LIMS_AUTH },
-            httpsAgent: agent,
+            ...axiosConfig,
         })
         .then((resp) => {
             if (resp.data && resp.data[0].includes('ERROR')) {
@@ -115,7 +122,7 @@ exports.getBarcodes = () => {
     return axios
         .get(url, {
             auth: { ...LIMS_AUTH },
-            httpsAgent: agent,
+            ...axiosConfig,
         })
         .then((resp) => {
             logger.log('info', `Successfully retrieved response from ${url}`);
@@ -136,7 +143,7 @@ exports.getMaterials = (application) => {
     return axios
         .get(url, {
             auth: { ...LIMS_AUTH },
-            httpsAgent: agent,
+            ...axiosConfig,
         })
         .then((resp) => {
             logger.log('info', `Successfully retrieved response from ${url}`);
@@ -157,7 +164,7 @@ exports.getApplications = (material) => {
     return axios
         .get(url, {
             auth: { ...LIMS_AUTH },
-            httpsAgent: agent,
+            ...axiosConfig,
         })
         .then((resp) => {
             // console.log(resp);
@@ -181,7 +188,7 @@ exports.getColumns = (material, application) => {
     return axios
         .get(url, {
             auth: { ...LIMS_AUTH },
-            httpsAgent: agent,
+            ...axiosConfig,
         })
         .then((resp) => {
             logger.log('info', `Successfully retrieved response from ${url}`);
@@ -205,6 +212,7 @@ exports.submit = (bankedSample) => {
             {
                 auth: { ...LIMS_AUTH },
                 httpsAgent: agent,
+                ...axiosConfig,
                 params: { ...bankedSample },
             }
         )
@@ -215,7 +223,6 @@ exports.submit = (bankedSample) => {
         .catch((error) => {
             logger.log('info', `Error retrieving response from ${url}`);
             if (error.response) {
-                
                 throw error.response.data;
             } else {
                 throw error;
@@ -278,7 +285,7 @@ exports.loadBankedSamples = (queryType, query) => {
     return axios
         .get(url, {
             auth: { ...LIMS_AUTH },
-            httpsAgent: agent,
+            ...axiosConfig,
         })
         .then((resp) => {
             logger.log('info', `Successfully retrieved response from ${url}`);
@@ -304,6 +311,7 @@ exports.promote = (data) => {
             {
                 auth: { ...LIMS_AUTH },
                 httpsAgent: agent,
+                ...axiosConfig,
                 params: { ...data },
             }
         )
@@ -318,6 +326,27 @@ exports.promote = (data) => {
                 throw error.response.data;
             }
             throw error;
+        })
+        .then((resp) => {
+            return formatData(resp);
+        });
+};
+
+//  DMP
+exports.getAvailableProjectsFromDmp = (date) => {
+    const url = `${DMP_URL}/getCMOTrackingIdList?date=${date}`;
+    logger.log('info', `Sending request to ${url}`);
+    return axios
+        .get(url, {
+            ...axiosConfig,
+        })
+        .then((resp) => {
+            logger.log('info', `Successfully retrieved response from ${url}`);
+            return resp;
+        })
+        .catch((error) => {
+            logger.log('info', `Error retrieving response from ${url}`);
+            return error;
         })
         .then((resp) => {
             return formatData(resp);
