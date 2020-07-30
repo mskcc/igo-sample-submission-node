@@ -7,7 +7,7 @@ exports.successResponse = function (res, msg) {
         status: 1,
         message: msg,
     };
-    // console.log(data);
+    
     res.status(200).json(data);
 };
 

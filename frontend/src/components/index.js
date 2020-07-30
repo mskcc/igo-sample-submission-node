@@ -12,6 +12,9 @@ import PromoteGrid from './Promote/PromoteGrid.js';
 
 import DmpForm from './Dmp/DmpForm.js';
 
+import DmpStatusPanel from './Dmp/DmpStatusPanel.js';
+import SubmissionsGrid from './Submissions/SubmissionsGrid.js';
+
 import Header from './Shared/Header.js';
 import Message from './Shared/Message.js';
 import SnackMessage from './Shared/SnackMessage.js';
@@ -30,4 +33,6 @@ export {
     GridButton,
     EditPanel,
     DmpForm,
+    SubmissionsGrid,
+    DmpStatusPanel,
 };

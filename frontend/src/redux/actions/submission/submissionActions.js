@@ -217,6 +217,33 @@ export function submitDmpSubmission(reviewed = false) {
     };
 }
 
+export const CHECK_DMP = 'CHECK_DMP';
+export const CHECK_DMP_FAIL = 'CHECK_DMP_FAIL';
+export const CHECK_DMP_SUCCESS = 'CHECK_DMP_SUCCESS';
+export function checkDmp(reviewed = false) {
+    return (dispatch, getState) => {
+        dispatch({ type: CHECK_DMP, message: 'Pulling status from DMP...' });
+
+        let data = util.generateSubmitData(getState());
+        data.reviewed = reviewed;
+        services
+            .updateDmpStatus(data)
+            .then((result) => {
+                dispatch({
+                    type: CHECK_DMP_SUCCESS,
+                });
+                return swal.genericMessage('success', result.payload.message).then(() => window.location.reload());
+            })
+            .catch((error) => {
+                dispatch({
+                    type: CHECK_DMP_FAIL,
+                    error: error,
+                });
+                return error;
+            });
+    };
+}
+
 export const DELETE_SUBMISSION = 'DELETE_SUBMISSION';
 export const DELETE_SUBMISSION_FAIL = 'DELETE_SUBMISSION_FAIL';
 export const DELETE_SUBMISSION_SUCCESS = 'DELETE_SUBMISSION_SUCCESS';

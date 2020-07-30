@@ -490,12 +490,12 @@ export function getAvailableProjectsFromDmp() {
                     results.forEach((idList) => {
                         idList.content['TrackingId List'].forEach((id) => trackingIds.add(id));
                     });
-                    console.log(trackingIds);
+                    resolve(trackingIds);
                 } catch (error) {
                     reject('Unexpected DMP result format.');
                 }
             })
-            .catch((error) => reject('Error retrieving data from the DMP.'));
+            .catch(() => reject('Error retrieving data from the DMP.'));
     });
 }
 export function addDmpColsToSubmissionGrid(submissions, grid, userRole) {
@@ -516,11 +516,14 @@ export function addDmpColsToSubmissionGrid(submissions, grid, userRole) {
             rows[i].reviewed = isReviewed ? 'yes' : 'no';
             rows[i].reviewedAt = submission.reviewedAt ? parseDate(submission.reviewedAt) : '';
             rows[i].reviewedBy = submission.reviewedBy ? submission.reviewedBy : '';
-            rows[i].trackingId = submission.gridValues[0].trackingId;
-            let isAvailable = true;
-            rows[i].pullFromDmp = `<span submitted=${isReviewed} service-id=${serviceId} submission-id=${
+            rows[i].trackingId = submission.trackingId;
+            let isAvailableAtDmp = submission.isAvailableAtDmp;
+            // let isAvailableAtDmp = true;
+            rows[i].loadFromDmp = `<span submitted=${isReviewed} service-id=${serviceId} submission-id=${
                 submission.id
-            } class="material-icons grid-action${isSubmitted && isAvailable ? '' : '-disabled'}">system_update_alt</span>`;
+            } class="material-icons grid-action${isAvailableAtDmp ? '' : '-disabled'}">${
+                isAvailableAtDmp ? 'cloud_download' : 'cloud_off'
+            }</span>`;
 
             if (userRole !== 'user') {
                 rows[i].review = `<span  submitted=${isSubmitted && !isReviewed} service-id=${serviceId} submission-id=${

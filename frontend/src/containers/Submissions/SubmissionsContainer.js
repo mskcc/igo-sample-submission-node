@@ -6,9 +6,10 @@ import { withLocalize } from 'react-localize-redux';
 import { gridActions, submissionActions } from '../../redux/actions';
 import { resetErrorMessage } from '../../redux/actions/commonActions';
 
+
 import { swal } from '../../util';
 
-import SubmissionsGrid from '../../components/Submissions/SubmissionsGrid';
+import { SubmissionsGrid } from '../../components/';
 
 export class SubmissionsPage extends Component {
     componentDidMount() {
@@ -30,6 +31,8 @@ export class SubmissionsPage extends Component {
             this.handleEdit(id);
         } else if (column === 'review' && submitted) {
             this.handleEdit(id);
+        } else if (column === 'pullFromDmp' && submitted) {
+            this.handleCheckDmp(id);
         } else if (column === 'unsubmit' && submitted) {
             this.handleUnsubmit(id);
         } else if (column === 'receipt' && submitted) {
@@ -42,6 +45,11 @@ export class SubmissionsPage extends Component {
     handleEdit = (submissionId) => {
         const { populateGridFromSubmission } = this.props;
         return populateGridFromSubmission(submissionId, this.props);
+    };
+
+    handleCheckDmp = (submissionId) => {
+        const { checkDmp } = this.props;
+        return checkDmp(submissionId, this.props);
     };
 
     handleUnsubmit = (submissionId) => {
@@ -67,12 +75,15 @@ export class SubmissionsPage extends Component {
         const { submissions, gridType } = this.props;
 
         return submissions.grid.rows.length > 0 ? (
-            <SubmissionsGrid
-                grid={submissions.grid}
-                gridType={gridType}
-                handleGridClick={this.handleGridClick}
-                handleFilterClick={this.handleFilterClick}
-            />
+            <React.Fragment>
+                <SubmissionsGrid
+                    grid={submissions.grid}
+                    gridType={gridType}
+                    handleGridClick={this.handleGridClick}
+                    handleFilterClick={this.handleFilterClick}
+                    handleCheckDmp={this.handleCheckDmp}
+                />
+            </React.Fragment>
         ) : (
             'No submissions available.'
         );

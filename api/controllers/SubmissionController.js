@@ -160,13 +160,13 @@ exports.create = [
         let formValues = JSON.parse(req.body.formValues);
         let gridValues = JSON.parse(req.body.gridValues);
         let submissionType = req.body.submissionType;
-
         let submission;
         if (submissionType === 'dmp') {
             submission = new DmpSubmissionModel({
                 username: res.user.username,
                 formValues: formValues,
                 gridValues: gridValues,
+                trackingId: gridValues[0].trackingId || '',
                 appVersion: '2.5',
             });
         } else {
@@ -206,18 +206,20 @@ exports.update = [
 
         let formValues = JSON.parse(req.body.formValues);
         let gridValues = JSON.parse(req.body.gridValues);
+        let updatedSubmission = {
+            formValues: formValues,
+            gridValues: gridValues,
+        };
         let submissionType = req.body.submissionType;
         let id = req.body.id;
-        let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
+
+        let model = SubmissionModel;
+        if (submissionType === 'dmp') {
+            model = DmpSubmissionModel;
+            updatedSubmission.trackingId = gridValues[0].trackingId || '';
+        }
         model
-            .findByIdAndUpdate(
-                ObjectId(id),
-                {
-                    formValues: formValues,
-                    gridValues: gridValues,
-                },
-                { new: true }
-            )
+            .findByIdAndUpdate(ObjectId(id), updatedSubmission, { new: true })
             .lean()
             .exec(function (err, submission) {
                 if (err || !submission) {
@@ -259,9 +261,12 @@ exports.submit = [
         Promise.all([findOrCreateSubPromise])
             .then((results) => {
                 let [submissionToSubmit] = results;
+
                 submissionToSubmit.formValues = formValues;
                 submissionToSubmit.gridValues = gridValues;
-
+                if (gridType === 'dmp') {
+                    submissionToSubmit.trackingId = gridValues[0].trackingId || '';
+                }
                 //  save pre LIMS submit so data is safe
                 submissionToSubmit.save(function (err) {
                     if (err) {
@@ -274,7 +279,7 @@ exports.submit = [
                         return apiResponse.errorResponse(res, reasons);
                     })
                     .then((results) => {
-                        if (results.some((x) => x.length === 0)) {
+                        if (!results || results.some((x) => x.length === 0)) {
                             return apiResponse.errorResponse(res, 'Could not submit.');
                         }
                         let [submissionResult] = results;

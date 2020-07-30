@@ -60,7 +60,7 @@ exports.materialsAndSpecies = [
             let materialsPromise = cache.get(recipe + '-Materials', () => services.getMaterials(recipe));
 
             Promise.all([materialsPromise]).then((results) => {
-                if (results.some((x) => x.length === 0)) {
+                if (!results || results.some((x) => x.length === 0)) {
                     return apiResponse.errorResponse(res, `Could not retrieve materials and species for '${recipe}'.`);
                 }
                 let [materialsResult] = results;
@@ -159,7 +159,7 @@ exports.grid = [
 
             let columnsPromise = cache.get(`${material}-${application}-Columns`, () => services.getColumns(material, application));
             Promise.all([columnsPromise]).then((results) => {
-                if (results.some((x) => x.length === 0)) {
+                if (!results || results.some((x) => x.length === 0)) {
                     return apiResponse.errorResponse(res, `Could not retrieve grid for '${material}' and '${application}'.`);
                 }
                 let [columnsResult] = results;

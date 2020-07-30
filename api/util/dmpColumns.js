@@ -263,9 +263,9 @@ export const submissionColumns = {
         data: 'review',
         renderer: 'html',
     },
-    'Pull From DMP': {
-        name: 'Check DMP',
-        data: 'pullFromDmp',
+    'Load From DMP': {
+        name: 'Load From DMP',
+        data: 'loadFromDmp',
         readOnly: 'true',
         renderer: 'html',
     },

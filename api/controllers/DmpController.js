@@ -3,6 +3,7 @@ const { body, query, validationResult } = require('express-validator');
 const util = require('../util/helpers');
 const services = require('../services/services');
 const { authenticate } = require('../middlewares/jwt');
+var _ = require('lodash');
 import CacheService from '../util/cache';
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
@@ -352,19 +353,31 @@ exports.readyForDmp = [
 ];
 
 // Query DMP and update submissions accordingly
-exports.updateDmpStatus = [
+exports.updateStatus = [
     function (req, res) {
-        let dmpPromise = util.generateAdditionalRows(columnFeatures, formValues, prevRowNumber, newRowNumber);
+        let dmpPromise = util.getAvailableProjectsFromDmp();
 
-        Promise.all([rowPromise]).then((results) => {
-            if (results.some((x) => x.length === 0)) {
-                return apiResponse.errorResponse(res, 'Could not retrieve autofilled row.');
-            }
-            let [additionalRows] = results;
-            let responseObject = {
-                additionalRows,
-            };
-            return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
-        });
+        dmpPromise
+            .then((availableTrackingIds) => {
+                if (!availableTrackingIds) {
+                    return apiResponse.successResponse(res, 'No projects returned by the DMP.');
+                }
+                // console.log(availableTrackingIds);
+                DmpSubmissionModel.updateMany(
+                    { trackingId: { $in: [...availableTrackingIds] }, isAvailableAtDmp: false },
+                    { isAvailableAtDmp: true }
+                )
+                    .lean()
+                    .then((writeResult) => {
+                        if (writeResult.n === 0) {
+                            return apiResponse.successResponse(res, 'No new projects since the last update.');
+                        } else {
+                            return apiResponse.successResponse(res, `${writeResult.nModified} projects newly available.`);
+                        }
+                    });
+            })
+            .catch((reasons) => {
+                return apiResponse.errorResponse(res, reasons);
+            });
     },
 ];

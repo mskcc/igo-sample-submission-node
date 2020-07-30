@@ -11,19 +11,27 @@ class SubmissionsGrid extends React.Component {
     }
 
     render() {
-        const { classes, handleGridClick, handleFilterClick, grid, gridType } = this.props;
+        const { classes, handleGridClick, handleFilterClick, handleCheckDmp, grid, gridType } = this.props;
         let headline = gridType.toUpperCase() === 'UPLOAD' ? 'IGO Submissions' : `${gridType.toUpperCase()} Submissions`;
         return (
             <div className={classes.container}>
-                <Typography color='inherit' variant='h6'>
-                    {headline}
-                </Typography>
+                <div className={classes.header}>
+                    <Typography color='inherit' variant='h6'>
+                        {headline}
+                    </Typography>{' '}
+                    {gridType === 'dmp' && (
+                        <Button variant='contained' color='primary' onClick={() => handleCheckDmp('', 0, true)}>
+                            Update DMP Status
+                        </Button>
+                    )}
+                </div>
+
                 <ButtonGroup color='primary' size='small' aria-label='small outlined primary button group'>
                     <Button onClick={() => handleFilterClick('months', 1)}>Last Month</Button>
                     <Button onClick={() => handleFilterClick('months', 3)}>Last 3 Months</Button>
                     <Button onClick={() => handleFilterClick('years', 1)}>Last Year</Button>
                     <Button onClick={() => handleFilterClick('years', 2)}>Last 2 Years</Button>
-                    <Button onClick={() => handleFilterClick('', 0, true)}>All</Button>‰
+                    <Button onClick={() => handleFilterClick('', 0, true)}>All</Button>
                 </ButtonGroup>
 
                 <HotTable
@@ -36,10 +44,11 @@ class SubmissionsGrid extends React.Component {
                     readOnly
                     className='htCenter'
                     columns={grid.columnFeatures}
-                    // stretchH="all"
+                    stretchH='all'
                     width='95%'
                     filters='true'
                     columnSorting='true'
+                    fixedColumnsLeft='1'
                     dropdownMenu={['filter_by_value', 'filter_action_bar']}
                     // make actions clickable
                     afterOnCellMouseDown={(event, coords, TD) => {
@@ -53,13 +62,23 @@ class SubmissionsGrid extends React.Component {
                             }
                         }
                     }}
+                    height={() => {
+                        if (grid.rows.length >= 25) return '700';
+                        // else if (grid.rows.length >= 900) return '100vh'
+                        else if (grid.rows.length >= 20) return '510';
+                        else if (grid.rows.length >= 15) return '650';
+                        else if (grid.rows.length >= 10) return '550';
+                        else if (grid.rows.length >= 5) return '450';
+                        else if (grid.rows.length < 5) return '350';
+                    }}
                 />
             </div>
         );
     }
 }
 
-const styles = (theme) => ({
-    // container: { width: '80vw' }
+const styles = () => ({
+    container: { width: '80vw', overflow: 'hidden' },
+    header: { display: 'flex', width: '95%', justifyContent: 'space-between' },
 });
 export default withStyles(styles)(SubmissionsGrid);

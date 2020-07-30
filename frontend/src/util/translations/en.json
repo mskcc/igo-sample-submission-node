@@ -53,5 +53,9 @@
         "loadBanked_label": "Load Banked Samples",
         "promoteAll_label": "Promote All",
         "promoteSelected_label": "Promote Selected"
+    },
+
+    "submissions": {
+        "dmp_panel_title": "Ready to pull from DMP"
     }
 }

@@ -81,6 +81,7 @@ export const grid = (data) => {
         });
 };
 
+//  HANDLE PATIENT IDs
 export const mrnToCid = (data) => {
     const url = `${Config.NODE_API_ROOT}/upload/mrnToCid`;
     return axios

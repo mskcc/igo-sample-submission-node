@@ -86,7 +86,7 @@ class UploadGridContainer extends Component {
         } else {
             if (grid.gridType === 'dmp') {
                 if (user.role !== 'user') {
-                    // TODO depends on backend ingo
+                    // TODO depends on backend info
                     let reviewed = true;
                     return swal
                         .genericDecision(
