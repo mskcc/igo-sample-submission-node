@@ -6,10 +6,10 @@ import { withLocalize } from 'react-localize-redux';
 import { gridActions, submissionActions } from '../../redux/actions';
 import { resetErrorMessage } from '../../redux/actions/commonActions';
 
-
 import { swal } from '../../util';
 
 import { SubmissionsGrid } from '../../components/';
+import { loadFromDmp } from '../../redux/actions/submission/submissionActions';
 
 export class SubmissionsPage extends Component {
     componentDidMount() {
@@ -24,21 +24,24 @@ export class SubmissionsPage extends Component {
         return getSubmissionsSince(unit, time, gridType);
     };
 
-    handleGridClick = (coords, submitted, id, serviceId) => {
+    handleGridClick = (coords, readyForAction, mongoId, serviceId) => {
         const { submissions } = this.props;
+        console.log(mongoId);
         const column = submissions.grid.columnFeatures[coords.col].data;
-        if (column === 'edit' && !submitted) {
-            this.handleEdit(id);
-        } else if (column === 'review' && submitted) {
-            this.handleEdit(id);
-        } else if (column === 'pullFromDmp' && submitted) {
-            this.handleCheckDmp(id);
-        } else if (column === 'unsubmit' && submitted) {
-            this.handleUnsubmit(id);
-        } else if (column === 'receipt' && submitted) {
-            this.handleReceipt(id, serviceId);
-        } else if (column === 'delete' && !submitted) {
-            this.handleDelete(id);
+        if (column === 'edit' && !readyForAction) {
+            this.handleEdit(mongoId);
+        } else if (column === 'review' && readyForAction) {
+            this.handleEdit(mongoId);
+        } else if (column === 'pullFromDmp' && readyForAction) {
+            this.handleCheckDmp();
+        } else if (column === 'loadFromDmp' && readyForAction) {
+            this.handleLoadFromDmp(serviceId, mongoId);
+        } else if (column === 'unsubmit' && readyForAction) {
+            this.handleUnsubmit(mongoId);
+        } else if (column === 'receipt' && readyForAction) {
+            this.handleReceipt(mongoId, serviceId);
+        } else if (column === 'delete' && !readyForAction) {
+            this.handleDelete(mongoId);
         }
     };
 
@@ -50,6 +53,11 @@ export class SubmissionsPage extends Component {
     handleCheckDmp = (submissionId) => {
         const { checkDmp } = this.props;
         return checkDmp(submissionId, this.props);
+    };
+
+    handleLoadFromDmp = (trackingId, mongoId) => {
+        const { loadFromDmp } = this.props;
+        return loadFromDmp(trackingId, mongoId);
     };
 
     handleUnsubmit = (submissionId) => {

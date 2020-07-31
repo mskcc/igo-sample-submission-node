@@ -56,9 +56,9 @@ class SubmissionsGrid extends React.Component {
                             let actionElement = TD.firstElementChild || undefined;
                             if (actionElement) {
                                 let submitted = actionElement.getAttribute('submitted') === 'true' || undefined;
-                                let service_id = actionElement.getAttribute('service-id') || undefined;
-                                let id = actionElement.getAttribute('submission-id') || undefined;
-                                handleGridClick(coords, submitted, id, service_id);
+                                let serviceId = actionElement.getAttribute('service-id') || undefined;
+                                let mongoId= actionElement.getAttribute('submission-id') || undefined;
+                                handleGridClick(coords, submitted, mongoId, serviceId);
                             }
                         }
                     }}

@@ -220,14 +220,11 @@ export function submitDmpSubmission(reviewed = false) {
 export const CHECK_DMP = 'CHECK_DMP';
 export const CHECK_DMP_FAIL = 'CHECK_DMP_FAIL';
 export const CHECK_DMP_SUCCESS = 'CHECK_DMP_SUCCESS';
-export function checkDmp(reviewed = false) {
+export function checkDmp() {
     return (dispatch, getState) => {
-        dispatch({ type: CHECK_DMP, message: 'Pulling status from DMP...' });
-
-        let data = util.generateSubmitData(getState());
-        data.reviewed = reviewed;
+        dispatch({ type: CHECK_DMP, message: 'Fetching status from DMP...' });
         services
-            .updateDmpStatus(data)
+            .updateDmpStatus()
             .then((result) => {
                 dispatch({
                     type: CHECK_DMP_SUCCESS,
@@ -237,6 +234,31 @@ export function checkDmp(reviewed = false) {
             .catch((error) => {
                 dispatch({
                     type: CHECK_DMP_FAIL,
+                    error: error,
+                });
+                return error;
+            });
+    };
+}
+
+export const LOAD_FROM_DMP = 'LOAD_FROM_DMP';
+export const LOAD_FROM_DMP_FAIL = 'LOAD_FROM_DMP_FAIL';
+export const LOAD_FROM_DMP_SUCCESS = 'LOAD_FROM_DMP_SUCCESS';
+export function loadFromDmp(trackingId, mongoId) {
+    return (dispatch, getState) => {
+        dispatch({ type: LOAD_FROM_DMP, message: 'Loading and parsing submission from DMP...' });
+        const data = { trackingId, mongoId };
+        services
+            .loadFromDmp(data)
+            .then((result) => {
+                dispatch({
+                    type: LOAD_FROM_DMP_SUCCESS,
+                });
+                return swal.genericMessage('success', result.payload.message).then(() => window.location.reload());
+            })
+            .catch((error) => {
+                dispatch({
+                    type: LOAD_FROM_DMP_FAIL,
                     error: error,
                 });
                 return error;

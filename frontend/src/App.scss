@@ -84,11 +84,13 @@ input.htCheckboxRendererInput {
 
 .grid-action {
     color: black;
+    text-align: center;
     // font-weight: bold;
     cursor: pointer;
 }
 
 .grid-action-disabled {
+    text-align: center;
     cursor: not-allowed;
 }
 .alert #swal2-content {

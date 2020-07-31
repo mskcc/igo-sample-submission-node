@@ -417,3 +417,19 @@ export const updateDmpStatus = () => {
             return resp;
         });
 };
+
+export const loadFromDmp = (data) => {
+    console.log(data);
+    const url = `${Config.NODE_API_ROOT}/dmp/loadFromDmp`;
+    return axios
+        .post(url, { ...data })
+        .then((resp) => {
+            return resp;
+        })
+        .catch((error) => {
+            throw error;
+        })
+        .then((resp) => {
+            return resp;
+        });
+};

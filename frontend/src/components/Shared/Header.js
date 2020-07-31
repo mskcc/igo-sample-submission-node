@@ -39,7 +39,7 @@ function Header(userRole) {
                     <Button>
                         <NavLink to='/dmp' activeClassName={classes.active} className={classes.navlink}>
                             <Typography color='inherit' variant='h6'>
-                                DMP
+                                 DMP
                             </Typography>
                         </NavLink>
                     </Button>
