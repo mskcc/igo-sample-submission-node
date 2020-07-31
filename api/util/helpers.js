@@ -6,6 +6,7 @@ const submitColumns = require('./columns');
 import CacheService from './cache';
 import { v4 as uuidv4 } from 'uuid';
 import { error } from 'winston';
+import { isMatch } from 'lodash';
 const dmpColumns = require('./dmpColumns');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
@@ -474,7 +475,6 @@ export function fillSubmissionGrid(submissions, userRole, gridColumns) {
 //       ]
 //     }
 //   }
-
 export function getAvailableProjectsFromDmp() {
     return new Promise((resolve, reject) => {
         // console.log(last7Days());
@@ -498,14 +498,19 @@ export function getAvailableProjectsFromDmp() {
             .catch(() => reject('Error retrieving data from the DMP.'));
     });
 }
+
+// user can submit => if user not yet submitted or if unsubmitted
+// pm can review => if user submitted and not yet reviewed
+// pm can submit => if pm reviewed
+// pm can unsubmit => if user submitted
+// pm can load from DMP => if available from DMP (no additonal check for reviewed)
 export function addDmpColsToSubmissionGrid(submissions, grid, userRole) {
     return new Promise((resolve) => {
         let dmpGrid = grid;
         let rows = dmpGrid.rows;
         for (let i = 0; i < submissions.length; i++) {
             let submission = submissions[i];
-            let serviceId = submission.formValues.serviceId;
-
+            let trackingId = submission.trackingId;
             let isSubmitted = submission.submitted;
 
             const samplesApproved = submission.gridValues.filter((element) => {
@@ -516,19 +521,26 @@ export function addDmpColsToSubmissionGrid(submissions, grid, userRole) {
             rows[i].reviewed = isReviewed ? 'yes' : 'no';
             rows[i].reviewedAt = submission.reviewedAt ? parseDate(submission.reviewedAt) : '';
             rows[i].reviewedBy = submission.reviewedBy ? submission.reviewedBy : '';
-            rows[i].trackingId = submission.trackingId;
+            rows[i].trackingId = trackingId;
             let isAvailableAtDmp = submission.isAvailableAtDmp;
             // let isAvailableAtDmp = true;
-            rows[i].loadFromDmp = `<span submitted=${isReviewed} service-id=${serviceId} submission-id=${
+            rows[i].loadFromDmp = `<span submitted=${isAvailableAtDmp} service-id=${trackingId} submission-id=${
                 submission.id
             } class="material-icons grid-action${isAvailableAtDmp ? '' : '-disabled'}">${
                 isAvailableAtDmp ? 'cloud_download' : 'cloud_off'
             }</span>`;
 
+            rows[i].edit = `<span  submitted=${isSubmitted} service-id=${trackingId} submission-id=${
+                submission.id
+            } class="material-icons grid-action${isSubmitted || isAvailableAtDmp ? '-disabled' : ''}">edit</span>`;
+
             if (userRole !== 'user') {
-                rows[i].review = `<span  submitted=${isSubmitted && !isReviewed} service-id=${serviceId} submission-id=${
+                rows[i].review = `<span  submitted=${isSubmitted} service-id=${trackingId} submission-id=${
                     submission.id
                 } class="material-icons grid-action${isSubmitted && !isReviewed ? '' : '-disabled'}">assignment_turned_in</span>`;
+                rows[i].unsubmit = `<span submitted=${isSubmitted && !isAvailableAtDmp} service-id=${trackingId} submission-id=${
+                    submission.id
+                } class="material-icons grid-action${isSubmitted && !isAvailableAtDmp ? '' : '-disabled'}">undo</span>`;
             }
 
             if (rows.length === submissions.length) {
@@ -826,12 +838,11 @@ export function filterForApprovedSamples(dmpData, submissions) {
         let requests = submissions;
         // for each request, get rid of unapproved samples
         requests.forEach(function (request, index) {
-            const samples = request.gridValues;
             let filteredRequest = {};
             let material = getDmpSpecimenType(request.formValues.material);
             let igoId = request._id;
 
-            const approvedSamples = samples.filter((sample) => sample.isApproved);
+            const approvedSamples = getApprovedSamples(request);
             approvedSamples.forEach(function (sample) {
                 sample.recordStatus = 'new';
                 sample.specimenType = material;
@@ -852,6 +863,57 @@ export function filterForApprovedSamples(dmpData, submissions) {
         });
     });
 }
+
+function getApprovedSamples(submission) {
+    const samples = submission.gridValues;
+    return samples.filter((sample) => sample.isApproved);
+}
+
+export function parseDmpOutput(dmpOutput, submission) {
+    return new Promise((resolve, reject) => {
+        let outputSamples = dmpOutput.content['CMO Sample Request Details'];
+        let message = '';
+        let parsedSubmission = {
+            username: submission.username,
+            gridValues: [],
+            submitted: false,
+            transactionId: submission.transactionId,
+            formValues: {
+                ...submission.formValues,
+                container: '',
+                groupingChecked: false,
+                patientIdType: 'MSK-Patients (or derived from MSK Patients)',
+                patientIdTypeSpecified: 'DMP ID',
+                serviceId: '',
+                species: 'Human',
+            },
+        };
+        delete parsedSubmission.formValues._id;
+        for (const sample in outputSamples) {
+        }
+
+        // does submission match output?
+        doSamplesMatch(outputSamples, submission).then((result) => {
+            message += result;
+        });
+    });
+}
+
+// Checks wether the returned data matches the samples that were submitted to the DMP using sampel submission
+function doSamplesMatch(dmpOutputSamples, dmpSubmission) {
+    return new Promise((resolve) => {
+        const dmpOutputSampleIds = Object.keys(dmpOutputSamples);
+        const dmpInputSampleIds = [];
+        getApprovedSamples(dmpSubmission).forEach((sample) => dmpInputSampleIds.push(sample.dmpSampleId));
+        if (isMatch(dmpOutputSampleIds, dmpInputSampleIds)) {
+            resolve('We received all submitted samples');
+        } else {
+            resolve(`The DMP returned ${dmpOutputSampleIds.length} samples out of ${dmpInputSampleIds.length} submitted.`);
+        }
+    });
+}
+
+//  UTIL
 function getTransactionId() {
     const now = Date.now();
     const transactionId = Math.floor(now);

@@ -8,7 +8,8 @@ import CacheService from '../util/cache';
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 const DmpSubmissionModel = require('../models/DmpSubmissionModel');
-
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 /**
  * Initial State, returns header values for submission form.
  *
@@ -379,5 +380,55 @@ exports.updateStatus = [
             .catch((reasons) => {
                 return apiResponse.errorResponse(res, reasons);
             });
+    },
+];
+
+exports.loadFromDmp = [
+    body('trackingId').isLength({ min: 1 }).trim().withMessage('TrackingId must be present.'),
+    body('mongoId').isMongoId().withMessage('mongoId must be valid MongoDB ID.'),
+    function (req, res) {
+        console.log(req.body);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
+        } else {
+            let trackingId = req.body.trackingId;
+            let mongoId = req.body.mongoId;
+            let dmpPromise = services.getProjectFromDmp(trackingId);
+            let mongoPromise = DmpSubmissionModel.findById(ObjectId(mongoId)).lean();
+
+            Promise.all([dmpPromise, mongoPromise]).then((results) => {
+                const [dmpResult, submission] = results;
+
+                if (dmpResult.result !== 'Success') {
+                    return apiResponse.errorResponse(res, 'Issues communicating with DMP.');
+                } else if (_.isEmpty(dmpResult.content['CMO Sample Request Details'])) {
+                    return apiResponse.errorResponse(res, 'No sample information returned from DMP.');
+                } else if (_.isEmpty(submission)) {
+                    return apiResponse.errorResponse(res, 'Error retrieving this submission from DB.');
+                } else {
+                    util.parseDmpOutput(dmpResult, submission);
+                }
+            });
+
+            // if (!results || results.some((x) => x.length === 0)) {
+            //         return apiResponse.errorResponse(res, `Could not retrieve grid for '${material}' and '${application}'.`);
+            //     }
+            //     let [columnsResult] = results;
+            //     let gridPromise = util.generateGrid(columnsResult, res.user.role, formValues);
+
+            //     Promise.all([gridPromise])
+            //         .then((results) => {
+            //             if (results.some((x) => x.length === 0)) {
+            //                 return apiResponse.errorResponse(res, `Could not retrieve grid for '${material}' and '${application}'.`);
+            //             }
+            //             let [gridResult] = results;
+            //             return apiResponse.successResponseWithData(res, 'Operation success', gridResult);
+            //         })
+            //         .catch((reasons) => {
+            //             return apiResponse.errorResponse(res, reasons);
+            //         });
+            // });
+        }
     },
 ];

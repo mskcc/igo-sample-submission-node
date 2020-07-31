@@ -352,3 +352,24 @@ exports.getAvailableProjectsFromDmp = (date) => {
             return formatData(resp);
         });
 };
+
+// http://virgo1.mskcc.org:8090/display/PD/getCMOSampleRequestDetails
+exports.getProjectFromDmp = (trackingId) => {
+    const url = `${DMP_URL}/getCMOSampleRequestDetails?trackingId=${trackingId}`;
+    logger.log('info', `Sending request to ${url}`);
+    return axios
+        .get(url, {
+            ...axiosConfig,
+        })
+        .then((resp) => {
+            logger.log('info', `Successfully retrieved response from ${url}`);
+            return resp;
+        })
+        .catch((error) => {
+            logger.log('info', `Error retrieving response from ${url}`);
+            return error;
+        })
+        .then((resp) => {
+            return formatData(resp);
+        });
+};

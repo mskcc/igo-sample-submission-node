@@ -6,7 +6,8 @@
   "scripts": {
     "test": "nyc _mocha --require @babel/register --timeout 10000 --exit --report lcovonly -- -R spec",
     "dev": "eslint . && nodemon --exec babel-node -r dotenv/config server.js",
-    "start": "nodemon --exec babel-node -r dotenv/config server.js"
+    "start": "nodemon --exec babel-node -r dotenv/config server.js",
+    "debug": "nodemon --inspect  --exec babel-node -r dotenv/config server.js"
   },
   "repository": {
     "type": "git",
