@@ -59,7 +59,6 @@ export function getMaterialsForApplication(selectedApplication, checkForMismatch
         axios
             .get(Config.NODE_API_ROOT + '/upload/materialsAndSpecies', {
                 params: {
-                    // weird, legacy slash workaround, has to be changed in /LimsRest/getIntakeTerms
                     recipe: selectedApplication,
                 },
             })
@@ -83,8 +82,11 @@ export const UPDATE_HEADER = 'UPDATE_HEADER';
 
 export function updateHeader(formValues) {
     return (dispatch) => {
-        dispatch(getApplicationsForMaterial(formValues.material, false));
-        dispatch(getMaterialsForApplication(formValues.application, false));
+        let promises = [
+            dispatch(getApplicationsForMaterial(formValues.material, false)),
+            dispatch(getMaterialsForApplication(formValues.application, false)),
+        ];
+        return Promise.all(promises).then((results) => results);
     };
 }
 

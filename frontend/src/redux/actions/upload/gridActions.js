@@ -118,7 +118,6 @@ export function getColumns(page, formValues) {
 
 export function getInitialColumns(page, formValues, userRole) {
     return (dispatch) => {
-        
         dispatch({ type: GET_INITIAL_COLUMNS });
         let material = formValues.material;
         let application = formValues.application;
@@ -205,12 +204,15 @@ export function populateGridFromSubmission(submissionId, ownProps) {
             .getSubmission(submissionId, page)
             .then((resp) => {
                 let submission = resp.payload.submission;
-                dispatch(getInitialColumns(page, submission.formValues), getState().user.role)
-                    .then(() => {
-                        if (page !== 'dmp') {
-                            dispatch(updateHeader(submission.formValues));
-                        }
-                    })
+                let promises = [];
+                let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
+                promises.push(columnPromise);
+                if (page !== 'dmp') {
+                    let headerPromise = dispatch(updateHeader(submission.formValues));
+                    promises.push(headerPromise);
+                }
+
+                Promise.all(promises)
                     .then(() => {
                         let type = page === 'dmp' ? GET_DMP_SUBMISSION_TO_EDIT_SUCCESS : GET_SUBMISSION_TO_EDIT_SUCCESS;
                         dispatch({
@@ -235,6 +237,54 @@ export function populateGridFromSubmission(submissionId, ownProps) {
                     type: GET_SUBMISSION_TO_EDIT_FAIL,
                     error: error,
                 });
+            });
+    };
+}
+
+export const LOAD_FROM_DMP = 'LOAD_FROM_DMP';
+export const LOAD_FROM_DMP_FAIL = 'LOAD_FROM_DMP_FAIL';
+export const LOAD_FROM_DMP_SUCCESS = 'LOAD_FROM_DMP_SUCCESS';
+export function loadFromDmp(trackingId, mongoId, ownProps) {
+    return (dispatch, getState) => {
+        dispatch({ type: LOAD_FROM_DMP, message: 'Loading and parsing submission from DMP...' });
+        const data = { trackingId, mongoId };
+
+        services
+            .loadFromDmp(data)
+            .then((resp) => {
+                let page = 'upload';
+                let submission = resp.payload.submission;
+                let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
+                let headerPromise = dispatch(updateHeader(submission.formValues));
+                Promise.all([columnPromise, headerPromise])
+                    .then(() => {
+                        let type = GET_SUBMISSION_TO_EDIT_SUCCESS;
+                        dispatch({
+                            type: type,
+                            payload: {
+                                ...submission,
+                                gridType: page,
+                            },
+
+                            message: 'Loaded!',
+                        });
+                        return ownProps.history.push(`/${page}`);
+                    })
+                    .catch((error) => {
+                        return dispatch({
+                            type: GET_SUBMISSION_TO_EDIT_FAIL,
+                            error: error,
+                        });
+                    });
+
+                return ownProps.history.push(`/${page}`);
+            })
+            .catch((error) => {
+                dispatch({
+                    type: LOAD_FROM_DMP_FAIL,
+                    error: error,
+                });
+                return error;
             });
     };
 }
@@ -343,7 +393,7 @@ function handleMRN(patientId, patientIdType, rows, rowIndex) {
             .then((response) => {
                 dispatch({
                     type: HANDLE_PATIENT_ID_SUCCESS,
-                    rows: util.redactMRN(rows, rowIndex, response.payload.patientId, 'MRN REDACTED', response.payload.sex),
+                    rows: util.redactMRN(rows, rowIndex, response.payload.patientId, 'MRN_REDACTED', response.payload.sex),
                 });
                 dispatch({ type: REGISTER_GRID_CHANGE });
             })
