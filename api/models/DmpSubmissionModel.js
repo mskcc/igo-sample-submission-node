@@ -26,6 +26,9 @@ var DmpSubmissionSchema = new mongoose.Schema(
         trackingId: { type: String, required: false },
         transactionId: { type: Number, required: false },
         appVersion: { type: String, default: '2.5' },
+        // grr, adding this id is bad style since it should by rights belong in a relational DB
+        // adding DMP submissions made it necessary/convenient
+        relatedIgoSubmission_id: { type: mongoose.Types.ObjectId, required: false },
         createdAt: Number,
         updatedAt: Number,
     },

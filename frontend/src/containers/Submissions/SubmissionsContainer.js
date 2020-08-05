@@ -9,7 +9,6 @@ import { resetErrorMessage } from '../../redux/actions/commonActions';
 import { swal } from '../../util';
 
 import { SubmissionsGrid } from '../../components/';
-import { loadFromDmp } from '../../redux/actions/submission/submissionActions';
 
 export class SubmissionsPage extends Component {
     componentDidMount() {
@@ -57,7 +56,7 @@ export class SubmissionsPage extends Component {
 
     handleLoadFromDmp = (trackingId, mongoId) => {
         const { loadFromDmp } = this.props;
-        return loadFromDmp(trackingId, mongoId);
+        return loadFromDmp(trackingId, mongoId, this.props);
     };
 
     handleUnsubmit = (submissionId) => {

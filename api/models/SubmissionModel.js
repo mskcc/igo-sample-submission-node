@@ -6,7 +6,7 @@ var ObjectId = mongoose.Types.ObjectId;
 
 var FormSchema = new mongoose.Schema({
     sharedWith: { type: String, default: '' },
-    altServiceId: { type: Boolean, required: true },
+    altServiceId: { type: Boolean, default: false },
     application: { type: String, required: true },
     container: { type: String, required: true },
     groupingChecked: { type: Boolean, default: false },
@@ -21,9 +21,6 @@ var FormSchema = new mongoose.Schema({
 var SubmissionSchema = new mongoose.Schema(
     {
         username: { type: String, required: true },
-        // serviceId: { type: String, required: true },
-        // material: { type: String, required: true },
-        // application: { type: String, required: true },
         formValues: FormSchema,
         gridValues: { type: Array, required: true },
         submitted: { type: Boolean, default: false },

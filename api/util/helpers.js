@@ -872,20 +872,24 @@ function getApprovedSamples(submission) {
 export function parseDmpOutput(dmpOutput, submission) {
     return new Promise((resolve, reject) => {
         let outputSamples = dmpOutput.content['CMO Sample Request Details'];
+        console.log(outputSamples);
+        let numReturnedSamples = Object.keys(outputSamples).length;
+
         let message = '';
         let parsedSubmission = {
             username: submission.username,
-            gridValues: [],
+            gridValues: translateDmpToBankedSample(outputSamples['P-0033479-T03-WES']),
             submitted: false,
             transactionId: submission.transactionId,
             formValues: {
                 ...submission.formValues,
-                container: '',
+                container: 'Plates',
                 groupingChecked: false,
                 patientIdType: 'MSK-Patients (or derived from MSK Patients)',
                 patientIdTypeSpecified: 'DMP ID',
-                serviceId: '',
+                serviceId: '000000',
                 species: 'Human',
+                numberOfSamples: numReturnedSamples,
             },
         };
         delete parsedSubmission.formValues._id;
@@ -896,6 +900,9 @@ export function parseDmpOutput(dmpOutput, submission) {
         doSamplesMatch(outputSamples, submission).then((result) => {
             message += result;
         });
+        console.log(message);
+
+        resolve(parsedSubmission);
     });
 }
 
@@ -935,4 +942,90 @@ function last7Days() {
             return [day < 10 ? '0' + day : day, month < 10 ? '0' + month : month, year].join('-');
         })(d.getDate(), d.getMonth(), d.getFullYear());
     });
+}
+// DNA Input Into Library: 250.0 | not needed,
+// Tracking ID: 20200619YJ | not needed,
+//      Sex: M | Gender/gender (to our great shame),
+// Specimen Type (Resection , Biopsy or Blood): biopsy |Specimen Type/specimenType, if N/A = Biopsy, cytology = other (preservation = Frozen), if sampleClass = Normal = specimentType = Blood, catchall: same value, just capitalized
+//      Sample Class (Primary , Met or Normal): Primary | SampleClass/sampleClass = sampleClass === Metastatic ? Metastasis : sampleClass ,
+//      Index: IDT65 | if Library, BarcodeId = Index Sequence.replace('','DMP0'),
+//      Nucleic Acid Type (Library or DNA): Library | Material from original submission,
+// Tumor Type: Esophagus_Stomach:Esophageal Adenocarcinoma | Tumor Type/tumorType, simply fill and let grid translate,
+//      Concentration (ng/ul): 45.88 | Concentration (ng/ul)/concentration ,
+//      Well Position: D1 | wellPosition, If empty, skip
+//      Preservation (FFPE or Blood): FFPE | Preservation/preservation = preservation === Blood? EDTA-Streck : preservation, SampleOrigin = preservation === FFPE ? Tissue : Whole Blood
+// Study of Title: TRAP | not needed,
+//      Collection Year: 2019 | CollectionYear/collectionYear,
+// Sample Approved By CMO:  | not needed,
+//      Volume (ul): 21.80 | Volumne (ul)/volume,
+// Received DNA Mass (ng): 1000.18 | not needed,
+//      Investigator Sample ID: P-0037409-T03-WES | UserSampleId/userId,
+// PI Name: Yelena Janjigian | not needed,,
+//      Barcode/Plate ID: 20200619YJ | PlateId, plateId,
+// DMP ID: P-0037409-T03-IM6 | not needed,
+// Index Sequence: TGGAACAA | not needed
+//      Requested Reads | RequestedReads/requestedReads
+
+// MRN = fill depending on DMP ID if possible
+//      Organism = Human
+//      Species = Human
+// TransactionId = Originial TransactionId,
+// Investigator = Original Submitter
+// RequestedReads = Added By PM
+// ServiceId = Added By PM
+//  TODO Add TrackingId
+function translateDmpToBankedSample(dmpSample) {
+    if (dmpSample['Well Position'] == '') return {};
+    const dmpPreservation = dmpSample['Preservation (FFPE or Blood)'];
+    let igoPreservation = dmpPreservation === 'Blood' ? 'EDTA-Streck' : dmpPreservation;
+    let igoSampleOrigin = dmpPreservation === 'FFPE' ? 'Tissue' : 'Whole Blood';
+
+    let igoUserId = dmpSample['Investigator Sample ID'];
+    let igoPatientId = igoUserId.match(/P-[0-9]{7}/)[0];
+
+    const dmpSampleClass = dmpSample['Sample Class (Primary, Met or Normal)'];
+    let igoSampleClass = dmpSampleClass === 'Metastatic' ? 'Metastasis' : dmpSampleClass;
+
+    const dmpSpecimenType = dmpSample['Specimen Type (Resection, Biopsy or Blood)'];
+    let igoSpecimenType;
+    if (dmpSpecimenType === 'N/A') {
+        igoSpecimenType = 'Biopsy';
+    } else if (dmpSpecimenType === 'Cytology') {
+        igoSpecimenType = 'other';
+        igoPreservation = 'Frozen';
+    } else if (dmpSampleClass === 'Normal') {
+        igoSpecimenType = 'Blood';
+    } else {
+        igoSpecimenType = dmpSpecimenType.charAt(0).toUpperCase() + dmpSpecimenType.slice(1);
+    }
+
+    let igoSample = {
+        vol: dmpSample['Volume (ul)'],
+        concentration: dmpSample['Concentration (ng/ul)'],
+        wellPosition: dmpSample['Well Position'],
+        tumorType: dmpSample['Tumor Type'],
+        plateId: dmpSample['Barcode/Plate ID'],
+        gender: dmpSample['Sex'],
+        collectionYear: dmpSample['Collection Year'],
+        organism: 'Human',
+
+        preservation: igoPreservation,
+        sampleOrigin: igoSampleOrigin,
+        sampleClass: igoSampleClass,
+        specimenType: igoSpecimenType,
+        userId: igoUserId,
+        patientId: igoPatientId,
+    };
+
+    if (dmpSample['Nucleic Acid Type (Library or DNA)'] === 'Library') {
+        let igoIndex = dmpSample['Index'].replace('DMP0', '');
+
+        igoSample = {
+            ...igoSample,
+            index: igoIndex,
+        };
+    }
+    // console.log(igoSample);
+
+    return igoSample;
 }

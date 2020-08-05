@@ -158,6 +158,7 @@ export default function gridReducer(state = initialGridState, action) {
 
         case ActionTypes.GET_SUBMISSION_TO_EDIT_SUCCESS:
         case ActionTypes.GET_DMP_SUBMISSION_TO_EDIT_SUCCESS:
+        case ActionTypes.LOAD_FROM_DMP_SUCCESS:
             return {
                 ...state,
                 rows: action.payload.gridValues,
