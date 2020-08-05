@@ -1,8 +1,6 @@
 // actions should not have this much BL, will change once it gets too convoluted
 
 import axios from 'axios';
-import { updateHeader } from './formActions';
-import { updateDmpHeader } from '../dmp/dmpFormActions';
 import { util, swal, services, excel } from '../../../util';
 
 import { Config } from '../../../config.js';
@@ -204,15 +202,8 @@ export function populateGridFromSubmission(submissionId, ownProps) {
             .getSubmission(submissionId, page)
             .then((resp) => {
                 let submission = resp.payload.submission;
-                let promises = [];
                 let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
-                promises.push(columnPromise);
-                if (page !== 'dmp') {
-                    let headerPromise = dispatch(updateHeader(submission.formValues));
-                    promises.push(headerPromise);
-                }
-
-                Promise.all(promises)
+                Promise.all(columnPromise)
                     .then(() => {
                         let type = page === 'dmp' ? GET_DMP_SUBMISSION_TO_EDIT_SUCCESS : GET_SUBMISSION_TO_EDIT_SUCCESS;
                         dispatch({
@@ -246,6 +237,7 @@ export const LOAD_FROM_DMP_FAIL = 'LOAD_FROM_DMP_FAIL';
 export const LOAD_FROM_DMP_SUCCESS = 'LOAD_FROM_DMP_SUCCESS';
 export function loadFromDmp(trackingId, mongoId, ownProps) {
     return (dispatch, getState) => {
+        // dispatch(clearForm());
         dispatch({ type: LOAD_FROM_DMP, message: 'Loading and parsing submission from DMP...' });
         const data = { trackingId, mongoId };
 
@@ -255,8 +247,7 @@ export function loadFromDmp(trackingId, mongoId, ownProps) {
                 let page = 'upload';
                 let submission = resp.payload.submission;
                 let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
-                let headerPromise = dispatch(updateHeader(submission.formValues));
-                Promise.all([columnPromise, headerPromise])
+                Promise.all([columnPromise])
                     .then(() => {
                         let type = GET_SUBMISSION_TO_EDIT_SUCCESS;
                         dispatch({
@@ -265,7 +256,6 @@ export function loadFromDmp(trackingId, mongoId, ownProps) {
                                 ...submission,
                                 gridType: page,
                             },
-
                             message: 'Loaded!',
                         });
                         return ownProps.history.push(`/${page}`);

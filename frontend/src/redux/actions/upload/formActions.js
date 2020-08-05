@@ -78,18 +78,6 @@ export function getMaterialsForApplication(selectedApplication, checkForMismatch
     };
 }
 
-export const UPDATE_HEADER = 'UPDATE_HEADER';
-
-export function updateHeader(formValues) {
-    return (dispatch) => {
-        let promises = [
-            dispatch(getApplicationsForMaterial(formValues.material, false)),
-            dispatch(getMaterialsForApplication(formValues.application, false)),
-        ];
-        return Promise.all(promises).then((results) => results);
-    };
-}
-
 export const SELECT = 'SELECT';
 
 export function select(id, value, checkForMismatch = true) {

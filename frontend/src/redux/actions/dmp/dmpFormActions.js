@@ -35,8 +35,6 @@ export function dmpGetInitialState() {
     };
 }
 
-export const UPDATE_HEADER = 'UPDATE_HEADER';
-
 export const DMP_SELECT = 'DMP_SELECT';
 
 export function dmpSelect(id, value) {
