@@ -27,6 +27,7 @@ export class SubmissionsPage extends Component {
         const { submissions } = this.props;
         console.log(mongoId);
         const column = submissions.grid.columnFeatures[coords.col].data;
+
         if (column === 'edit' && !readyForAction) {
             this.handleEdit(mongoId);
         } else if (column === 'review' && readyForAction) {
@@ -34,7 +35,8 @@ export class SubmissionsPage extends Component {
         } else if (column === 'pullFromDmp' && readyForAction) {
             this.handleCheckDmp();
         } else if (column === 'loadFromDmp' && readyForAction) {
-            this.handleLoadFromDmp(serviceId, mongoId);
+            const row = submissions.grid.rows[coords.row];
+            this.handleLoadFromDmp(serviceId, mongoId, row);
         } else if (column === 'unsubmit' && readyForAction) {
             this.handleUnsubmit(mongoId);
         } else if (column === 'receipt' && readyForAction) {
@@ -54,9 +56,14 @@ export class SubmissionsPage extends Component {
         return checkDmp(submissionId, this.props);
     };
 
-    handleLoadFromDmp = (trackingId, mongoId) => {
+    handleLoadFromDmp = (trackingId, mongoId, row) => {
         const { loadFromDmp } = this.props;
-        return loadFromDmp(trackingId, mongoId, this.props);
+        if (row.loadedFromDmpAt !== '') {
+            swal.genericDecision(
+                'Are you sure?',
+                'This has been loaded from the DMP before. If you load it again, any edits you might have made in the related IGO Submission will be overwritten.'
+            ).then((decision) => decision && loadFromDmp(trackingId, mongoId, this.props));
+        } else loadFromDmp(trackingId, mongoId, this.props);
     };
 
     handleUnsubmit = (submissionId) => {

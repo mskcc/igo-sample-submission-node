@@ -170,6 +170,13 @@ export const gridColumns = {
     },
 };
 export const submissionColumns = {
+    // 'Related IGO Submission ID': {
+    //     name: 'Related IGO Submission ID',
+    //     data: 'relatedIgoSubmission_id',
+    //     readOnly: 'true',
+    //     hiddenFrom: 'user'
+    // },
+
     'Tracking ID': {
         name: 'Tracking ID',
         data: 'trackingId',
@@ -224,24 +231,6 @@ export const submissionColumns = {
         readOnly: 'true',
     },
 
-    'Date Reviewed': {
-        name: 'Reviewed On',
-        data: 'reviewedAt',
-        readOnly: 'true',
-    },
-
-    'Date Created': {
-        name: 'Created On',
-        data: 'createdAt',
-        readOnly: 'true',
-    },
-
-    'Date Submitted': {
-        name: 'Submitted On',
-        data: 'submittedAt',
-        readOnly: 'true',
-    },
-
     'Transaction ID': {
         name: 'Transaction ID',
         data: 'transactionId',
@@ -285,6 +274,29 @@ export const submissionColumns = {
         name: 'Delete',
         data: 'delete',
         renderer: 'html',
+    },
+    'Date Reviewed': {
+        name: 'Reviewed On',
+        data: 'reviewedAt',
+        readOnly: 'true',
+    },
+
+    'Date Created': {
+        name: 'Created On',
+        data: 'createdAt',
+        readOnly: 'true',
+    },
+
+    'Date Submitted': {
+        name: 'Submitted On',
+        data: 'submittedAt',
+        readOnly: 'true',
+    },
+
+    'Date Loaded From DMP': {
+        name: 'Loaded From DMP',
+        data: 'loadedFromDmpAt',
+        readOnly: 'true',
     },
 };
 

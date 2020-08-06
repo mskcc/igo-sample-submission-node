@@ -29,6 +29,7 @@ var DmpSubmissionSchema = new mongoose.Schema(
         // grr, adding this id is bad style since it should by rights belong in a relational DB
         // adding DMP submissions made it necessary/convenient
         relatedIgoSubmission_id: { type: mongoose.Types.ObjectId, required: false },
+        loadedFromDmpAt: { type: Number, required: false },
         createdAt: Number,
         updatedAt: Number,
     },

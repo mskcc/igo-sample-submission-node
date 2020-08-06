@@ -1,4 +1,4 @@
-const validationPatterns = {
+export const validationPatterns = {
     userId: '^[A-Za-z0-9](?!.*__)[A-Za-z0-9\\,_-]{2}[A-Za-z0-9\\,_-]*$',
     patientId: '^[A-Za-z0-9][A-Za-z0-9\\,_-]*$',
     blockslidetube: '^.{1,25}$',
@@ -489,6 +489,7 @@ export const submissionColumns = {
         data: 'serviceId',
         readOnly: 'true',
     },
+
     'User ID': {
         name: 'User',
         data: 'username',
@@ -514,6 +515,11 @@ export const submissionColumns = {
         data: 'submitted',
         readOnly: 'true',
         renderer: 'html',
+    },
+    'DMP ID': {
+        name: 'DMP ID',
+        data: 'dmpTrackingId',
+        readOnly: 'true',
     },
     'Date Created': {
         name: 'Created On',

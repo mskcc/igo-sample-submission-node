@@ -203,7 +203,7 @@ export function populateGridFromSubmission(submissionId, ownProps) {
             .then((resp) => {
                 let submission = resp.payload.submission;
                 let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
-                Promise.all(columnPromise)
+                Promise.all([columnPromise])
                     .then(() => {
                         let type = page === 'dmp' ? GET_DMP_SUBMISSION_TO_EDIT_SUCCESS : GET_SUBMISSION_TO_EDIT_SUCCESS;
                         dispatch({
@@ -232,18 +232,20 @@ export function populateGridFromSubmission(submissionId, ownProps) {
     };
 }
 
+// TODO: Refactor, remove service calls from this and edit action to their own actions. merge the popolate tasks.
 export const LOAD_FROM_DMP = 'LOAD_FROM_DMP';
 export const LOAD_FROM_DMP_FAIL = 'LOAD_FROM_DMP_FAIL';
 export const LOAD_FROM_DMP_SUCCESS = 'LOAD_FROM_DMP_SUCCESS';
-export function loadFromDmp(trackingId, mongoId, ownProps) {
+export function loadFromDmp(trackingId, dmpSubmissionId, ownProps) {
     return (dispatch, getState) => {
-        // dispatch(clearForm());
         dispatch({ type: LOAD_FROM_DMP, message: 'Loading and parsing submission from DMP...' });
-        const data = { trackingId, mongoId };
+        const data = { trackingId, dmpSubmissionId };
 
         services
             .loadFromDmp(data)
             .then((resp) => {
+                console.log(resp);
+                
                 let page = 'upload';
                 let submission = resp.payload.submission;
                 let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
@@ -256,7 +258,7 @@ export function loadFromDmp(trackingId, mongoId, ownProps) {
                                 ...submission,
                                 gridType: page,
                             },
-                            message: 'Loaded!',
+                            message: 'Loaded! Please check notes column at the end for any parsing issues.',
                         });
                         return ownProps.history.push(`/${page}`);
                     })
