@@ -6,9 +6,9 @@ const { constants } = require('./constants');
  */
 const container = new winston.Container();
 const { format } = winston;
-const { combine, label, json } = format;
+const { combine, label, json, timestamp } = format;
 container.add(constants.logger, {
-    format: combine(label({ label: 'Sample-Sub' }), json()),
+    format: combine(label({ label: 'Sample-Sub' }), timestamp(), json()),
     transports: [new winston.transports.Console({ level: 'info' })],
 });
 
