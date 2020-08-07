@@ -1,5 +1,5 @@
 const apiResponse = require('../util/apiResponse');
-const { body, param, validationResult } = require('express-validator');
+const { body, param, query, validationResult } = require('express-validator');
 const util = require('../util/helpers');
 const mailer = require('../util/mailer');
 var _ = require('lodash');
@@ -330,21 +330,23 @@ exports.delete = [
 ];
 
 exports.download = [
-    // param('id').isMongoId().trim().withMessage('id must be valid MongoDB id.'),
+    query('id').isMongoId().trim().withMessage('id must be valid MongoDB id.'),
+    query('submissionType').isLength({ min: 1 }).withMessage('submissionType must be specified.'),
     function (req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
-        let id = req.params.id;
-        SubmissionModel.findById(ObjectId(id))
+        let id = req.query.id;
+        let submissionType = req.query.submissionType;
+        let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;        
+        model.findById(ObjectId(id))
             .lean()
             .exec(function (err, submission) {
-                if (err) {
+                if (!submission || err) {
                     return apiResponse.errorResponse(res, 'Could not retrieve submission.');
                 }
                 let excelData = util.generateSubmissionExcel(submission, res.user.role);
-
                 return apiResponse.successResponseWithData(res, 'Operation success', {
                     excelData,
                     fileName: `Receipt-${submission.formValues.serviceId}-${submission.username}`,

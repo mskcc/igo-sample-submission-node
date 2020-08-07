@@ -103,6 +103,7 @@ exports.applicationsAndContainers = [
                 });
             }
         } catch (err) {
+            logger.log('error', err);
             return apiResponse.errorResponse(res, err);
         }
     },
@@ -131,6 +132,7 @@ exports.picklist = [
                     });
             }
         } catch (err) {
+            logger.log('error', err);
             return apiResponse.errorResponse(res, err);
         }
     },
@@ -164,6 +166,7 @@ exports.grid = [
                 }
                 let [columnsResult] = results;
                 let gridPromise = util.generateGrid(columnsResult, res.user.role, formValues);
+                // let gridPromise = util.generateGrid(columnsResult, 'lab_member', formValues);
 
                 Promise.all([gridPromise])
                     .then((results) => {
@@ -198,6 +201,7 @@ exports.mrnToCid = [
 
                 Promise.all([patientIdPromise])
                     .catch(function (err) {
+                        logger.log('error', err);
                         return apiResponse.errorResponse(res, err);
                     })
                     .then((results) => {
@@ -207,12 +211,13 @@ exports.mrnToCid = [
                         let [patientIdResult] = results;
                         let responseObject = {
                             ...patientIdResult,
-                            normalizedPatientId: 'MRN REDACTED',
+                            normalizedPatientId: 'MRN_REDACTED',
                         };
                         return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
                     });
             }
         } catch (err) {
+            logger.log('error', err);
             return apiResponse.errorResponse(res, err);
         }
     },
@@ -234,6 +239,7 @@ exports.mrnToDmpId = [
 
                 Promise.all([patientIdPromise])
                     .catch(function (err) {
+                        logger.log('error', err);
                         return apiResponse.errorResponse(res, err);
                     })
                     .then((results) => {
@@ -243,12 +249,13 @@ exports.mrnToDmpId = [
                         let [patientIdResult] = results;
                         let responseObject = {
                             ...patientIdResult,
-                            normalizedPatientId: 'MRN REDACTED',
+                            normalizedPatientId: 'MRN_REDACTED',
                         };
                         return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
                     });
             }
         } catch (err) {
+            logger.log('error', err);
             return apiResponse.errorResponse(res, err);
         }
     },
@@ -271,6 +278,7 @@ exports.patientIdToCid = [
                 if (type === 'cellline') {
                     normalizedPatientId = `CELLLINE_${patientId.toUpperCase()}`;
                 } else {
+                    // normalizedPatientId = `NAKAUCHM_${patientId.toUpperCase()}`;
                     normalizedPatientId = `${res.user.username.toUpperCase()}_${patientId.toUpperCase()}`;
                 }
 
@@ -278,6 +286,7 @@ exports.patientIdToCid = [
 
                 Promise.all([patientIdPromise])
                     .catch(function (err) {
+                        logger.log('error', err);
                         return apiResponse.errorResponse(res, err);
                     })
                     .then((results) => {
@@ -293,6 +302,7 @@ exports.patientIdToCid = [
                     });
             }
         } catch (err) {
+            logger.log('error', err);
             return apiResponse.errorResponse(res, err);
         }
     },
@@ -319,6 +329,7 @@ exports.verifyCmoId = [
 
                 Promise.all([patientIdPromise])
                     .catch(function (err) {
+                        logger.log('error', err);
                         return apiResponse.errorResponse(res, err);
                     })
                     .then((results) => {
@@ -354,6 +365,7 @@ exports.verifyDmpId = [
 
                 Promise.all([patientIdPromise])
                     .catch(function (err) {
+                        logger.log('error', err);
                         return apiResponse.errorResponse(res, err);
                     })
                     .then((results) => {
@@ -401,6 +413,7 @@ exports.additionalRows = [
                 });
             }
         } catch (err) {
+            logger.log('error', err);
             return apiResponse.errorResponse(res, err);
         }
     },

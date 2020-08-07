@@ -200,9 +200,9 @@ export const getSubmissionsSince = (time, submissionType) => {
             return resp;
         });
 };
-
-export const downloadSubmission = (id) => {
-    const url = `${Config.NODE_API_ROOT}/submission/download/${id}`;
+// TODO FIX
+export const downloadSubmission = (id, submissionType) => {
+    const url = `${Config.NODE_API_ROOT}/submission/download?id=${id}&submissionType=${submissionType}`;
     return axios
         .get(url)
         .then((resp) => {

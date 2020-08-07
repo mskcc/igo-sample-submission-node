@@ -160,6 +160,7 @@ exports.grid = [
                         return apiResponse.errorResponse(res, `Could not retrieve grid for '${material}' and '${application}'.`);
                     }
                     let columnsResult = results;
+                    // let gridPromise = util.generateGrid(columnsResult, 'lab_member', formValues, 'dmp');
                     let gridPromise = util.generateGrid(columnsResult, res.user.role, formValues, 'dmp');
                     gridPromise
                         .then((results) => {

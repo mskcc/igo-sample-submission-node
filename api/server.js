@@ -83,7 +83,7 @@ if (process.env.NODE_ENV !== 'test') {
                 tokens['response-time'](req, res),
                 'ms',
                 '-',
-                res.user.username,
+                res.user ? res.user.username : 'anonymous',
             ].join(' ');
         })
     );

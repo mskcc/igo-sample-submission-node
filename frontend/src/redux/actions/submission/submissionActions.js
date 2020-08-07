@@ -143,12 +143,12 @@ export function unsubmit(id, submissionType) {
 export const DOWNLOAD_RECEIPT = 'DOWNLOAD_RECEIPT';
 export const DOWNLOAD_RECEIPT_FAIL = 'DOWNLOAD_RECEIPT_FAIL';
 export const DOWNLOAD_RECEIPT_SUCCESS = 'DOWNLOAD_RECEIPT_SUCCESS';
-export function downloadReceipt(submissionId, serviceId, username) {
+export function downloadReceipt(submissionId, serviceId, gridType) {
     return (dispatch) => {
         dispatch({ type: DOWNLOAD_RECEIPT });
 
         services
-            .downloadSubmission(submissionId)
+            .downloadSubmission(submissionId, gridType)
             .then((response) => {
                 excel.downloadExcel(response.payload.excelData, response.payload.fileName);
                 return dispatch({
