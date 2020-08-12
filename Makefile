@@ -7,8 +7,8 @@ quick-deploy-dev:
 	cd ./api && cp -rf ../frontend/build/* ./public && cd - && \
 	scp -r ./api/ igodev:deployments/node-sample-sub
 
-config-dev:
-	cd frontend && npm run config-dev && cd -
+config-local:
+	cd frontend && npm run config-local && cd -
 
 config-qa:
 	cd frontend && npm run config-qa && cd -

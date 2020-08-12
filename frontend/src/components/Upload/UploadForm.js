@@ -418,7 +418,7 @@ class UploadForm extends React.Component {
                                 color='primary'
                                 id='formSubmit'
                                 formId='upload-form'
-                                isLoading={gridIsLoading}
+                                // isLoading={gridIsLoading}
                                 nothingToSubmit={nothingToChange}
                             />
                             <Button
@@ -496,10 +496,11 @@ const styles = (theme) => ({
     form: {
         display: 'flex',
         flexWrap: 'wrap',
+        justifyContent: 'center',
     },
 
     lastItem: {
-        flexBasis: '100%',
+        // flexBasis: '100%',
         marginTop: '2em',
         width: 310,
     },

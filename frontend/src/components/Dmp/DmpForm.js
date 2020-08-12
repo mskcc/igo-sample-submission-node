@@ -294,10 +294,11 @@ const styles = (theme) => ({
     form: {
         display: 'flex',
         flexWrap: 'wrap',
+        justifyContent: 'center',
     },
 
     lastItem: {
-        flexBasis: '100%',
+        // flexBasis: '100%',
         marginTop: '2em',
         width: 310,
     },

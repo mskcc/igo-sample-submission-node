@@ -30,6 +30,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     width: 100vw;
+    // height: 100vh;
     font-size: 15px;
     // overflow: auto;
 }
@@ -62,7 +63,9 @@ code {
     // font-weight: bold;
     // color: $mskcc-orange;
 }
-
+.css-df17o1 {
+    height: 100vh;
+}
 .swal-title {
     margin: 0px;
     font-size: 18px;

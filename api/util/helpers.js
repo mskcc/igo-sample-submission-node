@@ -896,7 +896,7 @@ export function parseDmpOutput(dmpOutput, submission) {
                 let { igoSamples, translationIssues } = result;
 
                 let orderedTranslationIssues = {};
-                translationIssues.sampleMatch = doSamplesMatch(dmpSamples, translatedSubmission);
+                
                 Object.keys(translationIssues)
                     .sort()
                     .forEach(function (key) {
@@ -925,7 +925,7 @@ export function parseDmpOutput(dmpOutput, submission) {
                     },
                 };
                 delete parsedSubmission.formValues._id;
-
+                translationIssues.sampleMatch = doSamplesMatch(dmpSamples, parsedSubmission);
                 resolve({ parsedSubmission, translationIssues });
             });
         });

@@ -17,7 +17,7 @@ export const constants = {
         other: ['Plates', 'Micronic Barcoded Tubes', 'Blocks/Slides/Tubes'],
     },
 
-    humanApplications: ['expanded_genomics ', 'msk-access', 'hemepact', 'archer', 'impact4', 'humanwholegenome'],
+    humanApplications: ['expanded_genomics ', 'msk-access', 'hemepact', 'archer', 'impact4', 'humanwholegenome', 'methylcaptureseq'],
 
     mouseApplications: ['mousewholegenome ', 'm-impact_v1'],
 

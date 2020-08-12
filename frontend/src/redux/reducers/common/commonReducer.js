@@ -5,41 +5,47 @@ const initialState = {
     error: false,
     message: '',
     serverError: false,
-    // loading: true,
+    loading: false,
 };
 
 // global errors and messages
 function commonReducer(state = initialState, action) {
-    const { type, error, message, serverError } = action;
-    if (message) {
-        if (message === 'clear') {
-            return {
-                ...state,
-                message: '',
-            };
-        }
-        return {
+    const { error, message, loading } = action;
+    console.log(action);
+
+    if (typeof loading !== 'undefined') {
+        state = {
             ...state,
-            message: message,
+            loading: loading,
+        };
+    } else {
+        state = {
+            ...state,
+            loading: false,
+        };
+    }
+    if (message) {
+        state = {
+            ...state,
+            message: message === 'clear' ? '' : message,
         };
     } else if (error && error.payload) {
         console.log(error.payload);
         if (error.response.status === 400) {
             swal.apiValidationError(error.payload.message, error.payload.data);
-            return { ...state };
+            state = { ...state };
         }
-        return {
+        state = {
             ...state,
             message: error.payload.message,
         };
     } else if (error && error.message) {
-        return {
+        state = {
             ...state,
             message: error.message,
         };
-    } else {
-        return { ...state };
     }
+    return state;
 }
 
 export default commonReducer;

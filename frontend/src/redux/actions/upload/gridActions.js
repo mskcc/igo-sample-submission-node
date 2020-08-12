@@ -116,7 +116,7 @@ export function getColumns(page, formValues) {
 
 export function getInitialColumns(page, formValues, userRole) {
     return (dispatch) => {
-        dispatch({ type: GET_INITIAL_COLUMNS });
+        dispatch({ type: GET_INITIAL_COLUMNS, loading: true });
         let material = formValues.material;
         let application = formValues.application;
         return axios
@@ -134,6 +134,7 @@ export function getInitialColumns(page, formValues, userRole) {
                     rows: data.rowData,
                     form: formValues,
                     message: 'Grid generated for ' + material + ' for ' + application + '. Green columns are optional.',
+                    
                 });
             })
             .catch((error) => {
@@ -142,6 +143,7 @@ export function getInitialColumns(page, formValues, userRole) {
                     error: error,
                     application: application,
                     material: material,
+                    
                 });
                 return error;
             });
@@ -197,7 +199,7 @@ export const GET_DMP_SUBMISSION_TO_EDIT_SUCCESS = 'GET_DMP_SUBMISSION_TO_EDIT_SU
 export function populateGridFromSubmission(submissionId, ownProps) {
     return (dispatch, getState) => {
         let page = ownProps.gridType;
-        dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...' });
+        dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...', loading: true });
         services
             .getSubmission(submissionId, page)
             .then((resp) => {
@@ -238,7 +240,7 @@ export const LOAD_FROM_DMP_FAIL = 'LOAD_FROM_DMP_FAIL';
 export const LOAD_FROM_DMP_SUCCESS = 'LOAD_FROM_DMP_SUCCESS';
 export function loadFromDmp(trackingId, dmpSubmissionId, ownProps) {
     return (dispatch, getState) => {
-        dispatch({ type: LOAD_FROM_DMP, message: 'Loading and parsing submission from DMP...' });
+        dispatch({ type: LOAD_FROM_DMP, message: 'Loading and parsing submission from DMP...', loading: true });
         const data = { trackingId, dmpSubmissionId };
 
         services
