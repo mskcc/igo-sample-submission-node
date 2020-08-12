@@ -245,7 +245,7 @@ export function loadFromDmp(trackingId, dmpSubmissionId, ownProps) {
             .loadFromDmp(data)
             .then((resp) => {
                 console.log(resp);
-                
+
                 let page = 'upload';
                 let submission = resp.payload.submission;
                 let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
@@ -258,8 +258,9 @@ export function loadFromDmp(trackingId, dmpSubmissionId, ownProps) {
                                 ...submission,
                                 gridType: page,
                             },
-                            message: 'Loaded! Please check notes column at the end for any parsing issues.',
+                            message: 'Parsed!',
                         });
+                        swal.genericMessage('Parsing Summary', resp.payload.issues);
                         return ownProps.history.push(`/${page}`);
                     })
                     .catch((error) => {

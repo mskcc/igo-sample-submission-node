@@ -8,6 +8,7 @@ import CacheService from '../util/cache';
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 const DmpSubmissionModel = require('../models/DmpSubmissionModel');
+const SubmissionModel = require('../models/SubmissionModel');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 /**
@@ -39,73 +40,6 @@ exports.headerValues = [
             .catch((error) => {
                 return apiResponse.errorResponse(error, 'Could not retrieve picklists from LIMS.');
             });
-    },
-];
-
-/**
- * Returns Materials and Species for application/recipe.
- *
- * @returns {Object}
- */
-exports.materialsAndSpecies = [
-    authenticate,
-    query('recipe').isLength({ min: 1 }).trim().withMessage('Recipe must be specified.'),
-    function (req, res) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
-        } else {
-            let recipe = req.query.recipe;
-            let speciesResult = util.getSpecies(recipe);
-            let materialsPromise = cache.get(recipe + '-Materials', () => services.getMaterials(recipe));
-
-            Promise.all([materialsPromise]).then((results) => {
-                if (results.some((x) => x.length === 0)) {
-                    return apiResponse.errorResponse(res, `Could not retrieve materials and species for '${recipe}'.`);
-                }
-                let [materialsResult] = results;
-                let responseObject = {
-                    materials: materialsResult,
-                    species: speciesResult,
-                };
-                return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
-            });
-        }
-    },
-];
-/**
- * Returns applications/recipes for materials.
- *
- * @returns {Object}
- */
-exports.applicationsAndContainers = [
-    authenticate,
-    query('material').isLength({ min: 1 }).trim().withMessage('Material must be specified.'),
-    function (req, res) {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
-            } else {
-                let material = req.query.material;
-                let containersResult = util.getContainers(material);
-                let applicationsPromise = cache.get(material + '-Applications', () => services.getApplications(material));
-
-                Promise.all([applicationsPromise]).then((results) => {
-                    if (results.some((x) => x.length === 0)) {
-                        return apiResponse.errorResponse(res, `Could not retrieve applications and containers for '${material}'.`);
-                    }
-                    let [applicationsResult] = results;
-                    let responseObject = {
-                        applications: applicationsResult,
-                        containers: containersResult,
-                    };
-                    return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
-                });
-            }
-        } catch (err) {
-            return apiResponse.errorResponse(res, err);
-        }
     },
 ];
 
@@ -326,6 +260,7 @@ exports.submit = [
 
 // TODO time cutoff?
 // PUT cmoRequest and dmpResponse IDs in with the smaples in DMP table
+//  QUESTION DO they want dmpRequestId to be an identifier for a group of projects?
 exports.readyForDmp = [
     query('dmpRequestId').isUUID().trim().withMessage('dmpRequestId must be valid GUID.'),
     function (req, res) {
@@ -386,50 +321,68 @@ exports.updateStatus = [
 
 exports.loadFromDmp = [
     body('trackingId').isLength({ min: 1 }).trim().withMessage('TrackingId must be present.'),
-    body('mongoId').isMongoId().withMessage('mongoId must be valid MongoDB ID.'),
+    body('dmpSubmissionId').isMongoId().withMessage('dmpSubmissionId must be valid MongoDB ID.'),
     function (req, res) {
-        console.log(req.body);
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         } else {
             let trackingId = req.body.trackingId;
-            let mongoId = req.body.mongoId;
-            let dmpPromise = services.getProjectFromDmp(trackingId);
-            let mongoPromise = DmpSubmissionModel.findById(ObjectId(mongoId)).lean();
+            let dmpSubmissionId = req.body.dmpSubmissionId;
 
-            Promise.all([dmpPromise, mongoPromise]).then((results) => {
-                const [dmpResult, submission] = results;
+            let dmpOutputPromise = services.getProjectFromDmp(trackingId);
+            let dmpSubmissionPromise = DmpSubmissionModel.findById(ObjectId(dmpSubmissionId)).lean();
 
-                if (dmpResult.result !== 'Success') {
-                    return apiResponse.errorResponse(res, 'Issues communicating with DMP.');
-                } else if (_.isEmpty(dmpResult.content['CMO Sample Request Details'])) {
-                    return apiResponse.errorResponse(res, 'No sample information returned from DMP.');
-                } else if (_.isEmpty(submission)) {
-                    return apiResponse.errorResponse(res, 'Error retrieving this submission from DB.');
-                } else {
-                    util.parseDmpOutput(dmpResult, submission);
-                }
-            });
+            Promise.all([dmpOutputPromise, dmpSubmissionPromise])
+                .then((results) => {
+                    const [dmpOutput, retrievedDmpSubmission] = results;
 
-            // if (!results || results.some((x) => x.length === 0)) {
-            //         return apiResponse.errorResponse(res, `Could not retrieve grid for '${material}' and '${application}'.`);
-            //     }
-            //     let [columnsResult] = results;
-            //     let gridPromise = util.generateGrid(columnsResult, res.user.role, formValues);
+                    if (dmpOutput.result !== 'Success') {
+                        return apiResponse.errorResponse(res, 'Issues communicating with DMP.');
+                    } else if (_.isEmpty(dmpOutput.content['CMO Sample Request Details'])) {
+                        return apiResponse.errorResponse(res, 'No sample information returned from DMP.');
+                    } else if (_.isEmpty(retrievedDmpSubmission)) {
+                        return apiResponse.errorResponse(res, 'Error retrieving this submission from DB.');
+                    } else {
+                        util.parseDmpOutput(dmpOutput, retrievedDmpSubmission).then((result) => {
+                            let translatedSubmission = result.parsedSubmission;
+                            let issues = result.translationIssues;
 
-            //     Promise.all([gridPromise])
-            //         .then((results) => {
-            //             if (results.some((x) => x.length === 0)) {
-            //                 return apiResponse.errorResponse(res, `Could not retrieve grid for '${material}' and '${application}'.`);
-            //             }
-            //             let [gridResult] = results;
-            //             return apiResponse.successResponseWithData(res, 'Operation success', gridResult);
-            //         })
-            //         .catch((reasons) => {
-            //             return apiResponse.errorResponse(res, reasons);
-            //         });
-            // });
+                            // if this has been previously loaded from DMP, overwrite previous submission instead of creating a new one
+                            let relatedIgoSubmission_id = retrievedDmpSubmission.relatedIgoSubmission_id || '';
+                            let username = retrievedDmpSubmission.username;
+
+                            SubmissionModel.findOrCreateSub(relatedIgoSubmission_id, username).then((igoSubmission) => {
+                                igoSubmission.gridValues = translatedSubmission.gridValues;
+                                igoSubmission.formValues = translatedSubmission.formValues;
+                                igoSubmission.dmpTrackingId = trackingId;
+
+                                igoSubmission.save(function (err) {
+                                    if (err) {
+                                        return apiResponse.errorResponse(res, 'IGO Submission could not be saved.');
+                                    }
+                                    // update existing dmpSubmission document to connect igoSubmission and indicate last load date
+                                    DmpSubmissionModel.findByIdAndUpdate(ObjectId(dmpSubmissionId), {
+                                        relatedIgoSubmission_id: igoSubmission._id,
+                                        loadedFromDmpAt: util.getTransactionIdForMongo(),
+                                    }).exec(function (err, result) {
+                                        if (err) {
+                                            console.log(err);
+                                            return apiResponse.errorResponse(res, 'Retrieved DMP submission could not be updated.');
+                                        }
+                                        return apiResponse.successResponseWithData(res, 'Submission saved.', {
+                                            submission: igoSubmission._doc,
+                                            issues: issues,
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    }
+                })
+                .catch((reasons) => {
+                    return apiResponse.errorResponse(res, reasons);
+                });
         }
     },
 ];

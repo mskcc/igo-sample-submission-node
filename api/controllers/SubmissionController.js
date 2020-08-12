@@ -1,4 +1,4 @@
-const apiResponse = require('../util/apiResponse');
+ const apiResponse = require('../util/apiResponse');
 const { body, param, query, validationResult } = require('express-validator');
 const util = require('../util/helpers');
 const mailer = require('../util/mailer');

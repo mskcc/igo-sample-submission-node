@@ -198,7 +198,7 @@ export const alertEmptyLoad = (queryType) => {
 export const genericMessage = (type, msg) => {
     Swal.fire({
         title: type.charAt(0).toUpperCase() + type.slice(1),
-        text: msg,
+        html: msg,
         type: type,
         animation: false,
         confirmButtonText: 'Dismiss',

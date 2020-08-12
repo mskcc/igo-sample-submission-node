@@ -205,7 +205,12 @@ export function submitDmpSubmission(reviewed = false) {
                 dispatch({
                     type: DMP_SUBMIT_SUCCESS,
                 });
-                return swal.submitSuccess();
+                return swal.genericMessage(
+                    'Submitted!',
+                    `Please make a note of your transaction ID ${data.transactionId} and use it to fill out the required  <a href='https://docs.google.com/forms/d/e/1FAIpQLSf2YyzR_MdGHuaT27TOJCxuy2wyL4MyrC2G2_TLlbymau6Qxg/viewform?usp=sf_link'>
+                MSKCC DMP Specimen Transfer Request Form.
+            </a> You can also retrieve this ID under Submissions &#8594; DMP Submissions.`
+                );
             })
             .catch((error) => {
                 dispatch({
@@ -240,8 +245,6 @@ export function checkDmp() {
             });
     };
 }
-
-
 
 export const DELETE_SUBMISSION = 'DELETE_SUBMISSION';
 export const DELETE_SUBMISSION_FAIL = 'DELETE_SUBMISSION_FAIL';

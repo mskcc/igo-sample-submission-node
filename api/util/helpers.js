@@ -809,6 +809,12 @@ export function handleDmpId(dmpId) {
 export function getDmpColumns(material, application) {
     return new Promise((resolve, reject) => {
         const combination = `${material}+${application}`;
+        if (dmpColumns.invalidCombinations.includes(combination)) {
+            if (material === 'DNA Library' && application === 'HumanWholeGenome') {
+                reject(`HumanWholeGenome requires DNA, please select DNA as the material. `);
+            }
+            reject(`We do not accept '${material}' for '${application}'.`);
+        }
         const columns = dmpColumns.dmpIntakeForms[combination];
         if (columns) {
             resolve(columns);
@@ -879,14 +885,26 @@ export function parseDmpOutput(dmpOutput, submission) {
         let material = Object.values(dmpSamples)[0]['Nucleic Acid Type (Library or DNA)'];
         let promises = [];
         promises.push(cache.get('tumorType-Picklist', () => services.getOnco()));
-        promises.push(cache.get('barcodes-Picklist', () => services.getBarcodes()));
-
+        if (Object.values(dmpSamples)[0]['Nucleic Acid Type (Library or DNA)'].includes('Library)')) {
+            promises.push(cache.get('barcodes-Picklist', () => services.getBarcodes()));
+        }
         Promise.all(promises).then((results) => {
             let [oncoResult, indexResult] = results;
 
             translateDmpToBankedSample(dmpSamples, oncoResult, indexResult).then((result) => {
                 // console.log(translatedSamples);
                 let { igoSamples, translationIssues } = result;
+
+                let orderedTranslationIssues = {};
+                translationIssues.sampleMatch = doSamplesMatch(dmpSamples, translatedSubmission);
+                Object.keys(translationIssues)
+                    .sort()
+                    .forEach(function (key) {
+                        orderedTranslationIssues[key] = translationIssues[key];
+                    });
+
+                console.log(translationIssues);
+                console.log(orderedTranslationIssues);
 
                 igoSamples.sort(compareByWellPosition);
 
@@ -911,49 +929,6 @@ export function parseDmpOutput(dmpOutput, submission) {
                 resolve({ parsedSubmission, translationIssues });
             });
         });
-    });
-}
-
-// Checks wether the returned data matches the samples that were submitted to the DMP using sampel submission
-function doSamplesMatch(dmpOutputSamples, dmpSubmission) {
-    return new Promise((resolve) => {
-        const dmpOutputSampleIds = Object.keys(dmpOutputSamples);
-        const dmpInputSampleIds = [];
-        getApprovedSamples(dmpSubmission).forEach((sample) => dmpInputSampleIds.push(sample.dmpSampleId));
-        if (isMatch(dmpOutputSampleIds, dmpInputSampleIds)) {
-            resolve('We received all submitted samples');
-        } else {
-            resolve(`The DMP returned ${dmpOutputSampleIds.length} samples out of ${dmpInputSampleIds.length} submitted.`);
-        }
-    });
-}
-
-//  UTIL
-export function getTransactionIdForDmp() {
-    const now = Date.now();
-    const transactionId = Math.floor(now);
-    return transactionId;
-}
-export function getTransactionIdForMongo() {
-    const now = Date.now();
-    const transactionId = Math.floor(now / 1000);
-    return transactionId;
-}
-
-function getDmpSpecimenType(material) {
-    let dmpMaterial = 'unknown';
-    if (material === 'DNA Library') dmpMaterial = 'Library';
-    if (material === 'DNA') dmpMaterial = 'gDNA';
-    return dmpMaterial;
-}
-function last7Days() {
-    return '0123456'.split('').map(function (n) {
-        var d = new Date();
-        d.setDate(d.getDate() - n);
-
-        return (function (day, month, year) {
-            return [day < 10 ? '0' + day : day, month < 10 ? '0' + month : month, year].join('-');
-        })(d.getDate(), d.getMonth(), d.getFullYear());
     });
 }
 // DNA Input Into Library: 250.0 | not needed,
@@ -993,7 +968,7 @@ function translateDmpToBankedSample(dmpSamples, oncoResult, indexResult) {
         let translationIssues = [];
 
         Object.keys(dmpSamples).forEach((element, index) => {
-            let rowIssues = { columns: new Set(), messages: new Set() };
+            let rowIssues = {};
             let dmpSample = dmpSamples[element];
             let igoUserId = dmpSample['Investigator Sample ID'];
             const dmpPatientId = dmpSample['DMP ID'];
@@ -1006,8 +981,7 @@ function translateDmpToBankedSample(dmpSamples, oncoResult, indexResult) {
             let igoWellPosition = dmpWellPosition;
             var match = /([A-Za-z]+)(\d+)/.exec(igoWellPosition);
             if (!match) {
-                rowIssues.columns.add('wellPosition');
-                rowIssues.messages.add(`Invalid Well Position ${igoWellPosition}, this will affect sorting.`);
+                rowIssues.wellPosition = `Invalid Well Position ${igoWellPosition}, this will affect sorting and needs to be resolved prior to submission.`;
             }
 
             const dmpPreservation = dmpSample['Preservation (FFPE or Blood)'];
@@ -1041,10 +1015,13 @@ function translateDmpToBankedSample(dmpSamples, oncoResult, indexResult) {
             Promise.all(promises).then((results) => {
                 let [crdbResult, oncoMatch] = results;
 
+                rowIssues.tumorType = oncoMatch.status;
+                console.log(rowIssues);
+
                 let igoSample = {
                     vol: dmpSample['Volume (ul)'],
                     concentration: dmpSample['Concentration (ng/ul)'],
-                    wellPosition: rowIssues.columns.has('wellPosition') ? `Invalid: ${igoWellPosition}` : igoWellPosition,
+                    wellPosition: 'wellPosition' in rowIssues ? `Invalid: ${igoWellPosition}` : igoWellPosition,
                     plateId: dmpSample['Barcode/Plate ID'],
                     gender: dmpSample['Sex'],
                     collectionYear: dmpSample['Collection Year'],
@@ -1064,15 +1041,20 @@ function translateDmpToBankedSample(dmpSamples, oncoResult, indexResult) {
                 // ? is this true? if so, only cache indeces for libraries?
                 if (dmpSample['Nucleic Acid Type (Library or DNA)'].includes('Library)')) {
                     let igoIndex = dmpSample['Index'].replace('DMP0', '');
+                    if (!indexResult[igoIndex]) {
+                        rowIssues.index = `${igoIndex} is not known to IGO.`;
+                    }
                     igoSample = {
                         ...igoSample,
                         index: igoIndex,
-                        indexSequence: indexResult[igoIndex],
+                        indexSequence: indexResult[igoIndex] || '',
                     };
                 }
 
                 igoSamples.push(igoSample);
-                if (!_.isEmpty(rowIssues)) translationIssues.push({ [`Row ${index}, sample ${igoUserId}`]: rowIssues });
+                if (!_.isEmpty(rowIssues)) {
+                    translationIssues[index] = { sample: igoUserId, ...rowIssues };
+                }
 
                 if (Object.keys(dmpSamples).length === index + 1) {
                     resolve({ igoSamples: igoSamples, translationIssues });
@@ -1081,6 +1063,18 @@ function translateDmpToBankedSample(dmpSamples, oncoResult, indexResult) {
         });
         // console.log(igoSample);
     });
+}
+
+// Checks wether the returned data matches the samples that were submitted to the DMP using sampel submission
+function doSamplesMatch(dmpSamples, translatedSubmission) {
+    const dmpOutputSampleIds = Object.keys(dmpSamples);
+    const dmpInputSampleIds = [];
+    getApprovedSamples(translatedSubmission).forEach((sample) => dmpInputSampleIds.push(sample.dmpSampleId));
+    if (isMatch(dmpOutputSampleIds, dmpInputSampleIds)) {
+        return 'We received all submitted (and approved) samples';
+    } else {
+        return `The DMP returned ${dmpOutputSampleIds.length} samples out of ${dmpInputSampleIds.length} submitted.`;
+    }
 }
 
 /**
@@ -1123,18 +1117,46 @@ function findOncoMatch(tumorType, oncoResult) {
     return new Promise((resolve) => {
         // tumortype returned in unexpected format
         if (!tumorType.includes(':')) {
-            resolve({ status: `No match found for: ${tumorType}`, tumorType });
+            resolve({ status: `No match found for: "${tumorType}"`, tumorType: tumorType });
         }
         let tumorTypeToMatch = tumorType.split(':')[1];
         oncoResult.forEach((element, index) => {
             if (element.includes(tumorTypeToMatch)) {
-                resolve({ status: `Closest match found for: ${tumorType} was ${tumorTypeToMatch}`, tumorTypeToMatch });
+                resolve({ status: `Closest match found for "${tumorType}" was "${tumorTypeToMatch}"`, tumorType: tumorTypeToMatch });
                 return;
             }
             // no match found
             if (oncoResult.length === index + 1) {
-                resolve({ status: `No match found for: ${tumorType}`, tumorType });
+                resolve({ status: `No match found for: "${tumorType}"`, tumorType: tumorType });
             }
         });
+    });
+}
+//  UTIL
+export function getTransactionIdForDmp() {
+    const now = Date.now();
+    const transactionId = Math.floor(now);
+    return transactionId;
+}
+export function getTransactionIdForMongo() {
+    const now = Date.now();
+    const transactionId = Math.floor(now / 1000);
+    return transactionId;
+}
+
+function getDmpSpecimenType(material) {
+    let dmpMaterial = 'unknown';
+    if (material === 'DNA Library') dmpMaterial = 'Library';
+    if (material === 'DNA') dmpMaterial = 'gDNA';
+    return dmpMaterial;
+}
+function last7Days() {
+    return '0123456'.split('').map(function (n) {
+        var d = new Date();
+        d.setDate(d.getDate() - n);
+
+        return (function (day, month, year) {
+            return [day < 10 ? '0' + day : day, month < 10 ? '0' + month : month, year].join('-');
+        })(d.getDate(), d.getMonth(), d.getFullYear());
     });
 }

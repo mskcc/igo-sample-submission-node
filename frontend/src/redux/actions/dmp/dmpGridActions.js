@@ -2,7 +2,6 @@
 import React from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { updateHeader } from './formActions';
 import { util, swal, services, excel } from '../../../util';
 
 import { Config } from '../../../config.js';
@@ -253,7 +252,7 @@ export function handleMRN(rowIndex, patientId) {
                 dispatch({
                     type: HANDLE_MRN_SUCCESS,
                     message: 'MRN redacted.',
-                    rows: redactMRN(rows, rowIndex, response.payload.patientId, 'MRN REDACTED', response.payload.sex),
+                    rows: redactMRN(rows, rowIndex, response.payload.patientId, 'MRN_REDACTED', response.payload.sex),
                 });
                 dispatch({ type: DMP_REGISTER_GRID_CHANGE });
             })

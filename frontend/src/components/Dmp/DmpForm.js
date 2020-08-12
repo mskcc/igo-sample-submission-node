@@ -2,7 +2,7 @@ import React from 'react';
 import { Translate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 
-import { FormControl, Paper, withStyles } from '@material-ui/core';
+import { FormControl, Paper, withStyles, Typography } from '@material-ui/core';
 
 import { Button, Checkbox, Dropdown, Input } from '../index';
 
@@ -62,7 +62,7 @@ class DmpForm extends React.Component {
         }
     };
 
-       handleCheckbox = (name) => (event) => {
+    handleCheckbox = (name) => (event) => {
         this.setState({
             values: { ...this.state.values, [name]: event.target.checked },
         });
@@ -154,6 +154,13 @@ class DmpForm extends React.Component {
             <Translate>
                 {({ translate }) => (
                     <Paper className={classes.container} elevation={1}>
+                        <Typography className={classes.message} align='justify'>
+                            Please complete and submit the required{' '}
+                            <a href='https://docs.google.com/forms/d/e/1FAIpQLSf2YyzR_MdGHuaT27TOJCxuy2wyL4MyrC2G2_TLlbymau6Qxg/viewform?usp=sf_link'>
+                                MSKCC DMP Specimen Transfer Request Form
+                            </a>
+                            . You will need the 10 digit transaction ID generated from this DMP Sample Submission to complete the form.
+                        </Typography>
                         <form id='dmp-upload-form' className={classes.form} onSubmit={(e) => this.handleSubmit(e, handleSubmit)}>
                             <Dropdown
                                 id='material'
@@ -278,6 +285,11 @@ const styles = (theme) => ({
         margin: '2em auto',
         padding: '1em',
         marginBottom: '4em',
+    },
+    message:{
+        width: '60%',
+        marginBottom: '2em',
+
     },
     form: {
         display: 'flex',

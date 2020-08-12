@@ -54,6 +54,13 @@ export function dmpSelect(id, value) {
                 message: 'Library message TBD.',
             });
         }
+        if (id === 'material' && value === 'DNA') {
+            return dispatch({
+                type: DMP_SELECT,
+                payload: { id: id, value: value },
+                message: 'Please note that when requesting samples for transfer, the standard process is to first request sequenced libraries; gDNA can be requested after libraries are confirmed as depleted in the DMP.',
+            });
+        }
 
         if (id === 'number_of_samples') {
             if (value > 199) {
