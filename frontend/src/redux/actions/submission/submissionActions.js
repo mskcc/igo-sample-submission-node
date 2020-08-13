@@ -42,7 +42,7 @@ export function getSubmissionsSince(unit, time, submissionType) {
                 return dispatch({
                     type: GET_SUBMISSIONS_SINCE_SUCCESS,
                     payload: response.payload,
-                    message: `Displaying submissions created during last ${util.maybeSingularize(time, unit)}.`,
+                    message: `Displaying ${response.payload.rows.length} submissions created during last ${util.maybeSingularize(time, unit)}.`,
                 });
             })
             .catch((error) => {
@@ -177,6 +177,7 @@ export function submitSubmission() {
             .then(() => {
                 dispatch({
                     type: SUBMIT_SUCCESS,
+                    message: 'clear' 
                 });
                 return swal.submitSuccess();
             })
@@ -227,7 +228,7 @@ export const CHECK_DMP_FAIL = 'CHECK_DMP_FAIL';
 export const CHECK_DMP_SUCCESS = 'CHECK_DMP_SUCCESS';
 export function checkDmp() {
     return (dispatch, getState) => {
-        dispatch({ type: CHECK_DMP, message: 'Fetching status from DMP...' });
+        dispatch({ type: CHECK_DMP, message: 'Fetching status from DMP...', loading: true });
         services
             .updateDmpStatus()
             .then((result) => {
@@ -264,6 +265,30 @@ export function deleteSubmission(id, submissionType) {
             .catch((error) => {
                 return dispatch({
                     type: DELETE_SUBMISSION_FAIL,
+                    error: error,
+                });
+            });
+    };
+}
+
+export const IMPORT_SUBMISSIONS = 'IMPORT_SUBMISSIONS';
+export const IMPORT_SUBMISSIONS_FAIL = 'IMPORT_SUBMISSIONS_FAIL';
+export const IMPORT_SUBMISSIONS_SUCCESS = 'IMPORT_SUBMISSIONS_SUCCESS';
+export function importSqlSubmissions() {
+    return (dispatch) => {
+        
+        services
+            .importSqlSubmissions()
+            .then((result) => {
+                return dispatch({
+                    type: IMPORT_SUBMISSIONS_SUCCESS,
+                    message: result.payload.message,
+                });
+                
+            })
+            .catch((error) => {
+                return dispatch({
+                    type: IMPORT_SUBMISSIONS_FAIL,
                     error: error,
                 });
             });

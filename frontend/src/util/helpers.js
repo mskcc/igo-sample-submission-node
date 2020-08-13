@@ -140,7 +140,7 @@ export const checkEmptyColumns = (columnFeatures, rows, hiddenColumns) => {
     for (let i = 0; i < columnFeatures.length; i++) {
         for (let j = 0; j < rows.length; j++) {
             if (!rows[j][columnFeatures[i].data] && columnFeatures[i].optional === false) {
-                if (hiddenColumns.includes(i)) {                  
+                if (hiddenColumns.includes(i)) {
                     continue;
                 }
             }
@@ -184,7 +184,6 @@ export const generateAdditionalRowData = (columnFeatures, formValues, prevRowNum
 // partial submission save or banked sample
 export const generateSubmitData = (state, isPartial = false) => {
     let data = {
-        version: '',
         submissionType: '',
         gridValues: '',
         formValues: '',
@@ -195,7 +194,7 @@ export const generateSubmitData = (state, isPartial = false) => {
         data.transactionId = getTransactionId();
         data.id = state.submissions.submissionToEdit ? state.submissions.submissionToEdit._id : undefined;
     }
-    data.version = Config.VERSION;
+
     let rowsWithIndex = rowsWithRowIndex(state.upload.grid.rows);
     data.submissionType = state.upload.grid.gridType;
     data.gridValues = JSON.stringify(rowsWithIndex);

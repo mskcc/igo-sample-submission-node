@@ -134,7 +134,6 @@ export function getInitialColumns(page, formValues, userRole) {
                     rows: data.rowData,
                     form: formValues,
                     message: 'Grid generated for ' + material + ' for ' + application + '. Green columns are optional.',
-                    
                 });
             })
             .catch((error) => {
@@ -143,7 +142,6 @@ export function getInitialColumns(page, formValues, userRole) {
                     error: error,
                     application: application,
                     material: material,
-                    
                 });
                 return error;
             });
@@ -199,7 +197,7 @@ export const GET_DMP_SUBMISSION_TO_EDIT_SUCCESS = 'GET_DMP_SUBMISSION_TO_EDIT_SU
 export function populateGridFromSubmission(submissionId, ownProps) {
     return (dispatch, getState) => {
         let page = ownProps.gridType;
-        dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...', loading: true });
+        dispatch({ type: 'EDIT_SUBMISSION', loading: true });
         services
             .getSubmission(submissionId, page)
             .then((resp) => {
@@ -207,6 +205,12 @@ export function populateGridFromSubmission(submissionId, ownProps) {
                 let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
                 Promise.all([columnPromise])
                     .then(() => {
+                        if (submission.appVersion !== process.env.appVersion) {
+                            swal.genericMessage(
+                                'Previous Version',
+                                'The submission you are editing was created with an older version of this site. If you run into any issues, please reach out to <a href="mailto:zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org?subject=SampleSubmission Version Issue">the IGO Sample and Project Management Team.</a>'
+                            );
+                        }
                         let type = page === 'dmp' ? GET_DMP_SUBMISSION_TO_EDIT_SUCCESS : GET_SUBMISSION_TO_EDIT_SUCCESS;
                         dispatch({
                             type: type,

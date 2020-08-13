@@ -1,10 +1,11 @@
- const apiResponse = require('../util/apiResponse');
+const apiResponse = require('../util/apiResponse');
 const { body, param, query, validationResult } = require('express-validator');
 const util = require('../util/helpers');
 const mailer = require('../util/mailer');
 var _ = require('lodash');
 var mongoose = require('mongoose');
 var ObjectId = mongoose.Types.ObjectId;
+const { sqlSubmissions } = require('./sqlSubmissions');
 
 const SubmissionModel = require('../models/SubmissionModel');
 const DmpSubmissionModel = require('../models/DmpSubmissionModel');
@@ -167,14 +168,12 @@ exports.create = [
                 formValues: formValues,
                 gridValues: gridValues,
                 trackingId: gridValues[0].trackingId || '',
-                appVersion: '2.5',
             });
         } else {
             submission = new SubmissionModel({
                 username: res.user.username,
                 formValues: formValues,
                 gridValues: gridValues,
-                appVersion: '2.5',
             });
         }
         submission.save(function (err) {
@@ -339,8 +338,9 @@ exports.download = [
         }
         let id = req.query.id;
         let submissionType = req.query.submissionType;
-        let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;        
-        model.findById(ObjectId(id))
+        let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
+        model
+            .findById(ObjectId(id))
             .lean()
             .exec(function (err, submission) {
                 if (!submission || err) {
@@ -351,6 +351,29 @@ exports.download = [
                     excelData,
                     fileName: `Receipt-${submission.formValues.serviceId}-${submission.username}`,
                 });
+            });
+    },
+];
+
+//  used to import MySql receipts
+exports.import = [
+    function (req, res) {
+        // let parsedSubmissions = [];
+        // console.log(submissions.length);
+        let parsedSubmissions = util.translateSqlSubmissions(sqlSubmissions);
+
+        SubmissionModel.deleteMany({ appVersion: { $ne: '2.5' } }, function (err) {
+            if (err) console.log(err);
+            console.log('Successful deletion');
+        });
+        SubmissionModel.insertMany(parsedSubmissions)
+            .then((documents) => {
+                return apiResponse.successResponse(res, `${documents.length} submissions imported.`);
+            })
+            .catch((error) => {
+                console.log(error);
+
+                return apiResponse.errorResponse(res, 'Could not import submissions.');
             });
     },
 ];
