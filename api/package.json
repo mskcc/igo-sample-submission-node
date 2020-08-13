@@ -42,7 +42,7 @@
     "jsonwebtoken": "^8.5.1",
     "jwt-in-cookie": "^1.0.15",
     "ldapauth-fork": "^4.3.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "mocha": "^7.1.1",
     "moment": "^2.24.0",
     "mongoose": "^5.9.9",
