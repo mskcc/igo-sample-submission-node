@@ -221,6 +221,21 @@ export const genericDecision = (title, message) => {
     });
 };
 
+export const genericPromise = (title, message) => {
+    return new Promise((resolve) => {
+        Swal.fire({
+            title: title,
+            html: message,
+            type: 'info',
+            showCancelButton: false,
+            animation: false,
+            confirmButtonColor: '#df4602',
+
+            confirmButtonText: 'Dismiss',
+        }).then((result) => (result.value ? resolve(true) : resolve(false)));
+    });
+};
+
 export const dryRunSuccess = (message) => {
     return new Promise((resolve) => {
         Swal.fire({

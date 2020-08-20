@@ -234,7 +234,7 @@ export function checkDmp() {
                 dispatch({
                     type: CHECK_DMP_SUCCESS,
                 });
-                return swal.genericMessage('success', result.payload.message).then(() => window.location.reload());
+                return swal.genericPromise('DMP Checked', result.payload.message).then(() => window.location.reload());
             })
             .catch((error) => {
                 dispatch({

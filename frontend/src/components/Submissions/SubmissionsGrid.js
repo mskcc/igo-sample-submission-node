@@ -18,14 +18,20 @@ class SubmissionsGrid extends React.Component {
                 <div className={classes.header}>
                     <Typography color='inherit' variant='h6'>
                         {headline}
-                    </Typography>{' '}
-                    {gridType === 'dmp' && (
-                        <Button variant='contained' color='primary' onClick={() => handleCheckDmp('', 0, true)}>
-                            Update DMP Status
-                        </Button>
-                    )}
+                    </Typography>
+                    <Button variant='contained' color='primary' onClick={() => handleCheckDmp('', 0, true)}>
+                        Update DMP Status
+                    </Button>
                 </div>
+                <ul>
+                    <Typography color='inherit' variant='subtitle1'>
+                        Tracking IDs for Testing
+                    </Typography>
 
+                    {grid.trackingIds.map((element) => (
+                        <li>{element}</li>
+                    ))}
+                </ul>
                 <ButtonGroup color='primary' size='small' aria-label='small outlined primary button group'>
                     <Button onClick={() => handleFilterClick('months', 1)}>Last Month</Button>
                     <Button onClick={() => handleFilterClick('months', 3)}>Last 3 Months</Button>
@@ -57,7 +63,7 @@ class SubmissionsGrid extends React.Component {
                             if (actionElement) {
                                 let submitted = actionElement.getAttribute('submitted') === 'true' || undefined;
                                 let serviceId = actionElement.getAttribute('service-id') || undefined;
-                                let mongoId= actionElement.getAttribute('submission-id') || undefined;
+                                let mongoId = actionElement.getAttribute('submission-id') || undefined;
                                 handleGridClick(coords, submitted, mongoId, serviceId);
                             }
                         }

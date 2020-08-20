@@ -134,7 +134,6 @@ export function getInitialColumns(page, formValues, userRole) {
                     rows: data.rowData,
                     form: formValues,
                     message: 'Grid generated for ' + material + ' for ' + application + '. Green columns are optional.',
-                    
                 });
             })
             .catch((error) => {
@@ -143,7 +142,6 @@ export function getInitialColumns(page, formValues, userRole) {
                     error: error,
                     application: application,
                     material: material,
-                    
                 });
                 return error;
             });
@@ -262,7 +260,18 @@ export function loadFromDmp(trackingId, dmpSubmissionId, ownProps) {
                             },
                             message: 'Parsed!',
                         });
-                        swal.genericMessage('Parsing Summary', resp.payload.issues);
+                        let summary = '';
+                        let filtered = resp.payload.issues.filter((element) => element);
+                        filtered.map((element) => {
+                            let issues = '';
+                            Object.keys(element).forEach((key) => {
+                                if (key !== 'sample' && element && element[key]) {
+                                    issues += `${key}: ${element[key]}<br/>`;
+                                }
+                            });
+                            summary += `<ul style="text-align:left;">Sample ${element.sample}<br/>${issues}</ul>`;
+                        });
+                        swal.genericMessage('info', `Parsing Summary: ${summary}`);
                         return ownProps.history.push(`/${page}`);
                     })
                     .catch((error) => {

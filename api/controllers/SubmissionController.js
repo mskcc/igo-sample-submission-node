@@ -1,4 +1,4 @@
- const apiResponse = require('../util/apiResponse');
+const apiResponse = require('../util/apiResponse');
 const { body, param, query, validationResult } = require('express-validator');
 const util = require('../util/helpers');
 const mailer = require('../util/mailer');
@@ -98,7 +98,18 @@ exports.grid = [
                             return apiResponse.errorResponse(res, 'Could not retrieve submission grid.');
                         }
                         let [submissionGridResult] = results;
-                        return apiResponse.successResponseWithData(res, 'Operation success', submissionGridResult);
+                        if (submissionType === 'dmp') {
+                            util.getAvailableProjectsFromDmp().then((ids) => {
+                                console.log(Array.from(ids));
+                                
+                                apiResponse.successResponseWithData(res, 'Operation success', {
+                                    ...submissionGridResult,
+                                    trackingIds: Array.from(ids),
+                                });
+                            });
+                        } else {
+                            return apiResponse.successResponseWithData(res, 'Operation success', submissionGridResult);
+                        }
                     })
                     .catch((reasons) => {
                         return apiResponse.errorResponse(res, reasons);
@@ -339,8 +350,9 @@ exports.download = [
         }
         let id = req.query.id;
         let submissionType = req.query.submissionType;
-        let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;        
-        model.findById(ObjectId(id))
+        let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
+        model
+            .findById(ObjectId(id))
             .lean()
             .exec(function (err, submission) {
                 if (!submission || err) {
