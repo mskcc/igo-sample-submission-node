@@ -1,7 +1,4 @@
-import axios from 'axios';
-import Swal from 'sweetalert2';
-import { Config } from '../../../config.js';
-import { util, swal, services, excel } from '../../../util';
+import { util, swal, services } from '../../../util';
 
 export const REQUEST_INITIAL_STATE_PROMOTE = 'REQUEST_INITIAL_STATE_PROMOTE';
 

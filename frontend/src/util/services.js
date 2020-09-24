@@ -419,7 +419,6 @@ export const updateDmpStatus = () => {
 };
 
 export const loadFromDmp = (data) => {
-    console.log(data);
     const url = `${Config.NODE_API_ROOT}/dmp/loadFromDmp`;
     return axios
         .post(url, { ...data })

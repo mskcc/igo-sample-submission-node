@@ -516,11 +516,11 @@ export const submissionColumns = {
         readOnly: 'true',
         renderer: 'html',
     },
-    'DMP ID': {
-        name: 'DMP ID',
-        data: 'dmpTrackingId',
-        readOnly: 'true',
-    },
+    // 'DMP ID': {
+    //     name: 'DMP ID',
+    //     data: 'dmpTrackingId',
+    //     readOnly: 'true',
+    // },
     'Date Created': {
         name: 'Created On',
         data: 'createdAt',

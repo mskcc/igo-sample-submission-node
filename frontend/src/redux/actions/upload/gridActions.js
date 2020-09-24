@@ -244,8 +244,6 @@ export function loadFromDmp(trackingId, dmpSubmissionId, ownProps) {
         services
             .loadFromDmp(data)
             .then((resp) => {
-                console.log(resp);
-
                 let page = 'upload';
                 let submission = resp.payload.submission;
                 let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
@@ -262,7 +260,6 @@ export function loadFromDmp(trackingId, dmpSubmissionId, ownProps) {
                         });
                         let summary = '';
                         let filtered = resp.payload.issues.filter((element) => element);
-                        console.log(filtered);
                         let sampleMatch = filtered.filter((element) => 'sampleMatch' in element)[0];
                         summary += sampleMatch.sampleMatch;
                         filtered.map((element) => {

@@ -11,7 +11,7 @@ const initialState = {
 // global errors and messages
 function commonReducer(state = initialState, action) {
     const { error, message, loading } = action;
-    console.log(action);
+    // console.log(action);
 
     if (typeof loading !== 'undefined') {
         state = {

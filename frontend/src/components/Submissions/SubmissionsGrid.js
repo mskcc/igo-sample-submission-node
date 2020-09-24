@@ -19,46 +19,13 @@ class SubmissionsGrid extends React.Component {
                     <Typography color='inherit' variant='h6'>
                         {headline}
                     </Typography>
-                    <Button variant='contained' color='primary' onClick={() => handleCheckDmp('', 0, true)}>
-                        Update DMP Status
-                    </Button>
+                    {gridType === 'dmp' && (
+                        <Button variant='contained' color='primary' onClick={() => handleCheckDmp('', 0, true)}>
+                            Update DMP Status
+                        </Button>
+                    )}
                 </div>
 
-                {gridType === 'dmp' && (
-                    <ul>
-                        <Typography color='inherit' variant='subtitle1'>
-                            Tracking IDs for Testing
-                        </Typography>
-                        You can use any DMP ID not just the ones listed. Whatever the DMP returns will be translated into an IGO submission.
-                        <br />
-                        In the next update, only the samples with matching Investigator Sample ID will be translated. <br />
-                        Compare result to the DMP output from this link:
-                        <a target='_blank' href='http://plvpathhydra1.mskcc.org:8001/getCMOSampleRequestDetails?trackingId=[TRACKINGID]'>
-                            {' '}
-                            http://plvpathhydra1.mskcc.org:8001/getCMOSampleRequestDetails?trackingId=[TRACKINGID]
-                        </a>
-                        <li>'20200311JGA'</li>
-                        <li>'20200515NS'</li>
-                        <li>'20200507CI_gDNA'</li>
-                        <li>'20191007BT_gDNA'</li>
-                        <li>'20200518NS'</li>
-                        <li>'20200311JGA_gDNA'</li>
-                        <li>'20200601JS'</li>
-                        <li>'20200529LM'</li>
-                        <li>'20200528JC'</li>
-                        <li>'20200619YJ'</li>
-                        <li>'20200203DS_2'</li>
-                        <li>'20200630AD'</li>
-                        <li>'20200709MB'</li>
-                        <li>'20200713AH'</li>
-                        <li>'20200709NS'</li>
-                        <li>'20200723KB'</li>
-                        <li>'20191007BT_2'</li>
-                        <li>'20200729YJ'</li>
-                        <li>'20200709NS_gDNA'</li>
-                        <li>'20200714JC'</li>
-                    </ul>
-                )}
                 <ButtonGroup color='primary' size='small' aria-label='small outlined primary button group'>
                     <Button onClick={() => handleFilterClick('months', 1)}>Last Month</Button>
                     <Button onClick={() => handleFilterClick('months', 3)}>Last 3 Months</Button>
