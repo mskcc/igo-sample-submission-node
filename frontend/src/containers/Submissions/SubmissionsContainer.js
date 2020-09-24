@@ -12,8 +12,8 @@ import { SubmissionsGrid } from '../../components/';
 
 export class SubmissionsPage extends Component {
     componentDidMount() {
-        const { getSubmissions, gridType } = this.props;
-        getSubmissions(gridType);
+        const { getSubmissionsSince, gridType } = this.props;
+        getSubmissionsSince('months', 3, gridType);
         // TODO make submissionsSince default once subs are imported
     }
 

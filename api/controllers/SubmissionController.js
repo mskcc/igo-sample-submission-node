@@ -136,7 +136,7 @@ exports.since = [
             .sort({ createdAt: 'desc' })
             .exec(function (err, submissions) {
                 if (err || _.isEmpty(submissions)) {
-                    return apiResponse.errorResponse(res, 'Could not retrieve submissions.');
+                    return apiResponse.errorResponse(res, 'No submissions found.');
                 }
                 let submissionGridPromise = util.generateSubmissionGrid(submissions, res.user.role, submissionType);
                 Promise.all([submissionGridPromise])

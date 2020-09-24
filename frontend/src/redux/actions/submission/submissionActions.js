@@ -39,10 +39,15 @@ export function getSubmissionsSince(unit, time, submissionType) {
             .getSubmissionsSince(limit, submissionType)
 
             .then((response) => {
+                // console.log(response);
+                let number = response.payload.rows.length;
                 return dispatch({
                     type: GET_SUBMISSIONS_SINCE_SUCCESS,
                     payload: response.payload,
-                    message: `Displaying submissions created during last ${util.maybeSingularize(time, unit)}.`,
+                    message: `Displaying ${util.maybeSingularize(number, 'submissions')} created during last ${util.maybeSingularize(
+                        time,
+                        unit
+                    )}.`,
                 });
             })
             .catch((error) => {

@@ -110,11 +110,11 @@ class Root extends Component {
                                             path='/submissions/igo'
                                             render={(routeProps) => <SubmissionsPage {...routeProps} gridType='upload' />}
                                         />
-                                        <Route
+                                        {/* <Route
                                             path='/submissions/dmp'
                                             render={(routeProps) => <SubmissionsPage {...routeProps} gridType='dmp' />}
                                         />
-                                        <Route path='/dmp' render={(routeProps) => <UploadPage {...routeProps} gridType='dmp' />} />
+                                        <Route path='/dmp' render={(routeProps) => <UploadPage {...routeProps} gridType='dmp' />} /> */}
                                         <Route path='/logout' component={Logout} />
                                         <Route path='/error' component={ErrorPage} />
                                     </div>
