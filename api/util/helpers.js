@@ -6,7 +6,7 @@ const submitColumns = require('./columns');
 import CacheService from './cache';
 import { v4 as uuidv4 } from 'uuid';
 var _ = require('lodash');
-import { isMatch } from 'lodash';
+// import { isMatch } from 'lodash';
 const dmpColumns = require('./dmpColumns');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
@@ -894,17 +894,13 @@ export function parseDmpOutput(dmpOutput, submission) {
             translateDmpToBankedSample(dmpSamples, oncoResult, indexResult).then((result) => {
                 // console.log(translatedSamples);
                 let { igoSamples, translationIssues } = result;
-
                 let orderedTranslationIssues = {};
-                
+
                 Object.keys(translationIssues)
                     .sort()
                     .forEach(function (key) {
                         orderedTranslationIssues[key] = translationIssues[key];
                     });
-
-                console.log(translationIssues);
-                console.log(orderedTranslationIssues);
 
                 igoSamples.sort(compareByWellPosition);
 
@@ -925,7 +921,9 @@ export function parseDmpOutput(dmpOutput, submission) {
                     },
                 };
                 delete parsedSubmission.formValues._id;
-                translationIssues.sampleMatch = doSamplesMatch(dmpSamples, parsedSubmission);
+                translationIssues.push({ sampleMatch: doSamplesMatch(dmpSamples, submission) });
+                console.log(translationIssues);
+
                 resolve({ parsedSubmission, translationIssues });
             });
         });
@@ -1016,7 +1014,10 @@ function translateDmpToBankedSample(dmpSamples, oncoResult, indexResult) {
                 let [crdbResult, oncoMatch] = results;
 
                 rowIssues.tumorType = oncoMatch.status;
-                console.log(rowIssues);
+
+                if(!crdbResult.CMO_ID){
+                    rowIssues.anonymizedId = `Could not anonymize ${igoPatientId}, no match found in CRDB.`
+                }
 
                 let igoSample = {
                     vol: dmpSample['Volume (ul)'],
@@ -1070,13 +1071,31 @@ function doSamplesMatch(dmpSamples, translatedSubmission) {
     const dmpOutputSampleIds = Object.keys(dmpSamples);
     const dmpInputSampleIds = [];
     getApprovedSamples(translatedSubmission).forEach((sample) => dmpInputSampleIds.push(sample.dmpSampleId));
-    if (isMatch(dmpOutputSampleIds, dmpInputSampleIds)) {
+    console.log(dmpOutputSampleIds);
+    console.log(dmpInputSampleIds);
+    if (isEqual(dmpOutputSampleIds, dmpInputSampleIds)) {
         return 'We received all submitted (and approved) samples';
     } else {
-        return `The DMP returned ${dmpOutputSampleIds.length} samples out of ${dmpInputSampleIds.length} submitted.`;
+        return `Unexpected samples returned from DMP. Out of ${dmpInputSampleIds.length} submitted, ${dmpOutputSampleIds.length} returned.`;
     }
 }
+// simple comparison function TODO improve
+function isEqual(a, b) {
+    // if length is not equal
+    console.log('what');
+    console.log('what');
+    console.log('what');
+    console.log('what');
+    console.log(a.length);
+    console.log(b.length);
 
+    if (a.length != b.length) return false;
+    else {
+        // comapring each element of array
+        for (var i = 0; i < a.length; i++) if (a[i] != b[i]) return false;
+        return true;
+    }
+}
 /**
  * Well Position A1,A2...A12,B1,B2...H12
  * Well Position Rows = A-H
@@ -1122,7 +1141,9 @@ function findOncoMatch(tumorType, oncoResult) {
         let tumorTypeToMatch = tumorType.split(':')[1];
         oncoResult.forEach((element, index) => {
             if (element.includes(tumorTypeToMatch)) {
-                resolve({ status: `Closest match found for "${tumorType}" was "${tumorTypeToMatch}"`, tumorType: tumorTypeToMatch });
+                let tumorId = element.split(': ')[1];
+
+                resolve({ status: `Closest match found for "${tumorType}" was "${tumorTypeToMatch}"`, tumorType: tumorId });
                 return;
             }
             // no match found

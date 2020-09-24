@@ -262,11 +262,14 @@ export function loadFromDmp(trackingId, dmpSubmissionId, ownProps) {
                         });
                         let summary = '';
                         let filtered = resp.payload.issues.filter((element) => element);
+                        console.log(filtered);
+                        let sampleMatch = filtered.filter((element) => 'sampleMatch' in element)[0];
+                        summary += sampleMatch.sampleMatch;
                         filtered.map((element) => {
                             let issues = '';
                             Object.keys(element).forEach((key) => {
                                 if (key !== 'sample' && element && element[key]) {
-                                    issues += `${key}: ${element[key]}<br/>`;
+                                    issues += `<strong>${key}:</strong> ${element[key]}<br/>`;
                                 }
                             });
                             summary += `<ul style="text-align:left;">Sample ${element.sample}<br/>${issues}</ul>`;

@@ -370,6 +370,8 @@ exports.loadFromDmp = [
                                             console.log(err);
                                             return apiResponse.errorResponse(res, 'Retrieved DMP submission could not be updated.');
                                         }
+                                        console.log(issues);
+
                                         return apiResponse.successResponseWithData(res, 'Submission saved.', {
                                             submission: igoSubmission._doc,
                                             issues: issues,
@@ -381,6 +383,8 @@ exports.loadFromDmp = [
                     }
                 })
                 .catch((reasons) => {
+                    console.log(reasons);
+
                     return apiResponse.errorResponse(res, reasons);
                 });
         }
