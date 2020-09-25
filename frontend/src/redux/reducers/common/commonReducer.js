@@ -14,6 +14,7 @@ function commonReducer(state = initialState, action) {
     // console.log(action);
 
     if (typeof loading !== 'undefined') {
+        
         state = {
             ...state,
             loading: loading,

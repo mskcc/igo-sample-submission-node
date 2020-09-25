@@ -2,14 +2,29 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
-import { gridActions, submissionActions, userActions } from '../../redux/actions';
+import { gridActions, submissionActions, userActions, commonActions } from '../../redux/actions';
 
 import { util, swal } from '../../util';
 import { UploadGrid } from '../../components';
 
 class UploadGridContainer extends Component {
-    handleChange = (changes) => {
-        const { registerGridChange } = this.props;
+    handleChange = (changes, source) => {
+        const { registerGridChange, handlePatientIds, showLoader, grid, submissionToEdit, user } = this.props;
+        // console.log(changes);
+        let changesToModify = changes;
+        // let editPromises = [];
+        if (changes.some((element) => element.includes('patientId'))) {
+            showLoader();
+            const patientIdType = grid.columnFeatures.find((element) => element.data === 'patientId');
+
+            // editPromises.push(util.redactIds(changesToModify, patientIdType));
+            let newPatientIds = util.getPatientIdsFromChanges(changesToModify, patientIdType);
+            let emptyIds = newPatientIds.filter((element) => element.patientId === '');
+            let nonEmptyIds = newPatientIds.filter((element) => element.patientId !== '');
+            let username = submissionToEdit.username || user.username;
+            handlePatientIds(nonEmptyIds, emptyIds, username);
+        }
+
         return registerGridChange(changes);
     };
     handleMRN = (rowIndex) => {
@@ -148,6 +163,7 @@ UploadGridContainer.propTypes = {
     pasteTooMany: PropTypes.func,
     preValidate: PropTypes.func,
     registerGridChange: PropTypes.func,
+    showLoader: PropTypes.func,
     submissionToEdit: PropTypes.object,
     submitDmpSubmission: PropTypes.func,
     submitSubmission: PropTypes.func,
@@ -167,6 +183,7 @@ UploadGridContainer.defaultProps = {
     preValidate: () => {},
     handlePatientId: () => {},
     handleClear: () => {},
+    showLoader: () => {},
 };
 
 const mapStateToProps = (state) => ({
@@ -183,6 +200,7 @@ const mapDispatchToProps = {
     ...gridActions,
     ...submissionActions,
     ...userActions,
+    ...commonActions,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UploadGridContainer);

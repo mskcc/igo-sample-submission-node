@@ -68,3 +68,11 @@ export const resetMessage = () => ({
     type: RESET_MESSAGE,
     message: 'clear',
 });
+
+export const SHOW_LOADER = 'SHOW_LOADER';
+
+// Resets the currently visible error message.
+export const showLoader = () => ({
+    type: SHOW_LOADER,
+    loading: true,
+});

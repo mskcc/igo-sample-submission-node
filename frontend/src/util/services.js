@@ -25,7 +25,7 @@ axios.interceptors.response.use(
         return response;
     },
     function(error) {
-        console.log(error);
+        // console.log(error);
         if (error.response) {
             error.payload = error.response.data;
             if (error.response.status === 401) {
@@ -420,6 +420,23 @@ export const updateDmpStatus = () => {
 
 export const loadFromDmp = (data) => {
     const url = `${Config.NODE_API_ROOT}/dmp/loadFromDmp`;
+    return axios
+        .post(url, { ...data })
+        .then((resp) => {
+            return resp;
+        })
+        .catch((error) => {
+            throw error;
+        })
+        .then((resp) => {
+            return resp;
+        });
+};
+
+export const handlePatientIds = (data) => {
+    console.log(data);
+    
+    const url = `${Config.NODE_API_ROOT}/upload/anonymizeIds`;
     return axios
         .post(url, { ...data })
         .then((resp) => {

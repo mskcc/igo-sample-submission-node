@@ -8,6 +8,7 @@ router.get('/materialsAndSpecies', UploadController.materialsAndSpecies);
 router.get('/applicationsAndContainers', UploadController.applicationsAndContainers);
 router.get('/picklist', UploadController.picklist);
 router.post('/grid', UploadController.grid);
+router.post('/anonymizeIds', UploadController.anonymizeIds);
 router.post('/patientIdToCid', UploadController.patientIdToCid);
 router.post('/mrnToCid', UploadController.mrnToCid);
 router.post('/mrnToDmpId', UploadController.mrnToDmpId);

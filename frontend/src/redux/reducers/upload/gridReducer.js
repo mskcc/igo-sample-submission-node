@@ -27,6 +27,13 @@ export default function gridReducer(state = initialGridState, action) {
                 rows: action.payload.grid.rows,
             };
 
+            case ActionTypes.CLEAR_EMPTY_IDS:
+            return {
+                ...state,
+                gridIsLoading: false,
+                rows: action.payload,
+            };
+
         case ActionTypes.GET_COLUMNS:
             return {
                 ...state,

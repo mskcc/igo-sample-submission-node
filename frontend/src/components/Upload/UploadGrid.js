@@ -83,7 +83,19 @@ class UploadGrid extends React.Component {
                         manualColumnResize={true}
                         comments={true}
                         ref={this.hotTableComponent}
+                        // // remove patient ids from pasted information and handle separately
+                        // beforePaste={(data, coords) => {
+                        //     let patientIdIndex = grid.columnFeatures.findIndex((element) => element.data == 'patientId');
+                        //     console.log(data);
+                        //     console.log(coords);
+                        //     if (coords[0].colEnd === coords[0].colStart && coords[0].colStart == patientIdIndex) {
+                        //         console.log('one col');
+                        //         return [];
+                        //     }
+                        // }}
                         beforeChange={(changes, source) => {
+                            
+                            
                             // only do something if rows can fit the changes/if
                             // last changes[] element's row index is <= rows
                             if (changes[changes.length - 1][0] + 1 > grid.rows.length) {
@@ -102,9 +114,9 @@ class UploadGrid extends React.Component {
                                     changes.forEach(([row, prop, oldValue, newValue]) => {
                                         i++;
                                         let rowIndex = row;
-                                        if (prop === 'patientId') {
-                                            handlePatientId(rowIndex);
-                                        }
+                                        // if (prop === 'patientId') {
+                                        //     handlePatientId(rowIndex);
+                                        // }
 
                                         if (prop === 'assay') {
                                             if (newValue !== oldValue && oldValue !== undefined) {
@@ -120,7 +132,7 @@ class UploadGrid extends React.Component {
                                         }
                                     });
                                     if (i === changes.length) {
-                                        handleChange(changes);
+                                        handleChange(changes, source);
                                     }
                                 }
                             }

@@ -4,6 +4,8 @@ const util = require('../util/helpers');
 const services = require('../services/services');
 const crdbServices = require('../services/crdbServices');
 import CacheService from '../util/cache';
+const { loggers } = require('winston');
+const logger = loggers.get('logger');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 const { constants } = require('../util/constants');
@@ -311,6 +313,32 @@ exports.patientIdToCid = [
 // MRN to C-ID
 // C-ID verification
 // DMP-ID to MRN to C-ID
+exports.anonymizeIds = [
+    body('ids').isJSON().isLength({ min: 1 }).trim().withMessage('ids must be specified.'),
+    body('username').isLength({ min: 1 }).trim().withMessage('username must be specified.'),
+    function (req, res) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
+            } else {
+                let ids = JSON.parse(req.body.ids);
+                let username = req.body.username;
+                util.handlePatientIds(ids, username)
+                    .then((results) => {
+                        return apiResponse.successResponseWithData(res, 'Operation success', { idResults: results });
+                    })
+                    .catch(function (err) {
+                        logger.log('error', err);
+                        return apiResponse.errorResponse(res, err);
+                    });
+            }
+        } catch (err) {
+            return apiResponse.errorResponse(res, err);
+        }
+    },
+];
+
 exports.verifyCmoId = [
     body('cmoId').isLength({ min: 1 }).trim().withMessage('cmoId must be specified.'),
 
@@ -365,7 +393,9 @@ exports.verifyDmpId = [
 
                 Promise.all([patientIdPromise])
                     .catch(function (err) {
-                        logger.log('error', err);
+                        console.log(err);
+
+                        logger.log('error', err.toString());
                         return apiResponse.errorResponse(res, err);
                     })
                     .then((results) => {

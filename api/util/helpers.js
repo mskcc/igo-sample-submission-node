@@ -5,12 +5,14 @@ const { constants } = require('./constants');
 const submitColumns = require('./columns');
 import CacheService from './cache';
 import { v4 as uuidv4 } from 'uuid';
+
 var _ = require('lodash');
 // import { isMatch } from 'lodash';
 const dmpColumns = require('./dmpColumns');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 
+const MRN_REDACTED = process.env.MRN_REDACTED;
 exports.createSharedString = (shared, username) => {
     let sharedSet = new Set();
     let sharedArray = shared.split(',');
@@ -1015,8 +1017,8 @@ function translateDmpToBankedSample(dmpSamples, oncoResult, indexResult) {
 
                 rowIssues.tumorType = oncoMatch.status;
 
-                if(!crdbResult.CMO_ID){
-                    rowIssues.anonymizedId = `Could not anonymize ${igoPatientId}, no match found in CRDB.`
+                if (!crdbResult.CMO_ID) {
+                    rowIssues.anonymizedId = `Could not anonymize ${igoPatientId}, no match found in CRDB.`;
                 }
 
                 let igoSample = {
@@ -1153,6 +1155,57 @@ function findOncoMatch(tumorType, oncoResult) {
         });
     });
 }
+
+export async function handlePatientIds(ids, username) {
+    // return new Promise((resolve, reject) => {
+    let patientIdPromises = [];
+    let resultIds = JSON.parse(JSON.stringify(ids));
+    //  send CRDB requests in batches of ten.
+    let numBatches = Math.ceil(ids.length / 10);
+    for (let batchesProcessed = 0; batchesProcessed < numBatches; batchesProcessed++) {
+        //  0 = 0, 1 = 10, 2 = 20
+        let lowerIndex = batchesProcessed * 10;
+        // 0 = 10, 1 = 20, 2 = 30
+        let upperIndex = (batchesProcessed + 1) * 10;
+
+        let idBatch = ids.slice(lowerIndex, upperIndex);
+        idBatch.forEach((element) => {
+            patientIdPromises.push(selectIdService(element));
+        });
+        await Promise.all(patientIdPromises)
+            .catch((error) => reject(error))
+            .then((results) => {
+                idBatch.forEach((idElement, index) => {
+                    let normalizedPatientId = '';
+                    let cmoPatientId = '';
+                    let finalPatientId = '';
+                    let sex = '';
+
+                    const idType = idElement.idType;
+
+                    if (idType === 'CMO ID') {
+                        normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId.replace('C-', '')}`;
+                        cmoPatientId = _.isEmpty(results[index].CMO_ID) ? '' : idElement.patientId;
+                        finalPatientId = idElement.patientId;
+                    }
+
+                    if (idType === 'MRN') {
+                        cmoPatientId = `C-${results[index].patientId}`;
+                        normalizedPatientId = `${username.toUpperCase()}_${results[index].patientId}`;
+                        sex = results[index].sex;
+                        finalPatientId = MRN_REDACTED;
+                    }
+
+                    resultIds[index].result = { cmoPatientId, normalizedPatientId, patientId: finalPatientId };
+                    if (sex !== '') resultIds[index].result.sex = sex;
+                });
+            });
+
+        if (resultIds.length === ids.length) {
+            return resultIds;
+        }
+    }
+}
 //  UTIL
 export function getTransactionIdForDmp() {
     const now = Date.now();
@@ -1180,4 +1233,12 @@ function last7Days() {
             return [day < 10 ? '0' + day : day, month < 10 ? '0' + month : month, year].join('-');
         })(d.getDate(), d.getMonth(), d.getFullYear());
     });
+}
+
+function selectIdService(idElement) {
+    let idType = idElement.idType;
+    let patientId = idElement.patientId;
+    if (idType === 'MRN' || idType === 'CELLLINE') return crdbServices.getCrdbId(patientId);
+    if (idType === 'CMO ID') return crdbServices.verifyCmoId(patientId.replace('C-', ''));
+    if (idType === 'DMP ID') return crdbServices.verifyDmpId(patientId);
 }

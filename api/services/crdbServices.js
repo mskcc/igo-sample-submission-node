@@ -16,9 +16,12 @@ const CRDB_DB_URL = process.env.CRDB_DB_URL;
 const formatCrdb = (resp) => {
     let data = {};
     if (resp.data.PRM_JOB_STATUS.toString() === '0') {
+        let sex = resp.data.PRM_PT_GENDER || '';
+        if (sex === 'Female') sex = 'F';
+        if (sex === 'Male') sex = 'M';
         data = {
             patientId: resp.data.PRM_PT_ID,
-            sex: resp.data.PRM_PT_GENDER || '',
+            sex: sex,
         };
     } else {
         data = [];
@@ -29,6 +32,7 @@ const formatCrdb = (resp) => {
 const formatDbResponse = (resp) => {
     const data = resp.rows[0] || [];
     delete data.PT_MRN;
+    console.log('RESULT', data);
     return data;
 };
 
@@ -71,11 +75,16 @@ exports.verifyCmoId = (cmoId) => {
             })
             .then((connection) => {
                 connection
-                    .execute('SELECT pt_mrn, dmp_id FROM crdb_cmo_loj_dmp_map WHERE cmo_id = :cmoId', [cmoId])
-                    
+                    .execute('SELECT pt_mrn, dmp_id, cmo_id FROM crdb_cmo_loj_dmp_map WHERE cmo_id = :cmoId', [cmoId])
+
                     .then(function (result) {
                         connection.close();
-                        logger.log('info', 'Successfully retrieved response from CRDB');
+
+                        console.log('ID', cmoId);
+
+                        // console.log('RESULT', result);
+
+                        // logger.log('info', 'Successfully retrieved response from CRDB');
                         resolve(formatDbResponse(result));
                     })
                     .catch(function (error) {
@@ -84,7 +93,7 @@ exports.verifyCmoId = (cmoId) => {
                         reject(error);
                     });
             })
-            
+
             .catch((error) => {
                 reject(error);
             });
@@ -100,12 +109,13 @@ exports.verifyDmpId = (dmpId) => {
                 connectString: CRDB_DB_URL,
             })
             .then((connection) => {
-                
                 connection
                     .execute('SELECT pt_mrn, cmo_id, dmp_id FROM crdb_cmo_loj_dmp_map WHERE dmp_id = :dmpId', [dmpId])
                     .then(function (result) {
                         connection.close();
                         logger.log('info', 'Successfully retrieved response from CRDB');
+                        console.log(result);
+
                         resolve(formatDbResponse(result));
                     })
                     .catch(function (error) {
@@ -129,7 +139,6 @@ exports.mrnToDmpId = (mrn) => {
                 connectString: CRDB_DB_URL,
             })
             .then((connection) => {
-                
                 connection
                     .execute('SELECT pt_mrn, cmo_id, dmp_id FROM crdb_cmo_loj_dmp_map WHERE pt_mrn = :mrn', [mrn])
                     .then(function (result) {

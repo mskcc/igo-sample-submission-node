@@ -140,7 +140,7 @@ export const checkEmptyColumns = (columnFeatures, rows, hiddenColumns) => {
     for (let i = 0; i < columnFeatures.length; i++) {
         for (let j = 0; j < rows.length; j++) {
             if (!rows[j][columnFeatures[i].data] && columnFeatures[i].optional === false) {
-                if (hiddenColumns.includes(i)) {                  
+                if (hiddenColumns.includes(i)) {
                     continue;
                 }
             }
@@ -298,6 +298,56 @@ export const redactMRN = (rows, index, crdbId, msg, sex) => {
         rows[index].gender = sex === 'Female' ? 'F' : 'M';
     }
     return rows;
+};
+export const clearIds = (rows, ids) => {
+    let updatedRows = JSON.parse(JSON.stringify(rows));
+    ids.forEach((idElement) => {
+        if (!idElement.patientId) {
+            updatedRows[idElement.gridRowIndex].patientId = '';
+            updatedRows[idElement.gridRowIndex].cmoPatientId = '';
+            updatedRows[idElement.gridRowIndex].normalizedPatientId = '';
+        }
+    });
+    return updatedRows;
+};
+
+// handsontable changes elements are arrays like ['columnId', oldValue, newValue]
+export const getPatientIdsFromChanges = (changes, idType) => {
+    // TODO add username, either original submission or logged in
+    let ids = [];
+    changes.forEach((element) => {
+        let patientId = element[3].replace(/\s/g, '');
+        if (element.includes('patientId')) {
+            let regex = new RegExp(idType.pattern);
+            let confirmedIdType = idType.columnHeader;
+            let isValidId = regex.test(patientId) || patientId === '' || /^[0-9]{8}$/.test(patientId);
+            if (!isValidId) {
+                patientId = '';
+            } else {
+                if (/^[0-9]{8}$/.test(patientId)) {
+                    confirmedIdType = 'MRN';
+                }
+            }
+            ids.push({ patientId: patientId, gridRowIndex: element[0], idType: confirmedIdType });
+        }
+    });
+    return ids;
+};
+
+export const setPatientIds = (rows, ids) => {
+    let updatedRows = JSON.parse(JSON.stringify(rows));
+    Object.keys(ids).forEach((key) => {
+        let idElement = ids[key];
+        console.log(idElement);
+
+        updatedRows[idElement.gridRowIndex].patientId = idElement.result.patientId;
+        updatedRows[idElement.gridRowIndex].cmoPatientId = idElement.result.cmoPatientId;
+        updatedRows[idElement.gridRowIndex].normalizedPatientId = idElement.result.normalizedPatientId;
+        if ('sex' in idElement.result) updatedRows[idElement.gridRowIndex].gender = idElement.result.sex;
+    });
+    console.log(updatedRows);
+
+    return updatedRows;
 };
 
 export const createPatientId = (rows, index, crdbId, normalizedPatientID) => {

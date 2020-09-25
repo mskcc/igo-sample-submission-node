@@ -12,6 +12,9 @@ export const REGISTER_GRID_CHANGE_POST_VALIDATE = 'REGISTER_GRID_CHANGE_POST_VAL
 export const RESET_MESSAGE = 'RESET_MESSAGE';
 export const registerGridChange = (changes) => {
     return (dispatch, getState) => {
+        // handle ID changes here?
+        // check if changes include id changes
+
         let result = util.validateGrid(changes, getState().upload.grid);
         // dispatch({ type: RESET_MESSAGE })
         // would prefer to have this in reducer
@@ -29,6 +32,37 @@ export const registerGridChange = (changes) => {
                 message: result.errorMessage.replace(/<br>/g, ''),
             });
         }
+    };
+};
+
+// export const REGISTER_GRID_CHANGE_POST_VALIDATE = 'REGISTER_GRID_CHANGE_POST_VALIDATE';
+export const updateIds = (result) => {
+    return (dispatch, getState) => {
+        console.log(result);
+
+        // handle ID changes here?
+        // check if changes include id changes
+
+        // let result = util.validateGrid(changes, getState().upload.grid);
+        // dispatch({ type: RESET_MESSAGE })
+        // would prefer to have this in reducer
+        let rows = getState().upload.grid.rows;
+        result.forEach((element) => {
+            console.log(element);
+            if (element.result) {
+                rows[element.gridRowIndex] = {
+                    ...rows[element.gridRowIndex],
+                    normalizedPatientId: element.result.normalizedPatientId,
+                    cmoPatientId: element.result.cmoPatientId,
+                    patientId: element.result.patientId,
+                };
+            }
+        });
+        return dispatch({
+            type: REGISTER_GRID_CHANGE_POST_VALIDATE,
+            payload: { grid: { rows: rows } },
+            // message: result.errorMessage.replace(/<br>/g, ''),
+        });
     };
 };
 
@@ -336,6 +370,38 @@ export function handlePatientId(rowIndex) {
                     return dispatch(anonymizeId(patientId, 'investigator', rows, rowIndex));
             }
         }
+    };
+}
+export const CLEAR_EMPTY_IDS = 'CLEAR_EMPTY_IDS';
+
+export const HANDLE_PATIENT_IDS = 'HANDLE_PATIENT_IDS';
+export const HANDLE_PATIENT_IDS_FAIL = 'HANDLE_PATIENT_IDS_FAIL';
+export const HANDLE_PATIENT_IDS_SUCCESS = 'HANDLE_PATIENT_IDS_SUCCESS';
+export function handlePatientIds(ids, emptyIds, username) {
+    return (dispatch, getState) => {
+        dispatch({ type: 'HANDLE_PATIENT_ID' });
+        let rows = getState().upload.grid.rows;
+        const data = { ids: JSON.stringify(ids), username: username };
+        dispatch({ type: CLEAR_EMPTY_IDS, payload: util.clearIds(rows, emptyIds) });
+
+        if (ids.length === 0) {
+            return dispatch({ type: REGISTER_GRID_CHANGE });
+        }
+        return services
+            .handlePatientIds(data)
+            .then((response) => {
+                dispatch({
+                    type: HANDLE_PATIENT_ID_SUCCESS,
+                    rows: util.setPatientIds(rows, response.payload.idResults),
+                });
+                dispatch({ type: REGISTER_GRID_CHANGE });
+            })
+            .catch((error) => {
+                dispatch({
+                    type: HANDLE_PATIENT_ID_FAIL,
+                    error: error,
+                });
+            });
     };
 }
 
