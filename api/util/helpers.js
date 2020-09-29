@@ -13,6 +13,7 @@ const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 
 const MRN_REDACTED = process.env.MRN_REDACTED;
+const CRDB_MAX_REQUESTS = process.env.CRDB_MAX_REQUESTS;
 exports.createSharedString = (shared, username) => {
     let sharedSet = new Set();
     let sharedArray = shared.split(',');
@@ -1156,55 +1157,77 @@ function findOncoMatch(tumorType, oncoResult) {
     });
 }
 
-export async function handlePatientIds(ids, username) {
-    // return new Promise((resolve, reject) => {
-    let patientIdPromises = [];
-    let resultIds = JSON.parse(JSON.stringify(ids));
-    //  send CRDB requests in batches of ten.
-    let numBatches = Math.ceil(ids.length / 10);
-    for (let batchesProcessed = 0; batchesProcessed < numBatches; batchesProcessed++) {
-        //  0 = 0, 1 = 10, 2 = 20
-        let lowerIndex = batchesProcessed * 10;
-        // 0 = 10, 1 = 20, 2 = 30
-        let upperIndex = (batchesProcessed + 1) * 10;
+// All investigator entered patient IDs are sent to the CRDB for anonymization. This is done in batches of 10 parallel requests at a time.
+// CRDB's oracle DB has a connection limit. To stay within it, we limited it to 10.
+// ID's need to be normalized/redacted/handled based on their type. 
+// CMO IDs need to be sent to the CRDB without the C- that users enter.
+// MRNs need to be redacted and return sex information as well as the patient ID
+// DMP IDs only return a value if they were found in the CRDB. If they aren't, a message must be shown to the user recommending they enter a MRN instead.
+export function handlePatientIds(ids, username) {
+    return new Promise((resolve, reject) => {
+        let patientIdPromises = [];
 
-        let idBatch = ids.slice(lowerIndex, upperIndex);
-        idBatch.forEach((element) => {
-            patientIdPromises.push(selectIdService(element));
-        });
-        await Promise.all(patientIdPromises)
-            .catch((error) => reject(error))
-            .then((results) => {
-                idBatch.forEach((idElement, index) => {
-                    let normalizedPatientId = '';
-                    let cmoPatientId = '';
-                    let finalPatientId = '';
-                    let sex = '';
+        let resultIds = JSON.parse(JSON.stringify(ids));
+        let idsProcessed = 0;
+        //  send CRDB requests in batches of ten.
+        let numBatches = Math.ceil(ids.length / CRDB_MAX_REQUESTS);
+        for (let batchesProcessed = 0; batchesProcessed < numBatches; batchesProcessed++) {
+            //  0 = 0, 1 = CRDB_MAX_REQUESTS, 2 = 20
+            let lowerIndex = batchesProcessed * CRDB_MAX_REQUESTS;
+            // 0 = CRDB_MAX_REQUESTS, 1 = 20, 2 = 30
+            let upperIndex = (batchesProcessed + 1) * CRDB_MAX_REQUESTS;
 
-                    const idType = idElement.idType;
-
-                    if (idType === 'CMO ID') {
-                        normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId.replace('C-', '')}`;
-                        cmoPatientId = _.isEmpty(results[index].CMO_ID) ? '' : idElement.patientId;
-                        finalPatientId = idElement.patientId;
-                    }
-
-                    if (idType === 'MRN') {
-                        cmoPatientId = `C-${results[index].patientId}`;
-                        normalizedPatientId = `${username.toUpperCase()}_${results[index].patientId}`;
-                        sex = results[index].sex;
-                        finalPatientId = MRN_REDACTED;
-                    }
-
-                    resultIds[index].result = { cmoPatientId, normalizedPatientId, patientId: finalPatientId };
-                    if (sex !== '') resultIds[index].result.sex = sex;
-                });
+            let idBatch = ids.slice(lowerIndex, upperIndex);
+            idBatch.forEach((element) => {
+                patientIdPromises.push(selectIdService(element));
             });
+            // await Promise.all(patientIdPromises)
+            Promise.all(patientIdPromises)
+                .catch((error) => reject(error))
+                .then((results) => {
+                    resultIds.forEach((idElement, index) => {
+                        idsProcessed++;
+                        // console.log('index', index);
 
-        if (resultIds.length === ids.length) {
-            return resultIds;
+                        // console.log(results[index]);
+
+                        let normalizedPatientId = '';
+                        let cmoPatientId = '';
+                        let finalPatientId = '';
+                        let sex = '';
+
+                        const idType = idElement.idType;
+                        if (results[index]) {
+                            if (idType === 'CMO ID') {
+                                normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId.replace('C-', '')}`;
+                                cmoPatientId = _.isEmpty(results[index].CMO_ID) ? '' : idElement.patientId;
+                                finalPatientId = idElement.patientId;
+                            }
+
+                            if (idType === 'MRN') {
+                                cmoPatientId = `C-${results[index].patientId}`;
+                                normalizedPatientId = `${username.toUpperCase()}_${results[index].patientId}`;
+                                sex = results[index].sex;
+                                finalPatientId = MRN_REDACTED;
+                            }
+                        }
+
+                        resultIds[index].result = { cmoPatientId, normalizedPatientId, patientId: finalPatientId };
+                        // console.log('num', idsProcessed);
+                        // console.log(resultIds[index]);
+                        if (sex !== '') resultIds[index].result.sex = sex;
+                        if (resultIds.length === idsProcessed) {
+                            // console.log('DONE');
+                            // console.log(resultIds);
+
+                            resolve(resultIds);
+                        }
+                    });
+                });
         }
-    }
+    });
+    // console.log('idlengt', ids.length);
+    // console.log('idresultlengt', idsProcessed);
 }
 //  UTIL
 export function getTransactionIdForDmp() {

@@ -390,6 +390,8 @@ export function handlePatientIds(ids, emptyIds, username) {
         return services
             .handlePatientIds(data)
             .then((response) => {
+                // console.log(response);
+                
                 dispatch({
                     type: HANDLE_PATIENT_ID_SUCCESS,
                     rows: util.setPatientIds(rows, response.payload.idResults),
