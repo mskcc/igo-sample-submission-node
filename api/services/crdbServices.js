@@ -26,13 +26,15 @@ const formatCrdb = (resp) => {
     } else {
         data = [];
     }
+    
+    
     return data;
 };
 
 const formatDbResponse = (resp) => {
     const data = resp.rows[0] || [];
     delete data.PT_MRN;
-    console.log('RESULT', data);
+    // console.log('RESULT', data);
     return data;
 };
 
@@ -78,12 +80,7 @@ exports.verifyCmoId = (cmoId) => {
                     .execute('SELECT pt_mrn, dmp_id, cmo_id FROM crdb_cmo_loj_dmp_map WHERE cmo_id = :cmoId', [cmoId])
 
                     .then(function (result) {
-                        connection.close();
-
-                        console.log('ID', cmoId);
-
-                        // console.log('RESULT', result);
-
+                        connection.close();                
                         // logger.log('info', 'Successfully retrieved response from CRDB');
                         resolve(formatDbResponse(result));
                     })
@@ -113,8 +110,8 @@ exports.verifyDmpId = (dmpId) => {
                     .execute('SELECT pt_mrn, cmo_id, dmp_id FROM crdb_cmo_loj_dmp_map WHERE dmp_id = :dmpId', [dmpId])
                     .then(function (result) {
                         connection.close();
-                        logger.log('info', 'Successfully retrieved response from CRDB');
-                        console.log(result);
+                        // logger.log('info', 'Successfully retrieved response from CRDB');
+                        // console.log(result);
 
                         resolve(formatDbResponse(result));
                     })
@@ -143,7 +140,7 @@ exports.mrnToDmpId = (mrn) => {
                     .execute('SELECT pt_mrn, cmo_id, dmp_id FROM crdb_cmo_loj_dmp_map WHERE pt_mrn = :mrn', [mrn])
                     .then(function (result) {
                         connection.close();
-                        logger.log('info', 'Successfully retrieved response from CRDB');
+                        // logger.log('info', 'Successfully retrieved response from CRDB');
                         resolve(formatDbResponse(result));
                     })
                     .catch(function (error) {

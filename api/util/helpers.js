@@ -1197,12 +1197,20 @@ export function handlePatientIds(ids, username) {
                         let sex = '';
 
                         const idType = idElement.idType;
+                        // todo combination of cmo/dmp and mrn should work.
                         if (results[index]) {
                             if (idType === 'CMO ID') {
                                 normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId.replace('C-', '')}`;
                                 cmoPatientId = _.isEmpty(results[index].CMO_ID) ? '' : idElement.patientId;
                                 finalPatientId = idElement.patientId;
                             }
+
+                            if (idType === 'DMP ID') {
+                                normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId.replace('C-', '')}`;
+                                cmoPatientId = `C-${results[index].CMO_ID || ''}`;
+                                finalPatientId = idElement.patientId;
+                            }
+
 
                             if (idType === 'MRN') {
                                 cmoPatientId = `C-${results[index].patientId}`;

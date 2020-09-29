@@ -338,7 +338,7 @@ export const setPatientIds = (rows, ids) => {
     let updatedRows = JSON.parse(JSON.stringify(rows));
     Object.keys(ids).forEach((key) => {
         let idElement = ids[key];
-        console.log(idElement);
+        // console.log(idElement);
         if ('result' in idElement) {
             updatedRows[idElement.gridRowIndex].patientId = idElement.result.patientId;
             updatedRows[idElement.gridRowIndex].cmoPatientId = idElement.result.cmoPatientId;
