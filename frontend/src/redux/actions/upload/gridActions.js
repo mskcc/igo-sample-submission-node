@@ -35,36 +35,6 @@ export const registerGridChange = (changes) => {
     };
 };
 
-// export const REGISTER_GRID_CHANGE_POST_VALIDATE = 'REGISTER_GRID_CHANGE_POST_VALIDATE';
-export const updateIds = (result) => {
-    return (dispatch, getState) => {
-        console.log(result);
-
-        // handle ID changes here?
-        // check if changes include id changes
-
-        // let result = util.validateGrid(changes, getState().upload.grid);
-        // dispatch({ type: RESET_MESSAGE })
-        // would prefer to have this in reducer
-        let rows = getState().upload.grid.rows;
-        result.forEach((element) => {
-            console.log(element);
-            if (element.result) {
-                rows[element.gridRowIndex] = {
-                    ...rows[element.gridRowIndex],
-                    normalizedPatientId: element.result.normalizedPatientId,
-                    cmoPatientId: element.result.cmoPatientId,
-                    patientId: element.result.patientId,
-                };
-            }
-        });
-        return dispatch({
-            type: REGISTER_GRID_CHANGE_POST_VALIDATE,
-            payload: { grid: { rows: rows } },
-            // message: result.errorMessage.replace(/<br>/g, ''),
-        });
-    };
-};
 
 export const preValidate = () => {
     return (dispatch) => {
@@ -391,7 +361,18 @@ export function handlePatientIds(ids, emptyIds, username) {
             .handlePatientIds(data)
             .then((response) => {
                 // console.log(response);
-                
+                let errorMessage = new Set([]);
+                response.payload.idResults.forEach((element) => {
+                    if ('result' in element && 'message' in element.result) {
+                        errorMessage.add(`${element.result.message}`);
+                    }
+                });
+                if (errorMessage.size !== 0) {
+                    let message = util.buildErrorMessage(errorMessage);
+                    message += '<br> Please try MRN instead. You can enter MRNs in the current ID column without generating a new grid.';
+                    swal.invalidValues(message);
+                }
+
                 dispatch({
                     type: HANDLE_PATIENT_ID_SUCCESS,
                     rows: util.setPatientIds(rows, response.payload.idResults),
@@ -399,9 +380,11 @@ export function handlePatientIds(ids, emptyIds, username) {
                 dispatch({ type: REGISTER_GRID_CHANGE });
             })
             .catch((error) => {
+
                 dispatch({
                     type: HANDLE_PATIENT_ID_FAIL,
                     error: error,
+                    rows: util.redactMRNs(rows, ids),
                 });
             });
     };

@@ -436,7 +436,7 @@ export const loadFromDmp = (data) => {
 export const handlePatientIds = (data) => {
     console.log(data);
     
-    const url = `${Config.NODE_API_ROOT}/upload/anonymizeIds`;
+    const url = `${Config.NODE_API_ROOT}/upload/deidentifyIds`;
     return axios
         .post(url, { ...data })
         .then((resp) => {

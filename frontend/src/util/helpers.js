@@ -290,6 +290,7 @@ export const decreaseRowNumber = (rows, change) => {
 
 /*------------ PATIENT ID HANDLING ------------*/
 // make sure MRNs are always redacted and all depending fields handled accordingly
+// todo deprecated
 export const redactMRN = (rows, index, crdbId, msg, sex) => {
     rows[index].cmoPatientId = crdbId.length > 0 ? 'C-' + crdbId : '';
     rows[index].patientId = msg;
@@ -298,6 +299,19 @@ export const redactMRN = (rows, index, crdbId, msg, sex) => {
         rows[index].gender = sex === 'Female' ? 'F' : 'M';
     }
     return rows;
+};
+
+export const redactMRNs = (rows, ids) => {
+    let updatedRows = JSON.parse(JSON.stringify(rows));
+    ids.forEach((element) => {
+        if (isMRN(element.patientId)) {
+            updatedRows[element.gridRowIndex].cmoPatientId = '';
+            updatedRows[element.gridRowIndex].patientId = '';
+            updatedRows[element.gridRowIndex].normalizedPatientId = '';
+            updatedRows[element.gridRowIndex].gender = '';
+        }
+    });
+    return updatedRows;
 };
 export const clearIds = (rows, ids) => {
     let updatedRows = JSON.parse(JSON.stringify(rows));
@@ -645,3 +659,5 @@ export const parseDate = (mongooseDate) => {
     let humanReadable = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()} at ${date.getHours()}:${minutes}`;
     return humanReadable;
 };
+
+export const isMRN = (patientId) => /^[0-9]{8}$/.test(patientId.trim());

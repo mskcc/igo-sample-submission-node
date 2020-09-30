@@ -313,7 +313,7 @@ exports.patientIdToCid = [
 // MRN to C-ID
 // C-ID verification
 // DMP-ID to MRN to C-ID
-exports.anonymizeIds = [
+exports.deidentifyIds = [
     body('ids').isJSON().isLength({ min: 1 }).trim().withMessage('ids must be specified.'),
     body('username').isLength({ min: 1 }).trim().withMessage('username must be specified.'),
     function (req, res) {
@@ -336,11 +336,18 @@ exports.anonymizeIds = [
                     })
                     .catch(function (err) {
                         logger.log('error', err);
-                        return apiResponse.errorResponse(res, err);
+                        return apiResponse.errorResponse(
+                            res,
+                            'Something went wrong during Patient ID de-identification. To avoid accidental transmission of PHI, any MRNs have been removed and must be re-entered to be de-identified.'
+                        );
                     });
             }
         } catch (err) {
-            return apiResponse.errorResponse(res, err);
+            logger.log('error', err);
+            return apiResponse.errorResponse(
+                res,
+                'Something went wrong during Patient ID de-identification. To avoid accidental transmission of PHI, any MRNs have been removed and must be re-entered to be de-identified.'
+            );
         }
     },
 ];

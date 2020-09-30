@@ -66,7 +66,7 @@ exports.getCrdbId = (patientId) => {
             return formatCrdb(resp);
         });
 };
-
+//  TODO Refactor DB queries to do WHERE ... IN ...
 exports.verifyCmoId = (cmoId) => {
     return new Promise((resolve, reject) => {
         oracledb

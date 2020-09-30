@@ -1085,13 +1085,6 @@ function doSamplesMatch(dmpSamples, translatedSubmission) {
 // simple comparison function TODO improve
 function isEqual(a, b) {
     // if length is not equal
-    console.log('what');
-    console.log('what');
-    console.log('what');
-    console.log('what');
-    console.log(a.length);
-    console.log(b.length);
-
     if (a.length != b.length) return false;
     else {
         // comapring each element of array
@@ -1159,7 +1152,7 @@ function findOncoMatch(tumorType, oncoResult) {
 
 // All investigator entered patient IDs are sent to the CRDB for anonymization. This is done in batches of 10 parallel requests at a time.
 // CRDB's oracle DB has a connection limit. To stay within it, we limited it to 10.
-// ID's need to be normalized/redacted/handled based on their type. 
+// ID's need to be normalized/redacted/handled based on their type.
 // CMO IDs need to be sent to the CRDB without the C- that users enter.
 // MRNs need to be redacted and return sex information as well as the patient ID
 // DMP IDs only return a value if they were found in the CRDB. If they aren't, a message must be shown to the user recommending they enter a MRN instead.
@@ -1176,41 +1169,45 @@ export function handlePatientIds(ids, username) {
             let lowerIndex = batchesProcessed * CRDB_MAX_REQUESTS;
             // 0 = CRDB_MAX_REQUESTS, 1 = 20, 2 = 30
             let upperIndex = (batchesProcessed + 1) * CRDB_MAX_REQUESTS;
-
+            logger.log('info', `Sending ${ids.length} patientIds to CRDB.`);
             let idBatch = ids.slice(lowerIndex, upperIndex);
             idBatch.forEach((element) => {
                 patientIdPromises.push(selectIdService(element));
             });
-            // await Promise.all(patientIdPromises)
+            
             Promise.all(patientIdPromises)
-                .catch((error) => reject(error))
                 .then((results) => {
                     resultIds.forEach((idElement, index) => {
                         idsProcessed++;
-                        // console.log('index', index);
-
-                        // console.log(results[index]);
 
                         let normalizedPatientId = '';
                         let cmoPatientId = '';
                         let finalPatientId = '';
                         let sex = '';
+                        let message = '';
 
                         const idType = idElement.idType;
-                        // todo combination of cmo/dmp and mrn should work.
                         if (results[index]) {
                             if (idType === 'CMO ID') {
-                                normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId.replace('C-', '')}`;
                                 cmoPatientId = _.isEmpty(results[index].CMO_ID) ? '' : idElement.patientId;
-                                finalPatientId = idElement.patientId;
+
+                                if (cmoPatientId === '') {
+                                    message = `PatientID ${idElement.patientId} could not be verified.`;
+                                } else {
+                                    normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId.replace('C-', '')}`;
+                                    finalPatientId = idElement.patientId;
+                                }
                             }
 
                             if (idType === 'DMP ID') {
-                                normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId.replace('C-', '')}`;
                                 cmoPatientId = `C-${results[index].CMO_ID || ''}`;
-                                finalPatientId = idElement.patientId;
+                                if (cmoPatientId === '') {
+                                    message = `PatientID ${idElement.patientId} could not be verified.`;
+                                } else {
+                                    normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId}`;
+                                    finalPatientId = idElement.patientId;
+                                }
                             }
-
 
                             if (idType === 'MRN') {
                                 cmoPatientId = `C-${results[index].patientId}`;
@@ -1218,24 +1215,25 @@ export function handlePatientIds(ids, username) {
                                 sex = results[index].sex;
                                 finalPatientId = MRN_REDACTED;
                             }
+
+                            if (idType === 'Cell Line Name') {
+                                cmoPatientId = `C-${results[index].patientId}`;
+                                normalizedPatientId = `CELLLINE_${results[index].patientId}`;
+                                finalPatientId = idElement.patientId;
+                            }
                         }
 
                         resultIds[index].result = { cmoPatientId, normalizedPatientId, patientId: finalPatientId };
-                        // console.log('num', idsProcessed);
-                        // console.log(resultIds[index]);
                         if (sex !== '') resultIds[index].result.sex = sex;
+                        if (message !== '') resultIds[index].result.message = message;
                         if (resultIds.length === idsProcessed) {
-                            // console.log('DONE');
-                            // console.log(resultIds);
-
                             resolve(resultIds);
                         }
                     });
-                });
+                })
+                .catch((error) => reject(error));
         }
     });
-    // console.log('idlengt', ids.length);
-    // console.log('idresultlengt', idsProcessed);
 }
 //  UTIL
 export function getTransactionIdForDmp() {
@@ -1269,7 +1267,7 @@ function last7Days() {
 function selectIdService(idElement) {
     let idType = idElement.idType;
     let patientId = idElement.patientId;
-    if (idType === 'MRN' || idType === 'CELLLINE') return crdbServices.getCrdbId(patientId);
+    if (idType === 'MRN' || idType === 'Cell Line Name') return crdbServices.getCrdbId(patientId);
     if (idType === 'CMO ID') return crdbServices.verifyCmoId(patientId.replace('C-', ''));
     if (idType === 'DMP ID') return crdbServices.verifyDmpId(patientId);
 }
