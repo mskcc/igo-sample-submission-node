@@ -10,31 +10,51 @@ export const REGISTER_GRID_CHANGE_PRE_VALIDATE = 'REGISTER_GRID_CHANGE_PRE_VALID
 
 export const REGISTER_GRID_CHANGE_POST_VALIDATE = 'REGISTER_GRID_CHANGE_POST_VALIDATE';
 export const RESET_MESSAGE = 'RESET_MESSAGE';
-export const registerGridChange = (changes) => {
+export const handleGridChange = (changes) => {
     return (dispatch, getState) => {
+        dispatch({ type: REGISTER_GRID_CHANGE_PRE_VALIDATE});
         // handle ID changes here?
         // check if changes include id changes
+        let {
+            upload: { grid },
+            submissions,
+            user,
+        } = getState();
 
-        let result = util.validateGrid(changes, getState().upload.grid);
+        const validationResult = util.validateGrid(changes, grid);
+
+        const includesPatientIdChange = changes.some((element) => element.includes('patientId'));
+        if (includesPatientIdChange) {
+            const patientIdType = grid.columnFeatures.find((element) => element.data === 'patientId');
+
+            // editPromises.push(util.redactIds(changesToModify, patientIdType));
+            let newPatientIds = util.getPatientIdsFromChanges(changes, patientIdType);
+            let emptyIds = newPatientIds.filter((element) => element.patientId === '');
+            let nonEmptyIds = newPatientIds.filter((element) => element.patientId !== '');
+            let username = submissions.submissionToEdit ? submissions.submissionToEdit.username : user.username;
+            handlePatientIds(nonEmptyIds, emptyIds, username);
+        }
+
         // dispatch({ type: RESET_MESSAGE })
         // would prefer to have this in reducer
-        if (result.numErrors > 1) {
-            swal.invalidValues(result.errorMessage);
-            return dispatch({
-                type: REGISTER_GRID_CHANGE_POST_VALIDATE,
-                payload: result,
-                message: 'reset',
-            });
-        } else {
-            return dispatch({
-                type: REGISTER_GRID_CHANGE_POST_VALIDATE,
-                payload: result,
-                message: result.errorMessage.replace(/<br>/g, ''),
-            });
-        }
+        // if (validationResult.numErrors > 1) {
+        // swal.invalidValues(validationResult.errorMessage);
+        validationResult.errorMessage.map((element) => console.log(element));
+
+        return dispatch({
+            type: REGISTER_GRID_CHANGE_POST_VALIDATE,
+            payload: validationResult,
+            // message: 'reset',
+        });
+        // } else {
+        //     return dispatch({
+        //         type: REGISTER_GRID_CHANGE_POST_VALIDATE,
+        //         payload: validationResult,
+        //         message: [...validationResult.errorMessage][0],
+        //     });
+        // }
     };
 };
-
 
 export const preValidate = () => {
     return (dispatch) => {
@@ -354,33 +374,39 @@ export function handlePatientIds(ids, emptyIds, username) {
         const data = { ids: JSON.stringify(ids), username: username };
         dispatch({ type: CLEAR_EMPTY_IDS, payload: util.clearIds(rows, emptyIds) });
 
-        if (ids.length === 0) {
-            return dispatch({ type: REGISTER_GRID_CHANGE });
+        if (ids.length !== 0) {
+            return dispatch({ type: HANDLE_PATIENT_IDS_SUCCESS });
         }
         return services
             .handlePatientIds(data)
             .then((response) => {
                 // console.log(response);
-                let errorMessage = new Set([]);
+                let errorMessage = {};
+
                 response.payload.idResults.forEach((element) => {
                     if ('result' in element && 'message' in element.result) {
-                        errorMessage.add(`${element.result.message}`);
+                        console.log(element.result.message);
+
+                        errorMessage[element.gridRowIndex] = element.result.message;
                     }
                 });
-                if (errorMessage.size !== 0) {
-                    let message = util.buildErrorMessage(errorMessage);
-                    message += '<br> Please try MRN instead. You can enter MRNs in the current ID column without generating a new grid.';
-                    swal.invalidValues(message);
+
+                if (errorMessage.length !== 0) {
+                    errorMessage.addOn =
+                        'Please try MRN instead. You can enter MRNs in the current ID column without generating a new grid.';
+
+                    // swal.invalidValues(message);
                 }
 
                 dispatch({
-                    type: HANDLE_PATIENT_ID_SUCCESS,
+                    type: HANDLE_PATIENT_IDS_SUCCESS,
                     rows: util.setPatientIds(rows, response.payload.idResults),
+                    validation: errorMessage,
                 });
-                dispatch({ type: REGISTER_GRID_CHANGE });
+
+                // dispatch({ type: REGISTER_GRID_CHANGE });
             })
             .catch((error) => {
-
                 dispatch({
                     type: HANDLE_PATIENT_ID_FAIL,
                     error: error,

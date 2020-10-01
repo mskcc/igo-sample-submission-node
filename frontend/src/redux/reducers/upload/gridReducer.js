@@ -2,6 +2,7 @@ import { gridActions as ActionTypes } from '../../actions/';
 import { formActions as FormActionTypes } from '../../actions/';
 import { submissionActions as SubmissionActionTypes } from '../../actions/';
 import { initialGridState } from '../initialState';
+import { swal } from '../../../util';
 
 export default function gridReducer(state = initialGridState, action) {
     switch (action.type) {
@@ -19,15 +20,17 @@ export default function gridReducer(state = initialGridState, action) {
             return {
                 ...state,
                 gridIsLoading: true,
+                validation: { message: ['Validating...'], affectedRows: [] },
             };
         case ActionTypes.REGISTER_GRID_CHANGE_POST_VALIDATE:
             return {
                 ...state,
                 gridIsLoading: false,
                 rows: action.payload.grid.rows,
+                validation: { message: action.payload.errorMessage, affectedRows: action.payload.affectedRows },
             };
 
-            case ActionTypes.CLEAR_EMPTY_IDS:
+        case ActionTypes.CLEAR_EMPTY_IDS:
             return {
                 ...state,
                 gridIsLoading: false,
@@ -125,6 +128,19 @@ export default function gridReducer(state = initialGridState, action) {
             };
 
         case ActionTypes.HANDLE_PATIENT_ID_SUCCESS:
+            return {
+                ...state,
+                rows: action.rows,
+            };
+
+        case ActionTypes.HANDLE_PATIENT_IDS_SUCCESS:
+            return {
+                ...state,
+                rows: action.rows,
+                validation: action.validation,
+            };
+
+        case ActionTypes.HANDLE_PATIENT_IDS_FAIL:
             return {
                 ...state,
                 rows: action.rows,

@@ -135,7 +135,7 @@ export const updateRows = (formValues, grid) => {
     return setWellPos(rows);
 };
 
-export const checkEmptyColumns = (columnFeatures, rows, hiddenColumns) => {
+export const getEmptyColumns = (columnFeatures, rows, hiddenColumns) => {
     let emptyColumns = new Set();
     for (let i = 0; i < columnFeatures.length; i++) {
         for (let j = 0; j < rows.length; j++) {
@@ -159,6 +159,17 @@ export const checkEmptyColumns = (columnFeatures, rows, hiddenColumns) => {
 
     return emptyColumns;
 };
+
+// export const getEmptyRows = (grid) => {
+//     let emptyColumns = new Set();
+//     console.log(grid.rows);
+
+//     grid.rows.forEach((row) => {
+//         console.log(row);
+//     });
+
+//     return emptyColumns;
+// };
 
 export const generateAdditionalRowData = (columnFeatures, formValues, prevRowNumber, newRowNumber) => {
     let columnFeaturesCopy = [];
@@ -330,8 +341,8 @@ export const getPatientIdsFromChanges = (changes, idType) => {
     // TODO add username, either original submission or logged in
     let ids = [];
     changes.forEach((element) => {
-        let patientId = element[3].replace(/\s/g, '');
         if (element.includes('patientId')) {
+            let patientId = element[3].replace(/\s/g, '');
             let regex = new RegExp(idType.pattern);
             let confirmedIdType = idType.columnHeader;
             let isValidId = regex.test(patientId) || patientId === '' || /^[0-9]{8}$/.test(patientId);
@@ -494,7 +505,11 @@ const isAssay = (newValue, assays) => {
 // assay
 // drodpown selection restricted to picklist (if done through handsontable, validation experience very different from overall user experience)
 export const validateGrid = (changes, grid) => {
+    let updatedGrid = JSON.parse(JSON.stringify(grid));
+
     let errors = new Set([]);
+    let affectedRows = new Set([]);
+
     for (let i = 0; i < changes.length; i++) {
         // empties are fine, this isn't submit
         let newValue = changes[i][3];
@@ -503,13 +518,14 @@ export const validateGrid = (changes, grid) => {
         }
         let rowIndex = changes[i][0];
         let columnName = changes[i][1];
-        let columnIndex = grid.columnFeatures.findIndex((c) => c.data === columnName);
+        let columnIndex = updatedGrid.columnFeatures.findIndex((c) => c.data === columnName);
         if (columnIndex === -1) {
             errors.add(
                 'The number of columns you tried to paste is larger than the number of columns on the current grid. The surplus got cut off.'
             );
             continue;
         }
+        let columnHeader = updatedGrid.columnFeatures[columnIndex].name;
         if (columnName === 'assay') {
             continue;
         }
@@ -517,65 +533,74 @@ export const validateGrid = (changes, grid) => {
         // userid, samplename duplicate check
         if (columnName === 'userId') {
             let count = 0;
-            for (let j = 0; j < grid.rows.length; j++) {
-                if (grid.rows[j].userId.toLowerCase() === newValue.toLowerCase()) {
+            for (let j = 0; j < updatedGrid.rows.length; j++) {
+                if (updatedGrid.rows[j].userId.toLowerCase() === newValue.toLowerCase()) {
                     count++;
                 }
             }
             let valid = count <= 1;
             if (!valid) {
-                errors.add(grid.columnFeatures[columnIndex].name + ': ' + grid.columnFeatures[columnIndex].uniqueError);
-                grid.rows[rowIndex][columnName] = '';
+                affectedRows.add(rowIndex + 1);
+                errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].uniqueError);
+                updatedGrid.rows[rowIndex][columnName] = '';
                 continue;
             }
             // "sample" not allowed in this id
             if (newValue.toLowerCase().includes('sample') || newValue.toLowerCase().includes('igo-')) {
-                errors.add(grid.columnFeatures[columnIndex].name + ': ' + grid.columnFeatures[columnIndex].containsSampleError);
-                grid.rows[rowIndex][columnName] = '';
+                affectedRows.add(rowIndex + 1);
+                errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].containsSampleError);
+                updatedGrid.rows[rowIndex][columnName] = '';
                 continue;
             }
         }
 
         if (columnName === 'cancerType') {
-            let tumorTypeInList = findTumorType(grid.columnFeatures[columnIndex].source, newValue);
+            let tumorTypeInList = findTumorType(updatedGrid.columnFeatures[columnIndex].source, newValue);
 
             if (!tumorTypeInList) {
-                errors.add(grid.columnFeatures[columnIndex].name + ': ' + grid.columnFeatures[columnIndex].error);
-                grid.rows[rowIndex][columnName] = '';
+                affectedRows.add(rowIndex + 1);
+                errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].error);
+                updatedGrid.rows[rowIndex][columnName] = '';
             }
             continue;
         }
 
         if (columnName === 'index') {
-            let indexResult = findIndexSeq(grid, columnIndex, rowIndex, newValue);
+            let indexResult = findIndexSeq(updatedGrid, columnIndex, rowIndex, newValue);
             if (!indexResult.success) {
-                errors.add(grid.columnFeatures[columnIndex].name + ': ' + grid.columnFeatures[columnIndex].error);
-                grid.rows[rowIndex][columnName] = '';
+                affectedRows.add(rowIndex + 1);
+                errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].error);
+                updatedGrid.rows[rowIndex][columnName] = '';
             }
             continue;
         }
 
-        if ('pattern' in grid.columnFeatures[columnIndex]) {
-            let pattern = new RegExp(grid.columnFeatures[columnIndex].pattern);
+        if ('pattern' in updatedGrid.columnFeatures[columnIndex]) {
+            let pattern = new RegExp(updatedGrid.columnFeatures[columnIndex].pattern);
             if (!pattern.test(newValue)) {
-                errors.add(grid.columnFeatures[columnIndex].name + ': ' + grid.columnFeatures[columnIndex].error);
-                grid.rows[rowIndex][columnName] = '';
+                affectedRows.add(rowIndex + 1);
+                errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].error);
+                updatedGrid.rows[rowIndex][columnName] = '';
             }
             continue;
         }
 
-        if ('source' in grid.columnFeatures[columnIndex]) {
-            if (!grid.columnFeatures[columnIndex].source.includes(newValue)) {
-                errors.add(grid.columnFeatures[columnIndex].name + ': ' + grid.columnFeatures[columnIndex].error);
-                grid.rows[rowIndex][columnName] = '';
+        if ('source' in updatedGrid.columnFeatures[columnIndex]) {
+            if (!updatedGrid.columnFeatures[columnIndex].source.includes(newValue)) {
+                affectedRows.add(rowIndex + 1);
+                errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].error);
+                updatedGrid.rows[rowIndex][columnName] = '';
             }
             continue;
         }
     }
-    buildErrorMessage(errors);
+    // buildErrorMessage(errors);
+    // let emptyRows = getEmptyRows(updatedGrid);
     return {
-        grid,
-        errorMessage: buildErrorMessage(errors),
+        grid: updatedGrid,
+        errorMessage: [...errors],
+        affectedRows: [...affectedRows],
+        // emptyRows: getEmptyRows(updatedGrid),
         numErrors: errors.size,
     };
 };

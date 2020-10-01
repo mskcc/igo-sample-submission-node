@@ -4,7 +4,8 @@ import Dropdown from './Shared/formComponents/Dropdown.js';
 import Input from './Shared/formComponents/Input.js';
 
 import GridButton from './Shared/Button.js';
-import EditPanel from './Shared/EditPanel.js';
+import EditPanel from './Upload/EditPanel.js';
+import ValidationPanel from './Upload/ValidationPanel.js';
 
 import UploadForm from './Upload/UploadForm.js';
 import UploadGrid from './Upload/UploadGrid.js';
@@ -32,6 +33,7 @@ export {
     UploadGrid,
     GridButton,
     EditPanel,
+    ValidationPanel,
     DmpForm,
     SubmissionsGrid,
     DmpStatusPanel,

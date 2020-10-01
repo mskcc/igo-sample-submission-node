@@ -11,7 +11,7 @@ export const DMP_REGISTER_GRID_CHANGE_PRE_VALIDATE = 'DMP_REGISTER_GRID_CHANGE_P
 
 export const DMP_REGISTER_GRID_CHANGE_POST_VALIDATE = 'DMP_REGISTER_GRID_CHANGE_POST_VALIDATE';
 export const RESET_MESSAGE = 'RESET_MESSAGE';
-export const dmpRegisterGridChange = (changes) => {
+export const dmphandleGridChange = (changes) => {
     return (dispatch, getState) => {
         let result = validateGrid(changes, getState().dmp.grid);
         // dispatch({ type: RESET_MESSAGE })

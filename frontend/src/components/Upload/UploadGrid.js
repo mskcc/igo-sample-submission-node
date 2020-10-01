@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core';
 import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.css';
 
-import { GridButton, EditPanel } from '../index';
+import { GridButton, EditPanel, ValidationPanel } from '../index';
 
 class UploadGrid extends React.Component {
     constructor(props) {
@@ -26,14 +26,19 @@ class UploadGrid extends React.Component {
             submissionToEdit,
             handleAssay,
             handleTumorType,
+
             handlePatientId,
         } = this.props;
         return (
             <div>
                 <div className={classes.container}>
-                    {submissionToEdit && submissionToEdit.gridType === gridType && (
-                        <EditPanel userRole='lab_member' submission={submissionToEdit} />
-                    )}
+                    <div className={classes.information}>
+                        {submissionToEdit && submissionToEdit.gridType === gridType && (
+                            <EditPanel userRole='lab_member' submission={submissionToEdit} />
+                        )}
+                        {/* {grid.validationMessage} */}
+                        {<ValidationPanel validation={grid.validation} />}
+                    </div>
                     <div className={classes.buttons}>
                         {gridType === 'upload' ? (
                             <GridButton id='gridSubmit' onClick={handleSubmit} isLoading={false} nothingToSubmit={false} color='primary' />
@@ -94,8 +99,6 @@ class UploadGrid extends React.Component {
                         //     }
                         // }}
                         beforeChange={(changes, source) => {
-                            
-                            
                             // only do something if rows can fit the changes/if
                             // last changes[] element's row index is <= rows
                             if (changes[changes.length - 1][0] + 1 > grid.rows.length) {
@@ -178,13 +181,13 @@ const styles = (theme) => ({
     container: {
         display: 'grid',
         justifyItems: 'center',
-        gridTemplateAreas: '"submission" "buttons" "grid"',
+        gridTemplateAreas: '"information" "buttons" "grid"',
         marginLeft: theme.spacing(2),
         width: '95vw',
         overflow: 'hidden',
         marginBottom: '5em',
     },
-    submission: {},
+    information: { display: 'flex', width: '95%' },
     tooltipCell: {
         fontSize: '.8em',
         color: 'black !important',

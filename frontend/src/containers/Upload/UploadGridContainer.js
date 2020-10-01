@@ -9,23 +9,17 @@ import { UploadGrid } from '../../components';
 
 class UploadGridContainer extends Component {
     handleChange = (changes, source) => {
-        const { registerGridChange, handlePatientIds, showLoader, grid, submissionToEdit, user } = this.props;
+        const { handleGridChange, showLoader } = this.props;
         // console.log(changes);
-        let changesToModify = changes;
         // let editPromises = [];
-        if (changes.some((element) => element.includes('patientId'))) {
-            showLoader();
-            const patientIdType = grid.columnFeatures.find((element) => element.data === 'patientId');
+        const includesPatientIdChange = changes.some((element) => element.includes('patientId'));
+        console.log(changes.length);
 
-            // editPromises.push(util.redactIds(changesToModify, patientIdType));
-            let newPatientIds = util.getPatientIdsFromChanges(changesToModify, patientIdType);
-            let emptyIds = newPatientIds.filter((element) => element.patientId === '');
-            let nonEmptyIds = newPatientIds.filter((element) => element.patientId !== '');
-            let username = submissionToEdit.username || user.username;
-            handlePatientIds(nonEmptyIds, emptyIds, username);
+        if (changes.length > 20 || includesPatientIdChange) {
+            showLoader();
         }
 
-        return registerGridChange(changes);
+        handleGridChange(changes);
     };
     handleMRN = (rowIndex) => {
         const { handleMRN } = this.props;
@@ -93,7 +87,7 @@ class UploadGridContainer extends Component {
         if (!match.success) {
             return swal.formGridMismatch(match);
         }
-        let emptyColumns = util.checkEmptyColumns(grid.columnFeatures, grid.rows, grid.hiddenColumns);
+        let emptyColumns = util.getEmptyColumns(grid.columnFeatures, grid.rows, grid.hiddenColumns);
 
         if (emptyColumns.size > 0) {
             swal.emptyFieldsError(emptyColumns);
@@ -162,7 +156,7 @@ UploadGridContainer.propTypes = {
     handleTumorType: PropTypes.func,
     pasteTooMany: PropTypes.func,
     preValidate: PropTypes.func,
-    registerGridChange: PropTypes.func,
+    handleGridChange: PropTypes.func,
     showLoader: PropTypes.func,
     submissionToEdit: PropTypes.object,
     submitDmpSubmission: PropTypes.func,

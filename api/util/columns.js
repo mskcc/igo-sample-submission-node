@@ -460,7 +460,7 @@ export const formattingAdjustments = {
         columnHeader: 'CMO ID',
         tooltip: 'The patient CMO ID.',
         error:
-            'CMO ID is incorrectly formatted, please correct, or speak to a project manager if unsure. The usual DMP ID format is C-A1B2C3 or C-A1B2C3.',
+            'CMO ID is incorrectly formatted, please correct, or speak to a project manager if unsure. A CMO ID looks like this C-A1B2C3.',
         type: 'text',
     },
     'Non-MSK Patients': {

@@ -75,6 +75,7 @@ export const initialGridState = {
     gridIsLoading: false,
     isSaving: false,
     nothingToChange: false,
+    validation: { message: [], affectedRows: [], emptyRows: [] },
 };
 
 export const initialPromoteState = {
