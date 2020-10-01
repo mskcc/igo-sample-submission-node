@@ -24,10 +24,6 @@ class UploadGrid extends React.Component {
             pasteTooMany,
             user,
             submissionToEdit,
-            handleAssay,
-            handleTumorType,
-
-            handlePatientId,
         } = this.props;
         return (
             <div>
@@ -88,55 +84,10 @@ class UploadGrid extends React.Component {
                         manualColumnResize={true}
                         comments={true}
                         ref={this.hotTableComponent}
-                        // // remove patient ids from pasted information and handle separately
-                        // beforePaste={(data, coords) => {
-                        //     let patientIdIndex = grid.columnFeatures.findIndex((element) => element.data == 'patientId');
-                        //     console.log(data);
-                        //     console.log(coords);
-                        //     if (coords[0].colEnd === coords[0].colStart && coords[0].colStart == patientIdIndex) {
-                        //         console.log('one col');
-                        //         return [];
-                        //     }
-                        // }}
-                        beforeChange={(changes, source) => {
-                            // only do something if rows can fit the changes/if
-                            // last changes[] element's row index is <= rows
-                            if (changes[changes.length - 1][0] + 1 > grid.rows.length) {
-                                let numOfPastedRows = changes[changes.length - 1][0] + 1;
-                                pasteTooMany(numOfPastedRows);
-                                return false;
-                            }
-                            if (changes.length > 50) {
-                                this.props.preValidate();
-                            }
-                        }}
                         afterChange={(changes, source) => {
                             if (changes) {
-                                let i = 0;
                                 if (source !== 'loadData') {
-                                    changes.forEach(([row, prop, oldValue, newValue]) => {
-                                        i++;
-                                        let rowIndex = row;
-                                        // if (prop === 'patientId') {
-                                        //     handlePatientId(rowIndex);
-                                        // }
-
-                                        if (prop === 'assay') {
-                                            if (newValue !== oldValue && oldValue !== undefined) {
-                                                let col = this.hotTableComponent.current.hotInstance.propToCol(prop);
-                                                handleAssay(rowIndex, col, oldValue, newValue);
-                                            }
-                                        }
-                                        if (prop === 'cancerType') {
-                                            if (newValue !== oldValue && oldValue !== undefined) {
-                                                let col = this.hotTableComponent.current.hotInstance.propToCol(prop);
-                                                handleTumorType(rowIndex, col, oldValue, newValue);
-                                            }
-                                        }
-                                    });
-                                    if (i === changes.length) {
-                                        handleChange(changes, source);
-                                    }
+                                    handleChange(changes, source);
                                 }
                             }
                         }}

@@ -46,7 +46,7 @@ const EditPanel = ({ submission, role, classes }) => (
 
 const styles = (theme) => ({
     container: { margin: '2em', padding: '2em' },
-    field: { color: theme.palette.primary.dark, fontWeight: 'bold' },
+    field: { color: theme.palette.primary.dark, fontWeight: 'bold', lineHeight: '2em', },
 });
 
 export default withStyles(styles)(EditPanel);

@@ -20,8 +20,9 @@ export default function gridReducer(state = initialGridState, action) {
             return {
                 ...state,
                 gridIsLoading: true,
-                validation: { message: ['Validating...'], affectedRows: [] },
+                validation: { message: [], affectedRows: [] },
             };
+
         case ActionTypes.REGISTER_GRID_CHANGE_POST_VALIDATE:
             return {
                 ...state,
@@ -41,6 +42,7 @@ export default function gridReducer(state = initialGridState, action) {
             return {
                 ...state,
                 gridIsLoading: true,
+                validation: { message: [], affectedRows: [] },
             };
         case ActionTypes.NO_CHANGE:
             return {
@@ -58,6 +60,7 @@ export default function gridReducer(state = initialGridState, action) {
             return {
                 ...state,
                 gridIsLoading: true,
+                validation: { message: [], affectedRows: [] },
             };
         case ActionTypes.UPDATE_NUM_OF_ROWS_SUCCESS:
             return {
@@ -116,23 +119,6 @@ export default function gridReducer(state = initialGridState, action) {
                 },
             };
 
-        case ActionTypes.HANDLE_MRN_SUCCESS:
-            return {
-                ...state,
-                rows: action.rows,
-            };
-
-        case ActionTypes.HANDLE_MRN_FAIL:
-            return {
-                ...state,
-            };
-
-        case ActionTypes.HANDLE_PATIENT_ID_SUCCESS:
-            return {
-                ...state,
-                rows: action.rows,
-            };
-
         case ActionTypes.HANDLE_PATIENT_IDS_SUCCESS:
             return {
                 ...state,
@@ -171,12 +157,6 @@ export default function gridReducer(state = initialGridState, action) {
             return {
                 ...state,
                 rows: action.rows,
-            };
-
-        case ActionTypes.ADD_VALIDATORS_SUCCESS:
-            return {
-                ...state,
-                columnFeatures: action.columnFeatures,
             };
 
         case ActionTypes.GET_SUBMISSION_TO_EDIT_SUCCESS:

@@ -21,23 +21,6 @@ class UploadGridContainer extends Component {
 
         handleGridChange(changes);
     };
-    handleMRN = (rowIndex) => {
-        const { handleMRN } = this.props;
-        return handleMRN(rowIndex);
-    };
-    handleIndex = (colIndex, rowIndex, newValue) => {
-        const { handleIndex } = this.props;
-        return handleIndex(colIndex, rowIndex, newValue);
-    };
-    handleAssay = (rowIndex, colIndex, oldValue, newValue) => {
-        const { handleAssay } = this.props;
-        return handleAssay(rowIndex, colIndex, oldValue, newValue);
-    };
-
-    handleTumorType = (rowIndex, colIndex, oldValue, newValue) => {
-        const { handleTumorType } = this.props;
-        return handleTumorType(rowIndex, colIndex, oldValue, newValue);
-    };
 
     handleClear = () => {
         const { handleClear } = this.props;
@@ -115,24 +98,18 @@ class UploadGridContainer extends Component {
     };
 
     render() {
-        const { grid, gridType, user, submissionToEdit, preValidate, handlePatientId, pasteTooMany } = this.props;
+        const { grid, gridType, user, submissionToEdit, pasteTooMany } = this.props;
         return grid.rows.length > 0 ? (
             <UploadGrid
                 grid={grid}
                 gridType={gridType}
                 user={user}
                 submissionToEdit={submissionToEdit}
-                handleMRN={this.handleMRN}
-                handleIndex={this.handleIndex}
-                handleAssay={this.handleAssay}
-                handleTumorType={this.handleTumorType}
                 handleSubmit={this.handleSubmit}
                 handleChange={this.handleChange}
                 handleSave={this.handleSave}
                 handleUpdate={this.handleUpdate}
                 handleDownload={this.handleDownload}
-                preValidate={preValidate}
-                handlePatientId={handlePatientId}
                 handleClear={this.handleClear}
                 pasteTooMany={pasteTooMany}
             />
@@ -145,17 +122,11 @@ UploadGridContainer.propTypes = {
     downloadGrid: PropTypes.func,
     grid: PropTypes.object,
     gridType: PropTypes.string,
-    handleAssay: PropTypes.func,
     handleChange: PropTypes.func,
     handleClear: PropTypes.func,
-    handleIndex: PropTypes.func,
-    handleMRN: PropTypes.func,
-    handlePatientId: PropTypes.func,
     handleSave: PropTypes.func,
     handleSubmit: PropTypes.func,
-    handleTumorType: PropTypes.func,
     pasteTooMany: PropTypes.func,
-    preValidate: PropTypes.func,
     handleGridChange: PropTypes.func,
     showLoader: PropTypes.func,
     submissionToEdit: PropTypes.object,
@@ -168,14 +139,9 @@ UploadGridContainer.propTypes = {
 UploadGridContainer.defaultProps = {
     grid: {},
     user: {},
-    handleMRN: () => {},
-    handleIndex: () => {},
-    handleAssay: () => {},
     handleSubmit: () => {},
     handleChange: () => {},
     handleSave: () => {},
-    preValidate: () => {},
-    handlePatientId: () => {},
     handleClear: () => {},
     showLoader: () => {},
 };

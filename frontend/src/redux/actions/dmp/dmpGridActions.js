@@ -34,14 +34,6 @@ export const dmphandleGridChange = (changes) => {
     };
 };
 
-export const preValidate = () => {
-    return (dispatch) => {
-        dispatch({
-            type: DMP_REGISTER_GRID_CHANGE_PRE_VALIDATE,
-            message: 'Pasting large set, please be patient.',
-        });
-    };
-};
 
 export const DMP_GET_COLUMNS = 'DMP_GET_COLUMNS';
 export const DMP_GET_INITIAL_COLUMNS = 'DMP_GET_INITIAL_COLUMNS';
@@ -199,9 +191,6 @@ export function handlePatientId(rowIndex) {
             });
         }
         // handle as MRN whenever 8 digit id is entered
-        if (/^[0-9]{8}$/.test(patientId.trim())) {
-            return dispatch(handleMRN(rowIndex, patientId.trim()));
-        }
         // validation necessary because this fct is triggered before any handsontable validation would be
         let regex = new RegExp(patientIdType.pattern);
         let isValidId = regex.test(patientId);
@@ -237,65 +226,6 @@ export function handlePatientId(rowIndex) {
     };
 }
 
-export const HANDLE_MRN = 'HANDLE_MRN';
-export const HANDLE_MRN_FAIL = 'HANDLE_MRN_FAIL';
-export const HANDLE_MRN_SUCCESS = 'HANDLE_MRN_SUCCESS';
-export function handleMRN(rowIndex, patientId) {
-    return (dispatch, getState) => {
-        dispatch({ type: 'HANDLE_MRN' });
-        let rows = getState().dmp.grid.rows;
-        return axios
-            .post(Config.NODE_API_ROOT + '/upload/crdbId', {
-                patientId: patientId,
-            })
-            .then((response) => {
-                dispatch({
-                    type: HANDLE_MRN_SUCCESS,
-                    message: 'MRN redacted.',
-                    rows: redactMRN(rows, rowIndex, response.payload.patientId, 'MRN_REDACTED', response.payload.sex),
-                });
-                dispatch({ type: DMP_REGISTER_GRID_CHANGE });
-            })
-            .catch((error) => {
-                dispatch({
-                    type: HANDLE_MRN_FAIL,
-                    error: error,
-                    rows: redactMRN(rows, rowIndex, '', '', ''),
-                });
-                return error;
-            });
-    };
-}
-
-export const HANDLE_ASSAY = 'HANDLE_ASSAY';
-export const HANDLE_ASSAY_FAIL = 'HANDLE_ASSAY_FAIL';
-export const HANDLE_ASSAY_SUCCESS = 'HANDLE_ASSAY_SUCCESS';
-export function handleAssay(rowIndex, colIndex, oldValue, newValue) {
-    return (dispatch, getState) => {
-        return dispatch({
-            type: HANDLE_ASSAY_SUCCESS,
-            rows: appendAssay(getState().dmp.grid.rows, rowIndex, oldValue, newValue, getState().dmp.grid.columnFeatures[colIndex].source),
-        });
-    };
-}
-
-export const HANDLE_TUMOR_TYPE = 'HANDLE_TUMOR_TYPE';
-export const HANDLE_TUMOR_TYPE_FAIL = 'HANDLE_TUMOR_TYPE_FAIL';
-export const HANDLE_TUMOR_TYPE_SUCCESS = 'HANDLE_TUMOR_TYPE_SUCCESS';
-export function handleTumorType(rowIndex, colIndex, oldValue, newValue) {
-    return (dispatch, getState) => {
-        return dispatch({
-            type: HANDLE_TUMOR_TYPE_SUCCESS,
-            rows: translateTumorTypes(
-                getState().dmp.grid.rows,
-                getState().dmp.grid.columnFeatures[colIndex].source,
-                rowIndex,
-                oldValue,
-                newValue
-            ),
-        });
-    };
-}
 
 // export const HANDLE_CLEAR = 'HANDLE_CLEAR'
 // export const HANDLE_CLEAR_FAIL = 'HANDLE_CLEAR_FAIL'
@@ -306,25 +236,6 @@ export function handleClear() {
             type: HANDLE_CLEAR_SUCCESS,
             rows: generateRows(getState().dmp.grid.columnFeatures, getState().dmp.grid.form, getState().dmp.grid.rows.length),
         });
-    };
-}
-
-export const HANDLE_INDEX_SUCCESS = 'HANDLE_INDEX_SUCCESS';
-export const HANDLE_INDEX_FAIL = 'HANDLE_INDEX_FAIL';
-export function handleIndex(colIndex, rowIndex, newValue) {
-    return (dispatch, getState) => {
-        let indexSeq = findIndexSeq(getState().dmp.grid, colIndex, rowIndex, newValue);
-        if (indexSeq.success) {
-            return dispatch({
-                type: HANDLE_INDEX_SUCCESS,
-                rows: indexSeq.rows,
-            });
-        } else {
-            return dispatch({
-                type: HANDLE_INDEX_FAIL,
-                message: 'Index Sequence could not be found. Are you sure the Index ID is correct?',
-            });
-        }
     };
 }
 

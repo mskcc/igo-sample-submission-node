@@ -371,7 +371,6 @@ export const setPatientIds = (rows, ids) => {
             if ('sex' in idElement.result) updatedRows[idElement.gridRowIndex].gender = idElement.result.sex;
         }
     });
-    console.log(updatedRows);
 
     return updatedRows;
 };
@@ -385,40 +384,25 @@ export const createPatientId = (rows, index, crdbId, normalizedPatientID) => {
 
 /*------------ INDEX HANDLING ------------*/
 //  barcode hash is saved in colFeatures.index when index is part of the getCols response
-export const findIndexSeq = (grid, colIndex, rowIndex, indexId) => {
-    let result = { success: false, rows: '' };
-    // indexId = indexId.toLowerCase()
+export const findIndexMatch = (grid, colIndex, indexId) => {
     let barcodes = grid.columnFeatures[colIndex].barcodeHash;
-    if (indexId === '') {
-        grid.rows[rowIndex].indexSequence = '';
-        return { success: true, rows: grid.rows };
-    }
-    if (indexId in barcodes) {
-        let indexSeq = barcodes[indexId];
-        grid.rows[rowIndex].indexSequence = indexSeq;
-        return { success: true, rows: grid.rows };
-    } else {
-        grid.rows[rowIndex].indexSequence = '';
-        return { success: false, rows: grid.rows };
-    }
+    // case insensitive key retrieval
+    let matchedId = Object.keys(barcodes).find((key) => key.toLowerCase() === indexId.toLowerCase());
+
+    return { index: matchedId || '', indexSeq: barcodes[matchedId] };
 };
-// export const findSingleIndexSeq = (indexId) => {
-//   if (indexId !== '' && indexId in barcodes) {
-//     return barcodes[indexId].barcodeTag;
-//   } else {
-//     return '';
-//   }
-// };
+
 /*------------------------------------------------------------------------*/
 
-export const translateTumorTypes = (rows, tumorTypes, index, oldValue, newValue) => {
+export const translateTumorType = (tumorTypes, oldValue, newValue) => {
+    let translatedTumorType = '';
     //  clear
     if (newValue === '') {
-        rows[index].cancerType = '';
+        translatedTumorType = '';
     }
     // normal
     if (newValue === 'Normal') {
-        rows[index].cancerType = 'Normal';
+        return 'Normal';
     }
     //  translate to ID
     else {
@@ -435,15 +419,22 @@ export const translateTumorTypes = (rows, tumorTypes, index, oldValue, newValue)
                 break;
             }
         }
-        rows[index].cancerType = tumorId;
+        translatedTumorType = tumorId === '' ? 'ONCONOTFOUND' : tumorId;
     }
-    return rows;
+    return translatedTumorType;
 };
 
-const findTumorType = (tumorTypes, newValue) => {
+const isValidTumorType = (tumorTypes, newValue) => {
     if (newValue === '' || newValue === 'Normal') {
         return true;
     } else {
+        let matches = tumorTypes.filter((element) => element.includes(newValue));
+        if (matches.length > 0) {
+            return true;
+        } else {
+            return false;
+        }
+
         for (let i = 0; i < tumorTypes.length; i++) {
             let el = tumorTypes[i];
             let id = el.split(/ ID: /)[1];
@@ -456,45 +447,31 @@ const findTumorType = (tumorTypes, newValue) => {
     return false;
 };
 
-export const appendAssay = (rows, index, oldValue, newValue, assays) => {
+// Multiselect field
+export const appendAssay = (oldValue, newValue, assays) => {
     //  clear
     if (newValue === '' || newValue === 'Assay Selection' || newValue === 'Blank') {
-        rows[index].assay = '';
+        return '';
     }
     //  append
-    else {
-        if (oldValue === '') {
-            rows[index].assay = newValue;
-            return rows;
-        } else {
-            if (isAssay(newValue, assays)) {
-                let assay = oldValue + ',' + newValue;
-                assay = assay.replace(/[,]+/g, ',').trim();
-                rows[index].assay = assay;
-            } else {
-                // might mean something got deleted
-                if (oldValue.length > newValue.length) {
-                    let assay = newValue;
-                    assay = assay.substring(0, assay.lastIndexOf(','));
-                    rows[index].assay = assay;
-                    return rows;
-                } else {
-                    rows[index].assay = oldValue;
-                    return rows;
-                }
-            }
-        }
-    }
-    return rows;
-};
+    let appendedAssay = '';
+    let finalAssay = new Set([]);
+    console.log(newValue);
 
-const isAssay = (newValue, assays) => {
-    for (let j = 0; j < assays.length; j++) {
-        if (newValue === assays[j]) {
-            return true;
+    if (oldValue === '') {
+        appendedAssay = newValue;
+    } else {
+        appendedAssay = oldValue + ';' + newValue;
+        appendedAssay = appendedAssay.replace(/[;]+/g, ';').trim();
+    }
+    let assayValues = appendedAssay.split(';');
+    for (let i = 0; i < assayValues.length; i++) {
+        const assay = assayValues[i];
+        if (assays.includes(assay)) {
+            finalAssay.add(assay);
         }
     }
-    return false;
+    return [...finalAssay].join(';');
 };
 
 /*------------ VALIDATION ------------*/
@@ -505,104 +482,115 @@ const isAssay = (newValue, assays) => {
 // assay
 // drodpown selection restricted to picklist (if done through handsontable, validation experience very different from overall user experience)
 export const validateGrid = (changes, grid) => {
-    let updatedGrid = JSON.parse(JSON.stringify(grid));
+    return new Promise((resolve) => {
+        let updatedGrid = JSON.parse(JSON.stringify(grid));
 
-    let errors = new Set([]);
-    let affectedRows = new Set([]);
+        let errors = new Set([]);
+        let affectedRows = new Set([]);
 
-    for (let i = 0; i < changes.length; i++) {
-        // empties are fine, this isn't submit
-        let newValue = changes[i][3];
-        if (newValue === '') {
-            continue;
-        }
-        let rowIndex = changes[i][0];
-        let columnName = changes[i][1];
-        let columnIndex = updatedGrid.columnFeatures.findIndex((c) => c.data === columnName);
-        if (columnIndex === -1) {
-            errors.add(
-                'The number of columns you tried to paste is larger than the number of columns on the current grid. The surplus got cut off.'
-            );
-            continue;
-        }
-        let columnHeader = updatedGrid.columnFeatures[columnIndex].name;
-        if (columnName === 'assay') {
-            continue;
-        }
+        for (let i = 0; i < changes.length; i++) {
+            // empties are fine, this isn't submit
+            let newValue = changes[i][3];
+            let oldValue = changes[i][2];
+            if (newValue === '') {
+                continue;
+            }
+            let rowIndex = changes[i][0];
+            let columnName = changes[i][1];
 
-        // userid, samplename duplicate check
-        if (columnName === 'userId') {
-            let count = 0;
-            for (let j = 0; j < updatedGrid.rows.length; j++) {
-                if (updatedGrid.rows[j].userId.toLowerCase() === newValue.toLowerCase()) {
-                    count++;
+            let columnIndex = updatedGrid.columnFeatures.findIndex((c) => c.data === columnName);
+            if (columnIndex === -1) {
+                errors.add(
+                    'The number of columns you tried to paste is larger than the number of columns on the current grid. The surplus got cut off.'
+                );
+                continue;
+            }
+            let columnHeader = updatedGrid.columnFeatures[columnIndex].name;
+
+            // userid, samplename duplicate check
+            if (columnName === 'userId') {
+                let count = 0;
+                for (let j = 0; j < updatedGrid.rows.length; j++) {
+                    if (updatedGrid.rows[j].userId.toLowerCase() === newValue.toLowerCase()) {
+                        count++;
+                    }
+                }
+                let valid = count <= 1;
+                if (!valid) {
+                    affectedRows.add(rowIndex + 1);
+                    errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].uniqueError);
+                    updatedGrid.rows[rowIndex][columnName] = '';
+                    continue;
+                }
+                // "sample" not allowed in this id
+                if (newValue.toLowerCase().includes('sample') || newValue.toLowerCase().includes('igo-')) {
+                    affectedRows.add(rowIndex + 1);
+                    errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].containsSampleError);
+                    updatedGrid.rows[rowIndex][columnName] = '';
+                    continue;
                 }
             }
-            let valid = count <= 1;
-            if (!valid) {
-                affectedRows.add(rowIndex + 1);
-                errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].uniqueError);
-                updatedGrid.rows[rowIndex][columnName] = '';
+
+            if (columnName === 'cancerType') {
+                let translatedTumorType = translateTumorType(updatedGrid.columnFeatures[columnIndex].source, oldValue, newValue);
+                let isValid = isValidTumorType(updatedGrid.columnFeatures[columnIndex].source, translatedTumorType);
+                if (!isValid) {
+                    affectedRows.add(rowIndex + 1);
+                    errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].error);
+                    updatedGrid.rows[rowIndex][columnName] = '';
+                } else updatedGrid.rows[rowIndex][columnName] = translatedTumorType;
+
                 continue;
             }
-            // "sample" not allowed in this id
-            if (newValue.toLowerCase().includes('sample') || newValue.toLowerCase().includes('igo-')) {
-                affectedRows.add(rowIndex + 1);
-                errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].containsSampleError);
-                updatedGrid.rows[rowIndex][columnName] = '';
+            // TODO error handling, assays are the only dropdown users can append in the grid
+            if (columnName === 'assay') {
+                let assays = updatedGrid.columnFeatures[columnIndex].source;
+                let assay = appendAssay(oldValue, newValue, assays);
+                updatedGrid.rows[rowIndex][columnName] = assay;
+                continue;
+            }
+            if (columnName === 'index') {
+                let indexResult = findIndexMatch(updatedGrid, columnIndex, newValue);
+                if (indexResult.index === '') {
+                    affectedRows.add(rowIndex + 1);
+                    errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].error);
+                    updatedGrid.rows[rowIndex][columnName] = '';
+                    updatedGrid.rows[rowIndex].indexSequence = '';
+                } else {
+                    updatedGrid.rows[rowIndex][columnName] = indexResult.index;
+                    updatedGrid.rows[rowIndex].indexSequence = indexResult.indexSeq;
+                }
+                continue;
+            }
+
+            if ('pattern' in updatedGrid.columnFeatures[columnIndex]) {
+                let pattern = new RegExp(updatedGrid.columnFeatures[columnIndex].pattern);
+                let isValidMrnAsPatientId = columnName === 'patientId' && isMRN(newValue);
+                if (!isValidMrnAsPatientId && !pattern.test(newValue)) {
+                    affectedRows.add(rowIndex + 1);
+                    errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].error);
+                    updatedGrid.rows[rowIndex][columnName] = '';
+                }
+                continue;
+            }
+
+            if ('source' in updatedGrid.columnFeatures[columnIndex]) {
+                if (!updatedGrid.columnFeatures[columnIndex].source.includes(newValue)) {
+                    affectedRows.add(rowIndex + 1);
+                    errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].error);
+                    updatedGrid.rows[rowIndex][columnName] = '';
+                }
                 continue;
             }
         }
 
-        if (columnName === 'cancerType') {
-            let tumorTypeInList = findTumorType(updatedGrid.columnFeatures[columnIndex].source, newValue);
-
-            if (!tumorTypeInList) {
-                affectedRows.add(rowIndex + 1);
-                errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].error);
-                updatedGrid.rows[rowIndex][columnName] = '';
-            }
-            continue;
-        }
-
-        if (columnName === 'index') {
-            let indexResult = findIndexSeq(updatedGrid, columnIndex, rowIndex, newValue);
-            if (!indexResult.success) {
-                affectedRows.add(rowIndex + 1);
-                errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].error);
-                updatedGrid.rows[rowIndex][columnName] = '';
-            }
-            continue;
-        }
-
-        if ('pattern' in updatedGrid.columnFeatures[columnIndex]) {
-            let pattern = new RegExp(updatedGrid.columnFeatures[columnIndex].pattern);
-            if (!pattern.test(newValue)) {
-                affectedRows.add(rowIndex + 1);
-                errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].error);
-                updatedGrid.rows[rowIndex][columnName] = '';
-            }
-            continue;
-        }
-
-        if ('source' in updatedGrid.columnFeatures[columnIndex]) {
-            if (!updatedGrid.columnFeatures[columnIndex].source.includes(newValue)) {
-                affectedRows.add(rowIndex + 1);
-                errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].error);
-                updatedGrid.rows[rowIndex][columnName] = '';
-            }
-            continue;
-        }
-    }
-    // buildErrorMessage(errors);
-    // let emptyRows = getEmptyRows(updatedGrid);
-    return {
-        grid: updatedGrid,
-        errorMessage: [...errors],
-        affectedRows: [...affectedRows],
-        // emptyRows: getEmptyRows(updatedGrid),
-        numErrors: errors.size,
-    };
+        resolve({
+            grid: updatedGrid,
+            errorMessage: [...errors],
+            affectedRows: [...affectedRows],
+            numErrors: errors.size,
+        });
+    });
 };
 
 // compare grid and header for inconsistencies, detects if user changed header values but did not re-generate grid

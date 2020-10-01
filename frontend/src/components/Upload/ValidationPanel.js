@@ -18,6 +18,9 @@ const styles = (theme) => ({
     valElement: {
         lineHeight: '2em',
     },
+    valLastElement: {
+        lineHeight: 'unset',
+    },
 });
 const splitMessage = (validationMessage) => {
     let headers = [];
@@ -34,18 +37,23 @@ const ValidationPanel = ({ validation, classes }) => (
     <Paper className={classes.container}>
         {validation && validation.message.length > 0 ? (
             <Typography>
-                <div className={classes.sad}>Validation:</div>
+                <span className={classes.sad}>Validation:</span>
+                <br></br>
                 {validation.message.map((element, index) => (
-                    <div id={index} className={classes.valElement}>
+                    <span key={index} className={classes.valElement}>
                         {element.replace(':', ':   ')}
-                    </div>
+                        <br></br>
+                    </span>
                 ))}
-                <div className={classes.valElement}>Please correct or fill row(s) {validation.affectedRows.join(', ')}.</div>
+                <span className={classes.valLastElement}>
+                    To avoid mistakes, incorrect values have been cleared.<br></br>Affected row(s): {validation.affectedRows.join(', ')}.
+                </span>
             </Typography>
         ) : (
             <Typography>
                 {' '}
-                <div className={classes.happy}>Validation: No errors detected.</div>
+                <span className={classes.happy}>Validation: No errors detected.</span>
+                <br></br>
                 Please fill all rows.
             </Typography>
         )}

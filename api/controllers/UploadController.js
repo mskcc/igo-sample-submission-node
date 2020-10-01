@@ -326,13 +326,9 @@ exports.deidentifyIds = [
                 let username = req.body.username;
                 util.handlePatientIds(ids, username)
                     .then((results) => {
-                        // console.log(results);
-
-                        // console.log(util.handlePatientIds(ids, username));
                         if (results) {
                             return apiResponse.successResponseWithData(res, 'Operation success', { idResults: results });
                         }
-                        // })
                     })
                     .catch(function (err) {
                         logger.log('error', err);

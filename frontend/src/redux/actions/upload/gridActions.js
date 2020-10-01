@@ -7,60 +7,55 @@ import { Config } from '../../../config.js';
 
 export const REGISTER_GRID_CHANGE = 'REGISTER_GRID_CHANGE';
 export const REGISTER_GRID_CHANGE_PRE_VALIDATE = 'REGISTER_GRID_CHANGE_PRE_VALIDATE';
-
 export const REGISTER_GRID_CHANGE_POST_VALIDATE = 'REGISTER_GRID_CHANGE_POST_VALIDATE';
-export const RESET_MESSAGE = 'RESET_MESSAGE';
 export const handleGridChange = (changes) => {
     return (dispatch, getState) => {
-        dispatch({ type: REGISTER_GRID_CHANGE_PRE_VALIDATE});
-        // handle ID changes here?
-        // check if changes include id changes
+        dispatch({ type: REGISTER_GRID_CHANGE_PRE_VALIDATE, message: 'Validating...' });
         let {
             upload: { grid },
             submissions,
             user,
         } = getState();
 
-        const validationResult = util.validateGrid(changes, grid);
+        util.validateGrid(changes, grid).then((validationResult) => {
+            console.log('VALIDATION DONE');
 
-        const includesPatientIdChange = changes.some((element) => element.includes('patientId'));
-        if (includesPatientIdChange) {
-            const patientIdType = grid.columnFeatures.find((element) => element.data === 'patientId');
+            const includesPatientIdChange = changes.some((element) => element.includes('patientId'));
+            if (includesPatientIdChange) {
+                dispatch({ type: REGISTER_GRID_CHANGE_PRE_VALIDATE, message: 'De-identifying IDs...' });
+                const patientIdType = grid.columnFeatures.find((element) => element.data === 'patientId');
 
-            // editPromises.push(util.redactIds(changesToModify, patientIdType));
-            let newPatientIds = util.getPatientIdsFromChanges(changes, patientIdType);
-            let emptyIds = newPatientIds.filter((element) => element.patientId === '');
-            let nonEmptyIds = newPatientIds.filter((element) => element.patientId !== '');
-            let username = submissions.submissionToEdit ? submissions.submissionToEdit.username : user.username;
-            handlePatientIds(nonEmptyIds, emptyIds, username);
-        }
-
-        // dispatch({ type: RESET_MESSAGE })
-        // would prefer to have this in reducer
-        // if (validationResult.numErrors > 1) {
-        // swal.invalidValues(validationResult.errorMessage);
-        validationResult.errorMessage.map((element) => console.log(element));
-
-        return dispatch({
-            type: REGISTER_GRID_CHANGE_POST_VALIDATE,
-            payload: validationResult,
-            // message: 'reset',
-        });
-        // } else {
-        //     return dispatch({
-        //         type: REGISTER_GRID_CHANGE_POST_VALIDATE,
-        //         payload: validationResult,
-        //         message: [...validationResult.errorMessage][0],
-        //     });
-        // }
-    };
-};
-
-export const preValidate = () => {
-    return (dispatch) => {
-        dispatch({
-            type: REGISTER_GRID_CHANGE_PRE_VALIDATE,
-            message: 'Pasting large set, please be patient.',
+                let newPatientIds = util.getPatientIdsFromChanges(changes, patientIdType);
+                let emptyIds = newPatientIds.filter((element) => element.patientId === '');
+                // TODO REDACT empty ids from grid
+                let nonEmptyIds = newPatientIds.filter((element) => element.patientId !== '');
+                let username = submissions.submissionToEdit ? submissions.submissionToEdit.username : user.username;
+                handlePatientIds(validationResult.grid, nonEmptyIds, emptyIds, username)
+                    .then((result) => {
+                        console.log(result);
+                        validationResult = {
+                            ...validationResult,
+                            grid: { ...validationResult.grid, rows: result.rows },
+                        };
+                        let message = 'clear';
+                        if (validationResult.errorMessage.length > 0)
+                            message = 'Validation Error. Check validation panel for more information.';
+                        return dispatch({
+                            type: REGISTER_GRID_CHANGE_POST_VALIDATE,
+                            payload: validationResult,
+                            message: message,
+                        });
+                    })
+                    .catch((error) => console.log(error));
+            } else {
+                let message = 'clear';
+                if (validationResult.errorMessage.length > 0) message = 'Validation Error. Check validation panel for more information.';
+                return dispatch({
+                    type: REGISTER_GRID_CHANGE_POST_VALIDATE,
+                    payload: validationResult,
+                    message: message,
+                });
+            }
         });
     };
 };
@@ -76,7 +71,6 @@ export const UPDATE_NUM_OF_ROWS_SUCCESS = 'UPDATE_NUM_OF_ROWS_SUCCESS';
 
 export const GET_COLUMNS_FROM_CACHE = 'GET_COLUMNS_FROM_CACHE';
 export const GET_COLUMNS_SUCCESS = 'GET_COLUMNS_SUCCESS';
-// export const GET_COLUMNS_INVALID_COMBINATION = 'GET_COLUMNS_INVALID_COMBINATION'
 export const GET_COLUMNS_FAIL = 'GET_COLUMNS_FAIL';
 
 export function getColumns(page, formValues) {
@@ -91,7 +85,6 @@ export function getColumns(page, formValues) {
             let diffValues = util.diff(grid.form, formValues);
             if (!diffValues || Object.entries(diffValues).length === 0) {
                 swal.nothingToChange();
-
                 dispatch({ type: NO_CHANGE });
                 return setTimeout(() => {
                     dispatch({ type: NO_CHANGE_RESET });
@@ -101,7 +94,6 @@ export function getColumns(page, formValues) {
             //#samples -> #number rows, rest same, only update rows number
             else if (Object.entries(diffValues).length === 1 && 'number_of_samples' in diffValues) {
                 dispatch({ type: UPDATE_NUM_OF_ROWS });
-
                 let rows = util.updateRows(formValues, grid);
                 return dispatch({
                     type: UPDATE_NUM_OF_ROWS_SUCCESS,
@@ -176,7 +168,6 @@ export const DECREASE_ROW_NUMBER_SUCCESS = 'DECREASE_NUMBER_SUCCESS';
 export function decreaseRowNumber(change, newRowNumber) {
     return (dispatch, getState) => {
         let newRows = util.decreaseRowNumber(getState().upload.grid.rows, change);
-
         return dispatch({
             type: DECREASE_ROW_NUMBER_SUCCESS,
             rows: newRows,
@@ -317,237 +308,6 @@ export function loadFromDmp(trackingId, dmpSubmissionId, ownProps) {
     };
 }
 
-export const HANDLE_PATIENT_ID = 'HANDLE_PATIENT_ID';
-export const HANDLE_PATIENT_ID_FAIL = 'HANDLE_PATIENT_ID_FAIL';
-export const HANDLE_PATIENT_ID_SUCCESS = 'HANDLE_PATIENT_ID_SUCCESS';
-export function handlePatientId(rowIndex) {
-    return (dispatch, getState) => {
-        const patientId = getState().upload.grid.rows[rowIndex].patientId.trim();
-        let rows = getState().upload.grid.rows;
-        const patientIdType = getState().upload.grid.columnFeatures.find((element) => element.data === 'patientId');
-        dispatch({ type: 'HANDLE_PATIENT_ID' });
-        if (patientId === '') {
-            return dispatch({
-                type: HANDLE_PATIENT_ID_SUCCESS,
-                rows: util.redactMRN(rows, rowIndex, '', '', ''),
-            });
-        }
-        // simply handle as MRN whenever 8 digit id is entered
-        if (/^[0-9]{8}$/.test(patientId.trim())) {
-            return dispatch(handleMRN(patientId, patientIdType, rows, rowIndex));
-        }
-        // validation necessary because this action is triggered before any handsontable validation would be
-        let regex = new RegExp(patientIdType.pattern);
-        let isValidId = regex.test(patientId);
-        if (!isValidId) {
-            dispatch({
-                type: HANDLE_PATIENT_ID_FAIL,
-                message: `${patientIdType.columnHeader}: ${patientIdType.error}`,
-                rows: util.redactMRN(rows, rowIndex, '', '', ''),
-            });
-        } else {
-            switch (patientIdType.columnHeader) {
-                case 'CMO ID':
-                    return dispatch(handleCmoId(patientId, rows, rowIndex));
-                case 'DMP ID':
-                    return dispatch(handleDmpId(patientId, rows, rowIndex));
-                case 'Cell Line Name':
-                    return dispatch(anonymizeId(patientId, 'cellline', rows, rowIndex));
-                case 'MRN':
-                    // should never reach this because we check for MRN regex match first - just in case
-                    return dispatch(handleMRN(patientId, patientIdType, rows, rowIndex));
-                default:
-                    return dispatch(anonymizeId(patientId, 'investigator', rows, rowIndex));
-            }
-        }
-    };
-}
-export const CLEAR_EMPTY_IDS = 'CLEAR_EMPTY_IDS';
-
-export const HANDLE_PATIENT_IDS = 'HANDLE_PATIENT_IDS';
-export const HANDLE_PATIENT_IDS_FAIL = 'HANDLE_PATIENT_IDS_FAIL';
-export const HANDLE_PATIENT_IDS_SUCCESS = 'HANDLE_PATIENT_IDS_SUCCESS';
-export function handlePatientIds(ids, emptyIds, username) {
-    return (dispatch, getState) => {
-        dispatch({ type: 'HANDLE_PATIENT_ID' });
-        let rows = getState().upload.grid.rows;
-        const data = { ids: JSON.stringify(ids), username: username };
-        dispatch({ type: CLEAR_EMPTY_IDS, payload: util.clearIds(rows, emptyIds) });
-
-        if (ids.length !== 0) {
-            return dispatch({ type: HANDLE_PATIENT_IDS_SUCCESS });
-        }
-        return services
-            .handlePatientIds(data)
-            .then((response) => {
-                // console.log(response);
-                let errorMessage = {};
-
-                response.payload.idResults.forEach((element) => {
-                    if ('result' in element && 'message' in element.result) {
-                        console.log(element.result.message);
-
-                        errorMessage[element.gridRowIndex] = element.result.message;
-                    }
-                });
-
-                if (errorMessage.length !== 0) {
-                    errorMessage.addOn =
-                        'Please try MRN instead. You can enter MRNs in the current ID column without generating a new grid.';
-
-                    // swal.invalidValues(message);
-                }
-
-                dispatch({
-                    type: HANDLE_PATIENT_IDS_SUCCESS,
-                    rows: util.setPatientIds(rows, response.payload.idResults),
-                    validation: errorMessage,
-                });
-
-                // dispatch({ type: REGISTER_GRID_CHANGE });
-            })
-            .catch((error) => {
-                dispatch({
-                    type: HANDLE_PATIENT_ID_FAIL,
-                    error: error,
-                    rows: util.redactMRNs(rows, ids),
-                });
-            });
-    };
-}
-
-function anonymizeId(patientId, type, rows, rowIndex) {
-    return (dispatch) => {
-        return services
-            .patientIdToCid({
-                patientId: patientId,
-                type: type,
-            })
-            .then((response) => {
-                dispatch({
-                    type: HANDLE_PATIENT_ID_SUCCESS,
-                    rows: util.createPatientId(rows, rowIndex, response.payload.patientId, response.payload.normalizedPatientId),
-                });
-                dispatch({ type: REGISTER_GRID_CHANGE });
-            })
-            .catch((error) => {
-                dispatch({
-                    type: HANDLE_PATIENT_ID_FAIL,
-                    error: error,
-                    rows: util.redactMRN(rows, rowIndex, '', '', ''),
-                });
-            });
-    };
-}
-
-function handleCmoId(patientId, rows, rowIndex) {
-    return (dispatch) => {
-        // CMO IDs have a 'C-' prefix in the LIMS but not in CRDB, which we use to verify
-        const cmoId = patientId.replace('C-', '');
-        return services
-            .verifyCmoId({
-                cmoId: cmoId,
-            })
-            .then((response) => {
-                dispatch({
-                    type: HANDLE_PATIENT_ID_SUCCESS,
-                    rows: util.createPatientId(rows, rowIndex, response.payload.patientId, response.payload.normalizedPatientId),
-                });
-                dispatch({ type: REGISTER_GRID_CHANGE });
-            })
-            .catch((error) => {
-                dispatch({
-                    type: HANDLE_PATIENT_ID_FAIL,
-                    error: error,
-                    rows: util.redactMRN(rows, rowIndex, '', '', ''),
-                });
-            });
-    };
-}
-
-function handleMRN(patientId, patientIdType, rows, rowIndex) {
-    return (dispatch) => {
-        return services
-            .mrnToCid({
-                patientId: patientId,
-            })
-            .then((response) => {
-                dispatch({
-                    type: HANDLE_PATIENT_ID_SUCCESS,
-                    rows: util.redactMRN(rows, rowIndex, response.payload.patientId, 'MRN_REDACTED', response.payload.sex),
-                });
-                dispatch({ type: REGISTER_GRID_CHANGE });
-            })
-            .catch((error) => {
-                dispatch({
-                    type: HANDLE_PATIENT_ID_FAIL,
-                    error: error,
-                    rows: util.redactMRN(rows, rowIndex, '', '', ''),
-                });
-            });
-    };
-}
-
-function handleDmpId(patientId, rows, rowIndex) {
-    return (dispatch) => {
-        return services
-            .verifyDmpId({
-                dmpId: patientId,
-            })
-
-            .then((response) => {
-                dispatch({
-                    type: HANDLE_PATIENT_ID_SUCCESS,
-                    rows: util.createPatientId(rows, rowIndex, response.payload.cmoPatientId, response.payload.normalizedPatientId),
-                });
-                dispatch({ type: REGISTER_GRID_CHANGE });
-            })
-            .catch((error) => {
-                dispatch({
-                    type: HANDLE_PATIENT_ID_FAIL,
-                    error: error,
-                    rows: util.redactMRN(rows, rowIndex, '', '', ''),
-                });
-            });
-    };
-}
-
-export const HANDLE_ASSAY = 'HANDLE_ASSAY';
-export const HANDLE_ASSAY_FAIL = 'HANDLE_ASSAY_FAIL';
-export const HANDLE_ASSAY_SUCCESS = 'HANDLE_ASSAY_SUCCESS';
-export function handleAssay(rowIndex, colIndex, oldValue, newValue) {
-    return (dispatch, getState) => {
-        return dispatch({
-            type: HANDLE_ASSAY_SUCCESS,
-            rows: util.appendAssay(
-                getState().upload.grid.rows,
-                rowIndex,
-                oldValue,
-                newValue,
-                getState().upload.grid.columnFeatures[colIndex].source
-            ),
-        });
-    };
-}
-
-export const HANDLE_TUMOR_TYPE = 'HANDLE_TUMOR_TYPE';
-export const HANDLE_TUMOR_TYPE_FAIL = 'HANDLE_TUMOR_TYPE_FAIL';
-export const HANDLE_TUMOR_TYPE_SUCCESS = 'HANDLE_TUMOR_TYPE_SUCCESS';
-export function handleTumorType(rowIndex, colIndex, oldValue, newValue) {
-    return (dispatch, getState) => {
-        return dispatch({
-            type: HANDLE_TUMOR_TYPE_SUCCESS,
-            rows: util.translateTumorTypes(
-                getState().upload.grid.rows,
-                getState().upload.grid.columnFeatures[colIndex].source,
-                rowIndex,
-                oldValue,
-                newValue
-            ),
-        });
-    };
-}
-
 // export const HANDLE_CLEAR = 'HANDLE_CLEAR'
 // export const HANDLE_CLEAR_FAIL = 'HANDLE_CLEAR_FAIL'
 export const HANDLE_CLEAR_SUCCESS = 'HANDLE_CLEAR_SUCCESS';
@@ -557,25 +317,6 @@ export function handleClear() {
             type: HANDLE_CLEAR_SUCCESS,
             rows: util.generateRows(getState().upload.grid.columnFeatures, getState().upload.grid.form, getState().upload.grid.rows.length),
         });
-    };
-}
-
-export const HANDLE_INDEX_SUCCESS = 'HANDLE_INDEX_SUCCESS';
-export const HANDLE_INDEX_FAIL = 'HANDLE_INDEX_FAIL';
-export function handleIndex(colIndex, rowIndex, newValue) {
-    return (dispatch, getState) => {
-        let indexSeq = util.findIndexSeq(getState().upload.grid, colIndex, rowIndex, newValue);
-        if (indexSeq.success) {
-            return dispatch({
-                type: HANDLE_INDEX_SUCCESS,
-                rows: indexSeq.rows,
-            });
-        } else {
-            return dispatch({
-                type: HANDLE_INDEX_FAIL,
-                message: 'Index Sequence could not be found. Are you sure the Index ID is correct?',
-            });
-        }
     };
 }
 
@@ -599,9 +340,41 @@ export function downloadGrid() {
     };
 }
 
-export const RESET_GRID_ERROR_MESSAGE = 'RESET_GRID_ERROR_MESSAGE';
+export function handlePatientIds(grid, ids, emptyIds, username) {
+    return new Promise((resolve, reject) => {
+        let updatedGrid = JSON.parse(JSON.stringify(grid));
 
-// Resets the currently visible error message.
-export const resetGridErrorMessage = () => ({
-    type: RESET_GRID_ERROR_MESSAGE,
-});
+        let rows = updatedGrid.rows;
+        rows = util.clearIds(rows, emptyIds);
+        const data = { ids: JSON.stringify(ids), username: username };
+        if (ids.length === 0) {
+            resolve({ rows: rows });
+        }
+        return services
+            .handlePatientIds(data)
+            .then((response) => {
+                // console.log(response);
+                let validationResult = {};
+
+                response.payload.idResults.forEach((element) => {
+                    if ('result' in element && 'message' in element.result) {
+                        console.log(element.result.message);
+                        validationResult[element.gridRowIndex] = element.result.message;
+                    }
+                });
+
+                if (Object.keys(validationResult).length !== 0) {
+                    validationResult.addOn =
+                        'Please try MRN instead. You can enter MRNs in the current ID column without generating a new grid.';
+                }
+
+                resolve({ rows: util.setPatientIds(rows, response.payload.idResults), validation: validationResult });
+            })
+            .catch((error) => {
+                reject({
+                    error: error,
+                    rows: util.redactMRNs(rows, ids),
+                });
+            });
+    });
+}
