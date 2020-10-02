@@ -1235,29 +1235,47 @@ export function handlePatientIds(ids, username) {
         }
     });
 }
+
+// to import submissions, export json from table (using mysqlworkbench, for example)
+// change first line to export const submissions = [...]
+
 export function translateSqlSubmissions(sqlSubmissions) {
     let parsedSubmissions = [];
     for (let i = 0; i < sqlSubmissions.length; i++) {
         const submission = sqlSubmissions[i];
+        
+        
         try {
-            let formValues = JSON.parse(JSON.parse(submission.form_values));
+            
+            let formValues = JSON.parse(submission.form_values);
+            console.log(formValues);
+            if (typeof formValues == 'string') {
+                formValues = JSON.parse(formValues);
+            }
+            
             let gridValues = JSON.parse(submission.grid_values);
             if (typeof gridValues == 'string') {
                 gridValues = JSON.parse(gridValues);
             }
 
+            // console.log(typeof(formValues));
+            
             // formValues need to be converted to camelCase
             for (let element in formValues) {
                 if (element.includes('_')) {
                     let camelKey = toCamel(element);
                     formValues[camelKey] = formValues[element];
-                    delete formValues[element];
+                    delete formValues[element];                
                 }
+                
+                
             }
             if (formValues.patientIdType === 'MSK-Patients (or derived from MSK Patients)') {
                 formValues.patientIdTypeSpecified = 'CMO ID';
             }
             let transactionId = submission.transaction_id || null;
+            let createdAt = submission.created_on || null;
+            let updatedAt = submission.updated_on || null;
 
             let parsedSubmission = {
                 ...submission,
@@ -1265,8 +1283,8 @@ export function translateSqlSubmissions(sqlSubmissions) {
                 gridValues: gridValues,
                 appVersion: '2.0',
                 transactionId: transactionId,
-                createdAt: submission.created_on,
-                updatedAt: submission.updated_on,
+                createdAt: new Date(createdAt).valueOf()/1000,
+                updatedAt: new Date(updatedAt).valueOf()/1000,
                 submittedAt: transactionId,
             };
             delete parsedSubmission.form_values;
@@ -1274,6 +1292,7 @@ export function translateSqlSubmissions(sqlSubmissions) {
             parsedSubmissions.push(parsedSubmission);
         } catch (error) {
             console.log(error);
+            console.log(submission);
             console.log(typeof JSON.parse(submission.grid_values));
             return [];
         }
