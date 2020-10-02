@@ -324,6 +324,16 @@ export const redactMRNs = (rows, ids) => {
     });
     return updatedRows;
 };
+
+export const redactMRNsFromGrid = (grid) => {
+    grid.rows.forEach((element) => {
+        if (/^[0-9]{8}$/.test(element.patientId.trim())) {
+            element.patientId = 'MRN_REDACTED';
+        }
+    });
+    return grid;
+};
+
 export const clearIds = (rows, ids) => {
     let updatedRows = JSON.parse(JSON.stringify(rows));
     ids.forEach((idElement) => {
@@ -363,7 +373,6 @@ export const setPatientIds = (rows, ids) => {
     let updatedRows = JSON.parse(JSON.stringify(rows));
     Object.keys(ids).forEach((key) => {
         let idElement = ids[key];
-        // console.log(idElement);
         if ('result' in idElement) {
             updatedRows[idElement.gridRowIndex].patientId = idElement.result.patientId;
             updatedRows[idElement.gridRowIndex].cmoPatientId = idElement.result.cmoPatientId;

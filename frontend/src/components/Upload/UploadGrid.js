@@ -84,6 +84,15 @@ class UploadGrid extends React.Component {
                         manualColumnResize={true}
                         comments={true}
                         ref={this.hotTableComponent}
+                        beforeChange={(changes, source) => {
+                            // only do something if rows can fit the changes/if
+                            // last changes[] element's row index is <= rows
+                            if (changes[changes.length - 1][0] + 1 > grid.rows.length) {
+                                let numOfPastedRows = changes[changes.length - 1][0] + 1;
+                                pasteTooMany(numOfPastedRows);
+                                return false;
+                            }
+                        }}
                         afterChange={(changes, source) => {
                             if (changes) {
                                 if (source !== 'loadData') {

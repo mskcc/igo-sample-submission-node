@@ -377,7 +377,6 @@ export const gridColumns = {
         tooltip:
             'Sex information is important for calling Copy-Number Variations on sex chromosome (X,Y) genes.  Without this information, you may miss important data during analysis.  If you have any questions, please contact Platform Informatics',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,

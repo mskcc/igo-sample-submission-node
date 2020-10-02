@@ -1189,13 +1189,13 @@ export function handlePatientIds(ids, username) {
                         const idType = idElement.idType;
                         if (results[index]) {
                             if (idType === 'CMO ID') {
-                                cmoPatientId = _.isEmpty(results[index].CMO_ID) ? '' : idElement.patientId;
+                                cmoPatientId = _.isEmpty(results[index].CMO_ID) ? '' : idElement.patientId.toUpperCase();
 
                                 if (cmoPatientId === '') {
                                     message = `PatientID ${idElement.patientId} could not be verified.`;
                                 } else {
-                                    normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId.replace('C-', '')}`;
-                                    finalPatientId = idElement.patientId;
+                                    normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId.replace('C-', '').toUpperCase()}`;
+                                    finalPatientId = idElement.patientId.toUpperCase();
                                 }
                             }
 
@@ -1204,8 +1204,8 @@ export function handlePatientIds(ids, username) {
                                 if (cmoPatientId === '') {
                                     message = `PatientID ${idElement.patientId} could not be verified.`;
                                 } else {
-                                    normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId}`;
-                                    finalPatientId = idElement.patientId;
+                                    normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId.toUpperCase()}`;
+                                    finalPatientId = idElement.patientId.toUpperCase();
                                 }
                             }
 
@@ -1266,7 +1266,7 @@ function last7Days() {
 
 function selectIdService(idElement) {
     let idType = idElement.idType;
-    let patientId = idElement.patientId;
+    let patientId = idElement.patientId.toUpperCase();
     if (idType === 'MRN' || idType === 'Cell Line Name') return crdbServices.getCrdbId(patientId);
     if (idType === 'CMO ID') return crdbServices.verifyCmoId(patientId.replace('C-', ''));
     if (idType === 'DMP ID') return crdbServices.verifyDmpId(patientId);

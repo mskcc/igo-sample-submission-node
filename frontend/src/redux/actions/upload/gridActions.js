@@ -21,32 +21,48 @@ export const handleGridChange = (changes) => {
             console.log('VALIDATION DONE');
 
             const includesPatientIdChange = changes.some((element) => element.includes('patientId'));
+
             if (includesPatientIdChange) {
                 dispatch({ type: REGISTER_GRID_CHANGE_PRE_VALIDATE, message: 'De-identifying IDs...' });
                 const patientIdType = grid.columnFeatures.find((element) => element.data === 'patientId');
-
                 let newPatientIds = util.getPatientIdsFromChanges(changes, patientIdType);
                 let emptyIds = newPatientIds.filter((element) => element.patientId === '');
+                validationResult.grid.rows = util.clearIds(validationResult.grid.rows, emptyIds);
                 // TODO REDACT empty ids from grid
                 let nonEmptyIds = newPatientIds.filter((element) => element.patientId !== '');
                 let username = submissions.submissionToEdit ? submissions.submissionToEdit.username : user.username;
-                handlePatientIds(validationResult.grid, nonEmptyIds, emptyIds, username)
-                    .then((result) => {
-                        console.log(result);
-                        validationResult = {
-                            ...validationResult,
-                            grid: { ...validationResult.grid, rows: result.rows },
-                        };
-                        let message = 'clear';
-                        if (validationResult.errorMessage.length > 0)
-                            message = 'Validation Error. Check validation panel for more information.';
-                        return dispatch({
-                            type: REGISTER_GRID_CHANGE_POST_VALIDATE,
-                            payload: validationResult,
-                            message: message,
-                        });
-                    })
-                    .catch((error) => console.log(error));
+                if (nonEmptyIds.length > 0) {
+                    const containsMRNs = nonEmptyIds.some((element) => /^[0-9]{8}$/.test(element.patientId.trim()));
+                    // Redact MRNs even before sending them off to be de-identified.
+                    if (containsMRNs) {
+                        validationResult.grid = util.redactMRNsFromGrid(validationResult.grid);
+                    }
+
+                    handlePatientIds(validationResult.grid, nonEmptyIds, emptyIds, username)
+                        .then((patientIdResult) => {
+                            validationResult = {
+                                ...validationResult,
+                                grid: { ...validationResult.grid, rows: patientIdResult.rows },
+                                errorMessage: [...validationResult.errorMessage, ...patientIdResult.validationResult.message],
+                                affectedRows: [...validationResult.affectedRows, ...patientIdResult.validationResult.affectedRows],
+                            };
+                            let message = 'clear';
+                            if (validationResult.errorMessage.length > 0)
+                                message = 'Validation Error. Check validation panel for more information.';
+                            return dispatch({
+                                type: REGISTER_GRID_CHANGE_POST_VALIDATE,
+                                payload: validationResult,
+                                message: message,
+                            });
+                        })
+                        .catch((error) => console.log(error));
+                } else {
+                    return dispatch({
+                        type: REGISTER_GRID_CHANGE_POST_VALIDATE,
+                        payload: validationResult,
+                        message: 'clear',
+                    });
+                }
             } else {
                 let message = 'clear';
                 if (validationResult.errorMessage.length > 0) message = 'Validation Error. Check validation panel for more information.';
@@ -343,7 +359,6 @@ export function downloadGrid() {
 export function handlePatientIds(grid, ids, emptyIds, username) {
     return new Promise((resolve, reject) => {
         let updatedGrid = JSON.parse(JSON.stringify(grid));
-
         let rows = updatedGrid.rows;
         rows = util.clearIds(rows, emptyIds);
         const data = { ids: JSON.stringify(ids), username: username };
@@ -353,22 +368,26 @@ export function handlePatientIds(grid, ids, emptyIds, username) {
         return services
             .handlePatientIds(data)
             .then((response) => {
-                // console.log(response);
-                let validationResult = {};
+                console.log(response);
+                let validationResult = { message: [], affectedRows: [] };
 
                 response.payload.idResults.forEach((element) => {
                     if ('result' in element && 'message' in element.result) {
-                        console.log(element.result.message);
-                        validationResult[element.gridRowIndex] = element.result.message;
+                        validationResult.message.push(element.result.message);
+                        validationResult.affectedRows.push(element.gridRowIndex);
+                        console.log(element);
                     }
                 });
 
-                if (Object.keys(validationResult).length !== 0) {
-                    validationResult.addOn =
-                        'Please try MRN instead. You can enter MRNs in the current ID column without generating a new grid.';
+                if (validationResult.message.length !== 0) {
+                    validationResult.message.push(
+                        'Please try MRN instead. You can enter MRNs in the current ID column without generating a new grid.'
+                    );
                 }
-
-                resolve({ rows: util.setPatientIds(rows, response.payload.idResults), validation: validationResult });
+                resolve({
+                    rows: util.setPatientIds(rows, response.payload.idResults),
+                    validationResult,
+                });
             })
             .catch((error) => {
                 reject({
