@@ -36,22 +36,22 @@ function Header(userRole) {
                     </Button>
                     <div className={classes.divider}>&#8226;</div>
 
-                    {/* <Button>
+                    <Button>
                         <NavLink to='/dmp' activeClassName={classes.active} className={classes.navlink}>
                             <Typography color='inherit' variant='h6'>
                                  DMP
                             </Typography>
                         </NavLink>
-                    </Button> */}
-                    {/* <div className={classes.divider}>&#8226;</div> */}
-                    <Button>
+                    </Button>
+                    <div className={classes.divider}>&#8226;</div>
+                    {/* <Button>
                         <NavLink to='/submissions/igo' activeClassName={classes.active} className={classes.navlink}>
                             <Typography color='inherit' variant='h6'>
                                 Submissions
                             </Typography>
                         </NavLink>
-                    </Button>
-                    {/* <Button
+                    </Button> */}
+                    <Button
                         className={classes.navlink}
                         aria-controls='simple-menu'
                         aria-haspopup='true'
@@ -86,7 +86,7 @@ function Header(userRole) {
                                 </Typography>
                             </NavLink>
                         </MenuItem>
-                    </Menu> */}
+                    </Menu>
                     <div className={classes.divider}>&#8226;</div>
                     {userRole !== '' && userRole !== 'user' && (
                         <React.Fragment>
