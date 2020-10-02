@@ -11,7 +11,7 @@ class SubmissionsGrid extends React.Component {
     }
 
     render() {
-        const { classes, handleGridClick, handleFilterClick, handleCheckDmp, grid, gridType } = this.props;
+        const { classes, handleGridClick, handleImport, handleFilterClick, handleCheckDmp, grid, gridType, user } = this.props;
         let headline = gridType.toUpperCase() === 'UPLOAD' ? 'IGO Submissions' : `${gridType.toUpperCase()} Submissions`;
         return (
             <div className={classes.container}>
@@ -22,6 +22,11 @@ class SubmissionsGrid extends React.Component {
                     {gridType === 'dmp' && (
                         <Button variant='contained' color='primary' onClick={() => handleCheckDmp('', 0, true)}>
                             Update DMP Status
+                        </Button>
+                    )}
+                    {gridType === 'upload' && user.username === 'wagnerl' && (
+                        <Button variant='contained' color='primary' onClick={() => handleImport()}>
+                            Import Submissions
                         </Button>
                     )}
                 </div>

@@ -26,7 +26,7 @@ var SubmissionSchema = new mongoose.Schema(
         submitted: { type: Boolean, default: false },
         submittedAt: { type: Number, required: false },
         transactionId: { type: Number, required: false },
-        appVersion: { type: String, default: '2.5' },
+        appVersion: { type: String, default: process.env.APP_VERSION },
         dmpTrackingId: { type: String, default: '' },
         createdAt: Number,
         updatedAt: Number,

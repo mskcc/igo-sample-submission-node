@@ -1235,6 +1235,53 @@ export function handlePatientIds(ids, username) {
         }
     });
 }
+export function translateSqlSubmissions(sqlSubmissions) {
+    let parsedSubmissions = [];
+    for (let i = 0; i < sqlSubmissions.length; i++) {
+        const submission = sqlSubmissions[i];
+        try {
+            let formValues = JSON.parse(JSON.parse(submission.form_values));
+            let gridValues = JSON.parse(submission.grid_values);
+            if (typeof gridValues == 'string') {
+                gridValues = JSON.parse(gridValues);
+            }
+
+            // formValues need to be converted to camelCase
+            for (let element in formValues) {
+                if (element.includes('_')) {
+                    let camelKey = toCamel(element);
+                    formValues[camelKey] = formValues[element];
+                    delete formValues[element];
+                }
+            }
+            if (formValues.patientIdType === 'MSK-Patients (or derived from MSK Patients)') {
+                formValues.patientIdTypeSpecified = 'CMO ID';
+            }
+            let transactionId = submission.transaction_id || null;
+
+            let parsedSubmission = {
+                ...submission,
+                formValues: formValues,
+                gridValues: gridValues,
+                appVersion: '2.0',
+                transactionId: transactionId,
+                createdAt: submission.created_on,
+                updatedAt: submission.updated_on,
+                submittedAt: transactionId,
+            };
+            delete parsedSubmission.form_values;
+            delete parsedSubmission.grid_values;
+            parsedSubmissions.push(parsedSubmission);
+        } catch (error) {
+            console.log(error);
+            console.log(typeof JSON.parse(submission.grid_values));
+            return [];
+        }
+    }
+
+    return parsedSubmissions;
+}
+
 //  UTIL
 export function getTransactionIdForDmp() {
     const now = Date.now();
@@ -1271,3 +1318,8 @@ function selectIdService(idElement) {
     if (idType === 'CMO ID') return crdbServices.verifyCmoId(patientId.replace('C-', ''));
     if (idType === 'DMP ID') return crdbServices.verifyDmpId(patientId);
 }
+export const toCamel = (s) => {
+    return s.replace(/([-_][a-z])/gi, ($1) => {
+        return $1.toUpperCase().replace('-', '').replace('_', '');
+    });
+};

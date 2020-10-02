@@ -200,7 +200,6 @@ export const getSubmissionsSince = (time, submissionType) => {
             return resp;
         });
 };
-// TODO FIX
 export const downloadSubmission = (id, submissionType) => {
     const url = `${Config.NODE_API_ROOT}/submission/download?id=${id}&submissionType=${submissionType}`;
     return axios
@@ -435,10 +434,24 @@ export const loadFromDmp = (data) => {
 
 export const handlePatientIds = (data) => {
     console.log(data);
-    
+
     const url = `${Config.NODE_API_ROOT}/upload/deidentifyIds`;
     return axios
         .post(url, { ...data })
+        .then((resp) => {
+            return resp;
+        })
+        .catch((error) => {
+            throw error;
+        })
+        .then((resp) => {
+            return resp;
+        });
+};
+export const importSqlSubmissions = () => {
+    const url = `${Config.NODE_API_ROOT}/submission/import`;
+    return axios
+        .get(url)
         .then((resp) => {
             return resp;
         })

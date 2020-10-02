@@ -195,7 +195,6 @@ export const generateAdditionalRowData = (columnFeatures, formValues, prevRowNum
 // partial submission save or banked sample
 export const generateSubmitData = (state, isPartial = false) => {
     let data = {
-        version: '',
         submissionType: '',
         gridValues: '',
         formValues: '',
@@ -206,7 +205,7 @@ export const generateSubmitData = (state, isPartial = false) => {
         data.transactionId = getTransactionId();
         data.id = state.submissions.submissionToEdit ? state.submissions.submissionToEdit._id : undefined;
     }
-    data.version = Config.VERSION;
+
     let rowsWithIndex = rowsWithRowIndex(state.upload.grid.rows);
     data.submissionType = state.upload.grid.gridType;
     data.gridValues = JSON.stringify(rowsWithIndex);
