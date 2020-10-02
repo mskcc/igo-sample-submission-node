@@ -24,7 +24,7 @@ export const initialFormState = {
         patientIdType: '',
         patientIdTypeSpecified: '',
         groupingChecked: false,
-        altServiceId: false,
+        // altServiceId: false,
         isShared: false,
         sharedWith: '',
     },

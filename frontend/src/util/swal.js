@@ -12,34 +12,12 @@ export const formGridMismatch = (match) => {
     });
 };
 
-export const invalidValues = (msg) => {
-    Swal.fire({
-        title: 'Invalid Values',
-        html: msg,
-        footer: 'To avoid mistakes, invalid cells are cleared immediately.',
-        type: 'error',
-        animation: false,
-        confirmButtonText: 'Dismiss',
-        confirmButtonColor: '#007cba',
-        customClass: { content: 'alert' },
-    });
-};
 export const nothingToChange = () => {
     Swal.fire({
         title: 'Nothing to change.',
         type: 'info',
         animation: false,
         confirmButtonColor: '#007cba',
-        confirmButtonText: 'Dismiss',
-    });
-};
-export const altServiceIdNotice = () => {
-    Swal.fire({
-        title: 'Service Id',
-        html:
-            'Please make sure to get an ID through iLabs. For now, we will use a placeholder, please write it down (it will also be on your receipt once you submitted.).',
-        type: 'info',
-        animation: false,
         confirmButtonText: 'Dismiss',
     });
 };

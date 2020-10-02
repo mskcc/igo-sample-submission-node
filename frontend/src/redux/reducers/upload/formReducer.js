@@ -63,7 +63,7 @@ export default function formReducer(state = initialFormState, action) {
                 },
             };
         case ActionTypes.CLEAR:
-            if (action.payload.id === 'groupingChecked' || action.payload.id === 'altServiceId' || action.payload.id === 'isShared') {
+            if (action.payload.id === 'groupingChecked'  || action.payload.id === 'isShared') {
                 return {
                     ...state,
                     selected: {

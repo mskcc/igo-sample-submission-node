@@ -101,7 +101,7 @@ exports.grid = [
                         if (submissionType === 'dmp') {
                             util.getAvailableProjectsFromDmp().then((ids) => {
                                 console.log(Array.from(ids));
-                                
+
                                 apiResponse.successResponseWithData(res, 'Operation success', {
                                     ...submissionGridResult,
                                     trackingIds: Array.from(ids),
@@ -286,9 +286,7 @@ exports.submit = [
                 });
                 let submissionPromise = util.submit(submissionToSubmit, res.user, transactionId);
                 Promise.all([submissionPromise])
-                    .catch((reasons) => {
-                        return apiResponse.errorResponse(res, reasons);
-                    })
+
                     .then((results) => {
                         if (!results || results.some((x) => x.length === 0)) {
                             return apiResponse.errorResponse(res, 'Could not submit.');
@@ -311,6 +309,9 @@ exports.submit = [
                                 return apiResponse.successResponseWithData(res, 'Operation success', submissionResult);
                             }
                         });
+                    })
+                    .catch((reasons) => {
+                        return apiResponse.errorResponse(res, reasons);
                     });
             })
             .catch((reasons) => {

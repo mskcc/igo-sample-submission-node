@@ -17,7 +17,6 @@ export const dmphandleGridChange = (changes) => {
         // dispatch({ type: RESET_MESSAGE })
         // would prefer to have this in reducer
         if (result.numErrors > 1) {
-            swal.invalidValues(result.errorMessage);
 
             return dispatch({
                 type: DMP_REGISTER_GRID_CHANGE_POST_VALIDATE,

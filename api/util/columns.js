@@ -606,12 +606,12 @@ export const formColumns = {
         data: 'patientIdType',
         columnHeader: 'Patient ID Type',
     },
-    altServiceId: {
-        data: 'altServiceId',
-        columnHeader: 'Alt. Service ID',
-    },
+    // altServiceId: {
+    //     data: 'altServiceId',
+    //     columnHeader: 'Alt. Service ID',
+    // },
 };
 
-export const noShowColumns = ['rowIndex', '_id', 'altServiceId', 'groupingChecked', 'cmoPatientId', 'normalizedPatientId'];
+export const noShowColumns = ['rowIndex', '_id', 'groupingChecked', 'cmoPatientId', 'normalizedPatientId'];
 
 export const noShowEmptyColumns = ['patientIdType', 'sharedWith'];

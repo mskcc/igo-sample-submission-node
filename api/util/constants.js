@@ -25,5 +25,13 @@ export const constants = {
 
     logger: 'sample-sub',
 
-    cmoPmEmailApplications: ['HemePACT_v4', 'HumanWholeGenome', 'IMPACT410', 'IMPACT468', 'MSK-ACCESS_v1', 'WholeExomeSequencing'],
+    cmoPmEmailApplications: [
+        'HemePACT_v4',
+        'HumanWholeGenome',
+        'IMPACT410',
+        'IMPACT505',
+        'IMPACT468',
+        'MSK-ACCESS_v1',
+        'WholeExomeSequencing',
+    ],
 };

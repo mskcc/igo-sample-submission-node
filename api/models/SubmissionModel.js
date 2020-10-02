@@ -6,7 +6,7 @@ var ObjectId = mongoose.Types.ObjectId;
 
 var FormSchema = new mongoose.Schema({
     sharedWith: { type: String, default: '' },
-    altServiceId: { type: Boolean, default: false },
+    // altServiceId: { type: Boolean, default: false },
     application: { type: String, required: true },
     container: { type: String, required: true },
     groupingChecked: { type: Boolean, default: false },

@@ -149,7 +149,7 @@ exports.grid = [
     body('container').isLength({ min: 1 }).trim().withMessage('Container must be present.'),
     body('patientIdType').optional(),
     body('groupingChecked').optional(),
-    body('altServiceId').optional(),
+    // body('altServiceId').optional(),
     // sanitizeBody("*").escape(),
     function (req, res) {
         // try {

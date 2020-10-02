@@ -65,28 +65,28 @@ class UploadForm extends React.Component {
         this.props.handleInputChange(event.target.id, event.target.value);
     };
 
-    handleServiceIdCheck = (name) => (event) => {
-        var date = new Date();
-        var timestamp = date.getTime();
+    // handleServiceIdCheck = (name) => (event) => {
+    //     var date = new Date();
+    //     var timestamp = date.getTime();
 
-        this.setState({
-            values: {
-                ...this.state.values,
-                serviceId: timestamp,
-                [name]: event.target.checked,
-            },
+    //     this.setState({
+    //         values: {
+    //             ...this.state.values,
+    //             serviceId: timestamp,
+    //             [name]: event.target.checked,
+    //         },
 
-            formValid: { ...this.state.formValid, serviceId: true },
-        });
-        if (event.target.checked) {
-            this.props.handleInputChange('serviceId', timestamp);
-            this.props.handleInputChange('altServiceId', true);
-            swal.altServiceIdNotice();
-        } else {
-            this.props.handleInputChange('serviceId', '');
-            this.props.handleInputChange('altServiceId', false);
-        }
-    };
+    //         formValid: { ...this.state.formValid, serviceId: true },
+    //     });
+    //     if (event.target.checked) {
+    //         this.props.handleInputChange('serviceId', timestamp);
+    //         this.props.handleInputChange('altServiceId', true);
+    //         swal.altServiceIdNotice();
+    //     } else {
+    //         this.props.handleInputChange('serviceId', '');
+    //         this.props.handleInputChange('altServiceId', false);
+    //     }
+    // };
     handleCheckbox = (name) => (event) => {
         this.setState({
             values: { ...this.state.values, [name]: event.target.checked },
@@ -118,11 +118,11 @@ class UploadForm extends React.Component {
         for (let value in values) {
             switch (value) {
                 case 'serviceId':
-                    if (values.altServiceId) {
-                        formValid[value] = true;
-                    } else {
+                    // if (values.altServiceId) {
+                    //     formValid[value] = true;
+                    // } else {
                         formValid[value] = /\d{6}/g.test(values[value]) && values[value].length === 6;
-                    }
+                    // }
                     break;
                 case 'material':
                     // validate whether selected value in dynamic fields is in controlled options
@@ -377,13 +377,13 @@ class UploadForm extends React.Component {
                                     error={!formValid.serviceId}
                                     onChange={this.handleChange}
                                     inputProps={{
-                                        disabled: form.selected.altServiceId,
+                                        // disabled: form.selected.altServiceId,
                                         startAdornment: <InputAdornment position='start'>IGO-</InputAdornment>,
                                     }}
                                 />
-                                {!form.selected.application.includes('COVID') && (
+                                {/* {!form.selected.application.includes('COVID') && (
                                     <Checkbox id='altServiceId' checked={form.selected.altServiceId} onChange={this.handleServiceIdCheck} />
-                                )}
+                                )} */}
                             </FormControl>
 
                             <FormControl component='fieldset' className={classes.lastItem}>
@@ -462,7 +462,7 @@ UploadForm.defaultProps = {
             container: '',
             patientIdType: '',
             groupingChecked: false,
-            altServiceId: false,
+            // altServiceId: false,
         },
 
         handleSubmit: () => {},
