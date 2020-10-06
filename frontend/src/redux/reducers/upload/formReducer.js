@@ -19,6 +19,7 @@ export default function formReducer(state = initialFormState, action) {
                 filteredApplications: action.form_data.applications,
                 allMaterials: action.form_data.materials,
                 allApplications: action.form_data.applications,
+                capturePanels: action.form_data.capturePanels,
                 allSpecies: action.form_data.species,
                 filteredSpecies: action.form_data.species,
                 allContainers: action.form_data.containers,

@@ -568,7 +568,8 @@ function parseDate(mongooseDate) {
 export function submit(submission, user, transactionId) {
     return new Promise((resolve, reject) => {
         let serviceId = submission.formValues.serviceId;
-        let recipe = submission.formValues.application;
+        let recipe = submission.formValues.application;        
+        let capturePanel = submission.formValues.capturePanel;        
         let sampleType = submission.formValues.material;
         let samples = submission.gridValues;
         let submittedSamples = [];
@@ -577,6 +578,7 @@ export function submit(submission, user, transactionId) {
             let bankedSample = Object.assign({}, samples[i]);
             bankedSample.serviceId = serviceId;
             bankedSample.recipe = recipe;
+            bankedSample.capturePanel = capturePanel;
             bankedSample.sampleType = sampleType;
             bankedSample.transactionId = transactionId;
             bankedSample.igoUser = user.username;

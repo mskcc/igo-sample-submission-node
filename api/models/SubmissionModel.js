@@ -8,6 +8,7 @@ var FormSchema = new mongoose.Schema({
     sharedWith: { type: String, default: '' },
     altServiceId: { type: Boolean, default: false },
     application: { type: String, required: true },
+    capturePanel: { type: String, required: false },
     container: { type: String, required: true },
     groupingChecked: { type: Boolean, default: false },
     material: { type: String, required: true },

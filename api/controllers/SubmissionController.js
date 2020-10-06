@@ -5,7 +5,7 @@ const mailer = require('../util/mailer');
 var _ = require('lodash');
 var mongoose = require('mongoose');
 var ObjectId = mongoose.Types.ObjectId;
-const { sqlSubmissions } = require('./sqlSubmissions');
+// const { sqlSubmissions } = require('./sqlSubmissions');
 
 const SubmissionModel = require('../models/SubmissionModel');
 const DmpSubmissionModel = require('../models/DmpSubmissionModel');
@@ -277,6 +277,7 @@ exports.submit = [
                 if (gridType === 'dmp') {
                     submissionToSubmit.trackingId = gridValues[0].trackingId || '';
                 }
+                
                 //  save pre LIMS submit so data is safe
                 submissionToSubmit.save(function (err) {
                     if (err) {

@@ -236,7 +236,10 @@ export function populateGridFromSubmission(submissionId, ownProps) {
                 let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
                 Promise.all([columnPromise])
                     .then(() => {
-                        if (submission.appVersion !== process.env.appVersion) {
+                        console.log(submission.appVersion);
+                        console.log(Config.APP_VERSION);
+                        
+                        if (submission.appVersion !== Config.APP_VERSION) {
                             swal.genericMessage(
                                 'Previous Version',
                                 'The submission you are editing was created with an older version of this site. If you run into any issues, please reach out to <a href="mailto:zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org?subject=SampleSubmission Version Issue">the IGO Sample and Project Management Team.</a>'

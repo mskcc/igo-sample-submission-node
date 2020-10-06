@@ -19,6 +19,7 @@ class UploadForm extends React.Component {
             formValid: {
                 material: true,
                 application: true,
+                capturePanel: true,
                 serviceId: true,
                 numberOfSamples: true,
                 species: true,
@@ -35,6 +36,10 @@ class UploadForm extends React.Component {
     };
     showPatientIdTypeDropdown = () => {
         return this.state.values.species === 'Human';
+    };
+
+    showCapturePanelDropdown = () => {
+        return this.state.values.application === 'CustomCapture';
     };
     showPatientIdTypeSpecDropdown = () => {
         return (
@@ -288,6 +293,21 @@ class UploadForm extends React.Component {
                                     label: form.selected.application,
                                 }}
                             />
+                            {this.showCapturePanelDropdown() && (
+                                <Dropdown
+                                    id='capturePanel'
+                                    error={!formValid.capturePanel}
+                                    onChange={this.handleDropdownChange}
+                                    items={form.capturePanels.map((option) => ({
+                                        value: option,
+                                        label: option,
+                                    }))}
+                                    value={{
+                                        value: form.selected.capturePanel,
+                                        label: form.selected.capturePanel,
+                                    }}
+                                />
+                            )}
                             <FormControl component='fieldset'>
                                 <Dropdown
                                     id='species'
