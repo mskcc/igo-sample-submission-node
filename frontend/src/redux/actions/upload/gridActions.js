@@ -55,7 +55,14 @@ export const handleGridChange = (changes) => {
                                 message: message,
                             });
                         })
-                        .catch((error) => console.log(error));
+                        .catch((error) => {
+                            validationResult.grid.rows.map((element) => (element.patientId = ''));
+                            dispatch({
+                                type: REGISTER_GRID_CHANGE_POST_VALIDATE,
+                                payload: validationResult,
+                                message: 'Error while de-identifying. Please try again or reach out to zzPDL_SKI_IGO_DATA@mskcc.org.',
+                            });
+                        });
                 } else {
                     return dispatch({
                         type: REGISTER_GRID_CHANGE_POST_VALIDATE,
@@ -238,7 +245,7 @@ export function populateGridFromSubmission(submissionId, ownProps) {
                     .then(() => {
                         console.log(submission.appVersion);
                         console.log(Config.APP_VERSION);
-                        
+
                         if (submission.appVersion !== Config.APP_VERSION) {
                             swal.genericMessage(
                                 'Previous Version',

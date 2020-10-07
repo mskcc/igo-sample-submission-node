@@ -568,8 +568,8 @@ function parseDate(mongooseDate) {
 export function submit(submission, user, transactionId) {
     return new Promise((resolve, reject) => {
         let serviceId = submission.formValues.serviceId;
-        let recipe = submission.formValues.application;        
-        let capturePanel = submission.formValues.capturePanel;        
+        let recipe = submission.formValues.application;
+        let capturePanel = submission.formValues.capturePanel;
         let sampleType = submission.formValues.material;
         let samples = submission.gridValues;
         let submittedSamples = [];
@@ -1176,12 +1176,11 @@ export function handlePatientIds(ids, username) {
             idBatch.forEach((element) => {
                 patientIdPromises.push(selectIdService(element));
             });
-            
+
             Promise.all(patientIdPromises)
                 .then((results) => {
                     resultIds.forEach((idElement, index) => {
                         idsProcessed++;
-
                         let normalizedPatientId = '';
                         let cmoPatientId = '';
                         let finalPatientId = '';
@@ -1196,13 +1195,15 @@ export function handlePatientIds(ids, username) {
                                 if (cmoPatientId === '') {
                                     message = `PatientID ${idElement.patientId} could not be verified.`;
                                 } else {
-                                    normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId.replace('C-', '').toUpperCase()}`;
+                                    normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId
+                                        .replace('C-', '')
+                                        .toUpperCase()}`;
                                     finalPatientId = idElement.patientId.toUpperCase();
                                 }
                             }
 
                             if (idType === 'DMP ID') {
-                                cmoPatientId = `C-${results[index].CMO_ID || ''}`;
+                                cmoPatientId = _.isEmpty(results[index].CMO_ID) ? '' : `C-${results[index].CMO_ID}`;
                                 if (cmoPatientId === '') {
                                     message = `PatientID ${idElement.patientId} could not be verified.`;
                                 } else {
@@ -1212,16 +1213,24 @@ export function handlePatientIds(ids, username) {
                             }
 
                             if (idType === 'MRN') {
-                                cmoPatientId = `C-${results[index].patientId}`;
-                                normalizedPatientId = `${username.toUpperCase()}_${results[index].patientId}`;
-                                sex = results[index].sex;
-                                finalPatientId = MRN_REDACTED;
+                                if (_.isEmpty(results[index].patientId)) {
+                                    message = `PatientID could not be de-identifed.`;
+                                } else {
+                                    cmoPatientId = `C-${results[index].patientId}`;
+                                    normalizedPatientId = `${username.toUpperCase()}_${results[index].patientId}`;
+                                    sex = results[index].sex;
+                                    finalPatientId = MRN_REDACTED;
+                                }
                             }
 
                             if (idType === 'Cell Line Name') {
-                                cmoPatientId = `C-${results[index].patientId}`;
-                                normalizedPatientId = `CELLLINE_${results[index].patientId}`;
-                                finalPatientId = idElement.patientId;
+                                if (_.isEmpty(results[index].patientId)) {
+                                    message = `PatientID could not be de-identifed.`;
+                                } else {
+                                    cmoPatientId = `C-${results[index].patientId}`;
+                                    normalizedPatientId = `CELLLINE_${results[index].patientId}`;
+                                    finalPatientId = idElement.patientId;
+                                }
                             }
                         }
 
@@ -1245,32 +1254,28 @@ export function translateSqlSubmissions(sqlSubmissions) {
     let parsedSubmissions = [];
     for (let i = 0; i < sqlSubmissions.length; i++) {
         const submission = sqlSubmissions[i];
-        
-        
+
         try {
-            
             let formValues = JSON.parse(submission.form_values);
             console.log(formValues);
             if (typeof formValues == 'string') {
                 formValues = JSON.parse(formValues);
             }
-            
+
             let gridValues = JSON.parse(submission.grid_values);
             if (typeof gridValues == 'string') {
                 gridValues = JSON.parse(gridValues);
             }
 
             // console.log(typeof(formValues));
-            
+
             // formValues need to be converted to camelCase
             for (let element in formValues) {
                 if (element.includes('_')) {
                     let camelKey = toCamel(element);
                     formValues[camelKey] = formValues[element];
-                    delete formValues[element];                
+                    delete formValues[element];
                 }
-                
-                
             }
             if (formValues.patientIdType === 'MSK-Patients (or derived from MSK Patients)') {
                 formValues.patientIdTypeSpecified = 'CMO ID';
@@ -1285,8 +1290,8 @@ export function translateSqlSubmissions(sqlSubmissions) {
                 gridValues: gridValues,
                 appVersion: '2.0',
                 transactionId: transactionId,
-                createdAt: new Date(createdAt).valueOf()/1000,
-                updatedAt: new Date(updatedAt).valueOf()/1000,
+                createdAt: new Date(createdAt).valueOf() / 1000,
+                updatedAt: new Date(updatedAt).valueOf() / 1000,
                 submittedAt: transactionId,
             };
             delete parsedSubmission.form_values;
