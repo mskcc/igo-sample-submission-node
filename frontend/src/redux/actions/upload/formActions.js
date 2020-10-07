@@ -123,6 +123,9 @@ export const CLEAR = 'CLEAR';
 
 export function clear(id) {
     return (dispatch) => {
+        if (id === 'application') {
+            dispatch({ type: CLEAR, payload: { id: 'capturePanel' } });
+        }
         return dispatch({ type: CLEAR, payload: { id: id } });
     };
 }

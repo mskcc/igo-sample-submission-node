@@ -16,6 +16,7 @@ export const initialFormState = {
 
     selected: {
         application: '',
+        capturePanel: '',
         material: '',
         serviceId: '',
         numberOfSamples: '',

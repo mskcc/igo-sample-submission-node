@@ -90,8 +90,6 @@ export const gridColumns = {
         readOnly: true,
         tooltip: 'If your species is not available, please contact IGO immediately',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -102,8 +100,6 @@ export const gridColumns = {
         columnHeader: 'Nucleic Acid Type',
         data: 'nucleicAcidType',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -116,8 +112,6 @@ export const gridColumns = {
         tooltip:
             'The preservation method of your material is critical to understanding how to process your samples and anticipate issues.  Please complete as accurately as possible. If your preservation is not listed, please contact IGO',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -129,8 +123,6 @@ export const gridColumns = {
         data: 'sampleOrigin',
         tooltip: 'The sample origin is important for analysis.  Please complete as accurately as possible.',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -142,8 +134,6 @@ export const gridColumns = {
         data: 'specimenType',
         tooltip: 'The specimen type is important for analysis.  Please complete as accurately as possible.',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -157,8 +147,6 @@ export const gridColumns = {
             'If you are unsure of what read length is needed, please contact your data analyst or IGO.  There are different read lengths for different applications and we are happy to suggest a length. If you do not see your read length listed, please contact IGO immediately',
         //  FIXME
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -171,12 +159,34 @@ export const gridColumns = {
         tooltip:
             'Please tell us how many reads you would us to generate per sample.  If you are submitting for custom capture or whole exome capture, please tell us how much coverage you would like.  If you are submitting pre-made libraries, you must request by lane.  If you are using a custom sequencing primer, you must request an entire flow cell. Please contact IGO if you have any questions',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
         picklistName: 'SubmissionReadsCoverage',
+    },
+    'Requested Reads': {
+        name: 'Requested Reads',
+        columnHeader: 'Requested Reads',
+        data: 'requestedReads',
+        tooltip:
+            'Please tell us how many reads you would us to generate per sample.',
+        editableCellTemplate: 'ui-grid/dropdownEditor',
+        type: 'autocomplete',
+        error: 'Only dropdown options are permitted as values',
+        strict: true,
+        picklistName: 'Sequencing+Reads+Requested',
+    },
+    'Requested Coverage': {
+        name: 'Requested Coverage',
+        columnHeader: 'Requested Coverage',
+        data: 'requestedCoverage',
+        tooltip:
+            'Please tell us how much coverage you would like.  If you are submitting pre-made libraries, you must request by lane.  If you are using a custom sequencing primer, you must request an entire flow cell. Please contact IGO if you have any questions',
+        editableCellTemplate: 'ui-grid/dropdownEditor',
+        type: 'autocomplete',
+        error: 'Only dropdown options are permitted as values',
+        strict: true,
+        picklistName: 'Sequencing+Coverage+Requested',
     },
     Index: {
         name: 'Index',
@@ -209,8 +219,6 @@ export const gridColumns = {
         data: 'naToExtract',
         tooltip: 'For samples submitted for extraction, please tell us what we should extract out of the material.',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -317,8 +325,6 @@ export const gridColumns = {
         columnHeader: 'Tumor Type',
         data: 'cancerType',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only OncoTree Tumor IDs or exact dropdown options are permitted.',
         strict: true,
@@ -332,8 +338,6 @@ export const gridColumns = {
         tooltip:
             'Please provide us with detailed information about the Tumor or Normal status, and please be as precise as possible.  This value is critical for data analysis.',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,

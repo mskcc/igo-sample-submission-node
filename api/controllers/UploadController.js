@@ -27,10 +27,11 @@ exports.headerValues = [
                 if (results.some((x) => x.length === 0)) {
                     return apiResponse.errorResponse(res, 'Could not retrieve picklists from LIMS.');
                 }
-                let [applicationsResult, materialsResult, speciesResult, patientIdTypesResult, patientIdTypesSpecResult] = results;
+                let [applicationsResult, materialsResult, speciesResult, patientIdTypesResult, patientIdTypesSpecResult, capturePanelResult] = results;
 
                 let responseObject = {
                     applications: applicationsResult,
+                    capturePanels: capturePanelResult,
                     materials: materialsResult,
                     species: speciesResult,
                     containers: containers,

@@ -5,6 +5,7 @@ const mailer = require('../util/mailer');
 var _ = require('lodash');
 var mongoose = require('mongoose');
 var ObjectId = mongoose.Types.ObjectId;
+// const { sqlSubmissions } = require('./sqlSubmissions');
 
 const SubmissionModel = require('../models/SubmissionModel');
 const DmpSubmissionModel = require('../models/DmpSubmissionModel');
@@ -178,14 +179,12 @@ exports.create = [
                 formValues: formValues,
                 gridValues: gridValues,
                 trackingId: gridValues[0].trackingId || '',
-                appVersion: '2.5',
             });
         } else {
             submission = new SubmissionModel({
                 username: res.user.username,
                 formValues: formValues,
                 gridValues: gridValues,
-                appVersion: '2.5',
             });
         }
         submission.save(function (err) {
@@ -278,6 +277,7 @@ exports.submit = [
                 if (gridType === 'dmp') {
                     submissionToSubmit.trackingId = gridValues[0].trackingId || '';
                 }
+                
                 //  save pre LIMS submit so data is safe
                 submissionToSubmit.save(function (err) {
                     if (err) {
@@ -364,6 +364,29 @@ exports.download = [
                     excelData,
                     fileName: `Receipt-${submission.formValues.serviceId}-${submission.username}`,
                 });
+            });
+    },
+];
+
+//  used to import MySql receipts
+exports.import = [
+    function (req, res) {
+        // let parsedSubmissions = [];
+        // console.log(submissions.length);
+        let parsedSubmissions = util.translateSqlSubmissions(sqlSubmissions);
+
+        SubmissionModel.deleteMany({ appVersion: { $ne: '2.5' } }, function (err) {
+            if (err) console.log(err);
+            console.log('Successful deletion');
+        });
+        SubmissionModel.insertMany(parsedSubmissions)
+            .then((documents) => {
+                return apiResponse.successResponse(res, `${documents.length} submissions imported.`);
+            })
+            .catch((error) => {
+                console.log(error);
+
+                return apiResponse.errorResponse(res, 'Could not import submissions.');
             });
     },
 ];

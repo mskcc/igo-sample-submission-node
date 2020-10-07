@@ -4,6 +4,8 @@
         "material_helptext": "Select Material for Submission",
         "application_label": "Application*",
         "application_helptext": "Select Application",
+        "capturePanel_label": "Custom Panel*",
+        "capturePanel_helptext": "Select Panel",
         "species_label": "Species*",
         "species_helptext": "Select Species",
         "groupingCheckbox_label": "Are your samples in groups, pairs or replicates?",

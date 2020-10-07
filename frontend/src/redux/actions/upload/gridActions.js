@@ -55,7 +55,14 @@ export const handleGridChange = (changes) => {
                                 message: message,
                             });
                         })
-                        .catch((error) => console.log(error));
+                        .catch((error) => {
+                            validationResult.grid.rows.map((element) => (element.patientId = ''));
+                            dispatch({
+                                type: REGISTER_GRID_CHANGE_POST_VALIDATE,
+                                payload: validationResult,
+                                message: 'Error while de-identifying. Please try again or reach out to zzPDL_SKI_IGO_DATA@mskcc.org.',
+                            });
+                        });
                 } else {
                     return dispatch({
                         type: REGISTER_GRID_CHANGE_POST_VALIDATE,
@@ -228,7 +235,7 @@ export const GET_DMP_SUBMISSION_TO_EDIT_SUCCESS = 'GET_DMP_SUBMISSION_TO_EDIT_SU
 export function populateGridFromSubmission(submissionId, ownProps) {
     return (dispatch, getState) => {
         let page = ownProps.gridType;
-        dispatch({ type: 'EDIT_SUBMISSION', message: 'Loading...', loading: true });
+        dispatch({ type: 'EDIT_SUBMISSION', loading: true });
         services
             .getSubmission(submissionId, page)
             .then((resp) => {
@@ -236,6 +243,15 @@ export function populateGridFromSubmission(submissionId, ownProps) {
                 let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
                 Promise.all([columnPromise])
                     .then(() => {
+                        console.log(submission.appVersion);
+                        console.log(Config.APP_VERSION);
+
+                        if (submission.appVersion !== Config.APP_VERSION) {
+                            swal.genericMessage(
+                                'Previous Version',
+                                'The submission you are editing was created with an older version of this site. If you run into any issues, please reach out to <a href="mailto:zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org?subject=SampleSubmission Version Issue">the IGO Sample and Project Management Team.</a>'
+                            );
+                        }
                         let type = page === 'dmp' ? GET_DMP_SUBMISSION_TO_EDIT_SUCCESS : GET_SUBMISSION_TO_EDIT_SUCCESS;
                         dispatch({
                             type: type,
