@@ -927,7 +927,7 @@ export function parseDmpOutput(dmpOutput, submission) {
                 };
                 delete parsedSubmission.formValues._id;
                 translationIssues.push({ sampleMatch: doSamplesMatch(dmpSamples, submission) });
-                console.log(translationIssues);
+                // console.log(translationIssues);
 
                 resolve({ parsedSubmission, translationIssues });
             });
@@ -1008,7 +1008,7 @@ function translateDmpToBankedSample(dmpSamples, oncoResult, indexResult) {
             }
 
             const dmpTumorType = dmpSample['Tumor Type'];
-            let oncoMatchPromise = findOncoMatch(dmpTumorType, oncoResult);
+            let oncoMatchPromise = findOncoMatch(dmpTumorType, dmpSampleClass, oncoResult);
             let verifyDmpIdPromise = crdbServices.verifyDmpId(igoPatientId);
             let promises = [];
 
@@ -1018,7 +1018,7 @@ function translateDmpToBankedSample(dmpSamples, oncoResult, indexResult) {
             Promise.all(promises).then((results) => {
                 let [crdbResult, oncoMatch] = results;
 
-                rowIssues.tumorType = oncoMatch.status;
+                if (oncoMatch.status !== '') rowIssues.tumorType = oncoMatch.status;
 
                 if (!crdbResult.CMO_ID) {
                     rowIssues.anonymizedId = `Could not anonymize ${igoPatientId}, no match found in CRDB.`;
@@ -1076,8 +1076,8 @@ function doSamplesMatch(dmpSamples, translatedSubmission) {
     const dmpOutputSampleIds = Object.keys(dmpSamples);
     const dmpInputSampleIds = [];
     getApprovedSamples(translatedSubmission).forEach((sample) => dmpInputSampleIds.push(sample.dmpSampleId));
-    console.log(dmpOutputSampleIds);
-    console.log(dmpInputSampleIds);
+    // console.log(dmpOutputSampleIds);
+    // console.log(dmpInputSampleIds);
     if (isEqual(dmpOutputSampleIds, dmpInputSampleIds)) {
         return 'We received all submitted (and approved) samples';
     } else {
@@ -1130,25 +1130,50 @@ function compareByWellPosition(a, b) {
  * @param {array} oncoResult
  * @return {object} {tumorType: string, status: string}
  */
-function findOncoMatch(tumorType, oncoResult) {
+function findOncoMatch(tumorType, sampleClass, oncoResult) {
     return new Promise((resolve) => {
         // tumortype returned in unexpected format
-        if (!tumorType.includes(':')) {
-            resolve({ status: `No match found for: "${tumorType}"`, tumorType: tumorType });
-        }
+        // if (!tumorType.includes(':')) {
+        //     resolve({ status: `No match found for: "${tumorType}"`, tumorType: tumorType });
+        //     return;
+        // }
         let tumorTypeToMatch = tumorType.split(':')[1];
-        oncoResult.forEach((element, index) => {
-            if (element.includes(tumorTypeToMatch)) {
-                let tumorId = element.split(': ')[1];
+        console.log(tumorType.split(':')[0]);
+        if (tumorType.split(':')[0] === 'N/A') {
+            resolve({ status: '', tumorType: 'Normal' });
+            return;
+        }
+        console.log(tumorTypeToMatch);
+        console.log(tumorType);
+        var match = oncoResult.find((a) => a.includes(tumorTypeToMatch));
+        if (match) {
+            let tumorId = match.split(': ')[1];
 
-                resolve({ status: `Closest match found for "${tumorType}" was "${tumorTypeToMatch}"`, tumorType: tumorId });
-                return;
-            }
-            // no match found
-            if (oncoResult.length === index + 1) {
-                resolve({ status: `No match found for: "${tumorType}"`, tumorType: tumorType });
-            }
-        });
+            resolve({ status: `Closest match found for "${tumorType}" was "${tumorTypeToMatch}"`, tumorType: tumorId });
+            return;
+        } else {
+            resolve({ status: `No match found for: "${tumorType}"`, tumorType: tumorType });
+
+            return;
+        }
+        // oncoResult.forEach((element, index) => {
+        //     console.log(tumorTypeToMatch);
+        //     console.log(sampleClass);
+
+        //     if (!tumorTypeToMatch === 'N/A' && sampleClass === 'Normal') {
+        //         resolve({ status: ``, tumorType: 'Normal' });
+        //     }
+        //     if (element.includes(tumorTypeToMatch)) {
+        //         let tumorId = element.split(': ')[1];
+
+        //         resolve({ status: `Closest match found for "${tumorType}" was "${tumorTypeToMatch}"`, tumorType: tumorId });
+        //         return;
+        //     }
+        //     // no match found
+        //     if (oncoResult.length === index + 1) {
+        //         resolve({ status: `No match found for: "${tumorType}"`, tumorType: tumorType });
+        //     }
+        // });
     });
 }
 

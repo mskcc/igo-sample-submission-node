@@ -62,14 +62,11 @@ function submissionsReducer(state = initialState, action) {
                 submissionToEdit: {
                     _id: action.payload._id,
                     gridType: action.payload.gridType,
-                    serviceId: action.payload.formValues.serviceId,
-                    material: action.payload.formValues.material,
-                    application: action.payload.formValues.application,
-                    numberOfSamples: action.payload.formValues.numberOfSamples,
-                    container: action.payload.formValues.container,
                     username: action.payload.username,
                     createdAt: util.parseDate(action.payload.createdAt),
                     updatedAt: util.parseDate(action.payload.updatedAt),
+                    dmpTrackingId: action.payload.dmpTrackingId,
+                    ...action.payload.formValues,
                 },
             };
 
@@ -92,14 +89,11 @@ function submissionsReducer(state = initialState, action) {
                 submissionToEdit: {
                     _id: action.payload._id,
                     gridType: action.payload.gridType,
-                    serviceId: action.payload.formValues.serviceId,
-                    material: action.payload.formValues.material,
-                    application: action.payload.formValues.application,
-                    numberOfSamples: action.payload.formValues.numberOfSamples,
-                    container: action.payload.formValues.container,
                     username: action.payload.username,
                     createdAt: util.parseDate(action.payload.createdAt),
                     updatedAt: util.parseDate(action.payload.updatedAt),
+                    dmpTrackingId: action.payload.dmpTrackingId,
+                    ...action.payload.formValues,
                 },
             };
 
@@ -176,14 +170,11 @@ function submissionsReducer(state = initialState, action) {
                 submissionToEdit: {
                     _id: action.payload._id,
                     gridType: action.payload.gridType,
-                    serviceId: action.payload.formValues.serviceId,
-                    material: action.payload.formValues.material,
-                    application: action.payload.formValues.application,
-                    numberOfSamples: action.payload.formValues.numberOfSamples,
-                    container: action.payload.formValues.container,
                     username: action.payload.username,
                     createdAt: util.parseDate(action.payload.createdAt),
                     updatedAt: util.parseDate(action.payload.updatedAt),
+                    dmpTrackingId: action.payload.dmpTrackingId,
+                    ...action.payload.formValues,
                 },
             };
 

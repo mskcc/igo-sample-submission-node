@@ -34,6 +34,21 @@ export const handleGridChange = (changes) => {
                 if (nonEmptyIds.length > 0) {
                     const containsMRNs = nonEmptyIds.some((element) => /^[0-9]{8}$/.test(element.patientId.trim()));
                     // Redact MRNs even before sending them off to be de-identified.
+                    if (grid.gridType === 'dmp') {
+                        if (containsMRNs) {
+                            validationResult.grid.rows.map((element) => (element.patientId = ''));
+                            return dispatch({
+                                type: REGISTER_GRID_CHANGE_POST_VALIDATE,
+                                payload: validationResult,
+                                message: 'Please do not use MRNs for PatientIDs in DMP submissions.',
+                            });
+                        }
+                        return dispatch({
+                            type: REGISTER_GRID_CHANGE_POST_VALIDATE,
+                            payload: validationResult,
+                            message: 'clear',
+                        });
+                    }
                     if (containsMRNs) {
                         validationResult.grid = util.redactMRNsFromGrid(validationResult.grid);
                     }
@@ -248,11 +263,13 @@ export function populateGridFromSubmission(submissionId, ownProps) {
 
                         if (submission.appVersion !== Config.APP_VERSION) {
                             swal.genericMessage(
-                                'Previous Version',
+                                'Version Mismatch',
                                 'The submission you are editing was created with an older version of this site. If you run into any issues, please reach out to <a href="mailto:zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org?subject=SampleSubmission Version Issue">the IGO Sample and Project Management Team.</a>'
                             );
                         }
                         let type = page === 'dmp' ? GET_DMP_SUBMISSION_TO_EDIT_SUCCESS : GET_SUBMISSION_TO_EDIT_SUCCESS;
+                        console.log(submission);
+
                         dispatch({
                             type: type,
                             payload: {
@@ -296,7 +313,9 @@ export function loadFromDmp(trackingId, dmpSubmissionId, ownProps) {
                 let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
                 Promise.all([columnPromise])
                     .then(() => {
-                        let type = GET_SUBMISSION_TO_EDIT_SUCCESS;
+                        let type = GET_DMP_SUBMISSION_TO_EDIT_SUCCESS;
+                        console.log(submission);
+
                         dispatch({
                             type: type,
                             payload: {
