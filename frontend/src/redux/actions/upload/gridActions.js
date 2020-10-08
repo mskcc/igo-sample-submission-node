@@ -300,10 +300,10 @@ export function populateGridFromSubmission(submissionId, ownProps) {
 export const LOAD_FROM_DMP = 'LOAD_FROM_DMP';
 export const LOAD_FROM_DMP_FAIL = 'LOAD_FROM_DMP_FAIL';
 export const LOAD_FROM_DMP_SUCCESS = 'LOAD_FROM_DMP_SUCCESS';
-export function loadFromDmp(trackingId, dmpSubmissionId, ownProps) {
+export function loadFromDmp(dmpTrackingId, dmpSubmissionId, ownProps) {
     return (dispatch, getState) => {
         dispatch({ type: LOAD_FROM_DMP, message: 'Loading and parsing submission from DMP...', loading: true });
-        const data = { trackingId, dmpSubmissionId };
+        const data = { dmpTrackingId, dmpSubmissionId };
 
         services
             .loadFromDmp(data)

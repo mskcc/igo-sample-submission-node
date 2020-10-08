@@ -56,14 +56,14 @@ export class SubmissionsPage extends Component {
         return checkDmp(submissionId, this.props);
     };
 
-    handleLoadFromDmp = (trackingId, mongoId, row) => {
+    handleLoadFromDmp = (dmpTrackingId, mongoId, row) => {
         const { loadFromDmp } = this.props;
         if (row.loadedFromDmpAt !== '') {
             swal.genericDecision(
                 'Are you sure?',
                 'This has been loaded from the DMP before. If you load it again, any edits you might have made in the related IGO Submission will be overwritten.'
-            ).then((decision) => decision && loadFromDmp(trackingId, mongoId, this.props));
-        } else loadFromDmp(trackingId, mongoId, this.props);
+            ).then((decision) => decision && loadFromDmp(dmpTrackingId, mongoId, this.props));
+        } else loadFromDmp(dmpTrackingId, mongoId, this.props);
     };
 
     handleUnsubmit = (submissionId) => {

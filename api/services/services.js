@@ -354,8 +354,8 @@ exports.getAvailableProjectsFromDmp = (date) => {
 };
 
 // http://virgo1.mskcc.org:8090/display/PD/getCMOSampleRequestDetails
-exports.getProjectFromDmp = (trackingId) => {
-    const url = `${DMP_URL}/getCMOSampleRequestDetails?trackingId=${trackingId}`;
+exports.getProjectFromDmp = (dmpTrackingId) => {
+    const url = `${DMP_URL}/getCMOSampleRequestDetails?dmpTrackingId=${dmpTrackingId}`;
     logger.log('info', `Sending request to ${url}`);
     return axios
         .get(url, {

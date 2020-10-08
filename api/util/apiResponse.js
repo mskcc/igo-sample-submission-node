@@ -29,6 +29,8 @@ exports.errorResponse = function (res, msg) {
         status: 0,
         message: 'Warning: ' + msg,
     };
+    console.log(msg);
+    
 
     res.status(500).json(data);
 };

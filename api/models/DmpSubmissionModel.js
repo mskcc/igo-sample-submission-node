@@ -23,7 +23,7 @@ var DmpSubmissionSchema = new mongoose.Schema(
         reviewedAt: { type: Number, required: false },
         reviewedBy: { type: String, required: false },
         isAvailableAtDmp: { type: Boolean, default: false },
-        trackingId: { type: String, required: false },
+        dmpTrackingId: { type: String, required: false },
         transactionId: { type: Number, required: false },
         appVersion: { type: String, default: '2.5' },
         // grr, adding this id is bad style since it should by rights belong in a relational DB

@@ -490,11 +490,11 @@ export function getAvailableProjectsFromDmp() {
         Promise.all(promises)
             .then((results) => {
                 try {
-                    let trackingIds = new Set();
+                    let dmpTrackingIds = new Set();
                     results.forEach((idList) => {
-                        idList.content['TrackingId List'].forEach((id) => trackingIds.add(id));
+                        idList.content['TrackingId List'].forEach((id) => dmpTrackingIds.add(id));
                     });
-                    resolve(trackingIds);
+                    resolve(dmpTrackingIds);
                 } catch (error) {
                     reject('Unexpected DMP result format.');
                 }
@@ -514,7 +514,7 @@ export function addDmpColsToSubmissionGrid(submissions, grid, userRole) {
         let rows = dmpGrid.rows;
         for (let i = 0; i < submissions.length; i++) {
             let submission = submissions[i];
-            let trackingId = submission.trackingId;
+            let dmpTrackingId = submission.dmpTrackingId;
             let isSubmitted = submission.submitted;
 
             const samplesApproved = submission.gridValues.filter((element) => {
@@ -526,25 +526,25 @@ export function addDmpColsToSubmissionGrid(submissions, grid, userRole) {
             rows[i].reviewedAt = submission.reviewedAt ? parseDate(submission.reviewedAt) : '';
             rows[i].loadedFromDmpAt = submission.loadedFromDmpAt ? parseDate(submission.loadedFromDmpAt) : '';
             rows[i].reviewedBy = submission.reviewedBy ? submission.reviewedBy : '';
-            rows[i].trackingId = trackingId;
+            rows[i].dmpTrackingId = dmpTrackingId;
             rows[i].relatedIgoSubmission_id = submission.relatedIgoSubmission_id;
             let isAvailableAtDmp = submission.isAvailableAtDmp;
             // let isAvailableAtDmp = true;
-            rows[i].loadFromDmp = `<span submitted=${isAvailableAtDmp} service-id=${trackingId} submission-id=${
+            rows[i].loadFromDmp = `<span submitted=${isAvailableAtDmp} service-id=${dmpTrackingId} submission-id=${
                 submission.id
             } class="material-icons grid-action${isAvailableAtDmp ? '' : '-disabled'}">${
                 isAvailableAtDmp ? 'cloud_download' : 'cloud_off'
             }</span>`;
 
-            rows[i].edit = `<span  submitted=${isSubmitted} service-id=${trackingId} submission-id=${
+            rows[i].edit = `<span  submitted=${isSubmitted} service-id=${dmpTrackingId} submission-id=${
                 submission.id
             } class="material-icons grid-action${isSubmitted || isAvailableAtDmp ? '-disabled' : ''}">edit</span>`;
 
             if (userRole !== 'user') {
-                rows[i].review = `<span  submitted=${isSubmitted} service-id=${trackingId} submission-id=${
+                rows[i].review = `<span  submitted=${isSubmitted} service-id=${dmpTrackingId} submission-id=${
                     submission.id
                 } class="material-icons grid-action${isSubmitted && !isReviewed ? '' : '-disabled'}">assignment_turned_in</span>`;
-                rows[i].unsubmit = `<span submitted=${isSubmitted && !isAvailableAtDmp} service-id=${trackingId} submission-id=${
+                rows[i].unsubmit = `<span submitted=${isSubmitted && !isAvailableAtDmp} service-id=${dmpTrackingId} submission-id=${
                     submission.id
                 } class="material-icons grid-action${isSubmitted && !isAvailableAtDmp ? '' : '-disabled'}">undo</span>`;
             }
@@ -964,7 +964,7 @@ export function parseDmpOutput(dmpOutput, submission) {
 // Investigator = Original Submitter
 // RequestedReads = Added By PM
 // ServiceId = Added By PM
-//  TODO Add TrackingId
+//  TODO Add dmpTrackingId
 function translateDmpToBankedSample(dmpSamples, oncoResult, indexResult) {
     return new Promise((resolve) => {
         let igoSamples = [];

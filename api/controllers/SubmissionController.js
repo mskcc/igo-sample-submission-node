@@ -105,7 +105,7 @@ exports.grid = [
 
                                 apiResponse.successResponseWithData(res, 'Operation success', {
                                     ...submissionGridResult,
-                                    trackingIds: Array.from(ids),
+                                    dmpTrackingIds: Array.from(ids),
                                 });
                             });
                         } else {
@@ -178,7 +178,7 @@ exports.create = [
                 username: res.user.username,
                 formValues: formValues,
                 gridValues: gridValues,
-                trackingId: gridValues[0].trackingId || '',
+                dmpTrackingId: gridValues[0].dmpTrackingId || '',
             });
         } else {
             submission = new SubmissionModel({
@@ -222,16 +222,24 @@ exports.update = [
         };
         let submissionType = req.body.submissionType;
         let id = req.body.id;
+        console.log(req.body);
 
         let model = SubmissionModel;
         if (submissionType === 'dmp') {
             model = DmpSubmissionModel;
-            updatedSubmission.trackingId = gridValues[0].trackingId || '';
+            updatedSubmission.dmpTrackingId = gridValues[0].dmpTrackingId || '';
         }
+        console.log(id);
+        console.log(id);
+        console.log(id);
+        
         model
             .findByIdAndUpdate(ObjectId(id), updatedSubmission, { new: true })
             .lean()
             .exec(function (err, submission) {
+                console.log(err);
+                console.log(submission);
+                
                 if (err || !submission) {
                     return apiResponse.errorResponse(res, 'Could not update submission.');
                 }
@@ -275,7 +283,7 @@ exports.submit = [
                 submissionToSubmit.formValues = formValues;
                 submissionToSubmit.gridValues = gridValues;
                 if (gridType === 'dmp') {
-                    submissionToSubmit.trackingId = gridValues[0].trackingId || '';
+                    submissionToSubmit.dmpTrackingId = gridValues[0].dmpTrackingId || '';
                 }
                 
                 //  save pre LIMS submit so data is safe
