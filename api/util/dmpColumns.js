@@ -17,11 +17,21 @@ const validationPatterns = {
     plateId: '^MSK-[A-Za-z0-9\\,_-]{10,}$',
 };
 export const deprecatedColumns = ['Index Position'];
+export const formattingAdjustments = {
+    'DMP ID': {
+        pattern: validationPatterns.dmpPatientId,
+        columnHeader: 'Investigator Patient ID',
+        tooltip: 'The patient DMP ID.',
+        error:
+            'DMP ID is incorrectly formatted, please correct, or speak to a project manager if unsure. The usual DMP Patient ID format is P-0000000.',
+        type: 'text',
+    },
+};
 export const gridColumns = {
     'Tracking ID': {
         name: 'Tracking ID',
         columnHeader: 'Tracking ID',
-        data: 'trackingId',
+        data: 'dmpTrackingId',
         pattern: validationPatterns.alphanumdash,
         error: 'Only letters, digits, - and _, please.',
         sendToDmp: true,
@@ -51,6 +61,8 @@ export const gridColumns = {
         data: 'studySampleIdentifier',
         pattern: validationPatterns.userId,
         error: 'Only letters, digits, - and _, please.',
+        uniqueError: 'Sample ID needs to be unique.',
+        containsSampleError: 'Sample ID cannot contain the word "sample" or "IGO-.',
     },
 
     'Sample Type': {
@@ -119,10 +131,10 @@ export const gridColumns = {
         data: 'Variant Allele Frequency',
         hiddenFrom: 'user',
     },
-    Coverage: {
-        name: 'Coverage',
-        columnHeader: 'Coverage',
-        data: 'Coverage',
+    'Requested Coverage': {
+        name: 'Requested Coverage',
+        columnHeader: 'Requested Coverage',
+        data: 'requestedCoverage',
         type: 'autocomplete',
         strict: true,
         error: 'Only dropdown options are permitted as values',
@@ -133,7 +145,7 @@ export const gridColumns = {
     'Investigator Patient ID': {
         name: 'Investigator Patient ID',
         columnHeader: 'Investigator Patient ID',
-        data: 'investigatorPatientId',
+        data: 'patientId',
         pattern: validationPatterns.alphanumdash,
         error: 'Only letters, digits, - and _, please.',
         hiddenFrom: 'user',
@@ -142,10 +154,12 @@ export const gridColumns = {
     'Investigator Sample ID': {
         name: 'Investigator Sample ID',
         columnHeader: 'Investigator Sample ID',
-        data: 'investigatorSampleId',
+        data: 'userId',
         pattern: validationPatterns.alphanumdash,
         error: 'Only letters, digits, - and _, please.',
         hiddenFrom: 'user',
+        uniqueError: 'Sample ID needs to be unique.',
+        containsSampleError: 'Sample ID cannot contain the word "sample" or "IGO-.',
     },
 
     'Additional Info': {
@@ -173,7 +187,7 @@ export const submissionColumns = {
 
     'Tracking ID': {
         name: 'Tracking ID',
-        data: 'trackingId',
+        data: 'dmpTrackingId',
         readOnly: 'true',
     },
 
@@ -387,7 +401,7 @@ export const dmpIntakeForms = {
         ['Project Title', 'Required'],
         ['Sample Approved by CMO', 'Optional'],
         ['Variant Allele Frequency', 'Optional'],
-        ['Coverage', 'Required'],
+        ['Requested Coverage', 'Required'],
         ['Investigator Provided Patient ID', 'Required'],
         ['Investigator Provided Sample ID', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
@@ -444,7 +458,7 @@ export const dmpIntakeForms = {
         ['Project Title', 'Required'],
         ['Sample Approved by CMO', 'Optional'],
         ['Variant Allele Frequency', 'Optional'],
-        ['Coverage', 'Required'],
+        ['Requested Coverage', 'Required'],
         ['Investigator Provided Patient ID', 'Required'],
         ['Investigator Provided Sample ID', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
