@@ -450,17 +450,17 @@ export const formattingAdjustments = {
         error: 'MRN is incorrectly formatted, please correct, or speak to a project manager if unsure.',
         type: 'text',
     },
-    'DMP ID': {
+    'DMP Patient ID': {
         pattern: validationPatterns.dmpPatientId,
-        columnHeader: 'DMP ID',
+        columnHeader: 'DMP Patient ID',
         tooltip: 'The patient DMP ID.',
         error:
             'DMP ID is incorrectly formatted, please correct, or speak to a project manager if unsure. The usual DMP Patient ID format is P-0000000.',
         type: 'text',
     },
-    'CMO ID': {
+    'CMO Patient ID': {
         pattern: validationPatterns.cmoId,
-        columnHeader: 'CMO ID',
+        columnHeader: 'CMO Patient ID',
         tooltip: 'The patient CMO ID.',
         error:
             'CMO ID is incorrectly formatted, please correct, or speak to a project manager if unsure. A CMO ID looks like this C-A1B2C3.',
@@ -519,8 +519,8 @@ export const submissionColumns = {
         readOnly: 'true',
         renderer: 'html',
     },
-    // 'DMP ID': {
-    //     name: 'DMP ID',
+    // 'DMP Patient ID': {
+    //     name: 'DMP Patient ID',
     //     data: 'dmpTrackingId',
     //     readOnly: 'true',
     // },
