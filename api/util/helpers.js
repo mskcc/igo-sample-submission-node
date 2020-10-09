@@ -917,7 +917,7 @@ export function parseDmpOutput(dmpOutput, submission) {
                         container: 'Plates',
                         groupingChecked: false,
                         patientIdType: 'MSK-Patients (or derived from MSK Patients)',
-                        patientIdTypeSpecified: 'DMP ID',
+                        patientIdTypeSpecified: 'DMP Patient ID',
                         serviceId: '000000',
                         species: 'Human',
                         numberOfSamples: numReturnedSamples,
@@ -1213,7 +1213,7 @@ export function handlePatientIds(ids, username) {
 
                         const idType = idElement.idType;
                         if (results[index]) {
-                            if (idType === 'CMO ID') {
+                            if (idType === 'CMO Patient ID') {
                                 cmoPatientId = _.isEmpty(results[index].CMO_ID) ? '' : idElement.patientId.toUpperCase();
 
                                 if (cmoPatientId === '') {
@@ -1226,7 +1226,7 @@ export function handlePatientIds(ids, username) {
                                 }
                             }
 
-                            if (idType === 'DMP ID') {
+                            if (idType === 'DMP Patient ID') {
                                 cmoPatientId = _.isEmpty(results[index].CMO_ID) ? '' : `C-${results[index].CMO_ID}`;
                                 if (cmoPatientId === '') {
                                     message = `PatientID ${idElement.patientId} could not be verified.`;
@@ -1302,7 +1302,7 @@ export function translateSqlSubmissions(sqlSubmissions) {
                 }
             }
             if (formValues.patientIdType === 'MSK-Patients (or derived from MSK Patients)') {
-                formValues.patientIdTypeSpecified = 'CMO ID';
+                formValues.patientIdTypeSpecified = 'CMO Patient ID';
             }
             let transactionId = submission.transaction_id || null;
             let createdAt = submission.created_on || null;
@@ -1365,8 +1365,8 @@ function selectIdService(idElement) {
     let idType = idElement.idType;
     let patientId = idElement.patientId.toUpperCase();
     if (idType === 'MRN' || idType === 'Cell Line Name') return crdbServices.getCrdbId(patientId);
-    if (idType === 'CMO ID') return crdbServices.verifyCmoId(patientId.replace('C-', ''));
-    if (idType === 'DMP ID') return crdbServices.verifyDmpId(patientId);
+    if (idType === 'CMO Patient ID') return crdbServices.verifyCmoId(patientId.replace('C-', ''));
+    if (idType === 'DMP Patient ID') return crdbServices.verifyDmpId(patientId);
 }
 export const toCamel = (s) => {
     return s.replace(/([-_][a-z])/gi, ($1) => {
