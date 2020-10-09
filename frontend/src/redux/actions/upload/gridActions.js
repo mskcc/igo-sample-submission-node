@@ -8,6 +8,7 @@ import { Config } from '../../../config.js';
 export const REGISTER_GRID_CHANGE = 'REGISTER_GRID_CHANGE';
 export const REGISTER_GRID_CHANGE_PRE_VALIDATE = 'REGISTER_GRID_CHANGE_PRE_VALIDATE';
 export const REGISTER_GRID_CHANGE_POST_VALIDATE = 'REGISTER_GRID_CHANGE_POST_VALIDATE';
+export const SET_VALIDATION_MESSAGE = 'SET_VALIDATION_MESSAGE';
 export const handleGridChange = (changes) => {
     return (dispatch, getState) => {
         dispatch({ type: REGISTER_GRID_CHANGE_PRE_VALIDATE, message: 'Validating...' });
@@ -331,11 +332,17 @@ export function loadFromDmp(dmpTrackingId, dmpSubmissionId, ownProps) {
                         filtered.map((element) => {
                             let issues = '';
                             Object.keys(element).forEach((key) => {
-                                if (key !== 'sample' && element && element[key]) {
+                                if (key !== 'sampleMatch' && element && element[key]) {
                                     issues += `<strong>${key}:</strong> ${element[key]}<br/>`;
                                 }
                             });
                             summary += `<ul style="text-align:left;">Sample ${element.sample}<br/>${issues}</ul>`;
+                        });
+                        dispatch({
+                            type: SET_VALIDATION_MESSAGE,
+                            errorMessage: summary,
+                            affectedRows: '',
+                            message: 'Parsed!',
                         });
                         swal.genericMessage('info', `Parsing Summary: ${summary}`);
                         return ownProps.history.push(`/${page}`);

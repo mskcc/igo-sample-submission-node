@@ -526,6 +526,8 @@ export const validateGrid = (changes, grid) => {
                 let valid = count <= 1;
                 if (!valid) {
                     affectedRows.add(rowIndex + 1);
+                    console.log(updatedGrid.columnFeatures[columnIndex]);
+                    
                     errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].uniqueError);
                     updatedGrid.rows[rowIndex][columnName] = '';
                     continue;

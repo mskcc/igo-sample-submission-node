@@ -354,8 +354,9 @@ exports.getAvailableProjectsFromDmp = (date) => {
 };
 
 // http://virgo1.mskcc.org:8090/display/PD/getCMOSampleRequestDetails
+// using trackingId not dmpTracking id in the URL
 exports.getProjectFromDmp = (dmpTrackingId) => {
-    const url = `${DMP_URL}/getCMOSampleRequestDetails?dmpTrackingId=${dmpTrackingId}`;
+    const url = `${DMP_URL}/getCMOSampleRequestDetails?trackingId=${dmpTrackingId}`;
     logger.log('info', `Sending request to ${url}`);
     return axios
         .get(url, {

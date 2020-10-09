@@ -301,7 +301,7 @@ exports.updateStatus = [
                 }
                 // console.log(availableTrackingIds);
                 DmpSubmissionModel.updateMany(
-                    { trackingId: { $in: [...availableTrackingIds] }, isAvailableAtDmp: false },
+                    { dmpTrackingId: { $in: [...availableTrackingIds] }, isAvailableAtDmp: false },
                     { isAvailableAtDmp: true }
                 )
                     .lean()
@@ -320,17 +320,17 @@ exports.updateStatus = [
 ];
 
 exports.loadFromDmp = [
-    body('trackingId').isLength({ min: 1 }).trim().withMessage('TrackingId must be present.'),
+    body('dmpTrackingId').isLength({ min: 1 }).trim().withMessage('TrackingId must be present.'),
     body('dmpSubmissionId').isMongoId().withMessage('dmpSubmissionId must be valid MongoDB ID.'),
     function (req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         } else {
-            let trackingId = req.body.trackingId;
+            let dmpTrackingId = req.body.dmpTrackingId;
             let dmpSubmissionId = req.body.dmpSubmissionId;
 
-            let dmpOutputPromise = services.getProjectFromDmp(trackingId);
+            let dmpOutputPromise = services.getProjectFromDmp(dmpTrackingId);
             let dmpSubmissionPromise = DmpSubmissionModel.findById(ObjectId(dmpSubmissionId)).lean();
 
             Promise.all([dmpOutputPromise, dmpSubmissionPromise])
@@ -355,7 +355,7 @@ exports.loadFromDmp = [
                             SubmissionModel.findOrCreateSub(relatedIgoSubmission_id, username).then((igoSubmission) => {
                                 igoSubmission.gridValues = translatedSubmission.gridValues;
                                 igoSubmission.formValues = translatedSubmission.formValues;
-                                igoSubmission.dmpTrackingId = trackingId;
+                                igoSubmission.dmpTrackingId = dmpTrackingId;
 
                                 igoSubmission.save(function (err) {
                                     if (err) {
@@ -370,7 +370,7 @@ exports.loadFromDmp = [
                                             console.log(err);
                                             return apiResponse.errorResponse(res, 'Retrieved DMP submission could not be updated.');
                                         }
-                                        console.log(issues);
+                                        // console.log(issues);
 
                                         return apiResponse.successResponseWithData(res, 'Submission saved.', {
                                             submission: igoSubmission._doc,
