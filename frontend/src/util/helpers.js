@@ -372,11 +372,12 @@ export const setPatientIds = (rows, ids) => {
     let updatedRows = JSON.parse(JSON.stringify(rows));
     Object.keys(ids).forEach((key) => {
         let idElement = ids[key];
+        let updatedRow = updatedRows[idElement.gridRowIndex];
         if ('result' in idElement) {
-            updatedRows[idElement.gridRowIndex].patientId = idElement.result.patientId;
-            updatedRows[idElement.gridRowIndex].cmoPatientId = idElement.result.cmoPatientId;
-            updatedRows[idElement.gridRowIndex].normalizedPatientId = idElement.result.normalizedPatientId;
-            if ('sex' in idElement.result) updatedRows[idElement.gridRowIndex].gender = idElement.result.sex;
+            updatedRow.patientId = idElement.result.patientId;
+            updatedRow.cmoPatientId = idElement.result.cmoPatientId;
+            updatedRow.normalizedPatientId = idElement.result.normalizedPatientId;
+            if ('sex' in idElement.result) updatedRow.gender = idElement.result.sex;
         }
     });
 

@@ -27,7 +27,14 @@ exports.headerValues = [
                 if (results.some((x) => x.length === 0)) {
                     return apiResponse.errorResponse(res, 'Could not retrieve picklists from LIMS.');
                 }
-                let [applicationsResult, materialsResult, speciesResult, patientIdTypesResult, patientIdTypesSpecResult, capturePanelResult] = results;
+                let [
+                    applicationsResult,
+                    materialsResult,
+                    speciesResult,
+                    patientIdTypesResult,
+                    patientIdTypesSpecResult,
+                    capturePanelResult,
+                ] = results;
 
                 let responseObject = {
                     applications: applicationsResult,
@@ -316,7 +323,7 @@ exports.patientIdToCid = [
 // DMP-ID to MRN to C-ID
 exports.deidentifyIds = [
     body('ids').isJSON().isLength({ min: 1 }).trim().withMessage('ids must be specified.'),
-    body('username').isLength({ min: 1 }).trim().withMessage('username must be specified.'),
+    body('username').optional(),
     function (req, res) {
         try {
             const errors = validationResult(req);
@@ -324,7 +331,11 @@ exports.deidentifyIds = [
                 return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
             } else {
                 let ids = JSON.parse(req.body.ids);
-                let username = req.body.username;
+                let username = res.user.username;
+                console.log(username);
+                
+                // if submission is being edited, username of original submission will be sent along
+                if (req.body.username) username = req.body.username;
                 util.handlePatientIds(ids, username)
                     .then((results) => {
                         if (results) {

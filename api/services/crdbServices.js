@@ -81,7 +81,7 @@ exports.verifyCmoId = (cmoId) => {
 
                     .then(function (result) {
                         connection.close();                
-                        // logger.log('info', 'Successfully retrieved response from CRDB');
+                        logger.log('info', 'Successfully retrieved response from CRDB for CMO ID query.');
                         resolve(formatDbResponse(result));
                     })
                     .catch(function (error) {
@@ -110,9 +110,7 @@ exports.verifyDmpId = (dmpId) => {
                     .execute('SELECT pt_mrn, cmo_id, dmp_id FROM crdb_cmo_loj_dmp_map WHERE dmp_id = :dmpId', [dmpId])
                     .then(function (result) {
                         connection.close();
-                        // logger.log('info', 'Successfully retrieved response from CRDB');
-                        // console.log(result);
-
+                        logger.log('info', 'Successfully retrieved response from CRDB for DMP ID query.');
                         resolve(formatDbResponse(result));
                     })
                     .catch(function (error) {
@@ -140,7 +138,7 @@ exports.mrnToDmpId = (mrn) => {
                     .execute('SELECT pt_mrn, cmo_id, dmp_id FROM crdb_cmo_loj_dmp_map WHERE pt_mrn = :mrn', [mrn])
                     .then(function (result) {
                         connection.close();
-                        // logger.log('info', 'Successfully retrieved response from CRDB');
+                        logger.log('info', 'Successfully retrieved response from CRDB');
                         resolve(formatDbResponse(result));
                     })
                     .catch(function (error) {

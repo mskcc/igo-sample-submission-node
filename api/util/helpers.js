@@ -1174,12 +1174,19 @@ export function handlePatientIds(ids, username) {
             logger.log('info', `Sending ${ids.length} patientIds to CRDB.`);
             let idBatch = ids.slice(lowerIndex, upperIndex);
             idBatch.forEach((element) => {
-                patientIdPromises.push(selectIdService(element));
+                patientIdPromises.push(selectIdService(element, username));
             });
 
             Promise.all(patientIdPromises)
                 .then((results) => {
                     resultIds.forEach((idElement, index) => {
+
+                        const inputPatientId = idElement.patientId;
+                        const resultCmoId = results[index].CMO_ID;
+
+                        // for cases where we use the CRDB service instead of the DB queries
+                        const resultPatientId = results[index].patientId;
+
                         idsProcessed++;
                         let normalizedPatientId = '';
                         let cmoPatientId = '';
@@ -1190,33 +1197,31 @@ export function handlePatientIds(ids, username) {
                         const idType = idElement.idType;
                         if (results[index]) {
                             if (idType === 'CMO Patient ID') {
-                                cmoPatientId = _.isEmpty(results[index].CMO_ID) ? '' : idElement.patientId.toUpperCase();
+                                cmoPatientId = _.isEmpty(resultCmoId) ? '' : inputPatientId.toUpperCase();
 
                                 if (cmoPatientId === '') {
-                                    message = `PatientID ${idElement.patientId} could not be verified.`;
+                                    message = `PatientID ${inputPatientId} could not be verified.`;
                                 } else {
-                                    normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId
-                                        .replace('C-', '')
-                                        .toUpperCase()}`;
-                                    finalPatientId = idElement.patientId.toUpperCase();
+                                    normalizedPatientId = `${username.toUpperCase()}_${inputPatientId.replace('C-', '').toUpperCase()}`;
+                                    finalPatientId = inputPatientId.toUpperCase();
                                 }
                             }
 
                             if (idType === 'DMP Patient ID') {
-                                cmoPatientId = _.isEmpty(results[index].CMO_ID) ? '' : `C-${results[index].CMO_ID}`;
+                                cmoPatientId = _.isEmpty(resultCmoId) ? '' : `C-${resultCmoId}`;
                                 if (cmoPatientId === '') {
-                                    message = `PatientID ${idElement.patientId} could not be verified.`;
+                                    message = `PatientID ${inputPatientId} could not be verified.`;
                                 } else {
-                                    normalizedPatientId = `${username.toUpperCase()}_${idElement.patientId.toUpperCase()}`;
-                                    finalPatientId = idElement.patientId.toUpperCase();
+                                    normalizedPatientId = `${username.toUpperCase()}_${inputPatientId.toUpperCase()}`;
+                                    finalPatientId = inputPatientId.toUpperCase();
                                 }
                             }
 
                             if (idType === 'MRN') {
-                                if (_.isEmpty(results[index].patientId)) {
+                                if (_.isEmpty(resultPatientId)) {
                                     message = `PatientID could not be de-identifed.`;
                                 } else {
-                                    cmoPatientId = `C-${results[index].patientId}`;
+                                    cmoPatientId = `C-${resultPatientId}`;
                                     normalizedPatientId = `${username.toUpperCase()}_${results[index].patientId}`;
                                     sex = results[index].sex;
                                     finalPatientId = MRN_REDACTED;
@@ -1227,9 +1232,17 @@ export function handlePatientIds(ids, username) {
                                 if (_.isEmpty(results[index].patientId)) {
                                     message = `PatientID could not be de-identifed.`;
                                 } else {
-                                    cmoPatientId = `C-${results[index].patientId}`;
-                                    normalizedPatientId = `CELLLINE_${results[index].patientId}`;
-                                    finalPatientId = idElement.patientId;
+                                    cmoPatientId = `C-${resultPatientId}`;
+                                    normalizedPatientId = `CELLLINE_${resultPatientId}`;
+                                    finalPatientId = inputPatientId;
+                                }
+                            } else {
+                                if (_.isEmpty(resultPatientId)) {
+                                    message = `PatientID could not be de-identifed.`;
+                                } else {
+                                    cmoPatientId = `C-${resultPatientId}`;
+                                    normalizedPatientId = `${username.toUpperCase()}_${resultPatientId}`;
+                                    finalPatientId = inputPatientId;
                                 }
                             }
                         }
@@ -1337,12 +1350,14 @@ function last7Days() {
     });
 }
 
-function selectIdService(idElement) {
+function selectIdService(idElement, username) {
     let idType = idElement.idType;
     let patientId = idElement.patientId.toUpperCase();
-    if (idType === 'MRN' || idType === 'Cell Line Name') return crdbServices.getCrdbId(patientId);
+    if (idType === 'MRN') return crdbServices.getCrdbId(patientId);
+    if (idType === 'Cell Line Name') return crdbServices.getCrdbId('CELLLINE_' + patientId);
     if (idType === 'CMO Patient ID') return crdbServices.verifyCmoId(patientId.replace('C-', ''));
     if (idType === 'DMP Patient ID') return crdbServices.verifyDmpId(patientId);
+    return crdbServices.getCrdbId(username + '_' + patientId);
 }
 export const toCamel = (s) => {
     return s.replace(/([-_][a-z])/gi, ($1) => {
