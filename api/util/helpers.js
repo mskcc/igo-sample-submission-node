@@ -257,59 +257,69 @@ const fillAdditionalRows = (columns, formValues) => {
 const fillData = (columns, formValues) => {
     return new Promise((resolve) => {
         let rowData = [];
+        let { material, numberOfSamples, application, species } = formValues;
 
-        let numberOfRows = formValues.numberOfSamples;
-        for (var i = 0; i < numberOfRows; i++) {
-            columns.columnFeatures.map((entry) => {
-                rowData[i] = { ...rowData[i], [entry.data]: '' };
-                if (entry.type === 'checkbox') {
-                    rowData[i] = { ...rowData[i], [entry.data]: false };
+        for (var i = 0; i < numberOfSamples; i++) {
+            columns.columnFeatures.map((colDef) => {
+                console.log(colDef);
+                
+                let datafieldName = colDef.data;
+                rowData[i] = { ...rowData[i], [datafieldName]: '' };
+                if (colDef.type === 'checkbox') {
+                    rowData[i] = { ...rowData[i], [datafieldName]: false };
                 }
-                if (entry.data === 'species' || entry.data === 'organism') {
+                if (datafieldName === 'species' || datafieldName === 'organism') {
                     rowData[i] = {
                         ...rowData[i],
-                        organism: formValues.species,
+                        organism: species,
                     };
                 }
-                if (entry.data === 'preservation') {
-                    if (formValues.material === 'Blood') {
+                if (datafieldName === 'preservation') {
+                    if (material === 'Blood') {
                         rowData[i] = {
                             ...rowData[i],
                             preservation: 'EDTA-Streck',
                         };
-                    } else if (formValues.material === 'Buffy Coat') {
+                    }
+                    if (material === 'Buffy Coat') {
                         rowData[i] = {
                             ...rowData[i],
                             preservation: 'Frozen',
                         };
                     }
+                    if (material === 'Cells' && application.toUpperCase().includes('10X')) {
+                        rowData[i] = {
+                            ...rowData[i],
+                            preservation: 'Fresh',
+                        };
+                    }
                 }
-                if (entry.data === 'sampleOrigin') {
-                    if (formValues.material === 'Blood') {
+                if (datafieldName === 'sampleOrigin') {
+                    if (material === 'Blood') {
                         rowData[i] = {
                             ...rowData[i],
                             sampleOrigin: 'Whole Blood',
                         };
-                    } else if (formValues.material === 'Buffy Coat') {
+                    } else if (material === 'Buffy Coat') {
                         rowData[i] = {
                             ...rowData[i],
                             sampleOrigin: 'Buffy Coat',
                         };
                     }
                 }
-                if (entry.data === 'specimenType') {
-                    if (formValues.material === 'Blood' || formValues.material === 'Buffy Coat') {
+                if (datafieldName === 'specimenType') {
+                    if (material === 'Blood' || material === 'Buffy Coat') {
                         rowData[i] = {
                             ...rowData[i],
                             specimenType: 'Blood',
                         };
                     }
                 }
-                if (entry.data === 'patientId' && entry.columnHeader === 'Cell Line Name') {
+                if (datafieldName === 'patientId' && colDef.columnHeader === 'Cell Line Name') {
                     rowData[i] = { ...rowData[i], specimenType: 'CellLine' };
                 }
             });
-            if (rowData.length === parseInt(numberOfRows)) {
+            if (rowData.length === parseInt(numberOfSamples)) {
                 columns.rowData = rowData;
                 resolve(columns);
             }
@@ -1180,7 +1190,6 @@ export function handlePatientIds(ids, username) {
             Promise.all(patientIdPromises)
                 .then((results) => {
                     resultIds.forEach((idElement, index) => {
-
                         const inputPatientId = idElement.patientId;
                         const resultCmoId = results[index].CMO_ID;
 

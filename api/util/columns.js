@@ -9,6 +9,7 @@ export const validationPatterns = {
     alphanum: '[0-9a-zA-Z]',
     alphanumFour: '[0-9a-zA-Z]{4,}',
     alphanumdash: '^[A-Za-z0-9](?!.*__)[A-Za-z0-9\\,_-]{2}[A-Za-z0-9\\,_-]*$',
+    // alphanumdash: '^[a-zA-Z0-9-_]+$',
     cmoId: '^C[-|_].{6}$',
     dmpSampleId: '^P-[0-9]{7}-.{3}-.{3}$',
     dmpPatientId: '^P-[0-9]{7}$',
@@ -168,8 +169,7 @@ export const gridColumns = {
         name: 'Requested Reads',
         columnHeader: 'Requested Reads',
         data: 'requestedReads',
-        tooltip:
-            'Please tell us how many reads you would us to generate per sample.',
+        tooltip: 'Please tell us how many reads you would us to generate per sample.',
         editableCellTemplate: 'ui-grid/dropdownEditor',
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
@@ -467,13 +467,16 @@ export const formattingAdjustments = {
         type: 'text',
     },
     'Non-MSK Patients': {
-        pattern: validationPatterns.alphanumDash,
+        pattern: validationPatterns.alphanumdash,
         columnHeader: 'Patient ID',
         error:
             'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
     },
     'Cell Lines, not from Patients': {
         columnHeader: 'Cell Line Name',
+        pattern: validationPatterns.alphanumdash,
+        error:
+            'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
     },
     'Strain or Line Name': {
         pattern: validationPatterns.alphanumFour,
