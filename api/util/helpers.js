@@ -528,8 +528,9 @@ export function addDmpColsToSubmissionGrid(submissions, grid, userRole) {
             rows[i].reviewedBy = submission.reviewedBy ? submission.reviewedBy : '';
             rows[i].dmpTrackingId = dmpTrackingId;
             rows[i].relatedIgoSubmission_id = submission.relatedIgoSubmission_id;
-            let isAvailableAtDmp = submission.isAvailableAtDmp;
-            // let isAvailableAtDmp = true;
+            // TODO
+            // let isAvailableAtDmp = submission.isAvailableAtDmp;
+            let isAvailableAtDmp = true;
             rows[i].loadFromDmp = `<span submitted=${isAvailableAtDmp} service-id=${dmpTrackingId} submission-id=${
                 submission.id
             } class="material-icons grid-action${isAvailableAtDmp ? '' : '-disabled'}">${
@@ -888,6 +889,14 @@ export function parseDmpOutput(dmpOutput, submission) {
         let dmpSamples = dmpOutput.content['CMO Sample Request Details'];
         let numReturnedSamples = Object.keys(dmpSamples).length;
         let promises = [];
+
+        if (numReturnedSamples === 1) {
+            if (dmpSamples[Object.keys(dmpSamples)[0]]['Well Position'] === '') {
+                reject('DMP only returned one sample without a Well Position. Cannot load DMP output.');
+                return;
+            }
+        }
+
         promises.push(cache.get('tumorType-Picklist', () => services.getOnco()));
         if (submission.formValues.material.includes('Library')) {
             promises.push(cache.get('barcodes-Picklist', () => services.getBarcodes()));
@@ -897,13 +906,6 @@ export function parseDmpOutput(dmpOutput, submission) {
 
             translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexResult).then((result) => {
                 let { igoSamples, translationIssues } = result;
-                let orderedTranslationIssues = {};
-
-                Object.keys(translationIssues)
-                    .sort()
-                    .forEach(function (key) {
-                        orderedTranslationIssues[key] = translationIssues[key];
-                    });
 
                 igoSamples.sort(compareByWellPosition);
 
@@ -924,9 +926,9 @@ export function parseDmpOutput(dmpOutput, submission) {
                     },
                 };
                 delete parsedSubmission.formValues._id;
-                translationIssues.push({
-                    sampleMatch: `${submission.gridValues.length} total samples in original submission, ${numReturnedSamples} returned from DMP.`,
-                });
+                translationIssues.unshift(
+                    `Summary: ${submission.gridValues.length} total samples in original submission, ${numReturnedSamples} returned from DMP.`
+                );
                 resolve({ parsedSubmission, translationIssues });
             });
         });
@@ -963,14 +965,18 @@ export function parseDmpOutput(dmpOutput, submission) {
 // Investigator = Original Submitter
 // RequestedReads = Added By PM
 // ServiceId = Added By PM
+// TODO Refactor: Only do CRDB if PatientID needed in IGO. Same with ONCO.
 function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexResult) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         let igoSamples = [];
         let translationIssues = [];
+        let patientIds = new Set([]);
         const hasIndex = submission.formValues.material.includes('Library');
 
         Object.keys(dmpSamples).forEach((element, index) => {
-            let rowIssues = {};
+            // console.log(index);
+
+            let rowIssues = [];
 
             const dmpSample = dmpSamples[element];
             const dmpPatientId = dmpSample['DMP ID'];
@@ -989,26 +995,32 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
                 igoTumorType,
                 igoCmoPatientId,
                 igoNormalizedPatientId;
+
             let hasCoverage = false;
 
             // ? DMP ID or Investigator Sample ID to get Patient ID?
             igoUserId = dmpSample['Investigator Sample ID'];
             igoPatientId = dmpPatientId.match(/P-[0-9]{7}/)[0];
+            patientIds.add(igoPatientId);
             const originalSample = submission.gridValues.find((element) => element.userId === igoUserId);
+
             if (!originalSample) {
-                rowIssues.userId = `Sample ${igoUserId} received from DMP but not found in original submission.`;
+                rowIssues.push(`Sample received from DMP but not found in original submission.`);
             } else {
                 hasCoverage = 'requestedCoverage' in originalSample;
-                console.log('COVERAGE');
-                console.log('COVERAGE');
-                console.log('COVERAGE');
             }
 
-            if (dmpWellPosition == '') return;
             igoWellPosition = dmpWellPosition;
             var wellPosMatch = /([A-Za-z]+)(\d+)/.exec(igoWellPosition);
             if (!wellPosMatch) {
-                rowIssues.wellPosition = `Invalid Well Position ${igoWellPosition}, this will affect sorting and needs to be resolved prior to submission.`;
+                rowIssues.push(
+                    `Invalid Well Position ${igoWellPosition}, this will affect sorting and needs to be resolved prior to submission.`
+                );
+            }
+
+            if (dmpWellPosition === '') {
+                rowIssues.push(`No WellPosition received ${igoWellPosition}, sample skipped.`);
+                return;
             }
 
             igoPreservation = dmpPreservation === 'Blood' ? 'EDTA-Streck' : dmpPreservation;
@@ -1026,70 +1038,80 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
                 igoSpecimenType = dmpSpecimenType.charAt(0).toUpperCase() + dmpSpecimenType.slice(1);
             }
 
-            let oncoMatchPromise = findOncoMatch(dmpTumorType, dmpSampleClass, oncoResult);
+            let oncoMatch = findOncoMatch(dmpTumorType, dmpSampleClass, oncoResult);
+
             let verifyDmpIdPromise = crdbServices.verifyDmpId(igoPatientId);
-            let promises = [];
-            promises.push(verifyDmpIdPromise);
-            promises.push(oncoMatchPromise);
+            // let promises = [];
+            // promises.push(verifyDmpIdPromise);
+            // promises.push(oncoMatchPromise);
 
-            Promise.all(promises).then((results) => {
-                let [crdbResult, oncoMatch] = results;
+            // Promise.all(promises)
+            //     .then((results) => {
+            //         let [crdbResult, oncoMatch] = results;
+            verifyDmpIdPromise
+                .then((crdbResult) => {
+                    if (oncoMatch.status !== '') rowIssues.push(oncoMatch.status);
+                    // console.log(igoPatientId);
+                    igoTumorType = oncoMatch.tumorType;
 
-                if (oncoMatch.status !== '') rowIssues.tumorType = oncoMatch.status;
-                igoTumorType = oncoMatch.tumorType;
-                if (!crdbResult.CMO_ID) {
-                    rowIssues.cmoPatientId = `Could not de-identify ${igoPatientId}, no match found in CRDB.`;
-                    igoPatientId = '';
-                    igoCmoPatientId = '';
-                    igoNormalizedPatientId = '';
-                } else {
-                    igoCmoPatientId = `C-${crdbResult.CMO_ID}`;
-                    igoNormalizedPatientId = `C-${crdbResult.CMO_ID}`;
-                }
-
-                let igoSample = {
-                    vol: dmpSample['Volume (ul)'],
-                    concentration: dmpSample['Concentration (ng/ul)'],
-                    wellPosition: 'wellPosition' in rowIssues ? `Invalid: ${igoWellPosition}` : igoWellPosition,
-                    plateId: dmpSample['Barcode/Plate ID'],
-                    gender: dmpSample['Sex'],
-                    collectionYear: dmpSample['Collection Year'],
-                    organism: 'Human',
-                    // not tumorType. unclear why.
-                    cancerType: igoTumorType,
-                    preservation: igoPreservation,
-                    sampleOrigin: igoSampleOrigin,
-                    sampleClass: igoSampleClass,
-                    specimenType: igoSpecimenType,
-                    userId: igoUserId,
-                    patientId: igoPatientId,
-                    cmoPatientId: igoCmoPatientId,
-                    normalizedPatientId: igoNormalizedPatientId,
-                };
-
-                if (hasIndex) {
-                    let igoIndex = dmpSample['Index'].replace('DMP0', '');
-                    let indexMatch = indexResult[igoIndex];
-                    if (!indexMatch) {
-                        rowIssues.index = `${igoIndex} is not known to IGO.`;
+                    if (!crdbResult.CMO_ID) {
+                        rowIssues.push(`Could not de-identify ${igoPatientId}, no match found in CRDB.`);
+                        igoPatientId = '';
+                        igoCmoPatientId = '';
+                        igoNormalizedPatientId = '';
+                    } else {
+                        igoCmoPatientId = `C-${crdbResult.CMO_ID}`;
+                        igoNormalizedPatientId = `${submission.username.toUpperCase()}_C-${crdbResult.CMO_ID}`;
                     }
-                    igoSample = {
-                        ...igoSample,
-                        index: igoIndex,
-                        indexSequence: indexMatch || '',
+
+                    let igoSample = {
+                        vol: dmpSample['Volume (ul)'],
+                        concentration: dmpSample['Concentration (ng/ul)'],
+                        wellPosition: rowIssues.some((el) => el.includes('Well Pos')) ? `Invalid: ${igoWellPosition}` : igoWellPosition,
+                        plateId: dmpSample['Barcode/Plate ID'],
+                        gender: dmpSample['Sex'],
+                        collectionYear: dmpSample['Collection Year'],
+                        organism: 'Human',
+                        // not tumorType. unclear why.
+                        cancerType: igoTumorType,
+                        preservation: igoPreservation,
+                        sampleOrigin: igoSampleOrigin,
+                        sampleClass: igoSampleClass,
+                        specimenType: igoSpecimenType,
+                        userId: igoUserId,
+                        patientId: igoPatientId,
+                        cmoPatientId: igoCmoPatientId,
+                        normalizedPatientId: igoNormalizedPatientId,
                     };
-                }
-                if (hasCoverage) igoSample.requestedCoverage = originalSample.requestedCoverage;
 
-                igoSamples.push(igoSample);
-                if (!_.isEmpty(rowIssues)) {
-                    translationIssues[index] = { sample: igoUserId, ...rowIssues };
-                }
+                    if (hasIndex) {
+                        let igoIndex = dmpSample['Index'].replace('DMP0', '');
+                        let indexMatch = indexResult[igoIndex];
+                        if (!indexMatch) {
+                            rowIssues.push(`${igoIndex} is not known to IGO.`);
+                        }
+                        igoSample = {
+                            ...igoSample,
+                            index: igoIndex,
+                            indexSequence: indexMatch || '',
+                        };
+                    }
+                    if (hasCoverage) igoSample.requestedCoverage = originalSample.requestedCoverage;
 
-                if (Object.keys(dmpSamples).length === index + 1) {
-                    resolve({ igoSamples: igoSamples, translationIssues });
-                }
-            });
+                    if (rowIssues.length > 0) {
+                        translationIssues[index] = `${igoUserId}: ${rowIssues.join('–')}`;
+                    }
+                    igoSamples.push(igoSample);
+                    if (Object.keys(dmpSamples).length === index + 1) {
+                        // handlePatientIds([...patientIds]).then((result) => console.log(result));
+
+                        resolve({ igoSamples: igoSamples, translationIssues });
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    reject(error);
+                });
         });
     });
 }
@@ -1099,8 +1121,7 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
 //     const dmpOutputSampleIds = Object.keys(dmpSamples);
 //     const dmpInputSampleIds = [];
 //     getApprovedSamples(translatedSubmission).forEach((sample) => dmpInputSampleIds.push(sample.dmpSampleId));
-//     // console.log(dmpOutputSampleIds);
-//     // console.log(dmpInputSampleIds);
+
 //     if (isEqual(dmpOutputSampleIds, dmpInputSampleIds)) {
 //         return 'We received all submitted (and approved) samples';
 //     } else {
@@ -1154,26 +1175,18 @@ function compareByWellPosition(a, b) {
  * @return {object} {tumorType: string, status: string}
  */
 function findOncoMatch(tumorType, sampleClass, oncoResult) {
-    return new Promise((resolve) => {
-        let tumorTypeToMatch = tumorType.split(':')[1];
-        if (tumorType.split(':')[0] === 'N/A') {
-            resolve({ status: '', tumorType: 'Normal' });
-            return;
-        }
-        // console.log(tumorTypeToMatch);
-        // console.log(tumorType);
-        var match = oncoResult.find((a) => a.includes(tumorTypeToMatch));
-        if (match) {
-            let tumorId = match.split(': ')[1];
+    let tumorTypeToMatch = tumorType.split(':')[1];
+    if (tumorType.split(':')[0] === 'N/A') {
+        return { status: '', tumorType: 'Normal' };
+    }
+    var match = oncoResult.find((a) => a.includes(tumorTypeToMatch));
+    if (match) {
+        let tumorId = match.split(': ')[1];
 
-            resolve({ status: `Closest match found for "${tumorType}" was "${tumorTypeToMatch}"`, tumorType: tumorId });
-            return;
-        } else {
-            resolve({ status: `No match found for: "${tumorType}"`, tumorType: tumorType });
-
-            return;
-        }
-    });
+        return { status: `Closest match found for "${tumorType}" was "${tumorTypeToMatch}"`, tumorType: tumorId };
+    } else {
+        return { status: `No match found for: "${tumorType}"`, tumorType: tumorType };
+    }
 }
 
 // All investigator entered patient IDs are sent to the CRDB for anonymization. This is done in batches of 10 parallel requests at a time.
@@ -1195,10 +1208,11 @@ export function handlePatientIds(ids, username) {
             let lowerIndex = batchesProcessed * CRDB_MAX_REQUESTS;
             // 0 = CRDB_MAX_REQUESTS, 1 = 20, 2 = 30
             let upperIndex = (batchesProcessed + 1) * CRDB_MAX_REQUESTS;
-            logger.log('info', `Sending ${ids.length} patientIds to CRDB.`);
+
             let idBatch = ids.slice(lowerIndex, upperIndex);
             idBatch.forEach((element) => {
                 patientIdPromises.push(selectIdService(element));
+                logger.log('info', `Sending ${element.idType} to CRDB.`);
             });
 
             Promise.all(patientIdPromises)
@@ -1281,7 +1295,6 @@ export function translateSqlSubmissions(sqlSubmissions) {
 
         try {
             let formValues = JSON.parse(submission.form_values);
-            console.log(formValues);
             if (typeof formValues == 'string') {
                 formValues = JSON.parse(formValues);
             }

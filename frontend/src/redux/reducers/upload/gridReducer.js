@@ -30,14 +30,14 @@ export default function gridReducer(state = initialGridState, action) {
                 rows: action.payload.grid.rows,
                 validation: { message: action.payload.errorMessage, affectedRows: action.payload.affectedRows },
             };
-            case ActionTypes.SET_VALIDATION_MESSAGE:
+        case ActionTypes.SET_VALIDATION_MESSAGE:
+            console.log(action.payload);
+
             return {
                 ...state,
                 gridIsLoading: false,
-                rows: action.payload.grid.rows,
                 validation: { message: action.payload.errorMessage, affectedRows: action.payload.affectedRows },
             };
-            
 
         case ActionTypes.CLEAR_EMPTY_IDS:
             return {

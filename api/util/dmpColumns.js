@@ -47,9 +47,29 @@ export const gridColumns = {
         sendToDmp: true,
     },
 
+    'Investigator Patient ID': {
+        name: 'Investigator Patient ID',
+        columnHeader: 'Investigator Patient ID',
+        data: 'patientId',
+        pattern: validationPatterns.alphanumdash,
+        error: 'Only letters, digits, - and _, please.',
+        hiddenFrom: 'user',
+    },
+
+    'Investigator Sample ID': {
+        columnHeader: 'Investigator Sample ID',
+        data: 'userId',
+        pattern: validationPatterns.alphanumdash,
+        error: 'Only letters, digits, - and _, please.',
+        hiddenFrom: 'user',
+        uniqueError: 'Sample ID needs to be unique.',
+        containsSampleError: 'Sample ID cannot contain the word "sample" or "IGO-.',
+    },
+
+    // Used by CMO PMs for WES requests
     'Investigator Provided Patient ID': {
         name: 'Investigator Provided Patient ID',
-        columnHeader: 'Investigator Patient ID',
+        columnHeader: 'Investigator Provided Patient ID',
         data: 'studySubjectIdentifier',
         pattern: validationPatterns.alphanumdash,
         error: 'Only letters, digits, - and _, please.',
@@ -57,7 +77,7 @@ export const gridColumns = {
 
     'Investigator Provided Sample ID': {
         name: 'Investigator Provided Sample ID',
-        columnHeader: 'Investigator Sample ID',
+        columnHeader: 'Investigator Provided Sample ID',
         data: 'studySampleIdentifier',
         pattern: validationPatterns.userId,
         error: 'Only letters, digits, - and _, please.',
@@ -128,7 +148,7 @@ export const gridColumns = {
     'Variant Allele Frequency': {
         name: 'Variant Allele Frequency',
         columnHeader: 'Variant Allele Frequency',
-        data: 'Variant Allele Frequency',
+        data: 'variantAlleleFrequency',
         hiddenFrom: 'user',
     },
     'Requested Coverage': {
@@ -142,25 +162,7 @@ export const gridColumns = {
         hiddenFrom: 'user',
     },
 
-    'Investigator Patient ID': {
-        name: 'Investigator Patient ID',
-        columnHeader: 'Investigator Patient ID',
-        data: 'patientId',
-        pattern: validationPatterns.alphanumdash,
-        error: 'Only letters, digits, - and _, please.',
-        hiddenFrom: 'user',
-    },
-
-    'Investigator Sample ID': {
-        name: 'Investigator Sample ID',
-        columnHeader: 'Investigator Sample ID',
-        data: 'userId',
-        pattern: validationPatterns.alphanumdash,
-        error: 'Only letters, digits, - and _, please.',
-        hiddenFrom: 'user',
-        uniqueError: 'Sample ID needs to be unique.',
-        containsSampleError: 'Sample ID cannot contain the word "sample" or "IGO-.',
-    },
+    
 
     'Additional Info': {
         name: 'Additional Info',

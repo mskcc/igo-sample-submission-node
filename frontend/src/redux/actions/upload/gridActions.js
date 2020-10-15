@@ -269,7 +269,6 @@ export function populateGridFromSubmission(submissionId, ownProps) {
                             );
                         }
                         let type = page === 'dmp' ? GET_DMP_SUBMISSION_TO_EDIT_SUCCESS : GET_SUBMISSION_TO_EDIT_SUCCESS;
-                        console.log(submission);
 
                         dispatch({
                             type: type,
@@ -301,6 +300,7 @@ export function populateGridFromSubmission(submissionId, ownProps) {
 export const LOAD_FROM_DMP = 'LOAD_FROM_DMP';
 export const LOAD_FROM_DMP_FAIL = 'LOAD_FROM_DMP_FAIL';
 export const LOAD_FROM_DMP_SUCCESS = 'LOAD_FROM_DMP_SUCCESS';
+
 export function loadFromDmp(dmpTrackingId, dmpSubmissionId, ownProps) {
     return (dispatch, getState) => {
         dispatch({ type: LOAD_FROM_DMP, message: 'Loading and parsing submission from DMP...', loading: true });
@@ -315,7 +315,6 @@ export function loadFromDmp(dmpTrackingId, dmpSubmissionId, ownProps) {
                 Promise.all([columnPromise])
                     .then(() => {
                         let type = GET_DMP_SUBMISSION_TO_EDIT_SUCCESS;
-                        console.log(submission);
 
                         dispatch({
                             type: type,
@@ -325,31 +324,18 @@ export function loadFromDmp(dmpTrackingId, dmpSubmissionId, ownProps) {
                             },
                             message: 'Parsed!',
                         });
-                        let summary = '';
-                        let filtered = resp.payload.issues.filter((element) => element);
-                        let sampleMatch = filtered.filter((element) => 'sampleMatch' in element)[0];
-                        summary += sampleMatch.sampleMatch;
-                        filtered.map((element) => {
-                            let issues = '';
-                            Object.keys(element).forEach((key) => {
-                                if (key !== 'sampleMatch' && element && element[key]) {
-                                    issues += `<strong>${key}:</strong> ${element[key]}<br/>`;
-                                }
-                            });
-                            summary += `<ul style="text-align:left;">Sample ${element.sample}<br/>${issues}</ul>`;
-                        });
                         dispatch({
                             type: SET_VALIDATION_MESSAGE,
-                            errorMessage: summary,
-                            affectedRows: '',
+                            payload: { errorMessage: resp.payload.issues, affectedRows: [] },
                             message: 'Parsed!',
                         });
-                        swal.genericMessage('info', `Parsing Summary: ${summary}`);
                         return ownProps.history.push(`/${page}`);
                     })
                     .catch((error) => {
+                        console.log(error);
+
                         return dispatch({
-                            type: GET_SUBMISSION_TO_EDIT_FAIL,
+                            type: LOAD_FROM_DMP_FAIL,
                             error: error,
                         });
                     });
@@ -410,14 +396,12 @@ export function handlePatientIds(grid, ids, emptyIds, username) {
         return services
             .handlePatientIds(data)
             .then((response) => {
-                console.log(response);
                 let validationResult = { message: [], affectedRows: [] };
 
                 response.payload.idResults.forEach((element) => {
                     if ('result' in element && 'message' in element.result) {
                         validationResult.message.push(element.result.message);
                         validationResult.affectedRows.push(element.gridRowIndex);
-                        console.log(element);
                     }
                 });
 

@@ -379,6 +379,8 @@ exports.loadFromDmp = [
                                     });
                                 });
                             });
+                        })  .catch((reasons) => {
+                            return apiResponse.errorResponse(res, reasons);
                         });
                     }
                 })

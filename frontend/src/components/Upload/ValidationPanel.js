@@ -41,13 +41,16 @@ const ValidationPanel = ({ validation, classes }) => (
                 <br></br>
                 {validation.message.map((element, index) => (
                     <span key={index} className={classes.valElement}>
-                        {element.replace(':', ':   ')}
+                        {element}
                         <br></br>
                     </span>
                 ))}
-                <span className={classes.valLastElement}>
-                    To avoid mistakes, incorrect values have been cleared.<br></br>Affected row(s): {validation.affectedRows.join(', ')}.
-                </span>
+
+                {validation.affectedRows.length > 0 && (
+                    <span className={classes.valLastElement}>
+                        To avoid mistakes, incorrect values have been cleared.<br></br>Affected row(s): {validation.affectedRows.join(', ')}
+                    </span>
+                )}
             </Typography>
         ) : (
             <Typography>
