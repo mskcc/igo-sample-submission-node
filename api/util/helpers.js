@@ -261,8 +261,6 @@ const fillData = (columns, formValues) => {
 
         for (var i = 0; i < numberOfSamples; i++) {
             columns.columnFeatures.map((colDef) => {
-                console.log(colDef);
-                
                 let datafieldName = colDef.data;
                 rowData[i] = { ...rowData[i], [datafieldName]: '' };
                 if (colDef.type === 'checkbox') {
@@ -1214,9 +1212,7 @@ export function handlePatientIds(ids, username) {
                                     normalizedPatientId = `${username.toUpperCase()}_${inputPatientId.replace('C-', '').toUpperCase()}`;
                                     finalPatientId = inputPatientId.toUpperCase();
                                 }
-                            }
-
-                            if (idType === 'DMP Patient ID') {
+                            } else if (idType === 'DMP Patient ID') {
                                 cmoPatientId = _.isEmpty(resultCmoId) ? '' : `C-${resultCmoId}`;
                                 if (cmoPatientId === '') {
                                     message = `PatientID ${inputPatientId} could not be verified.`;
@@ -1224,9 +1220,7 @@ export function handlePatientIds(ids, username) {
                                     normalizedPatientId = `${username.toUpperCase()}_${inputPatientId.toUpperCase()}`;
                                     finalPatientId = inputPatientId.toUpperCase();
                                 }
-                            }
-
-                            if (idType === 'MRN') {
+                            } else if (idType === 'MRN') {
                                 if (_.isEmpty(resultPatientId)) {
                                     message = `PatientID could not be de-identifed.`;
                                 } else {
@@ -1235,9 +1229,7 @@ export function handlePatientIds(ids, username) {
                                     sex = results[index].sex;
                                     finalPatientId = MRN_REDACTED;
                                 }
-                            }
-
-                            if (idType === 'Cell Line Name') {
+                            } else if (idType === 'Cell Line Name') {
                                 if (_.isEmpty(results[index].patientId)) {
                                     message = `PatientID could not be de-identifed.`;
                                 } else {
@@ -1258,6 +1250,7 @@ export function handlePatientIds(ids, username) {
 
                         resultIds[index].result = { cmoPatientId, normalizedPatientId, patientId: finalPatientId };
                         if (sex !== '') resultIds[index].result.sex = sex;
+
                         if (message !== '') resultIds[index].result.message = message;
                         if (resultIds.length === idsProcessed) {
                             resolve(resultIds);

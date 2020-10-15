@@ -397,7 +397,6 @@ export function handlePatientIds(grid, ids, emptyIds, username) {
                     if ('result' in element && 'message' in element.result) {
                         validationResult.message.push(element.result.message);
                         validationResult.affectedRows.push(element.gridRowIndex);
-                        console.log(element);
                     }
                 });
 
