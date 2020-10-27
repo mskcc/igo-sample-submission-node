@@ -44,11 +44,13 @@ export const handleGridChange = (changes) => {
 
                         handlePatientIds(validatedGrid, nonEmptyIds, emptyIds, username)
                             .then((patientIdResult) => {
+                                console.log('handlePatientIds Result', patientIdResult);
+
                                 validationResult = {
                                     ...validationResult,
                                     grid: { ...validatedGrid, rows: patientIdResult.rows },
-                                    errorMessage: [...validationResult.errorMessage, ...patientIdResult.validationResult.message],
-                                    affectedRows: [...validationResult.affectedRows, ...patientIdResult.validationResult.affectedRows],
+                                    errorMessage: [...validationResult.errorMessage, ...patientIdResult.message],
+                                    affectedRows: [...validationResult.affectedRows, ...patientIdResult.affectedRows],
                                 };
                                 let message = 'clear';
                                 if (validationResult.errorMessage.length > 0)
@@ -60,6 +62,7 @@ export const handleGridChange = (changes) => {
                                 });
                             })
                             .catch((error) => {
+                                console.log(error);
                                 validatedGrid.rows.map((element) => (element.patientId = ''));
                                 dispatch({
                                     type: REGISTER_GRID_CHANGE_POST_VALIDATE,
@@ -390,25 +393,19 @@ export function handlePatientIds(grid, ids, emptyIds, username) {
         return services
             .handlePatientIds(data)
             .then((response) => {
-                console.log(response);
-                let validationResult = { message: [], affectedRows: [] };
-
-                response.payload.idResults.forEach((element) => {
-                    if ('result' in element && 'message' in element.result) {
-                        validationResult.message.push(element.result.message);
-                        validationResult.affectedRows.push(element.gridRowIndex);
-                    }
-                });
-
-                if (validationResult.message.length !== 0) {
-                    validationResult.message.push(
-                        'Please try MRN instead. You can enter MRNs in the current ID column without generating a new grid.'
-                    );
+                let message = [];
+                let affectedRows = [];
+                let failedIds = response.payload.idResults.filter((element) => element.message);
+                if (failedIds) {
+                    failedIds.forEach((element) => {
+                        message.push(element.message);
+                        affectedRows.push(element.gridRowIndex);
+                    });
+                    message.push('You can use MRNs as Patient IDs for any Patient ID Type.');
                 }
-                resolve({
-                    rows: util.setPatientIds(rows, response.payload.idResults),
-                    validationResult,
-                });
+                let result = { rows: util.setPatientIds(rows, response.payload.idResults), message, affectedRows };
+
+                resolve(result);
             })
             .catch((error) => {
                 reject({

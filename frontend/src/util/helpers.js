@@ -370,17 +370,17 @@ export const getPatientIdsFromChanges = (changes, idType) => {
 
 export const setPatientIds = (rows, ids) => {
     let updatedRows = JSON.parse(JSON.stringify(rows));
-    Object.keys(ids).forEach((key) => {
-        let idElement = ids[key];
+    ids.forEach((idElement) => {
         let updatedRow = updatedRows[idElement.gridRowIndex];
-        if ('result' in idElement) {
-            updatedRow.patientId = idElement.result.patientId;
-            updatedRow.cmoPatientId = idElement.result.cmoPatientId;
-            updatedRow.normalizedPatientId = idElement.result.normalizedPatientId;
-            if ('sex' in idElement.result) updatedRow.gender = idElement.result.sex;
+        try {
+            updatedRow.patientId = idElement.finalPatientId;
+            updatedRow.cmoPatientId = idElement.cmoPatientId;
+            updatedRow.normalizedPatientId = idElement.normalizedPatientId;
+            if ('sex' in idElement) updatedRow.gender = idElement.sex;
+        } catch (error) {
+            console.log(error);
         }
     });
-
     return updatedRows;
 };
 

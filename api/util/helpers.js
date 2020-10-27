@@ -5,6 +5,7 @@ const { constants } = require('./constants');
 const submitColumns = require('./columns');
 import CacheService from './cache';
 import { v4 as uuidv4 } from 'uuid';
+const fs = require('fs');
 
 var _ = require('lodash');
 // import { isMatch } from 'lodash';
@@ -1170,101 +1171,79 @@ export function handlePatientIds(ids, username) {
     return new Promise((resolve, reject) => {
         let patientIdPromises = [];
 
-        let resultIds = JSON.parse(JSON.stringify(ids));
-        let idsProcessed = 0;
-        //  send CRDB requests in batches of ten.
-        let numBatches = Math.ceil(ids.length / CRDB_MAX_REQUESTS);
-        for (let batchesProcessed = 0; batchesProcessed < numBatches; batchesProcessed++) {
-            //  0 = 0, 1 = CRDB_MAX_REQUESTS, 2 = 20
-            let lowerIndex = batchesProcessed * CRDB_MAX_REQUESTS;
-            // 0 = CRDB_MAX_REQUESTS, 1 = 20, 2 = 30
-            let upperIndex = (batchesProcessed + 1) * CRDB_MAX_REQUESTS;
-            logger.log('info', `Sending ${ids.length} patientIds to CRDB.`);
-            let idBatch = ids.slice(lowerIndex, upperIndex);
-            idBatch.forEach((element) => {
-                patientIdPromises.push(selectIdService(element, username));
-            });
+        const idsByType = sortPatientIdsByType(ids, username);
 
-            Promise.all(patientIdPromises)
-                .then((results) => {
-                    resultIds.forEach((idElement, index) => {
-                        const inputPatientId = idElement.patientId;
-                        const resultCmoId = results[index].CMO_ID;
+        // add crdb queries for each type of id, add empty promises if id type is not present on request so that Promise.all has reliable return value and order of dmp, cmo and standard ids
+        if (!_.isEmpty(idsByType.standardPatientIds)) {
+            let ids = [];
+            idsByType.standardPatientIds.forEach((element) => ids.push(element.patientId));
+            patientIdPromises.push(crdbServices.getCrdbIds(ids));
+            countIdRequests('STANDARD ID', username);
+        } else patientIdPromises.push([]);
+        if (!_.isEmpty(idsByType.dmpPatientIds)) {
+            let { query, bindValues } = generateCrdbDbStatement(idsByType.dmpPatientIds, 'dmp_id');
+            patientIdPromises.push(crdbServices.crdbDbQuery(query, bindValues));
+            countIdRequests('DMP ID', username);
+        } else patientIdPromises.push([]);
+        if (!_.isEmpty(idsByType.cmoPatientIds)) {
+            let { query, bindValues } = generateCrdbDbStatement(idsByType.cmoPatientIds, 'cmo_id');
+            patientIdPromises.push(crdbServices.crdbDbQuery(query, bindValues));
+            countIdRequests('CMO ID', username);
+        } else patientIdPromises.push([]);
 
-                        // for cases where we use the CRDB service instead of the DB queries
-                        const resultPatientId = results[index].patientId;
+        Promise.all(patientIdPromises)
+            .then((result) => {
+                let resultIds = result.flat();
+                let deIdentifiedIds = JSON.parse(JSON.stringify(ids));
 
-                        idsProcessed++;
-                        let normalizedPatientId = '';
-                        let cmoPatientId = '';
-                        let finalPatientId = '';
-                        let sex = '';
-                        let message = '';
+                deIdentifiedIds.forEach((idElement) => {
+                    // idsProcessed++;
+                    let inputId = idElement.patientId;
+                    let resultIdMatch = resultIds.find(
+                        (resultIdElement) =>
+                            resultIdElement.patientId === inputId.replace('C-', '') ||
+                            resultIdElement.dmpId === inputId ||
+                            resultIdElement.mrn === inputId
+                    );
+                    if (resultIdMatch) {
+                        console.log(resultIdMatch);
 
-                        const idType = idElement.idType;
-                        if (results[index]) {
-                            if (idType === 'CMO Patient ID') {
-                                cmoPatientId = _.isEmpty(resultCmoId) ? '' : inputPatientId.toUpperCase();
-
-                                if (cmoPatientId === '') {
-                                    message = `PatientID ${inputPatientId} could not be verified.`;
-                                } else {
-                                    normalizedPatientId = `${username.toUpperCase()}_${inputPatientId.replace('C-', '').toUpperCase()}`;
-                                    finalPatientId = inputPatientId.toUpperCase();
-                                }
-                            } else if (idType === 'DMP Patient ID') {
-                                cmoPatientId = _.isEmpty(resultCmoId) ? '' : `C-${resultCmoId}`;
-                                if (cmoPatientId === '') {
-                                    message = `PatientID ${inputPatientId} could not be verified.`;
-                                } else {
-                                    normalizedPatientId = `${username.toUpperCase()}_${inputPatientId.toUpperCase()}`;
-                                    finalPatientId = inputPatientId.toUpperCase();
-                                }
-                            } else if (idType === 'MRN') {
-                                if (_.isEmpty(resultPatientId)) {
-                                    message = `PatientID could not be de-identifed.`;
-                                } else {
-                                    cmoPatientId = `C-${resultPatientId}`;
-                                    normalizedPatientId = `${username.toUpperCase()}_${results[index].patientId}`;
-                                    sex = results[index].sex;
-                                    finalPatientId = MRN_REDACTED;
-                                }
-                            } else if (idType === 'Cell Line Name') {
-                                if (_.isEmpty(results[index].patientId)) {
-                                    message = `PatientID could not be de-identifed.`;
-                                } else {
-                                    cmoPatientId = `C-${resultPatientId}`;
-                                    normalizedPatientId = `CELLLINE_${resultPatientId}`;
-                                    finalPatientId = inputPatientId;
-                                }
-                            } else {
-                                if (_.isEmpty(resultPatientId)) {
-                                    message = `PatientID could not be de-identifed.`;
-                                } else {
-                                    cmoPatientId = `C-${resultPatientId}`;
-                                    normalizedPatientId = `${username.toUpperCase()}_${resultPatientId}`;
-                                    finalPatientId = inputPatientId;
-                                }
-                            }
+                        idElement.finalPatientId = `C-${resultIdMatch.patientId}`;
+                        idElement.cmoPatientId = `C-${resultIdMatch.patientId}`;
+                        idElement.normalizedPatientId = `${username.toUpperCase()}_${resultIdMatch.patientId}`;
+                        if (idElement.idType === 'MRN') {
+                            idElement.finalPatientId = 'MRN_REDACTED';
+                        }
+                        if (idElement.idType === 'DMP Patient ID') {
+                            idElement.finalPatientId = resultIdMatch.dmpId;
+                            idElement.normalizedPatientId = `${username.toUpperCase()}_${resultIdMatch.dmpId}`;
                         }
 
-                        resultIds[index].result = { cmoPatientId, normalizedPatientId, patientId: finalPatientId };
-                        if (sex !== '') resultIds[index].result.sex = sex;
+                        if ('sex' in resultIdMatch) idElement.sex = resultIdMatch.sex;
+                    } else {
+                        idElement.message = `${idElement.idType} ${
+                            idElement.idType === 'MRN' ? '' : inputId
+                        } could not be de-identified or verified. `;
+                        idElement.finalPatientId = '';
+                        idElement.cmoPatientId = '';
+                        idElement.normalizedPatientId = '';
+                    }
+                    delete idElement.mrn;
+                    delete idElement.patientId;
 
-                        if (message !== '') resultIds[index].result.message = message;
-                        if (resultIds.length === idsProcessed) {
-                            resolve(resultIds);
-                        }
-                    });
-                })
-                .catch((error) => reject(error));
-        }
+                    //                         resolve(resultIds);
+                    //                     }
+                });
+                // console.log(deIdentifiedIds);
+
+                resolve(deIdentifiedIds);
+            })
+            .catch((reasons) => reject(reasons));
     });
 }
 
 // to import submissions, export json from table (using mysqlworkbench, for example)
 // change first line to export const submissions = [...]
-
 export function translateSqlSubmissions(sqlSubmissions) {
     let parsedSubmissions = [];
     for (let i = 0; i < sqlSubmissions.length; i++) {
@@ -1281,8 +1260,6 @@ export function translateSqlSubmissions(sqlSubmissions) {
             if (typeof gridValues == 'string') {
                 gridValues = JSON.parse(gridValues);
             }
-
-            // console.log(typeof(formValues));
 
             // formValues need to be converted to camelCase
             for (let element in formValues) {
@@ -1352,17 +1329,46 @@ function last7Days() {
     });
 }
 
-function selectIdService(idElement, username) {
-    let idType = idElement.idType;
-    let patientId = idElement.patientId.toUpperCase();
-    if (idType === 'MRN') return crdbServices.getCrdbId(patientId);
-    if (idType === 'Cell Line Name') return crdbServices.getCrdbId('CELLLINE_' + patientId);
-    if (idType === 'CMO Patient ID') return crdbServices.verifyCmoId(patientId.replace('C-', ''));
-    if (idType === 'DMP Patient ID') return crdbServices.verifyDmpId(patientId);
-    return crdbServices.getCrdbId(username + '_' + patientId);
+function generateCrdbDbStatement(patientIds, table) {
+    let bindPlaceholders = [];
+    let bindValues = [];
+
+    let i = 0;
+    patientIds.forEach((element) => {
+        if (!bindValues.includes(element.patientId)) {
+            bindPlaceholders.push(`:bv${i + 1}`);
+            bindValues.push(element.patientId);
+            ++i;
+        }
+    });
+    // Trusting NODE OraclDB bind to sanitize
+    let query = `SELECT pt_mrn, cmo_id, dmp_id FROM crdb_cmo_loj_dmp_map WHERE ${table} IN (${bindPlaceholders})`;
+    return { query, bindValues };
 }
+function sortPatientIdsByType(ids, username) {
+    let standardPatientIds = [];
+    let dmpPatientIds = [];
+    let cmoPatientIds = [];
+    ids.forEach((idElement) => {
+        let idType = idElement.idType;
+        let patientId = idElement.patientId.toUpperCase();
+        if (idType === 'MRN') standardPatientIds.push(idElement);
+        else if (idType === 'Cell Line Name') standardPatientIds.push({ ...idElement, patientId: `CELLLINE_${patientId}` });
+        else if (idType === 'CMO Patient ID') cmoPatientIds.push({ ...idElement, patientId: patientId.replace('C-', '') });
+        else if (idType === 'DMP Patient ID') dmpPatientIds.push(idElement);
+        else standardPatientIds.push(standardPatientIds.push({ ...idElement, patientId: `${username.toUpperCase()}_${patientId}` }));
+    });
+    return { standardPatientIds, dmpPatientIds, cmoPatientIds };
+}
+
 export const toCamel = (s) => {
     return s.replace(/([-_][a-z])/gi, ($1) => {
         return $1.toUpperCase().replace('-', '').replace('_', '');
+    });
+};
+
+const countIdRequests = (id, username) => {
+    fs.appendFile('idTypeCounter.txt', `${id}, ${username}, ${new Date().toLocaleDateString()}\r\n`, function (err) {
+        if (err) console.log(err);
     });
 };
