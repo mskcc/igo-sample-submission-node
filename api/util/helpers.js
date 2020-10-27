@@ -1221,9 +1221,8 @@ export function handlePatientIds(ids, username) {
 
                         if ('sex' in resultIdMatch) idElement.sex = resultIdMatch.sex;
                     } else {
-                        idElement.message = `${idElement.idType} ${
-                            idElement.idType === 'MRN' ? '' : inputId
-                        } could not be de-identified or verified. `;
+                        if (idElement.idType === 'MRN') idElement.message = 'MRN(s) could not be de-identified or verified.';
+                        else idElement.message = `${idElement.idType} ${inputId} could not be de-identified or verified. `;
                         idElement.finalPatientId = '';
                         idElement.cmoPatientId = '';
                         idElement.normalizedPatientId = '';

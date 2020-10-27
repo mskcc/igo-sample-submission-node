@@ -393,16 +393,17 @@ export function handlePatientIds(grid, ids, emptyIds, username) {
         return services
             .handlePatientIds(data)
             .then((response) => {
-                let message = [];
+                let message = new Set([]);
                 let affectedRows = [];
                 let failedIds = response.payload.idResults.filter((element) => element.message);
                 if (failedIds) {
                     failedIds.forEach((element) => {
-                        message.push(element.message);
+                        message.add(element.message);
                         affectedRows.push(element.gridRowIndex);
                     });
-                    message.push('You can use MRNs as Patient IDs for any Patient ID Type.');
+                    message.add('You can use MRNs as Patient IDs for any Patient ID Type.');
                 }
+                message = Array.from(message);
                 let result = { rows: util.setPatientIds(rows, response.payload.idResults), message, affectedRows };
 
                 resolve(result);
