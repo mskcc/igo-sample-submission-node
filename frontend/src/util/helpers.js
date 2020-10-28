@@ -370,16 +370,17 @@ export const getPatientIdsFromChanges = (changes, idType) => {
 
 export const setPatientIds = (rows, ids) => {
     let updatedRows = JSON.parse(JSON.stringify(rows));
-    Object.keys(ids).forEach((key) => {
-        let idElement = ids[key];
-        if ('result' in idElement) {
-            updatedRows[idElement.gridRowIndex].patientId = idElement.result.patientId;
-            updatedRows[idElement.gridRowIndex].cmoPatientId = idElement.result.cmoPatientId;
-            updatedRows[idElement.gridRowIndex].normalizedPatientId = idElement.result.normalizedPatientId;
-            if ('sex' in idElement.result) updatedRows[idElement.gridRowIndex].gender = idElement.result.sex;
+    ids.forEach((idElement) => {
+        let updatedRow = updatedRows[idElement.gridRowIndex];
+        try {
+            updatedRow.patientId = idElement.finalPatientId;
+            updatedRow.cmoPatientId = idElement.cmoPatientId;
+            updatedRow.normalizedPatientId = idElement.normalizedPatientId;
+            if ('sex' in idElement) updatedRow.gender = idElement.sex;
+        } catch (error) {
+            console.log(error);
         }
     });
-
     return updatedRows;
 };
 
@@ -482,6 +483,36 @@ export const appendAssay = (oldValue, newValue, assays) => {
     return [...finalAssay].join(';');
 };
 
+/*------------ AUTOFILL ------------*/
+//  Fills sex for identical patients
+// TODO
+// fill de-identified ids as well!
+export const autoFillGridBasedOnInput = (changes, grid) => {
+    return new Promise((resolve) => {
+        let autofilledChanges = changes;
+        let autofilledGrid = grid;
+        let result = { autofilledChanges, autofilledGrid };
+
+        // autofill sex if patientId is duplicated and has sex associated already
+        const patientIdChanges = changes.filter((element) => element.includes('patientId'));
+        if (patientIdChanges) {
+            changes.forEach((changeElement) => {
+                let changedRow = changeElement[0];
+                let newValue = changeElement[3];
+                if ('gender' in grid.rows[changedRow]) {
+                    let rowWithSamePatientId = grid.rows.find((element) => element.patientId === newValue && element.gender !== '');
+                    if (rowWithSamePatientId) {
+                        autofilledGrid.rows[changedRow].gender = rowWithSamePatientId.gender;
+                    }
+                }
+            });
+            resolve(result);
+        } else {
+            resolve(result);
+        }
+    });
+};
+
 /*------------ VALIDATION ------------*/
 // Validation for all the fields where a pattern/validator approach can't be used
 // unique values (patientid, samplename)
@@ -490,7 +521,11 @@ export const appendAssay = (oldValue, newValue, assays) => {
 // assay
 // drodpown selection restricted to picklist (if done through handsontable, validation experience very different from overall user experience)
 export const validateGrid = (changes, grid) => {
+    console.log('autofill', changes);
+
     return new Promise((resolve) => {
+        console.log(grid);
+
         let updatedGrid = JSON.parse(JSON.stringify(grid));
 
         let errors = new Set([]);
