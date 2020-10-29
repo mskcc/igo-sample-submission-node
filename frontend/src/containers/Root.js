@@ -96,8 +96,9 @@ class Root extends Component {
                     {/* <LoadingOverlay active={common.loading} spinner text='Loading...'> */}
 
                     <div className='app'>
-                        <Backdrop open={common.loading}>  <CircularProgress color="inherit" />
-</Backdrop>
+                        <Backdrop open={common.loading}>
+                            <CircularProgress color='inherit' />
+                        </Backdrop>
                         <Header userRole={role} />
                         {Config.ENV !== 'production' ? <DevTools /> : <div />}
 
@@ -112,11 +113,11 @@ class Root extends Component {
                                         path='/submissions/igo'
                                         render={(routeProps) => <SubmissionsPage {...routeProps} gridType='upload' />}
                                     />
-                                    {/* <Route
+                                    <Route
                                             path='/submissions/dmp'
                                             render={(routeProps) => <SubmissionsPage {...routeProps} gridType='dmp' />}
                                         />
-                                        <Route path='/dmp' render={(routeProps) => <UploadPage {...routeProps} gridType='dmp' />} /> */}
+                                        <Route path='/dmp' render={(routeProps) => <UploadPage {...routeProps} gridType='dmp' />} />
                                     <Route path='/logout' component={Logout} />
                                     <Route path='/error' component={ErrorPage} />
                                 </div>

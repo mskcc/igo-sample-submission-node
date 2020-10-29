@@ -1101,7 +1101,7 @@ function mergePatientIdsIntoSamples(samples, patientIdResult) {
             sample.normalizedPatientId = deidentifiedMatch.normalizedPatientId;
             sample.cmoPatientId = deidentifiedMatch.cmoPatientId;
         } else {
-            message.add(`DMP Patient ID ${sample.patientId} could not be verified.`);
+            message.add(`DMP Patient ID ${sample.patientId} could not be verified.\r\n`);
             message.add('You can use MRNs as Patient IDs for any Patient ID Type.');
             sample.patientId = '';
             sample.normalizedPatientId = '';

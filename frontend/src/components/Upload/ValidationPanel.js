@@ -3,10 +3,9 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 import { withStyles } from '@material-ui/core/styles';
-import { element } from 'prop-types';
 
 const styles = (theme) => ({
-    container: { margin: '2em', padding: '2em', minWidth: '50%' },
+    container: { margin: '2em', padding: '2em', minWidth: '50%', maxHeight: '30vh', overflow: 'auto' },
     sad: {
         color: theme.palette.secondary.main,
         fontWeight: 'bold',
@@ -22,16 +21,16 @@ const styles = (theme) => ({
         lineHeight: 'unset',
     },
 });
-const splitMessage = (validationMessage) => {
-    let headers = [];
-    let data = [];
-    validationMessage.forEach((element) => {
-        let res = element.split(':');
-        headers.add(res[0]);
-        data.add(res[1]);
-    });
-    return { headers, data };
-};
+// const splitMessage = (validationMessage) => {
+//     let headers = [];
+//     let data = [];
+//     validationMessage.forEach((element) => {
+//         let res = element.split(':');
+//         headers.add(res[0]);
+//         data.add(res[1]);
+//     });
+//     return { headers, data };
+// };
 
 const ValidationPanel = ({ validation, classes }) => (
     <Paper className={classes.container}>
