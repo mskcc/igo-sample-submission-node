@@ -1229,7 +1229,6 @@ export function handlePatientIds(ids, username) {
                             resultIdElement.mrn === inputId
                     );
                     if (resultIdMatch) {
-                        console.log(resultIdMatch);
 
                         idElement.finalPatientId = `C-${resultIdMatch.patientId}`;
                         idElement.cmoPatientId = `C-${resultIdMatch.patientId}`;

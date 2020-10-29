@@ -15,12 +15,13 @@ function commonReducer(state = initialState, action) {
 
     if (typeof loading !== 'undefined') {
         console.log('loading');
-        
+
         state = {
             ...state,
             loading: loading,
         };
     } else {
+        console.log('loading DONE');
         state = {
             ...state,
             loading: false,
