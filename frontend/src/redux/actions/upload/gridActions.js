@@ -10,7 +10,7 @@ export const REGISTER_GRID_CHANGE_PRE_VALIDATE = 'REGISTER_GRID_CHANGE_PRE_VALID
 export const REGISTER_GRID_CHANGE_POST_VALIDATE = 'REGISTER_GRID_CHANGE_POST_VALIDATE';
 export const handleGridChange = (changes) => {
     return (dispatch, getState) => {
-        dispatch({ type: REGISTER_GRID_CHANGE_PRE_VALIDATE, message: 'Validating...' });
+        dispatch({ type: REGISTER_GRID_CHANGE_PRE_VALIDATE, message: 'Validating...', loading: true });
         let {
             upload: { grid },
             submissions,
@@ -27,7 +27,7 @@ export const handleGridChange = (changes) => {
                 const includesPatientIdChange = changes.some((element) => element.includes('patientId'));
 
                 if (includesPatientIdChange) {
-                    dispatch({ type: REGISTER_GRID_CHANGE_PRE_VALIDATE, message: 'De-identifying IDs...' });
+                    dispatch({ type: REGISTER_GRID_CHANGE_PRE_VALIDATE, message: 'De-identifying IDs...', loading: true });
                     const patientIdType = grid.columnFeatures.find((element) => element.data === 'patientId');
                     let newPatientIds = util.getPatientIdsFromChanges(changes, patientIdType);
                     let emptyIds = newPatientIds.filter((element) => element.patientId === '');
@@ -59,6 +59,7 @@ export const handleGridChange = (changes) => {
                                     type: REGISTER_GRID_CHANGE_POST_VALIDATE,
                                     payload: validationResult,
                                     message: message,
+                                    
                                 });
                             })
                             .catch((error) => {
@@ -68,6 +69,7 @@ export const handleGridChange = (changes) => {
                                     type: REGISTER_GRID_CHANGE_POST_VALIDATE,
                                     payload: validationResult,
                                     message: 'Error while de-identifying. Please try again or reach out to zzPDL_SKI_IGO_DATA@mskcc.org.',
+                                    
                                 });
                             });
                     } else {
@@ -75,6 +77,7 @@ export const handleGridChange = (changes) => {
                             type: REGISTER_GRID_CHANGE_POST_VALIDATE,
                             payload: validationResult,
                             message: 'clear',
+                            
                         });
                     }
                 } else {
@@ -85,6 +88,7 @@ export const handleGridChange = (changes) => {
                         type: REGISTER_GRID_CHANGE_POST_VALIDATE,
                         payload: validationResult,
                         message: message,
+                        
                     });
                 }
             });

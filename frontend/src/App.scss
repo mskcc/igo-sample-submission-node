@@ -120,6 +120,10 @@ input.htCheckboxRendererInput {
     overflow: auto;
 }
 
+.MuiBackdrop-root {
+    z-index: 999 !important;
+}
+
 #gridSubmit,
 #gridSubmitDmp {
     background: $mskcc-dark-green !important;

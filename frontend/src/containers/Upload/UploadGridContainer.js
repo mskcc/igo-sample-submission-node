@@ -9,11 +9,11 @@ import { UploadGrid } from '../../components';
 
 class UploadGridContainer extends Component {
     handleChange = (changes, source) => {
-        const { handleGridChange, showLoader } = this.props;
-        const includesPatientIdChange = changes.some((element) => element.includes('patientId'));
-        if (changes.length > 20 || includesPatientIdChange) {
-            showLoader();
-        }
+        const { handleGridChange } = this.props;
+        // const includesPatientIdChange = changes.some((element) => element.includes('patientId'));
+        // if (changes.length > 20 || includesPatientIdChange) {
+        //     showLoader();
+        // }
         handleGridChange(changes);
     };
 

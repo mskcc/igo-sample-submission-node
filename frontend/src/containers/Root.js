@@ -8,6 +8,7 @@ import { withLocalize } from 'react-localize-redux';
 import enTranslations from '../util/translations/en.json';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { Backdrop, CircularProgress } from '@material-ui/core';
 import LoadingOverlay from 'react-loading-overlay';
 
 import { connect } from 'react-redux';
@@ -92,47 +93,47 @@ class Root extends Component {
         return (
             <MuiThemeProvider theme={theme}>
                 <Router basename={Config.BASENAME}>
-                    <LoadingOverlay active={common.loading} spinner text='Loading...'>
-                        <div className='app'>
-                            <Header userRole={role} />
-                            {Config.ENV !== 'production' ? <DevTools /> : <div />}
+                    {/* <LoadingOverlay active={common.loading} spinner text='Loading...'> */}
 
-                            {common.serverError ? (
-                                <ErrorPage />
-                            ) : (
-                                <React.Fragment>
-                                    <div>
-                                        <Route
-                                            path='/(upload|)'
-                                            render={(routeProps) => <UploadPage {...routeProps} gridType='upload' />}
-                                        />
-                                        <Route path='/promote' component={PromotePage} />
-                                        <Route
-                                            path='/submissions/igo'
-                                            render={(routeProps) => <SubmissionsPage {...routeProps} gridType='upload' />}
-                                        />
-                                        {/* <Route
+                    <div className='app'>
+                        <Backdrop open={common.loading}>  <CircularProgress color="inherit" />
+</Backdrop>
+                        <Header userRole={role} />
+                        {Config.ENV !== 'production' ? <DevTools /> : <div />}
+
+                        {common.serverError ? (
+                            <ErrorPage />
+                        ) : (
+                            <React.Fragment>
+                                <div>
+                                    <Route path='/(upload|)' render={(routeProps) => <UploadPage {...routeProps} gridType='upload' />} />
+                                    <Route path='/promote' component={PromotePage} />
+                                    <Route
+                                        path='/submissions/igo'
+                                        render={(routeProps) => <SubmissionsPage {...routeProps} gridType='upload' />}
+                                    />
+                                    {/* <Route
                                             path='/submissions/dmp'
                                             render={(routeProps) => <SubmissionsPage {...routeProps} gridType='dmp' />}
                                         />
                                         <Route path='/dmp' render={(routeProps) => <UploadPage {...routeProps} gridType='dmp' />} /> */}
-                                        <Route path='/logout' component={Logout} />
-                                        <Route path='/error' component={ErrorPage} />
-                                    </div>
-                                    {common.message && common.message.length > 0 ? (
-                                        <span>
-                                            <SnackMessage
-                                                open
-                                                type={error ? 'error' : 'info'}
-                                                message={common.message}
-                                                handleClose={this.handleMsgClose}
-                                            />
-                                        </span>
-                                    ) : null}
-                                </React.Fragment>
-                            )}
-                        </div>
-                    </LoadingOverlay>
+                                    <Route path='/logout' component={Logout} />
+                                    <Route path='/error' component={ErrorPage} />
+                                </div>
+                                {common.message && common.message.length > 0 ? (
+                                    <span>
+                                        <SnackMessage
+                                            open
+                                            type={error ? 'error' : 'info'}
+                                            message={common.message}
+                                            handleClose={this.handleMsgClose}
+                                        />
+                                    </span>
+                                ) : null}
+                            </React.Fragment>
+                        )}
+                    </div>
+                    {/* </LoadingOverlay> */}
                 </Router>
             </MuiThemeProvider>
         );

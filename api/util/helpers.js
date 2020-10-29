@@ -936,7 +936,7 @@ export function parseDmpOutput(dmpOutput, submission) {
                 };
                 delete parsedSubmission.formValues._id;
                 translationIssues.push({ sampleMatch: doSamplesMatch(dmpSamples, submission) });
-                console.log(translationIssues);
+                // console.log(translationIssues);
 
                 resolve({ parsedSubmission, translationIssues });
             });
@@ -1206,7 +1206,6 @@ export function handlePatientIds(ids, username) {
                             resultIdElement.mrn === inputId
                     );
                     if (resultIdMatch) {
-                        console.log(resultIdMatch);
 
                         idElement.finalPatientId = `C-${resultIdMatch.patientId}`;
                         idElement.cmoPatientId = `C-${resultIdMatch.patientId}`;

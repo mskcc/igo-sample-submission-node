@@ -35,9 +35,11 @@ exports.headerValues = [
                     patientIdTypesSpecResult,
                     capturePanelResult,
                 ] = results;
-
+                let currentApplications = applicationsResult.filter(
+                    (application) => !constants.deprecatedApplications.includes(application.toLowerCase())
+                );
                 let responseObject = {
-                    applications: applicationsResult,
+                    applications: currentApplications,
                     capturePanels: capturePanelResult,
                     materials: materialsResult,
                     species: speciesResult,
@@ -333,7 +335,7 @@ exports.deidentifyIds = [
                 let ids = JSON.parse(req.body.ids);
                 let username = res.user.username;
                 console.log(username);
-                
+
                 // if submission is being edited, username of original submission will be sent along
                 if (req.body.username) username = req.body.username;
                 util.handlePatientIds(ids, username)
