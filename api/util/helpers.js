@@ -908,6 +908,7 @@ export function parseDmpOutput(dmpOutput, submission) {
         }
 
         promises.push(cache.get('tumorType-Picklist', () => services.getOnco()));
+       
         if (submission.formValues.material.includes('Library')) {
             promises.push(cache.get('barcodes-Picklist', () => services.getBarcodes()));
         } else {
@@ -999,19 +1000,28 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
 
         const dmpSample = dmpSamples[element];
         const dmpPatientId = dmpSample['DMP ID'];
+        // const dmpPatientId = dmpSample['Investigator'];
         const dmpWellPosition = dmpSample['Well Position'];
         const dmpPreservation = dmpSample['Preservation (FFPE or Blood)'];
         const dmpSampleClass = dmpSample['Sample Class (Primary, Met or Normal)'];
         const dmpSpecimenType = dmpSample['Specimen Type (Resection, Biopsy or Blood)'];
         const dmpTumorType = dmpSample['Tumor Type'];
-        let igoUserId, igoPatientId, igoWellPosition, igoPreservation, igoSampleOrigin, igoSampleClass, igoSpecimenType, igoTumorType;
+
+        let igoInvestigatorSampleId,
+            igoInvestigatorPatientId,
+            igoWellPosition,
+            igoPreservation,
+            igoSampleOrigin,
+            igoSampleClass,
+            igoSpecimenType,
+            igoTumorType;
 
         let hasCoverage = false;
 
-        // ? DMP ID or Investigator Sample ID to get Patient ID?
-        igoUserId = dmpSample['Investigator Sample ID'];
-        igoPatientId = dmpPatientId.match(/P-[0-9]{7}/)[0];
-        const originalSample = submission.gridValues.find((element) => element.userId === igoUserId);
+        // ? DMP ID or Investigator Sample ID to get Patient ID
+        igoInvestigatorSampleId = dmpSample['Investigator Sample ID'];
+        igoInvestigatorPatientId = dmpPatientId.match(/P-[0-9]{7}/)[0];
+        const originalSample = submission.gridValues.find((element) => element.userId === igoInvestigatorSampleId);
 
         if (!originalSample) {
             rowIssues.push(`Sample received from DMP but not found in original submission.`);
@@ -1067,8 +1077,8 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
             sampleOrigin: igoSampleOrigin,
             sampleClass: igoSampleClass,
             specimenType: igoSpecimenType,
-            userId: igoUserId,
-            patientId: igoPatientId,
+            userId: igoInvestigatorSampleId,
+            patientId: igoInvestigatorPatientId,
         };
 
         if (hasIndex) {
@@ -1229,7 +1239,6 @@ export function handlePatientIds(ids, username) {
                             resultIdElement.mrn === inputId
                     );
                     if (resultIdMatch) {
-
                         idElement.finalPatientId = `C-${resultIdMatch.patientId}`;
                         idElement.cmoPatientId = `C-${resultIdMatch.patientId}`;
                         idElement.normalizedPatientId = `${username.toUpperCase()}_${resultIdMatch.patientId}`;
