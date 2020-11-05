@@ -12,7 +12,7 @@ import Root from './containers/Root';
 
 import * as serviceWorker from './serviceWorker';
 
-import './App.scss';
+import './App.css';
 
 const App = (props) => (
     <Provider store={store}>

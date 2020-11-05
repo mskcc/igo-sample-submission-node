@@ -1,26 +1,28 @@
-// colors
-$mskcc-blue: #007cba;
-$mskcc-orange: #df4602;
-$mskcc-dark-blue: #006098;
-$mskcc-medium-blue: #40b4e5;
-$mskcc-light-blue: #8fc7e8;
-$mskcc-dark-orange: #c24d00;
-$mskcc-medium-orange: #f29934;
-$mskcc-light-orange: #f6c65b;
-$mskcc-dark-violet: #83276b;
-$mskcc-light-violet: #b687b8;
-$mskcc-dark-magenta: #e92076;
-$mskcc-light-magenta: #efb3cb;
-$mskcc-red: #b1132d;
-$mskcc-dark-green: #4c8b2b;
-$mskcc-light-green: #a6ce39;
-$mskcc-dark-turquoise: #006c68;
-$mskcc-light-turquoise: #009490;
-$mskcc-dark-yellow: #ffc20e;
-$mskcc-light-yellow: #ffe100;
-$mskcc-dark-gray: #9e9e98;
-$mskcc-light-gray: #d5d4c7;
-$material-gray: #eceff1;
+/* colors */
+:root {
+    --mskcc-blue: #007cba;
+    --mskcc-orange: #df4602;
+    --mskcc-dark-blue: #006098;
+    --mskcc-medium-blue: #40b4e5;
+    --mskcc-light-blue: #8fc7e8;
+    --mskcc-dark-orange: #c24d00;
+    --mskcc-medium-orange: #f29934;
+    --mskcc-light-orange: #f6c65b;
+    --mskcc-dark-violet: #83276b;
+    --mskcc-light-violet: #b687b8;
+    --mskcc-dark-magenta: #e92076;
+    --mskcc-light-magenta: #efb3cb;
+    --mskcc-red: #b1132d;
+    --mskcc-dark-green: #4c8b2b;
+    --mskcc-light-green: #a6ce39;
+    --mskcc-dark-turquoise: #006c68;
+    --mskcc-light-turquoise: #009490;
+    --mskcc-dark-yellow: #ffc20e;
+    --mskcc-light-yellow: #ffe100;
+    --mskcc-dark-gray: #9e9e98;
+    --mskcc-light-gray: #d5d4c7;
+    --material-gray: #eceff1;
+}
 
 body {
     margin: 0;
@@ -30,9 +32,9 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     width: 100vw;
-    // height: 100vh;
+    /* height: 100vh; */
     font-size: 15px;
-    // overflow: auto;
+    /* overflow: auto; */
 }
 
 code {
@@ -44,24 +46,24 @@ code {
     grid-template-areas:
         'mskcc-header'
         'content';
-    // 'footer';
+    /* 'footer'; */
     justify-items: center;
     grid-row-gap: 4em;
 }
 
-// th {
-//   background-color: $material-gray !important;
-// }
+/* th { */
+/* background-color: $material-gray !important; */
+/* } */
 .colHeader .optional {
     font-weight: 600;
-    color: $mskcc-dark-green;
+    color: var(--mskcc-dark-green);
 }
 
 .colHeader .required {
     font-weight: 600;
 
-    // font-weight: bold;
-    // color: $mskcc-orange;
+    /* font-weight: bold; */
+    /* color:var(--$mskcc-orange;) */
 }
 .css-df17o1 {
     height: 100vh;
@@ -73,12 +75,12 @@ code {
     margin-bottom: 28px;
 }
 
-// .htColumnHeaders {
-//   overflow: visible !important;
-// }
+/* .htColumnHeaders { */
+/* overflow: visible !important; */
+/* } */
 
 .htDimmed {
-    background-color: $material-gray !important;
+    background-color: $materialvar(--gray !important);
 }
 
 input.htCheckboxRendererInput {
@@ -88,7 +90,7 @@ input.htCheckboxRendererInput {
 .grid-action {
     color: black;
     text-align: center;
-    // font-weight: bold;
+    /* font-weight: bold; */
     cursor: pointer;
 }
 
@@ -105,9 +107,9 @@ input.htCheckboxRendererInput {
     background: #8fc7e8 !important;
 }
 
-// .ht_master.handsontable {
-//   overflow-y: scroll;
-// }
+/* .ht_master.handsontable { */
+/* overflow-y: scroll; */
+/* } */
 
 [title='check'] > div > button {
     display: none;
@@ -116,7 +118,7 @@ input.htCheckboxRendererInput {
     overflow: unset;
 }
 .ht_master.wtHolder {
-    // overflow-y: scroll;
+    /* overflow-y: scroll; */
     overflow: auto;
 }
 
@@ -126,12 +128,12 @@ input.htCheckboxRendererInput {
 
 #gridSubmit,
 #gridSubmitDmp {
-    background: $mskcc-dark-green !important;
+    background: var(--mskcc-dark-green) !important;
 }
 
-// .handsontableEditor.autocompleteEditor.htMacScroll.handsontable.listbox {
-//   overflow: visible !important;
-// }
+/* .handsontableEditor.autocompleteEditor.htMacScroll.handsontable.listbox { */
+/* overflow: visible !important; */
+/* } */
 
 .MuiFormHelperText-root {
     max-width: 310px !important;

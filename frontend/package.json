@@ -84,7 +84,7 @@
         "xlsx": "^0.14.5"
     },
     "scripts": {
-        "start": "node scripts/start.js",
+        "start": "BROWSER=none node scripts/start.js",
         "dev": "node scripts/start.js",
         "build": "node scripts/build.js",
         "test": "node scripts/test.js",
