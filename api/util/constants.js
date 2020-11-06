@@ -26,7 +26,8 @@ export const constants = {
     humanOrMouseApplications: ['wholeexomesequencing'],
 
     logger: 'sample-sub',
-
+};
+export const emailConfig = {
     cmoPmEmailApplications: [
         'HemePACT_v4',
         'HumanWholeGenome',
@@ -36,4 +37,11 @@ export const constants = {
         'MSK-ACCESS_v1',
         'WholeExomeSequencing',
     ],
+    notificationRecipients: 'zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org, wagnerl@mskcc.org',
+    notificationSender: 'igoski@mskcc.org',
+    cmoPmEmail: 'skicmopm@mskcc.org',
+    // #skicmopm@mskcc.org
+    subject: '[TEST IGO Submission]',
+    footer:
+        '<br><br><br>Thank you, <br><br><a href="http://cmo.mskcc.org/cmo/igo/">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br>Follow us on <a href="https://www.instagram.com/genomics212/?hl=en">Instagram</a> and <a href="https://twitter.com/genomics212?lang=en">Twitter</a>!<br>',
 };
