@@ -19,7 +19,7 @@ const validationPatterns = {
 export const deprecatedColumns = ['Index Position'];
 export const formattingAdjustments = {
     'DMP ID': {
-        pattern: validationPatterns.dmpPatientId,
+        // pattern: validationPatterns.dmpPatientId,
         columnHeader: 'Investigator Patient ID',
         tooltip: 'The patient DMP ID.',
         error:
@@ -40,7 +40,7 @@ export const gridColumns = {
 
     'DMP Sample ID': {
         name: 'DMP Sample ID',
-        pattern: validationPatterns.dmpSampleId,
+        pattern: validationPatterns.alphanumdash,
         columnHeader: 'DMP Sample ID',
         data: 'dmpSampleId',
         error: 'Only valid DMP Sample IDs, e.g. P-0000000-T00-IM0.',
@@ -145,12 +145,6 @@ export const gridColumns = {
         sendToDmp: true,
     },
 
-    'Variant Allele Frequency': {
-        name: 'Variant Allele Frequency',
-        columnHeader: 'Variant Allele Frequency',
-        data: 'variantAlleleFrequency',
-        hiddenFrom: 'user',
-    },
     'Requested Coverage': {
         name: 'Requested Coverage',
         columnHeader: 'Requested Coverage',
@@ -402,7 +396,6 @@ export const dmpIntakeForms = {
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
         ['Sample Approved by CMO', 'Optional'],
-        ['Variant Allele Frequency', 'Optional'],
         ['Requested Coverage', 'Required'],
         ['Investigator Provided Patient ID', 'Required'],
         ['Investigator Provided Sample ID', 'Required'],
@@ -459,7 +452,6 @@ export const dmpIntakeForms = {
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
         ['Sample Approved by CMO', 'Optional'],
-        ['Variant Allele Frequency', 'Optional'],
         ['Requested Coverage', 'Required'],
         ['Investigator Provided Patient ID', 'Required'],
         ['Investigator Provided Sample ID', 'Required'],

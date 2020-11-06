@@ -267,9 +267,6 @@ export function populateGridFromSubmission(submissionId, ownProps) {
                 let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
                 Promise.all([columnPromise])
                     .then(() => {
-                        console.log(submission.appVersion);
-                        console.log(Config.APP_VERSION);
-
                         if (submission.appVersion !== Config.APP_VERSION) {
                             swal.genericMessage(
                                 'Version Mismatch',
@@ -322,10 +319,8 @@ export function loadFromDmp(dmpTrackingId, dmpSubmissionId, ownProps) {
                 let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
                 Promise.all([columnPromise])
                     .then(() => {
-                        let type = GET_DMP_SUBMISSION_TO_EDIT_SUCCESS;
-
                         dispatch({
-                            type: type,
+                            type: LOAD_FROM_DMP_SUCCESS,
                             payload: {
                                 ...submission,
                                 gridType: page,
@@ -337,18 +332,16 @@ export function loadFromDmp(dmpTrackingId, dmpSubmissionId, ownProps) {
                             payload: { errorMessage: resp.payload.issues, affectedRows: [] },
                             message: 'Parsed!',
                         });
+
                         return ownProps.history.push(`/${page}`);
                     })
                     .catch((error) => {
                         console.log(error);
-
                         return dispatch({
                             type: LOAD_FROM_DMP_FAIL,
                             error: error,
                         });
                     });
-
-                return ownProps.history.push(`/${page}`);
             })
             .catch((error) => {
                 dispatch({
@@ -407,7 +400,7 @@ export function handlePatientIds(grid, ids, emptyIds, username) {
                 let message = new Set([]);
                 let affectedRows = [];
                 let failedIds = response.payload.idResults.filter((element) => element.message);
-                if (failedIds) {
+                if (failedIds && failedIds.length > 0) {
                     failedIds.forEach((element) => {
                         message.add(element.message);
                         affectedRows.push(element.gridRowIndex);

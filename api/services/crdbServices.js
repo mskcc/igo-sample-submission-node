@@ -98,12 +98,11 @@ exports.getCrdbIds = (patientIds) => {
             data.mrn = patientId;
             axios
                 .post(url, { ...data, headers })
-                .then((resp) => {
-                    count++;
-
+                .then((resp) => {                    
                     logger.log('info', 'Successfully retrieved response from CRDB');
                     result.push(formatCrdb(resp, patientId));
                     if (count === patientIds.length) resolve(result);
+                    count++;
                 })
                 .catch((error) => {
                     logger.log('info', 'Error retrieving response from CRDB');

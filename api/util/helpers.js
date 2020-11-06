@@ -5,6 +5,7 @@ const { constants } = require('./constants');
 const submitColumns = require('./columns');
 import CacheService from './cache';
 import { v4 as uuidv4 } from 'uuid';
+import { Logform } from 'winston';
 const fs = require('fs');
 
 var _ = require('lodash');
@@ -13,6 +14,7 @@ const dmpColumns = require('./dmpColumns');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 
+const APP_VERSION = process.env.APP_VERSION;
 const MRN_REDACTED = process.env.MRN_REDACTED;
 const CRDB_MAX_REQUESTS = process.env.CRDB_MAX_REQUESTS;
 exports.createSharedString = (shared, username) => {
@@ -490,8 +492,6 @@ export function fillSubmissionGrid(submissions, userRole, gridColumns) {
 //   }
 export function getAvailableProjectsFromDmp() {
     return new Promise((resolve, reject) => {
-        // console.log(last7Days());
-        // const datesToFetch = last7Days();
         const datesToFetch = ['05-20-2020', '05-21-2020', '05-23-2020', '05-24-2020', '05-25-2020', '05-26-2020', '05-27-2020'];
         let promises = [];
         datesToFetch.forEach((date) => promises.push(services.getAvailableProjectsFromDmp(date)));
@@ -908,7 +908,7 @@ export function parseDmpOutput(dmpOutput, submission) {
         }
 
         promises.push(cache.get('tumorType-Picklist', () => services.getOnco()));
-       
+
         if (submission.formValues.material.includes('Library')) {
             promises.push(cache.get('barcodes-Picklist', () => services.getBarcodes()));
         } else {
@@ -916,9 +916,14 @@ export function parseDmpOutput(dmpOutput, submission) {
         }
         let sampleIdsToDeidentify = [];
 
-        Object.keys(dmpSamples).forEach((key) => {
-            const sample = dmpSamples[key];
-            sampleIdsToDeidentify.push({ patientId: sample['DMP ID'].match(/P-[0-9]{7}/)[0], idType: 'DMP Patient ID' });
+        // deidentify orginal submissions IDs, not DMP
+        submission.gridValues.forEach((sample) => {
+            let id = sample.patientId;
+            let idType = 'Standard';
+            if (sample.patientId.includes('P-')) idType = 'DMP Patient ID';
+            if (sample.patientId.match(/^[0-9]{8}$/)) idType = 'MRN';
+
+            sampleIdsToDeidentify.push({ patientId: id, idType: idType });
         });
 
         promises.push(handlePatientIds(sampleIdsToDeidentify, username));
@@ -954,6 +959,7 @@ export function parseDmpOutput(dmpOutput, submission) {
             translationIssues.unshift(
                 `Summary: ${submission.gridValues.length} total samples in original submission, ${numReturnedSamples} returned from DMP.`
             );
+
             resolve({ parsedSubmission, translationIssues });
         });
     });
@@ -999,8 +1005,8 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
         let rowIssues = [];
 
         const dmpSample = dmpSamples[element];
-        const dmpPatientId = dmpSample['DMP ID'];
-        // const dmpPatientId = dmpSample['Investigator'];
+        const dmpPatientId = dmpSample['DMP ID'].match(/P-[0-9]{7}/)[0];
+        const dmpInvestigatorSampleId = dmpSample['Investigator Sample ID'];
         const dmpWellPosition = dmpSample['Well Position'];
         const dmpPreservation = dmpSample['Preservation (FFPE or Blood)'];
         const dmpSampleClass = dmpSample['Sample Class (Primary, Met or Normal)'];
@@ -1019,14 +1025,18 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
         let hasCoverage = false;
 
         // ? DMP ID or Investigator Sample ID to get Patient ID
-        igoInvestigatorSampleId = dmpSample['Investigator Sample ID'];
-        igoInvestigatorPatientId = dmpPatientId.match(/P-[0-9]{7}/)[0];
-        const originalSample = submission.gridValues.find((element) => element.userId === igoInvestigatorSampleId);
+        igoInvestigatorSampleId = dmpInvestigatorSampleId;
+        // igoInvestigatorPatientId = dmpPatientId.match(/P-[0-9]{7}/)[0];
+        //  take investigator patient id from original sample as it's not returned from DMP
+        const originalSample = submission.gridValues.find((element) => element.userId === dmpInvestigatorSampleId);
 
         if (!originalSample) {
-            rowIssues.push(`Sample received from DMP but not found in original submission.`);
+            rowIssues.push(
+                `Sample received from DMP but not found in original submission. Investigator Sample ID could not be de-indentified or matched to a submitted sample.`
+            );
         } else {
             hasCoverage = 'requestedCoverage' in originalSample;
+            igoInvestigatorPatientId = originalSample.patientId;
         }
 
         igoWellPosition = dmpWellPosition;
@@ -1096,7 +1106,7 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
         if (hasCoverage) igoSample.requestedCoverage = originalSample.requestedCoverage;
 
         if (rowIssues.length > 0) {
-            translationIssues[index] = `${igoUserId}: ${rowIssues.join('–')}`;
+            translationIssues[index] = `${igoInvestigatorSampleId}: ${rowIssues.join('–')}`;
         }
         igoSamples.push(igoSample);
     });
@@ -1106,7 +1116,9 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
 function mergePatientIdsIntoSamples(samples, patientIdResult) {
     let message = new Set([]);
     samples.forEach((sample) => {
-        let deidentifiedMatch = patientIdResult.find((element) => element.finalPatientId === sample.patientId);
+        let deidentifiedMatch = patientIdResult.find(
+            (element) => element.finalPatientId === sample.patientId || element.inputId === sample.patientId
+        );
         if (deidentifiedMatch) {
             sample.normalizedPatientId = deidentifiedMatch.normalizedPatientId;
             sample.cmoPatientId = deidentifiedMatch.cmoPatientId;
@@ -1213,17 +1225,17 @@ export function handlePatientIds(ids, username) {
             idsByType.standardPatientIds.forEach((element) => ids.push(element.patientId));
             patientIdPromises.push(crdbServices.getCrdbIds(ids));
             countIdRequests('STANDARD ID', username);
-        } else patientIdPromises.push([]);
+        }
         if (!_.isEmpty(idsByType.dmpPatientIds)) {
             let { query, bindValues } = generateCrdbDbStatement(idsByType.dmpPatientIds, 'dmp_id');
             patientIdPromises.push(crdbServices.crdbDbQuery(query, bindValues));
             countIdRequests('DMP ID', username);
-        } else patientIdPromises.push([]);
+        }
         if (!_.isEmpty(idsByType.cmoPatientIds)) {
             let { query, bindValues } = generateCrdbDbStatement(idsByType.cmoPatientIds, 'cmo_id');
             patientIdPromises.push(crdbServices.crdbDbQuery(query, bindValues));
             countIdRequests('CMO ID', username);
-        } else patientIdPromises.push([]);
+        }
 
         Promise.all(patientIdPromises)
             .then((result) => {
@@ -1239,10 +1251,12 @@ export function handlePatientIds(ids, username) {
                             resultIdElement.mrn === inputId
                     );
                     if (resultIdMatch) {
+                        idElement.inputId = inputId;
                         idElement.finalPatientId = `C-${resultIdMatch.patientId}`;
                         idElement.cmoPatientId = `C-${resultIdMatch.patientId}`;
                         idElement.normalizedPatientId = `${username.toUpperCase()}_${resultIdMatch.patientId}`;
                         if (idElement.idType === 'MRN') {
+                            idElement.inputId = '';
                             idElement.finalPatientId = 'MRN_REDACTED';
                         }
                         if (idElement.idType === 'DMP Patient ID') {
@@ -1259,7 +1273,7 @@ export function handlePatientIds(ids, username) {
                         idElement.normalizedPatientId = '';
                     }
                     delete idElement.mrn;
-                    delete idElement.patientId;
+                    delete idElement.patientId;                  
                 });
                 resolve(deIdentifiedIds);
             })
@@ -1304,7 +1318,7 @@ export function translateSqlSubmissions(sqlSubmissions) {
                 ...submission,
                 formValues: formValues,
                 gridValues: gridValues,
-                appVersion: '2.0',
+                appVersion: APP_VERSION,
                 transactionId: transactionId,
                 createdAt: new Date(createdAt).valueOf() / 1000,
                 updatedAt: new Date(updatedAt).valueOf() / 1000,
@@ -1380,6 +1394,7 @@ function sortPatientIdsByType(ids, username) {
         else if (idType === 'Cell Line Name') standardPatientIds.push({ ...idElement, patientId: `CELLLINE_${patientId}` });
         else if (idType === 'CMO Patient ID') cmoPatientIds.push({ ...idElement, patientId: patientId.replace('C-', '') });
         else if (idType === 'DMP Patient ID') dmpPatientIds.push(idElement);
+        else if (idType === 'Standard') standardPatientIds.push(idElement);
         else standardPatientIds.push(standardPatientIds.push({ ...idElement, patientId: `${username.toUpperCase()}_${patientId}` }));
     });
     return { standardPatientIds, dmpPatientIds, cmoPatientIds };

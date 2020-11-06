@@ -64,7 +64,7 @@ export default function formReducer(state = initialFormState, action) {
                 },
             };
         case ActionTypes.CLEAR:
-            if (action.payload.id === 'groupingChecked'  || action.payload.id === 'isShared') {
+            if (action.payload.id === 'groupingChecked' || action.payload.id === 'isShared') {
                 return {
                     ...state,
                     selected: {
@@ -240,7 +240,8 @@ export default function formReducer(state = initialFormState, action) {
                     numberOfSamples: action.rowNumber,
                 },
             };
-        case GridActionTypes.GET_SUBMISSION_TO_EDIT_SUCCESS:
+        case GridActionTypes.GET_SUBMISSION_TO_EDIT_SUCCESS:        
+        case GridActionTypes.LOAD_FROM_DMP_SUCCESS:        
             let form = action.payload.formValues;
             return {
                 ...state,

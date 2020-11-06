@@ -326,7 +326,7 @@ export const redactMRNs = (rows, ids) => {
 
 export const redactMRNsFromGrid = (grid, value='MRN_REDACTED') => {
     grid.rows.forEach((element) => {
-        if (/^[0-9]{8}$/.test(element.patientId.trim())) {
+        if (/^[0-9]{8}$/.test(element.patientId)) {
             element.patientId = value;
         }
     });
