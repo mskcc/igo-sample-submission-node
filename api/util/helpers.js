@@ -1032,7 +1032,7 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
 
         if (!originalSample) {
             rowIssues.push(
-                `Sample received from DMP but not found in original submission. Investigator Sample ID could not be de-indentified or matched to a submitted sample.`
+                 `Sample received from DMP but not found in original submission. Investigator Patient ID could not be de-indentified because no Investigator Sample ID matched.`
             );
         } else {
             hasCoverage = 'requestedCoverage' in originalSample;
