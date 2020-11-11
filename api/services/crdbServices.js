@@ -22,7 +22,7 @@ const formatCrdb = (resp, mrn) => {
         if (sex === 'Female') sex = 'F';
         if (sex === 'Male') sex = 'M';
         data = {
-            patientId: resp.data.PRM_PT_ID,
+            crdbOutput: resp.data.PRM_PT_ID,
             dmpId: '',
             mrn: mrn,
             sex: sex,
@@ -38,7 +38,7 @@ const formatDbResponse = (resp) => {
     const data = resp.rows;
     data.map((element) => {
         //     { PT_MRN: '********', CMO_ID: 'AAA3AA', DMP_ID: 'P-000000' },
-        element.patientId = element['CMO_ID'];
+        element.crdbOutput = element['CMO_ID'];
         element.dmpId = element['DMP_ID'];
         element.mrn = element['PT_MRN'];
         delete element.PT_MRN;
@@ -98,15 +98,16 @@ exports.getCrdbIds = (patientIds) => {
             data.mrn = patientId;
             axios
                 .post(url, { ...data, headers })
-                .then((resp) => {                    
+                .then((resp) => {
                     logger.log('info', 'Successfully retrieved response from CRDB');
                     result.push(formatCrdb(resp, patientId));
+
                     if (count === patientIds.length) resolve(result);
                     count++;
                 })
                 .catch((error) => {
                     logger.log('info', 'Error retrieving response from CRDB');
-                    throw error;
+                    reject(error.message);
                 });
         });
     });
@@ -121,15 +122,15 @@ exports.crdbDbQuery = (sql, values) => {
                 connectString: CRDB_DB_URL,
             })
             .then((connection) => {
-                // Trusting NODE OraclDB bind to sanitize
                 connection
                     .execute(sql, values)
-                    .then(function (result) {
+
+                    .then((result) => {
                         // connection.close();
                         logger.log('info', 'Successfully retrieved response from CRDB for DB query.');
                         resolve(formatDbResponse(result));
                     })
-                    .catch(function (error) {
+                    .catch((error) => {
                         connection.close();
                         logger.log('info', 'Error retrieving response from CRDB');
                         reject(error);

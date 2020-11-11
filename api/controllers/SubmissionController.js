@@ -285,7 +285,7 @@ exports.submit = [
                 if (gridType === 'dmp') {
                     submissionToSubmit.dmpTrackingId = gridValues[0].dmpTrackingId || '';
                 }
-                
+
                 //  save pre LIMS submit so data is safe
                 submissionToSubmit.save(function (err) {
                     if (err) {
@@ -299,21 +299,19 @@ exports.submit = [
                         if (!results || results.some((x) => x.length === 0)) {
                             return apiResponse.errorResponse(res, 'Could not submit.');
                         }
+                        mailer.sendNotification(submissionToSubmit);
                         let [submissionResult] = results;
                         submissionToSubmit.submitted = true;
                         submissionToSubmit.transactionId = transactionId;
                         submissionToSubmit.submittedAt = transactionId;
                         submissionToSubmit.save(function (err) {
+                            
                             if (err) {
                                 return apiResponse.errorResponse(
                                     res,
                                     'Submission could not be saved on this site but was submitted to IGO.'
                                 );
                             } else {
-                                let sendEmail = mailer.sendToPms(submissionToSubmit.formValues);
-                                if (sendEmail) {
-                                    mailer.sendNotification(submissionToSubmit);
-                                }
                                 return apiResponse.successResponseWithData(res, 'Operation success', submissionResult);
                             }
                         });

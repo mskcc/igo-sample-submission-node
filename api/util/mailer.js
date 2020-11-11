@@ -1,5 +1,7 @@
 const nodemailer = require('nodemailer');
 const { logger } = require('../util/winston');
+const { emailConfig } = require('./constants');
+
 // create reusable transporter object using the default SMTP transport
 let transporter = nodemailer.createTransport({
     port: 25,
@@ -14,7 +16,44 @@ let transporter = nodemailer.createTransport({
     // }
 });
 
-const { constants } = require('./constants');
+exports.sendNotification = function (submission) {
+    let recipients = [emailConfig.notificationRecipients];
+
+    let sampleIdsString = '';
+    submission.gridValues.map((element) => {
+        sampleIdsString += `<br> ${element.userId}`;
+    });
+
+    if (sendToPms(submission.formValues)) {
+        recipients.push(emailConfig.cmoPmEmail);
+    }
+    let email = {
+        subject: `${emailConfig.subject} ${submission.formValues.serviceId}`,
+        content: `The following ${submission.formValues.material} samples were submitted to IGO for ${submission.formValues.application} by ${submission.username} under service id ${submission.formValues.serviceId}.  <br> ${sampleIdsString} `,
+        footer: emailConfig.footer,
+    };
+    console.log(email);
+
+    logger.log('info', `${email} sent to recipients.`);
+    transporter
+        .sendMail({
+            from: emailConfig.notificationSender, // sender address e.g. no-reply@xyz.com or "Fred Foo 👻" <foo@example.com>
+            to: recipients.join(','), // list of receivers e.g. bar@example.com, baz@example.com
+            subject: email.subject, // Subject line e.g. 'Hello ✔'
+            html: email.content + email.footer, // html body e.g. '<b>Hello world?</b>'
+            //text: text, // plain text body e.g. Hello world?
+        })
+        // .then((result) => console.log(result))
+        .catch((error) => console.log(error));
+};
+
+const sendToPms = (submissionFormValues) => {
+    let isPmApp = emailConfig.cmoPmEmailApplications.includes(submissionFormValues.application);
+    let isHuman = submissionFormValues.species === 'Human';
+    if (isHuman && isPmApp) {
+        return true;
+    } else return false;
+};
 
 exports.send = function (from, to, subject, html) {
     // send mail with defined transport object
@@ -26,35 +65,4 @@ exports.send = function (from, to, subject, html) {
         //text: text, // plain text body e.g. Hello world?
         html: html, // html body e.g. '<b>Hello world?</b>'
     });
-};
-
-exports.sendNotification = function (submission) {
-    let sampleIdsString = '';
-    submission.gridValues.map((element) => {
-        sampleIdsString += `<br> ${element.userId}`;
-    });
-    let email = {
-        subject: `[TEST IGO Submission] ${submission.formValues.serviceId}`,
-        content: `The following ${submission.formValues.material} samples were submitted to IGO for ${submission.formValues.application} by ${submission.username} under service id ${submission.formValues.serviceId}.  <br> ${sampleIdsString} `,
-        footer:
-            '<br><br><br>Thank you, <br><br><a href="http://cmo.mskcc.org/cmo/igo/">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br>Follow us on <a href="https://www.instagram.com/genomics212/?hl=en">Instagram</a> and <a href="https://twitter.com/genomics212?lang=en">Twitter</a>!<br>',
-    };
-    // // send mail with defined transport object
-    // // visit https://nodemailer.com/ for more options
-    logger.log('info', `${email} sent to recipients.`);
-    return transporter.sendMail({
-        from: process.env.IGO_EMAIL, // sender address e.g. no-reply@xyz.com or "Fred Foo 👻" <foo@example.com>
-        to: 'wagnerl@mskcc.org, lisa.wagner91@gmail.com', // list of receivers e.g. bar@example.com, baz@example.com
-        subject: email.subject, // Subject line e.g. 'Hello ✔'
-        //text: text, // plain text body e.g. Hello world?
-        html: email.content + email.footer, // html body e.g. '<b>Hello world?</b>'
-    });
-};
-
-exports.sendToPms = (submissionFormValues) => {
-    let isPmApp = constants.cmoPmEmailApplications.includes(submissionFormValues.application);
-    let isHuman = submissionFormValues.species === 'Human';
-    if (isHuman && isPmApp) {
-        return true;
-    } else return false;
 };
