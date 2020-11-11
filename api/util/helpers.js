@@ -1170,13 +1170,13 @@ function findOncoMatch(tumorType, oncoResult) {
 export function handlePatientIds(ids, username) {
     return new Promise((resolve, reject) => {
         let patientIdPromises = [];
-
-        const idsByType = sortPatientIdsByType(ids, username);
+        const idsWithCrdbInputId = addCrdbInputId(ids, username);
+        const idsByType = sortPatientIdsByType(idsWithCrdbInputId, username);
 
         // add crdb queries for each type of id, add empty promises if id type is not present on request so that Promise.all has reliable return value and order of dmp, cmo and standard ids
         if (!_.isEmpty(idsByType.standardPatientIds)) {
             let ids = [];
-            idsByType.standardPatientIds.forEach((element) => ids.push(element.patientId));
+            idsByType.standardPatientIds.forEach((element) => ids.push(element.crdbInputId));
             patientIdPromises.push(crdbServices.getCrdbIds(ids));
             countIdRequests('STANDARD ID', username);
         } else patientIdPromises.push([]);
@@ -1193,47 +1193,55 @@ export function handlePatientIds(ids, username) {
 
         Promise.all(patientIdPromises)
             .then((result) => {
-                let resultIds = result.flat();
-                let deIdentifiedIds = JSON.parse(JSON.stringify(ids));
+                let crdbResultIds = result.flat();
+                let deIdentifiedIds = JSON.parse(JSON.stringify(idsWithCrdbInputId));
 
                 deIdentifiedIds.forEach((idElement) => {
-                    // idsProcessed++;
-                    let inputId = idElement.patientId;
-                    let resultIdMatch = resultIds.find(
+                    //  Patient ID originally entered by User
+                    let userInputId = idElement.patientId;
+                    // Patient ID sent to CRDB
+                    let crdbInputId = idElement.crdbInputId;
+                    // Match CRDB Result values to its original ID
+                    let resultIdMatch = crdbResultIds.find(
                         (resultIdElement) =>
-                            resultIdElement.patientId === inputId.replace('C-', '') ||
-                            resultIdElement.dmpId === inputId ||
-                            resultIdElement.mrn === inputId
+                            resultIdElement.crdbOutput === crdbInputId ||
+                            resultIdElement.dmpId === crdbInputId ||
+                            resultIdElement.mrn === crdbInputId
                     );
-                    if (resultIdMatch) {
 
-                        idElement.finalPatientId = `C-${resultIdMatch.patientId}`;
-                        idElement.cmoPatientId = `C-${resultIdMatch.patientId}`;
-                        idElement.normalizedPatientId = `${username.toUpperCase()}_${resultIdMatch.patientId}`;
-                        if (idElement.idType === 'MRN') {
+                    if (resultIdMatch) {
+                        idElement.cmoPatientId = `C-${resultIdMatch.crdbOutput}`;
+
+                        // finetuning
+                        if (idElement.idType === 'CMO Patient ID') {
+                            idElement.finalPatientId = cmoPatientId;
+                            idElement.normalizedPatientId = `${username.toUpperCase()}_C-${resultIdMatch.crdbOutput}`;
+                        } else if (idElement.idType === 'MRN') {
                             idElement.finalPatientId = 'MRN_REDACTED';
-                        }
-                        if (idElement.idType === 'DMP Patient ID') {
+                            idElement.normalizedPatientId = `${username.toUpperCase()}_C-${resultIdMatch.crdbOutput}`;
+                        } else if (idElement.idType === 'DMP Patient ID') {
                             idElement.finalPatientId = resultIdMatch.dmpId;
                             idElement.normalizedPatientId = `${username.toUpperCase()}_${resultIdMatch.dmpId}`;
+                        } else {
+                            // no type matched? CRDB Input ID already includes username
+                            idElement.finalPatientId = userInputId;
+                            idElement.normalizedPatientId = idElement.crdbInputId.toUpperCase();
                         }
-
+                       
                         if ('sex' in resultIdMatch) idElement.sex = resultIdMatch.sex;
+
                     } else {
                         if (idElement.idType === 'MRN') idElement.message = 'MRN(s) could not be de-identified or verified.';
-                        else idElement.message = `${idElement.idType} ${inputId} could not be de-identified or verified. `;
+                        else idElement.message = `${idElement.idType} ${userInputId} could not be de-identified or verified. `;
                         idElement.finalPatientId = '';
                         idElement.cmoPatientId = '';
                         idElement.normalizedPatientId = '';
                     }
                     delete idElement.mrn;
+                    delete idElement.crdbInput;
                     delete idElement.patientId;
-
-                    //                         resolve(resultIds);
-                    //                     }
+                    delete idElement.userInputId;
                 });
-                // console.log(deIdentifiedIds);
-
                 resolve(deIdentifiedIds);
             })
             .catch((reasons) => reject(reasons));
@@ -1333,28 +1341,62 @@ function generateCrdbDbStatement(patientIds, table) {
 
     let i = 0;
     patientIds.forEach((element) => {
-        if (!bindValues.includes(element.patientId)) {
+        if (!bindValues.includes(element.crdbInputId)) {
             bindPlaceholders.push(`:bv${i + 1}`);
-            bindValues.push(element.patientId);
+            bindValues.push(element.crdbInputId);
             ++i;
         }
     });
+    console.log(bindValues);
+
     // Trusting NODE OraclDB bind to sanitize
     let query = `SELECT pt_mrn, cmo_id, dmp_id FROM crdb_cmo_loj_dmp_map WHERE ${table} IN (${bindPlaceholders})`;
     return { query, bindValues };
 }
+
+function addCrdbInputId(ids, username) {
+    let result = [];
+    ids.forEach((idElement) => {
+        let idType = idElement.idType;
+        let patientId = idElement.patientId;
+        switch (idType) {
+            case 'MRN':
+            case 'DMP Patient ID':
+                result.push({ ...idElement, crdbInputId: patientId });
+                break;
+            case 'CMO Patient ID':
+                result.push({ ...idElement, crdbInputId: patientId.replace('C-', '') });
+                break;
+            case 'Cell Line Name':
+                result.push({ ...idElement, crdbInputId: `CELLLINE_${patientId}` });
+                break;
+            default:
+                result.push({ ...idElement, crdbInputId: `${username.toUpperCase()}_${patientId}` });
+        }
+    });
+    return result;
+}
+
 function sortPatientIdsByType(ids, username) {
     let standardPatientIds = [];
     let dmpPatientIds = [];
     let cmoPatientIds = [];
     ids.forEach((idElement) => {
         let idType = idElement.idType;
-        let patientId = idElement.patientId.toUpperCase();
-        if (idType === 'MRN') standardPatientIds.push(idElement);
-        else if (idType === 'Cell Line Name') standardPatientIds.push({ ...idElement, patientId: `CELLLINE_${patientId}` });
-        else if (idType === 'CMO Patient ID') cmoPatientIds.push({ ...idElement, patientId: patientId.replace('C-', '') });
-        else if (idType === 'DMP Patient ID') dmpPatientIds.push(idElement);
-        else standardPatientIds.push(standardPatientIds.push({ ...idElement, patientId: `${username.toUpperCase()}_${patientId}` }));
+        switch (idType) {
+            case 'MRN':
+            case 'Cell Line Name':
+                standardPatientIds.push(idElement);
+                break;
+            case 'CMO Patient ID':
+                cmoPatientIds.push(idElement);
+                break;
+            case 'DMP Patient ID':
+                dmpPatientIds.push(idElement);
+                break;
+            default:
+                standardPatientIds.push(idElement);
+        }
     });
     return { standardPatientIds, dmpPatientIds, cmoPatientIds };
 }

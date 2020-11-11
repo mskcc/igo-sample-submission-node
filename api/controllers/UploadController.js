@@ -334,8 +334,6 @@ exports.deidentifyIds = [
             } else {
                 let ids = JSON.parse(req.body.ids);
                 let username = res.user.username;
-                console.log(username);
-
                 // if submission is being edited, username of original submission will be sent along
                 if (req.body.username) username = req.body.username;
                 util.handlePatientIds(ids, username)
@@ -346,6 +344,7 @@ exports.deidentifyIds = [
                     })
                     .catch(function (err) {
                         logger.log('error', err);
+                        console.log(err);
                         return apiResponse.errorResponse(
                             res,
                             'Something went wrong during Patient ID de-identification. To avoid accidental transmission of PHI, any MRNs have been removed and must be re-entered to be de-identified.'

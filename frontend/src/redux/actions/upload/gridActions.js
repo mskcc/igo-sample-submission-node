@@ -400,7 +400,7 @@ export function handlePatientIds(grid, ids, emptyIds, username) {
                 let message = new Set([]);
                 let affectedRows = [];
                 let failedIds = response.payload.idResults.filter((element) => element.message);
-                if (failedIds) {
+                if (failedIds.length > 0) {
                     failedIds.forEach((element) => {
                         message.add(element.message);
                         affectedRows.push(element.gridRowIndex);
