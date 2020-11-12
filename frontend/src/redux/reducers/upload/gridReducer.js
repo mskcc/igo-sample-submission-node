@@ -2,7 +2,6 @@ import { gridActions as ActionTypes } from '../../actions/';
 import { formActions as FormActionTypes } from '../../actions/';
 import { submissionActions as SubmissionActionTypes } from '../../actions/';
 import { initialGridState } from '../initialState';
-import { swal } from '../../../util';
 
 export default function gridReducer(state = initialGridState, action) {
     switch (action.type) {
@@ -169,6 +168,13 @@ export default function gridReducer(state = initialGridState, action) {
 
         case ActionTypes.GET_SUBMISSION_TO_EDIT_SUCCESS:
         case ActionTypes.GET_DMP_SUBMISSION_TO_EDIT_SUCCESS:
+            return {
+                ...state,
+                rows: action.payload.gridValues,
+                gridType: action.payload.gridType,
+                form: action.payload.formValues,
+                validation: { message: [], affectedRows: [] },
+            };
         case ActionTypes.LOAD_FROM_DMP_SUCCESS:
             return {
                 ...state,

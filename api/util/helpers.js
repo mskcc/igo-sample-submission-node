@@ -916,15 +916,22 @@ export function parseDmpOutput(dmpOutput, submission) {
         }
         let sampleIdsToDeidentify = [];
 
-        // deidentify orginal submissions IDs, not DMP
-        submission.gridValues.forEach((sample) => {
-            let id = sample.patientId;
-            let idType = 'Standard';
-            if (sample.patientId.includes('P-')) idType = 'DMP Patient ID';
-            if (sample.patientId.match(/^[0-9]{8}$/)) idType = 'MRN';
+        // deidentify orginal submission's IDs, not DMP
+        // Do only if the original samples exist in the DMP submission
+        submission.gridValues.forEach((originalSample) => {
+            const matchedDmpSample = Object.keys(dmpSamples).find(
+                (element) => dmpSamples[element]['Investigator Sample ID'] === originalSample.userId
+            );
+            if (matchedDmpSample) {
+                let id = originalSample.patientId;
+                let idType = 'Standard';
+                if (originalSample.patientId.includes('P-')) idType = 'DMP Patient ID';
+                if (originalSample.patientId.match(/^[0-9]{8}$/)) idType = 'MRN';
 
-            sampleIdsToDeidentify.push({ patientId: id, idType: idType });
+                sampleIdsToDeidentify.push({ patientId: id, idType: idType });
+            }
         });
+        // reject('done');
 
         promises.push(handlePatientIds(sampleIdsToDeidentify, username));
 
@@ -1032,7 +1039,7 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
 
         if (!originalSample) {
             rowIssues.push(
-                 `Sample received from DMP but not found in original submission. Investigator Patient ID could not be de-indentified because no Investigator Sample ID matched.`
+                `No matching Sample ID found in original submission. Investigator Patient ID could be pulled from original sample.`
             );
         } else {
             hasCoverage = 'requestedCoverage' in originalSample;
@@ -1117,8 +1124,9 @@ function mergePatientIdsIntoSamples(samples, patientIdResult) {
     let message = new Set([]);
     samples.forEach((sample) => {
         let deidentifiedMatch = patientIdResult.find(
-            (element) => element.finalPatientId === sample.patientId || element.inputId === sample.patientId
+            (element) => element.finalPatientId === sample.patientId || element.crdbInputId === sample.patientId
         );
+        
         if (deidentifiedMatch) {
             sample.normalizedPatientId = deidentifiedMatch.normalizedPatientId;
             sample.cmoPatientId = deidentifiedMatch.cmoPatientId;
@@ -1218,7 +1226,7 @@ export function handlePatientIds(ids, username) {
         let patientIdPromises = [];
         const idsWithCrdbInputId = addCrdbInputId(ids, username);
         const idsByType = sortPatientIdsByType(idsWithCrdbInputId, username);
-
+        
         // add crdb queries for each type of id, add empty promises if id type is not present on request so that Promise.all has reliable return value and order of dmp, cmo and standard ids
         if (!_.isEmpty(idsByType.standardPatientIds)) {
             let ids = [];
@@ -1273,9 +1281,8 @@ export function handlePatientIds(ids, username) {
                             idElement.finalPatientId = userInputId;
                             idElement.normalizedPatientId = idElement.crdbInputId.toUpperCase();
                         }
-                       
-                        if ('sex' in resultIdMatch) idElement.sex = resultIdMatch.sex;
 
+                        if ('sex' in resultIdMatch) idElement.sex = resultIdMatch.sex;
                     } else {
                         if (idElement.idType === 'MRN') idElement.message = 'MRN(s) could not be de-identified or verified.';
                         else idElement.message = `${idElement.idType} ${userInputId} could not be de-identified or verified. `;
@@ -1392,7 +1399,6 @@ function generateCrdbDbStatement(patientIds, table) {
             ++i;
         }
     });
-    console.log(bindValues);
 
     // Trusting NODE OraclDB bind to sanitize
     let query = `SELECT pt_mrn, cmo_id, dmp_id FROM crdb_cmo_loj_dmp_map WHERE ${table} IN (${bindPlaceholders})`;
