@@ -1,24 +1,9 @@
 const http = require('http');
 const express = require('express');
-var morgan = require('morgan');
-var path = require('path');
-var cors = require('cors');
-// require('dotenv').config();
-var cookieParser = require('cookie-parser');
-
-const winston = require('winston');
-const { format, loggers } = require('winston');
-const { combine, timestamp, prettyPrint } = format;
-
-loggers.add('logger', {
-    level: 'info',
-    format: combine(winston.format.json(), timestamp(), prettyPrint()),
-
-    transports: [
-        new winston.transports.File({ filename: 'error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'combined.log' }),
-    ],
-});
+const morgan = require('morgan');
+const path = require('path');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
@@ -43,17 +28,9 @@ mongoose
 
 var port = process.env.PORT;
 const hostname = '127.0.0.1';
-// if (process.env.NODE_ENV !== 'test') {
-//   port = 3002;
-// } else {
-//   port = 3003;
-// }
 
 var publicDir = path.join(__dirname, 'public');
-// process.on('unhandledRejection', (reason, p) => {
-//   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
-//   // application specific logging, throwing an error, or other logic here
-// });
+
 var app = express();
 
 app.use(cookieParser());
@@ -104,27 +81,6 @@ app.get('/favicon.ico', function (req, res) {
 app.use('*', function (req, res) {
     return apiResponse.notFoundResponse(res, 'Page not found');
 });
-
-// app.use((err, req, res, next) => {
-//     if (err.name === "UnauthorizedError") {
-//         return apiResponse.unauthorizedResponse(res, err.message);
-//     }
-//     console.log(req)
-//     console.log(req.user)
-// });
-
-// app.use((req, res, next) => {
-//     console.log(req)
-//     console.log(req.user)
-//     if (req.user){
-//         res.user = req.user
-//     }
-//     next()
-// });
-// // throw 404 if URL not found
-// app.all("*", function (req, res) {
-//     return apiResponse.notFoundResponse(res, "Page not found");
-// });
 
 const server = http.createServer(app);
 server.listen(port, hostname, () => {

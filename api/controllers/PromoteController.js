@@ -38,18 +38,12 @@ exports.load = [
         .withMessage('queryType must be specified and one of the following: investigator, serviceId, userId or project.'),
     body('query').isString().trim().withMessage('query must be specified.'),
     function (req, res) {
-        // console.log(req.body);
-        // try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         } else {
             let queryType = req.body.queryType;
             let query = req.body.query;
-
-            // let samplesPromise = cache.get(`BankedSamples-${query}`, () =>
-            //   util.loadBankedSamples(queryType, query)
-            // );
 
             let samplesPromise = util.loadBankedSamples(queryType, query);
             Promise.all([samplesPromise]).then((results) => {

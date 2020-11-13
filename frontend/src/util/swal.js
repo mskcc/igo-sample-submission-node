@@ -1,5 +1,43 @@
 import Swal from 'sweetalert2';
 
+
+
+export const genericMessage = (type, msg) => {
+    Swal.fire({
+        title: type.charAt(0).toUpperCase() + type.slice(1),
+        html: msg,
+        type: type,
+        animation: false,
+        confirmButtonText: 'Dismiss',
+    });
+};
+
+export const genericMessageWithTitle = (type, title, msg) => {
+    Swal.fire({
+        title: title,
+        html: msg,
+        type: type,
+        animation: false,
+        confirmButtonText: 'Dismiss',
+    });
+};
+
+export const genericDecision = (title, message) => {
+    return new Promise((resolve) => {
+        Swal.fire({
+            title: title,
+            html: message,
+            type: 'warning',
+            showCancelButton: true,
+            animation: false,
+            confirmButtonColor: '#df4602',
+            cancelButtonColor: '#007cba',
+            confirmButtonText: 'Proceed',
+            cancelButtonText: 'Cancel',
+        }).then((result) => (result.value ? resolve(true) : resolve(false)));
+    });
+};
+
 export const formGridMismatch = (match) => {
     Swal.fire({
         title: 'Header does not match Grid',
@@ -12,26 +50,6 @@ export const formGridMismatch = (match) => {
     });
 };
 
-export const nothingToChange = () => {
-    Swal.fire({
-        title: 'Nothing to change.',
-        type: 'info',
-        animation: false,
-        confirmButtonColor: '#007cba',
-        confirmButtonText: 'Dismiss',
-    });
-};
-
-export const tooManyRowsPasteAlert = () => {
-    Swal.fire({
-        title: 'Too many rows.',
-        html:
-            'We adjusted the grid for you now, please paste one more time. (Additional rows need to be added before pasting to apply all autofilling logic.)',
-        type: 'warning',
-        animation: false,
-        confirmButtonText: 'Dismiss',
-    });
-};
 
 export const confirmGridOverwrite = (msg) => {
     return new Promise((resolve) => {
@@ -125,7 +143,7 @@ export const confirmUpdate = () => {
     });
 };
 
-export const apiValidationError = (msg, data) => {
+export const apiRequestValidationError = (msg, data) => {
     let errors = data || '';
     if (data) {
         errors = '';
@@ -173,32 +191,8 @@ export const alertEmptyLoad = (queryType) => {
     });
 };
 
-export const genericMessage = (type, msg) => {
-    Swal.fire({
-        title: type.charAt(0).toUpperCase() + type.slice(1),
-        html: msg,
-        type: type,
-        animation: false,
-        confirmButtonText: 'Dismiss',
-    });
-};
 
-export const genericDecision = (title, message) => {
-    return new Promise((resolve) => {
-        Swal.fire({
-            title: title,
-            html: message,
-            type: 'warning',
-            showCancelButton: true,
-            animation: false,
-            confirmButtonColor: '#df4602',
-            cancelButtonColor: '#007cba',
-            confirmButtonText: 'Proceed',
-            cancelButtonText: 'Cancel',
-        }).then((result) => (result.value ? resolve(true) : resolve(false)));
-    });
-};
-
+// Used to wait for user to react to SWAL message even if no actual decision needed
 export const genericPromise = (title, message) => {
     return new Promise((resolve) => {
         Swal.fire({

@@ -9,13 +9,13 @@ import enTranslations from '../util/translations/en.json';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import { Backdrop, CircularProgress } from '@material-ui/core';
-import LoadingOverlay from 'react-loading-overlay';
 
 import { connect } from 'react-redux';
 import { commonActions, userActions } from '../redux/actions';
 import DevTools from './DevTools';
 
 import { Header, SnackMessage } from '../components';
+
 import UploadPage from './Upload/UploadPage';
 import SubmissionsPage from './Submissions/SubmissionsContainer';
 import PromotePage from './Promote/PromoteContainer';
@@ -89,15 +89,14 @@ class Root extends Component {
     };
 
     render() {
-        const { role, common, error, loading } = this.props;
+        const { role, common, error } = this.props;
         return (
             <MuiThemeProvider theme={theme}>
                 <Router basename={Config.BASENAME}>
-                    {/* <LoadingOverlay active={common.loading} spinner text='Loading...'> */}
-
                     <div className='app'>
-                        <Backdrop open={common.loading}>  <CircularProgress color="inherit" />
-</Backdrop>
+                        <Backdrop open={common.loading}>
+                            <CircularProgress color='inherit' />
+                        </Backdrop>
                         <Header userRole={role} />
                         {Config.ENV !== 'production' ? <DevTools /> : <div />}
 
@@ -120,7 +119,7 @@ class Root extends Component {
                                     <Route path='/logout' component={Logout} />
                                     <Route path='/error' component={ErrorPage} />
                                 </div>
-                                {common.message && common.message.length > 0 ? (
+                                {common.message && common.message.length > 0 && (
                                     <span>
                                         <SnackMessage
                                             open
@@ -129,11 +128,10 @@ class Root extends Component {
                                             handleClose={this.handleMsgClose}
                                         />
                                     </span>
-                                ) : null}
+                                )}
                             </React.Fragment>
                         )}
                     </div>
-                    {/* </LoadingOverlay> */}
                 </Router>
             </MuiThemeProvider>
         );

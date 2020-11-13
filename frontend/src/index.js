@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom';
 import 'react-app-polyfill/ie9';
 import 'react-app-polyfill/ie11';
 
-import { LocalizeProvider } from 'react-localize-redux';
-import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import { store, persistor } from './redux/store/configureStore';
+import { LocalizeProvider } from 'react-localize-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 
 import Root from './containers/Root';
 
@@ -14,7 +14,7 @@ import * as serviceWorker from './serviceWorker';
 
 import './App.css';
 
-const App = (props) => (
+const App = () => (
     <Provider store={store}>
         <LocalizeProvider store={store}>
             <PersistGate loading={null} persistor={persistor}>

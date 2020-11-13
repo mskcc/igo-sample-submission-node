@@ -3,7 +3,6 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 import { withStyles } from '@material-ui/core/styles';
-import { element } from 'prop-types';
 
 const styles = (theme) => ({
     container: { margin: '2em', padding: '2em', minWidth: '50%' },

@@ -299,7 +299,6 @@ exports.updateStatus = [
                 if (!availableTrackingIds) {
                     return apiResponse.successResponse(res, 'No projects returned by the DMP.');
                 }
-                // console.log(availableTrackingIds);
                 DmpSubmissionModel.updateMany(
                     { trackingId: { $in: [...availableTrackingIds] }, isAvailableAtDmp: false },
                     { isAvailableAtDmp: true }
