@@ -35,7 +35,7 @@ function commonReducer(state = initialState, action) {
     } else if (error && error.payload) {
         console.log(error.payload);
         if (error.response.status === 400) {
-            swal.apiValidationError(error.payload.message, error.payload.data);
+            swal.apiRequestValidationError(error.payload.message, error.payload.data);
             state = { ...state };
         }
         state = {

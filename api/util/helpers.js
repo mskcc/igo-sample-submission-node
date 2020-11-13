@@ -9,7 +9,7 @@ import { Logform } from 'winston';
 const fs = require('fs');
 
 var _ = require('lodash');
-// import { isMatch } from 'lodash';
+
 const dmpColumns = require('./dmpColumns');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
@@ -1268,7 +1268,7 @@ export function handlePatientIds(ids, username) {
 
                         // finetuning
                         if (idElement.idType === 'CMO Patient ID') {
-                            idElement.finalPatientId = cmoPatientId;
+                            idElement.finalPatientId = idElement.cmoPatientId;
                             idElement.normalizedPatientId = `${username.toUpperCase()}_C-${resultIdMatch.crdbOutput}`;
                         } else if (idElement.idType === 'MRN') {
                             idElement.finalPatientId = 'MRN_REDACTED';

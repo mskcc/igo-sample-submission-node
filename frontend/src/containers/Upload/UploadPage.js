@@ -23,7 +23,7 @@ export class UploadPage extends Component {
         const { grid, increaseRowNumber } = this.props;
         const prevRowNumber = grid.form.numberOfSamples;
         increaseRowNumber(prevRowNumber, newRowNumber);
-        swal.tooManyRowsPasteAlert();
+        swal.genericMessageWithTitle('warning', 'Pasting too many rows.', 'We adjusted the sample number for you now, please paste one more time. (Additional rows need to be added before pasting to apply all autofilling logic.)',);
     };
 
     submitRowNumberUpdate = () => {

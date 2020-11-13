@@ -131,7 +131,7 @@ export function getColumns(page, formValues) {
             let grid = getState().upload.grid;
             let diffValues = util.diff(grid.form, formValues);
             if (!diffValues || Object.entries(diffValues).length === 0) {
-                swal.nothingToChange();
+                swal.genericMessage('info', 'Nothing to change.');
                 dispatch({ type: NO_CHANGE });
                 return setTimeout(() => {
                     dispatch({ type: NO_CHANGE_RESET });

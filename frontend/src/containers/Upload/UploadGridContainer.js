@@ -9,12 +9,8 @@ import { UploadGrid } from '../../components';
 
 class UploadGridContainer extends Component {
     handleChange = (changes, source) => {
-        const { handleGridChange, grid } = this.props;
-        // const includesPatientIdChange = changes.some((element) => element.includes('patientId'));
-        // if (changes.length > 20 || includesPatientIdChange) {
-        //     showLoader();
-        // }
-        handleGridChange(changes, grid.gridType);
+        const { handleGridChange } = this.props;        
+        handleGridChange(changes);
     };
 
     handleClear = () => {
@@ -32,7 +28,7 @@ class UploadGridContainer extends Component {
         const formValues = this.props[gridType].form.selected;
 
         const match = util.checkGridAndForm(formValues, grid.form);
-        if (!match.success) {
+        if (!match.success) {            
             return swal.formGridMismatch(match);
         }
 
