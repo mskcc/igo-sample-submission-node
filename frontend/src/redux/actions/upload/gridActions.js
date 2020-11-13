@@ -38,53 +38,39 @@ export const handleGridChange = (changes, gridType) => {
                         const containsMRNs = nonEmptyIds.some((element) => /^[0-9]{8}$/.test(element.patientId.trim()));
                         // Redact MRNs even before sending them off to be de-identified.
                         if (containsMRNs) {
-                            if (gridType === 'dmp') {
-                                validatedGrid = util.redactMRNsFromGrid(validationResult.grid, '');
-                                validationResult.errorMessage.push('No MRNs allowed as Patient IDs for this submission type.');
-                            } else validatedGrid = util.redactMRNsFromGrid(validationResult.grid);
+                            validatedGrid = util.redactMRNsFromGrid(validationResult.grid);
                         }
 
-                        if (gridType === 'upload') {
-                            dispatch({ type: REGISTER_GRID_CHANGE_PRE_VALIDATE, message: 'De-identifying IDs...', loading: true });
+                        dispatch({ type: REGISTER_GRID_CHANGE_PRE_VALIDATE, message: 'De-identifying IDs...', loading: true });
 
-                            let username = submissions.submissionToEdit ? submissions.submissionToEdit.username : user.username;
+                        let username = submissions.submissionToEdit ? submissions.submissionToEdit.username : user.username;
 
-                            handlePatientIds(validatedGrid, nonEmptyIds, emptyIds, username)
-                                .then((patientIdResult) => {
-                                    console.log('handlePatientIds Result', patientIdResult);
-
-                                    validationResult = {
-                                        ...validationResult,
-                                        grid: { ...validatedGrid, rows: patientIdResult.rows },
-                                        errorMessage: [...validationResult.errorMessage, ...patientIdResult.message],
-                                        affectedRows: [...validationResult.affectedRows, ...patientIdResult.affectedRows],
-                                    };
-                                    let message = 'clear';
-                                    if (validationResult.errorMessage.length > 0)
-                                        message = 'Validation Error. Check validation panel for more information.';
-                                    return dispatch({
-                                        type: REGISTER_GRID_CHANGE_POST_VALIDATE,
-                                        payload: validationResult,
-                                        message: message,
-                                    });
-                                })
-                                .catch((error) => {
-                                    console.log(error);
-                                    validatedGrid.rows.map((element) => (element.patientId = ''));
-                                    dispatch({
-                                        type: REGISTER_GRID_CHANGE_POST_VALIDATE,
-                                        payload: validationResult,
-                                        message:
-                                            'Error while de-identifying. Please try again or reach out to zzPDL_SKI_IGO_DATA@mskcc.org.',
-                                    });
+                        handlePatientIds(validatedGrid, nonEmptyIds, emptyIds, username)
+                            .then((patientIdResult) => {
+                                validationResult = {
+                                    ...validationResult,
+                                    grid: { ...validatedGrid, rows: patientIdResult.rows },
+                                    errorMessage: [...validationResult.errorMessage, ...patientIdResult.message],
+                                    affectedRows: [...validationResult.affectedRows, ...patientIdResult.affectedRows],
+                                };
+                                let message = 'clear';
+                                if (validationResult.errorMessage.length > 0)
+                                    message = 'Validation Error. Check validation panel for more information.';
+                                return dispatch({
+                                    type: REGISTER_GRID_CHANGE_POST_VALIDATE,
+                                    payload: validationResult,
+                                    message: message,
                                 });
-                        } else {
-                            return dispatch({
-                                type: REGISTER_GRID_CHANGE_POST_VALIDATE,
-                                payload: validationResult,
-                                message: 'clear',
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                                validatedGrid.rows.map((element) => (element.patientId = ''));
+                                dispatch({
+                                    type: REGISTER_GRID_CHANGE_POST_VALIDATE,
+                                    payload: validationResult,
+                                    message: 'Error while de-identifying. Please try again or reach out to zzPDL_SKI_IGO_DATA@mskcc.org.',
+                                });
                             });
-                        }
                     } else {
                         return dispatch({
                             type: REGISTER_GRID_CHANGE_POST_VALIDATE,

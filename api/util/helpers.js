@@ -918,37 +918,37 @@ export function parseDmpOutput(dmpOutput, submission) {
 
         // deidentify orginal submission's IDs, not DMP
         // Do only if the original samples exist in the DMP submission
-        submission.gridValues.forEach((originalSample) => {
-            const matchedDmpSample = Object.keys(dmpSamples).find(
-                (element) => dmpSamples[element]['Investigator Sample ID'] === originalSample.userId
-            );
-            if (matchedDmpSample) {
-                let id = originalSample.patientId;
-                let idType = 'Standard';
-                if (originalSample.patientId.includes('P-')) idType = 'DMP Patient ID';
-                if (originalSample.patientId.match(/^[0-9]{8}$/)) idType = 'MRN';
+        // submission.gridValues.forEach((originalSample) => {
+        //     const matchedDmpSample = Object.keys(dmpSamples).find(
+        //         (element) => dmpSamples[element]['Investigator Sample ID'] === originalSample.userId
+        //     );
+        //     if (matchedDmpSample) {
+        //         let id = originalSample.patientId;
+        //         let idType = 'Standard';
+        //         if (originalSample.patientId.includes('P-')) idType = 'DMP Patient ID';
+        //         if (originalSample.patientId.match(/^[0-9]{8}$/)) idType = 'MRN';
 
-                sampleIdsToDeidentify.push({ patientId: id, idType: idType });
-            }
-        });
+        //         sampleIdsToDeidentify.push({ patientId: id, idType: idType });
+        //     }
+        // });
         // reject('done');
 
-        promises.push(handlePatientIds(sampleIdsToDeidentify, username));
+        // promises.push(handlePatientIds(sampleIdsToDeidentify, username));
 
         Promise.all(promises).then((results) => {
-            let [oncoResult, indexResult, patientIdResult] = results;
+            let [oncoResult, indexResult] = results;
 
             let translatedSamples = translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexResult);
             let { igoSamples, translationIssues } = translatedSamples;
 
-            let mergedSamplesResult = mergePatientIdsIntoSamples(igoSamples, patientIdResult);
-            let { mergedSamples, failedIdsMessage } = mergedSamplesResult;
-            translationIssues.push(failedIdsMessage);
-            mergedSamples.sort(compareByWellPosition);
+            // let mergedSamplesResult = mergePatientIdsIntoSamples(igoSamples, patientIdResult);
+            // let { mergedSamples, failedIdsMessage } = mergedSamplesResult;
+            // translationIssues.push(failedIdsMessage);
+            igoSamples.sort(compareByWellPosition);
 
             let parsedSubmission = {
                 username: submission.username,
-                gridValues: mergedSamples,
+                gridValues: igoSamples,
                 submitted: false,
                 transactionId: submission.transactionId,
                 formValues: {
@@ -1012,7 +1012,6 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
         let rowIssues = [];
 
         const dmpSample = dmpSamples[element];
-        const dmpPatientId = dmpSample['DMP ID'].match(/P-[0-9]{7}/)[0];
         const dmpInvestigatorSampleId = dmpSample['Investigator Sample ID'];
         const dmpWellPosition = dmpSample['Well Position'];
         const dmpPreservation = dmpSample['Preservation (FFPE or Blood)'];
@@ -1020,32 +1019,11 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
         const dmpSpecimenType = dmpSample['Specimen Type (Resection, Biopsy or Blood)'];
         const dmpTumorType = dmpSample['Tumor Type'];
 
-        let igoInvestigatorSampleId,
-            igoInvestigatorPatientId,
-            igoWellPosition,
-            igoPreservation,
-            igoSampleOrigin,
-            igoSampleClass,
-            igoSpecimenType,
-            igoTumorType;
+        //  values translated from dmp output
+        //  coverage and patientIds are pulled from original sample
+        let igoInvestigatorSampleId, igoWellPosition, igoPreservation, igoSampleOrigin, igoSampleClass, igoSpecimenType, igoTumorType;
 
-        let hasCoverage = false;
-
-        // ? DMP ID or Investigator Sample ID to get Patient ID
         igoInvestigatorSampleId = dmpInvestigatorSampleId;
-        // igoInvestigatorPatientId = dmpPatientId.match(/P-[0-9]{7}/)[0];
-        //  take investigator patient id from original sample as it's not returned from DMP
-        const originalSample = submission.gridValues.find((element) => element.userId === dmpInvestigatorSampleId);
-
-        if (!originalSample) {
-            rowIssues.push(
-                `No matching Sample ID found in original submission. Investigator Patient ID could be pulled from original sample.`
-            );
-        } else {
-            hasCoverage = 'requestedCoverage' in originalSample;
-            igoInvestigatorPatientId = originalSample.patientId;
-        }
-
         igoWellPosition = dmpWellPosition;
         var wellPosMatch = /([A-Za-z]+)(\d+)/.exec(igoWellPosition);
         if (!wellPosMatch) {
@@ -1095,7 +1073,6 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
             sampleClass: igoSampleClass,
             specimenType: igoSpecimenType,
             userId: igoInvestigatorSampleId,
-            patientId: igoInvestigatorPatientId,
         };
 
         if (hasIndex) {
@@ -1110,7 +1087,21 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
                 indexSequence: indexMatch || '',
             };
         }
-        if (hasCoverage) igoSample.requestedCoverage = originalSample.requestedCoverage;
+        // ADD ORIGINAL SAMPLE VALUES
+        const originalSample = submission.gridValues.find((element) => element.userId === dmpInvestigatorSampleId);
+
+        if (!originalSample) {
+            rowIssues.push(
+                `No matching Sample ID found in original submission. Coverage and deidentified PatientIDs could not be pulled from original but can be entered here.`
+            );
+        } else {
+            if ('requestedCoverage' in originalSample) {
+                igoSample.requestedCoverage = originalSample.requestedCoverage;
+            }
+            igoSample.patientId = originalSample.patientId;
+            igoSample.cmoPatientId = originalSample.cmoPatientId;
+            igoSample.normalizedPatientId = originalSample.normalizedPatientId;
+        }
 
         if (rowIssues.length > 0) {
             translationIssues[index] = `${igoInvestigatorSampleId}: ${rowIssues.join('–')}`;
@@ -1120,50 +1111,6 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
     return { igoSamples: igoSamples, translationIssues };
 }
 
-function mergePatientIdsIntoSamples(samples, patientIdResult) {
-    let message = new Set([]);
-    samples.forEach((sample) => {
-        let deidentifiedMatch = patientIdResult.find(
-            (element) => element.finalPatientId === sample.patientId || element.crdbInputId === sample.patientId
-        );
-        
-        if (deidentifiedMatch) {
-            sample.normalizedPatientId = deidentifiedMatch.normalizedPatientId;
-            sample.cmoPatientId = deidentifiedMatch.cmoPatientId;
-        } else {
-            message.add(`DMP Patient ID ${sample.patientId} could not be verified.\r\n`);
-            message.add('You can use MRNs as Patient IDs for any Patient ID Type.');
-            sample.patientId = '';
-            sample.normalizedPatientId = '';
-            sample.cmoPatientId = '';
-        }
-    });
-    message = Array.from(message);
-    return { mergedSamples: samples, failedIdsMessage: message };
-}
-
-// // Checks wether the returned data matches the samples that were submitted to the DMP using sampel submission
-// function doSamplesMatch(dmpSamples, translatedSubmission) {
-//     const dmpOutputSampleIds = Object.keys(dmpSamples);
-//     const dmpInputSampleIds = [];
-//     getApprovedSamples(translatedSubmission).forEach((sample) => dmpInputSampleIds.push(sample.dmpSampleId));
-
-//     if (isEqual(dmpOutputSampleIds, dmpInputSampleIds)) {
-//         return 'We received all submitted (and approved) samples';
-//     } else {
-//         return `Unexpected sample IDs returned from DMP.`;
-//     }
-// }
-// simple comparison function TODO improve
-function isEqual(a, b) {
-    // if length is not equal
-    if (a.length != b.length) return false;
-    else {
-        // comapring each element of array
-        for (var i = 0; i < a.length; i++) if (a[i] != b[i]) return false;
-        return true;
-    }
-}
 /**
  * Well Position A1,A2...A12,B1,B2...H12
  * Well Position Rows = A-H
@@ -1226,7 +1173,7 @@ export function handlePatientIds(ids, username) {
         let patientIdPromises = [];
         const idsWithCrdbInputId = addCrdbInputId(ids, username);
         const idsByType = sortPatientIdsByType(idsWithCrdbInputId, username);
-        
+
         // add crdb queries for each type of id, add empty promises if id type is not present on request so that Promise.all has reliable return value and order of dmp, cmo and standard ids
         if (!_.isEmpty(idsByType.standardPatientIds)) {
             let ids = [];

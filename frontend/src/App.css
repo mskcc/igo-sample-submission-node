@@ -80,7 +80,7 @@ code {
 /* } */
 
 .htDimmed {
-    background-color: $materialvar(--gray !important);
+    background-color: var(--material-gray) !important;
 }
 
 input.htCheckboxRendererInput {
