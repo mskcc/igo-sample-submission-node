@@ -10,6 +10,7 @@ const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 const { constants } = require('../util/constants');
 
+
 /**
  * Initial State, returns header values for submission form.
  *
@@ -223,7 +224,7 @@ exports.mrnToCid = [
                         let [patientIdResult] = results;
                         let responseObject = {
                             ...patientIdResult,
-                            normalizedPatientId: 'MRN_REDACTED',
+                            normalizedPatientId: constants.MRN_REDACTED_STRING,
                         };
                         return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
                     });
@@ -261,7 +262,7 @@ exports.mrnToDmpId = [
                         let [patientIdResult] = results;
                         let responseObject = {
                             ...patientIdResult,
-                            normalizedPatientId: 'MRN_REDACTED',
+                            normalizedPatientId: constants.MRN_REDACTED_STRING,
                         };
                         return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
                     });
