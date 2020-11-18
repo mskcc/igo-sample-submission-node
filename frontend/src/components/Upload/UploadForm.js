@@ -126,7 +126,7 @@ class UploadForm extends React.Component {
                     // if (values.altServiceId) {
                     //     formValid[value] = true;
                     // } else {
-                        formValid[value] = /\d{6}/g.test(values[value]) && values[value].length === 6;
+                    formValid[value] = /\d{6}/g.test(values[value]) && values[value].length === 6;
                     // }
                     break;
                 case 'material':
@@ -148,6 +148,18 @@ class UploadForm extends React.Component {
                     formValid[value] = isValidOption && values[value].length > 0;
                     break;
 
+                // Investigators need to know the panel they're requesting. Case, underscores and spaces are normalized for matching.
+                // The picklist is not public to avoid lab's requesting each other's custom panels without consent.
+                case 'capturePanel':
+                    let findValidOption = this.props.form.capturePanels.find(function(el) {                        
+                        return el.toLowerCase().replace(/_|\s/g,'') === values[value].toLowerCase().replace(/_|\s/g,'');
+                    });            
+                    if (findValidOption) isValidOption = true;
+                    else isValidOption = false;
+                    formValid[value] = isValidOption && values[value].length > 0;
+                    if (formValid[value]) values[value] = findValidOption;
+                    break;
+                    
                 case 'container':
                     isValidOption = this.props.form.filteredContainers.some(function(el) {
                         return el === values[value];
@@ -235,6 +247,7 @@ class UploadForm extends React.Component {
             this.state.formValid.container &&
             this.state.formValid.patientIdType &&
             this.state.formValid.patientIdTypeSpecified &&
+            this.state.formValid.capturePanel &&
             this.state.formValid.sharedWith
         );
     }
@@ -294,19 +307,29 @@ class UploadForm extends React.Component {
                                 }}
                             />
                             {this.showCapturePanelDropdown() && (
-                                <Dropdown
+                                <Input
                                     id='capturePanel'
+                                    type='text'
                                     error={!formValid.capturePanel}
-                                    onChange={this.handleDropdownChange}
-                                    items={form.capturePanels.map((option) => ({
-                                        value: option,
-                                        label: option,
-                                    }))}
-                                    value={{
-                                        value: form.selected.capturePanel,
-                                        label: form.selected.capturePanel,
+                                    onChange={this.handleChange}
+                                    inputProps={{
+                                        inputProps: { min: 0 },
                                     }}
+                                    value={form.selected.capturePanel}
                                 />
+                                // <Dropdown
+                                //     id='capturePanel'
+                                //     error={!formValid.capturePanel}
+                                //     onChange={this.handleDropdownChange}
+                                //     items={form.capturePanels.map((option) => ({
+                                //         value: option,
+                                //         label: option,
+                                //     }))}
+                                //     value={{
+                                //         value: form.selected.capturePanel,
+                                //         label: form.selected.capturePanel,
+                                //     }}
+                                // />
                             )}
                             <FormControl component='fieldset'>
                                 <Dropdown

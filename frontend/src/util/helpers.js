@@ -523,7 +523,6 @@ export const autoFillGridBasedOnInput = (changes, grid) => {
 // assay
 // drodpown selection restricted to picklist (if done through handsontable, validation experience very different from overall user experience)
 export const validateGrid = (changes, grid) => {
-    console.log('autofill', changes);
 
     return new Promise((resolve) => {
         console.log(grid);
