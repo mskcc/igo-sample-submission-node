@@ -151,15 +151,20 @@ class UploadForm extends React.Component {
                 // Investigators need to know the panel they're requesting. Case, underscores and spaces are normalized for matching.
                 // The picklist is not public to avoid lab's requesting each other's custom panels without consent.
                 case 'capturePanel':
-                    let findValidOption = this.props.form.capturePanels.find(function(el) {                        
-                        return el.toLowerCase().replace(/_|\s/g,'') === values[value].toLowerCase().replace(/_|\s/g,'');
-                    });            
+                    if (!this.showCapturePanelDropdown()) {
+                        formValid[value] = true;
+                        values[value] = '';
+                        break;
+                    }
+                    let findValidOption = this.props.form.capturePanels.find(function(el) {
+                        return el.toLowerCase().replace(/_|\s/g, '') === values[value].toLowerCase().replace(/_|\s/g, '');
+                    });
                     if (findValidOption) isValidOption = true;
                     else isValidOption = false;
                     formValid[value] = isValidOption && values[value].length > 0;
                     if (formValid[value]) values[value] = findValidOption;
                     break;
-                    
+
                 case 'container':
                     isValidOption = this.props.form.filteredContainers.some(function(el) {
                         return el === values[value];
