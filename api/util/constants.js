@@ -26,6 +26,7 @@ export const constants = {
     humanOrMouseApplications: ['wholeexomesequencing'],
 
     logger: 'sampleSubmission',
+    mrnRedactedString: 'MRN_REDACTED'
 };
 export const emailConfig = {
     cmoPmEmailApplications: [
