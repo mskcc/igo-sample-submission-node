@@ -299,7 +299,6 @@ exports.updateStatus = [
                 if (!availableTrackingIds) {
                     return apiResponse.successResponse(res, 'No projects returned by the DMP.');
                 }
-                // console.log(availableTrackingIds);
                 DmpSubmissionModel.updateMany(
                     { trackingId: { $in: [...availableTrackingIds] }, isAvailableAtDmp: false },
                     { isAvailableAtDmp: true }
@@ -370,6 +369,8 @@ exports.loadFromDmp = [
                                             console.log(err);
                                             return apiResponse.errorResponse(res, 'Retrieved DMP submission could not be updated.');
                                         }
+                                        console.log(issues);
+
                                         return apiResponse.successResponseWithData(res, 'Submission saved.', {
                                             submission: igoSubmission._doc,
                                             issues: issues,
@@ -381,6 +382,8 @@ exports.loadFromDmp = [
                     }
                 })
                 .catch((reasons) => {
+                    console.log(reasons);
+
                     return apiResponse.errorResponse(res, reasons);
                 });
         }

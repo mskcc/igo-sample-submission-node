@@ -1,10 +1,11 @@
- const apiResponse = require('../util/apiResponse');
+const apiResponse = require('../util/apiResponse');
 const { body, param, query, validationResult } = require('express-validator');
 const util = require('../util/helpers');
 const mailer = require('../util/mailer');
 var _ = require('lodash');
 var mongoose = require('mongoose');
 var ObjectId = mongoose.Types.ObjectId;
+// const { sqlSubmissions } = require('./sqlSubmissions');
 
 const SubmissionModel = require('../models/SubmissionModel');
 const DmpSubmissionModel = require('../models/DmpSubmissionModel');
@@ -98,7 +99,18 @@ exports.grid = [
                             return apiResponse.errorResponse(res, 'Could not retrieve submission grid.');
                         }
                         let [submissionGridResult] = results;
-                        return apiResponse.successResponseWithData(res, 'Operation success', submissionGridResult);
+                        if (submissionType === 'dmp') {
+                            util.getAvailableProjectsFromDmp().then((ids) => {
+                                console.log(Array.from(ids));
+
+                                apiResponse.successResponseWithData(res, 'Operation success', {
+                                    ...submissionGridResult,
+                                    trackingIds: Array.from(ids),
+                                });
+                            });
+                        } else {
+                            return apiResponse.successResponseWithData(res, 'Operation success', submissionGridResult);
+                        }
                     })
                     .catch((reasons) => {
                         return apiResponse.errorResponse(res, reasons);
@@ -125,7 +137,7 @@ exports.since = [
             .sort({ createdAt: 'desc' })
             .exec(function (err, submissions) {
                 if (err || _.isEmpty(submissions)) {
-                    return apiResponse.errorResponse(res, 'Could not retrieve submissions.');
+                    return apiResponse.errorResponse(res, 'No submissions found.');
                 }
                 let submissionGridPromise = util.generateSubmissionGrid(submissions, res.user.role, submissionType);
                 Promise.all([submissionGridPromise])
@@ -167,14 +179,12 @@ exports.create = [
                 formValues: formValues,
                 gridValues: gridValues,
                 trackingId: gridValues[0].trackingId || '',
-                appVersion: '2.5',
             });
         } else {
             submission = new SubmissionModel({
                 username: res.user.username,
                 formValues: formValues,
                 gridValues: gridValues,
-                appVersion: '2.5',
             });
         }
         submission.save(function (err) {
@@ -267,6 +277,7 @@ exports.submit = [
                 if (gridType === 'dmp') {
                     submissionToSubmit.trackingId = gridValues[0].trackingId || '';
                 }
+
                 //  save pre LIMS submit so data is safe
                 submissionToSubmit.save(function (err) {
                     if (err) {
@@ -275,31 +286,30 @@ exports.submit = [
                 });
                 let submissionPromise = util.submit(submissionToSubmit, res.user, transactionId);
                 Promise.all([submissionPromise])
-                    .catch((reasons) => {
-                        return apiResponse.errorResponse(res, reasons);
-                    })
+
                     .then((results) => {
                         if (!results || results.some((x) => x.length === 0)) {
                             return apiResponse.errorResponse(res, 'Could not submit.');
                         }
+                        mailer.sendNotification(submissionToSubmit);
                         let [submissionResult] = results;
                         submissionToSubmit.submitted = true;
                         submissionToSubmit.transactionId = transactionId;
                         submissionToSubmit.submittedAt = transactionId;
                         submissionToSubmit.save(function (err) {
+                            
                             if (err) {
                                 return apiResponse.errorResponse(
                                     res,
                                     'Submission could not be saved on this site but was submitted to IGO.'
                                 );
                             } else {
-                                let sendEmail = mailer.sendToPms(submissionToSubmit.formValues);
-                                if (sendEmail) {
-                                    mailer.sendNotification(submissionToSubmit);
-                                }
                                 return apiResponse.successResponseWithData(res, 'Operation success', submissionResult);
                             }
                         });
+                    })
+                    .catch((reasons) => {
+                        return apiResponse.errorResponse(res, reasons);
                     });
             })
             .catch((reasons) => {
@@ -339,8 +349,9 @@ exports.download = [
         }
         let id = req.query.id;
         let submissionType = req.query.submissionType;
-        let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;        
-        model.findById(ObjectId(id))
+        let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
+        model
+            .findById(ObjectId(id))
             .lean()
             .exec(function (err, submission) {
                 if (!submission || err) {
@@ -351,6 +362,29 @@ exports.download = [
                     excelData,
                     fileName: `Receipt-${submission.formValues.serviceId}-${submission.username}`,
                 });
+            });
+    },
+];
+
+//  used to import MySql receipts
+exports.import = [
+    function (req, res) {
+        // let parsedSubmissions = [];
+        // console.log(submissions.length);
+        let parsedSubmissions = util.translateSqlSubmissions(sqlSubmissions);
+
+        SubmissionModel.deleteMany({ appVersion: { $ne: '2.5' } }, function (err) {
+            if (err) console.log(err);
+            console.log('Successful deletion');
+        });
+        SubmissionModel.insertMany(parsedSubmissions)
+            .then((documents) => {
+                return apiResponse.successResponse(res, `${documents.length} submissions imported.`);
+            })
+            .catch((error) => {
+                console.log(error);
+
+                return apiResponse.errorResponse(res, 'Could not import submissions.');
             });
     },
 ];

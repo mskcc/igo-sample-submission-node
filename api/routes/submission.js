@@ -8,6 +8,7 @@ router.get('/grid/:type', SubmissionController.grid);
 router.get('/since/:type/:time', SubmissionController.since);
 router.get('/get/:id/:type', SubmissionController.submission);
 router.get('/download', SubmissionController.download);
+router.get('/import', SubmissionController.import);
 router.post('/create', SubmissionController.create);
 router.post('/update', SubmissionController.update);
 router.post('/delete', SubmissionController.delete);

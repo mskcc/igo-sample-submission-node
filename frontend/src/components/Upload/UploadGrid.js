@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core';
 import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.css';
 
-import { GridButton, EditPanel } from '../index';
+import { GridButton, EditPanel, ValidationPanel } from '../index';
 
 class UploadGrid extends React.Component {
     constructor(props) {
@@ -24,16 +24,17 @@ class UploadGrid extends React.Component {
             pasteTooMany,
             user,
             submissionToEdit,
-            handleAssay,
-            handleTumorType,
-            handlePatientId,
         } = this.props;
         return (
             <div>
                 <div className={classes.container}>
-                    {submissionToEdit && submissionToEdit.gridType === gridType && (
-                        <EditPanel userRole='lab_member' submission={submissionToEdit} />
-                    )}
+                    <div className={classes.information}>
+                        {submissionToEdit && submissionToEdit.gridType === gridType && (
+                            <EditPanel userRole='lab_member' submission={submissionToEdit} />
+                        )}
+                        {/* {grid.validationMessage} */}
+                        {<ValidationPanel validation={grid.validation} />}
+                    </div>
                     <div className={classes.buttons}>
                         {gridType === 'upload' ? (
                             <GridButton id='gridSubmit' onClick={handleSubmit} isLoading={false} nothingToSubmit={false} color='primary' />
@@ -91,37 +92,11 @@ class UploadGrid extends React.Component {
                                 pasteTooMany(numOfPastedRows);
                                 return false;
                             }
-                            if (changes.length > 50) {
-                                this.props.preValidate();
-                            }
                         }}
                         afterChange={(changes, source) => {
                             if (changes) {
-                                let i = 0;
                                 if (source !== 'loadData') {
-                                    changes.forEach(([row, prop, oldValue, newValue]) => {
-                                        i++;
-                                        let rowIndex = row;
-                                        if (prop === 'patientId') {
-                                            handlePatientId(rowIndex);
-                                        }
-
-                                        if (prop === 'assay') {
-                                            if (newValue !== oldValue && oldValue !== undefined) {
-                                                let col = this.hotTableComponent.current.hotInstance.propToCol(prop);
-                                                handleAssay(rowIndex, col, oldValue, newValue);
-                                            }
-                                        }
-                                        if (prop === 'cancerType') {
-                                            if (newValue !== oldValue && oldValue !== undefined) {
-                                                let col = this.hotTableComponent.current.hotInstance.propToCol(prop);
-                                                handleTumorType(rowIndex, col, oldValue, newValue);
-                                            }
-                                        }
-                                    });
-                                    if (i === changes.length) {
-                                        handleChange(changes);
-                                    }
+                                    handleChange(changes, source);
                                 }
                             }
                         }}
@@ -166,13 +141,13 @@ const styles = (theme) => ({
     container: {
         display: 'grid',
         justifyItems: 'center',
-        gridTemplateAreas: '"submission" "buttons" "grid"',
+        gridTemplateAreas: '"information" "buttons" "grid"',
         marginLeft: theme.spacing(2),
         width: '95vw',
         overflow: 'hidden',
         marginBottom: '5em',
     },
-    submission: {},
+    information: { display: 'flex', width: '95%' },
     tooltipCell: {
         fontSize: '.8em',
         color: 'black !important',

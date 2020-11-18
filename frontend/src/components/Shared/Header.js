@@ -36,15 +36,22 @@ function Header(userRole) {
                     </Button>
                     <div className={classes.divider}>&#8226;</div>
 
-                    <Button>
+                    {/* <Button>
                         <NavLink to='/dmp' activeClassName={classes.active} className={classes.navlink}>
                             <Typography color='inherit' variant='h6'>
                                  DMP
                             </Typography>
                         </NavLink>
+                    </Button> */}
+                    {/* <div className={classes.divider}>&#8226;</div> */}
+                    <Button>
+                        <NavLink to='/submissions/igo' activeClassName={classes.active} className={classes.navlink}>
+                            <Typography color='inherit' variant='h6'>
+                                Submissions
+                            </Typography>
+                        </NavLink>
                     </Button>
-                    <div className={classes.divider}>&#8226;</div>
-                    <Button
+                    {/* <Button
                         className={classes.navlink}
                         aria-controls='simple-menu'
                         aria-haspopup='true'
@@ -54,6 +61,8 @@ function Header(userRole) {
                             Submissions
                         </Typography>
                     </Button>
+                   
+                   
                     <Menu
                         id='simple-menu'
                         anchorEl={anchorEl}
@@ -77,7 +86,7 @@ function Header(userRole) {
                                 </Typography>
                             </NavLink>
                         </MenuItem>
-                    </Menu>
+                    </Menu> */}
                     <div className={classes.divider}>&#8226;</div>
                     {userRole !== '' && userRole !== 'user' && (
                         <React.Fragment>
@@ -98,6 +107,15 @@ function Header(userRole) {
                             </Typography>
                         </NavLink>
                     </Button>
+                    <Typography color='inherit' variant='h5' className={classes.lastItem}>
+                        <Button>
+                            <NavLink to='/help' activeClassName={classes.active} className={classes.navlink}>
+                                <Typography color='inherit' variant='h6' className={classes.lastItem}>
+                                    Help
+                                </Typography>
+                            </NavLink>
+                        </Button>
+                    </Typography>
                 </React.Fragment>
             </Toolbar>
         </AppBar>
@@ -122,6 +140,11 @@ const useStyles = makeStyles((theme) => ({
         color: theme.palette.textSecondary,
         textDecoration: 'none',
         marginRight: theme.spacing(1),
+    },
+    lastItem: {
+        flex: 1,
+        textAlign: 'right',
+        justifyContent: 'flex-end',
     },
     navlinkMenu: {
         color: theme.palette.primary.dark,

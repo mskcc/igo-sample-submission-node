@@ -1,5 +1,3 @@
-import { formActions as FormActionTypes, userActions as ActionTypes } from '../../actions';
-import FileSaver from 'file-saver';
 const initialState = {
     username: '',
     loading: false,

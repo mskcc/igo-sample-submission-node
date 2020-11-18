@@ -9,6 +9,7 @@ export const validationPatterns = {
     alphanum: '[0-9a-zA-Z]',
     alphanumFour: '[0-9a-zA-Z]{4,}',
     alphanumdash: '^[A-Za-z0-9](?!.*__)[A-Za-z0-9\\,_-]{2}[A-Za-z0-9\\,_-]*$',
+    // alphanumdash: '^[a-zA-Z0-9-_]+$',
     cmoId: '^C[-|_].{6}$',
     dmpSampleId: '^P-[0-9]{7}-.{3}-.{3}$',
     dmpPatientId: '^P-[0-9]{7}$',
@@ -90,8 +91,6 @@ export const gridColumns = {
         readOnly: true,
         tooltip: 'If your species is not available, please contact IGO immediately',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -102,8 +101,6 @@ export const gridColumns = {
         columnHeader: 'Nucleic Acid Type',
         data: 'nucleicAcidType',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -116,8 +113,6 @@ export const gridColumns = {
         tooltip:
             'The preservation method of your material is critical to understanding how to process your samples and anticipate issues.  Please complete as accurately as possible. If your preservation is not listed, please contact IGO',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -129,8 +124,6 @@ export const gridColumns = {
         data: 'sampleOrigin',
         tooltip: 'The sample origin is important for analysis.  Please complete as accurately as possible.',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -142,8 +135,6 @@ export const gridColumns = {
         data: 'specimenType',
         tooltip: 'The specimen type is important for analysis.  Please complete as accurately as possible.',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -157,8 +148,6 @@ export const gridColumns = {
             'If you are unsure of what read length is needed, please contact your data analyst or IGO.  There are different read lengths for different applications and we are happy to suggest a length. If you do not see your read length listed, please contact IGO immediately',
         //  FIXME
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -171,12 +160,33 @@ export const gridColumns = {
         tooltip:
             'Please tell us how many reads you would us to generate per sample.  If you are submitting for custom capture or whole exome capture, please tell us how much coverage you would like.  If you are submitting pre-made libraries, you must request by lane.  If you are using a custom sequencing primer, you must request an entire flow cell. Please contact IGO if you have any questions',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
         picklistName: 'SubmissionReadsCoverage',
+    },
+    'Requested Reads': {
+        name: 'Requested Reads',
+        columnHeader: 'Requested Reads',
+        data: 'requestedReads',
+        tooltip: 'Please tell us how many reads you would us to generate per sample.',
+        editableCellTemplate: 'ui-grid/dropdownEditor',
+        type: 'autocomplete',
+        error: 'Only dropdown options are permitted as values',
+        strict: true,
+        picklistName: 'Sequencing+Reads+Requested',
+    },
+    'Requested Coverage': {
+        name: 'Requested Coverage',
+        columnHeader: 'Requested Coverage',
+        data: 'requestedCoverage',
+        tooltip:
+            'Please tell us how much coverage you would like.  If you are submitting pre-made libraries, you must request by lane.  If you are using a custom sequencing primer, you must request an entire flow cell. Please contact IGO if you have any questions',
+        editableCellTemplate: 'ui-grid/dropdownEditor',
+        type: 'autocomplete',
+        error: 'Only dropdown options are permitted as values',
+        strict: true,
+        picklistName: 'Sequencing+Coverage+Requested',
     },
     Index: {
         name: 'Index',
@@ -209,8 +219,6 @@ export const gridColumns = {
         data: 'naToExtract',
         tooltip: 'For samples submitted for extraction, please tell us what we should extract out of the material.',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -317,8 +325,6 @@ export const gridColumns = {
         columnHeader: 'Tumor Type',
         data: 'cancerType',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only OncoTree Tumor IDs or exact dropdown options are permitted.',
         strict: true,
@@ -332,8 +338,6 @@ export const gridColumns = {
         tooltip:
             'Please provide us with detailed information about the Tumor or Normal status, and please be as precise as possible.  This value is critical for data analysis.',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-        //  editor select is a simpler version of type dropdown
-        //  "editor": "select",
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -377,7 +381,6 @@ export const gridColumns = {
         tooltip:
             'Sex information is important for calling Copy-Number Variations on sex chromosome (X,Y) genes.  Without this information, you may miss important data during analysis.  If you have any questions, please contact Platform Informatics',
         editableCellTemplate: 'ui-grid/dropdownEditor',
-
         type: 'autocomplete',
         error: 'Only dropdown options are permitted as values',
         strict: true,
@@ -447,30 +450,33 @@ export const formattingAdjustments = {
         error: 'MRN is incorrectly formatted, please correct, or speak to a project manager if unsure.',
         type: 'text',
     },
-    'DMP ID': {
+    'DMP Patient ID': {
         pattern: validationPatterns.dmpPatientId,
-        columnHeader: 'DMP ID',
+        columnHeader: 'DMP Patient ID',
         tooltip: 'The patient DMP ID.',
         error:
             'DMP ID is incorrectly formatted, please correct, or speak to a project manager if unsure. The usual DMP Patient ID format is P-0000000.',
         type: 'text',
     },
-    'CMO ID': {
+    'CMO Patient ID': {
         pattern: validationPatterns.cmoId,
-        columnHeader: 'CMO ID',
+        columnHeader: 'CMO Patient ID',
         tooltip: 'The patient CMO ID.',
         error:
-            'CMO ID is incorrectly formatted, please correct, or speak to a project manager if unsure. The usual DMP ID format is C-A1B2C3 or C-A1B2C3.',
+            'CMO ID is incorrectly formatted, please correct, or speak to a project manager if unsure. A CMO ID looks like this C-A1B2C3.',
         type: 'text',
     },
     'Non-MSK Patients': {
-        pattern: validationPatterns.alphanumDash,
+        pattern: validationPatterns.alphanumdash,
         columnHeader: 'Patient ID',
         error:
             'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
     },
     'Cell Lines, not from Patients': {
         columnHeader: 'Cell Line Name',
+        pattern: validationPatterns.alphanumdash,
+        error:
+            'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
     },
     'Strain or Line Name': {
         pattern: validationPatterns.alphanumFour,
@@ -516,11 +522,11 @@ export const submissionColumns = {
         readOnly: 'true',
         renderer: 'html',
     },
-    'DMP ID': {
-        name: 'DMP ID',
-        data: 'dmpTrackingId',
-        readOnly: 'true',
-    },
+    // 'DMP Patient ID': {
+    //     name: 'DMP Patient ID',
+    //     data: 'dmpTrackingId',
+    //     readOnly: 'true',
+    // },
     'Date Created': {
         name: 'Created On',
         data: 'createdAt',
@@ -607,12 +613,12 @@ export const formColumns = {
         data: 'patientIdType',
         columnHeader: 'Patient ID Type',
     },
-    altServiceId: {
-        data: 'altServiceId',
-        columnHeader: 'Alt. Service ID',
-    },
+    // altServiceId: {
+    //     data: 'altServiceId',
+    //     columnHeader: 'Alt. Service ID',
+    // },
 };
 
-export const noShowColumns = ['rowIndex', '_id', 'altServiceId', 'groupingChecked', 'cmoPatientId', 'normalizedPatientId'];
+export const noShowColumns = ['rowIndex', '_id', 'groupingChecked', 'cmoPatientId', 'normalizedPatientId'];
 
 export const noShowEmptyColumns = ['patientIdType', 'sharedWith'];

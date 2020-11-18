@@ -37,6 +37,27 @@ export const gridColumns = {
         sendToDmp: true,
     },
 
+    'Investigator Patient ID': {
+        name: 'Investigator Patient ID',
+        columnHeader: 'Investigator Patient ID',
+        data: 'patientId',
+        pattern: validationPatterns.alphanumdash,
+        error: 'Only letters, digits, - and _, please.',
+        hiddenFrom: 'user',
+    },
+
+    'Investigator Sample ID': {
+        name: 'Investigator Sample ID',
+        columnHeader: 'Investigator Sample ID',
+        data: 'userId',
+        pattern: validationPatterns.alphanumdash,
+        error: 'Only letters, digits, - and _, please.',
+        hiddenFrom: 'user',
+        uniqueError: 'Sample ID needs to be unique.',
+        containsSampleError: 'Sample ID cannot contain the word "sample" or "IGO-.',
+    },
+
+    // Used by CMO PMs for WES requests
     'Investigator Provided Patient ID': {
         name: 'Investigator Provided Patient ID',
         columnHeader: 'Investigator Patient ID',
@@ -130,19 +151,19 @@ export const gridColumns = {
         hiddenFrom: 'user',
     },
 
-    'Investigator Provided Patient ID': {
-        name: 'Investigator Provided Patient ID',
-        columnHeader: 'Investigator Provided Patient ID',
-        data: 'investigatorProvidedPatientId',
+    'Investigator  Patient ID': {
+        name: 'Investigator  Patient ID',
+        columnHeader: 'Investigator  Patient ID',
+        data: 'investigatorPatientId',
         pattern: validationPatterns.alphanumdash,
         error: 'Only letters, digits, - and _, please.',
         hiddenFrom: 'user',
     },
 
-    'Investigator Provided Sample ID': {
-        name: 'Investigator Provided Sample ID',
-        columnHeader: 'Investigator Provided Sample ID',
-        data: 'investigatorProvidedSampleId',
+    'Investigator  Sample ID': {
+        name: 'Investigator  Sample ID',
+        columnHeader: 'Investigator  Sample ID',
+        data: 'investigatorSampleId',
         pattern: validationPatterns.alphanumdash,
         error: 'Only letters, digits, - and _, please.',
         hiddenFrom: 'user',
@@ -322,7 +343,7 @@ export const dmpIntakeForms = {
         ['Molecular Pathology Accession Number', 'Optional'],
         ['Additional Info', 'Optional'],
     ],
-    'DNA+TCRSeq': [
+    'DNA+ImmunoSeq': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['Tracking ID', 'Required'],
@@ -388,8 +409,8 @@ export const dmpIntakeForms = {
         ['Sample Approved by CMO', 'Required'],
         ['Variant Allele Frequency', 'Required'],
         ['Coverage', 'Required'],
-        ['Investigator Provided Patient ID', 'Required'],
-        ['Investigator Provided Sample ID', 'Required'],
+        ['Investigator Patient ID', 'Required'],
+        ['Investigator Sample ID', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
         ['Additional Info', 'Optional'],
     ],
@@ -476,7 +497,7 @@ export const dmpIntakeForms = {
         ['Molecular Pathology Accession Number', 'Optional'],
         ['Additional Info', 'Optional'],
     ],
-    'DNA Library+TCRSeq': [
+    'DNA Library+ImmunoSeq': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['Tracking ID', 'Required'],

@@ -5,8 +5,8 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 
 const EditPanel = ({ submission, role, classes }) => (
-    <Paper>
-        <div className={classes.submission}>
+    <Paper className={classes.container}>
+        
             <Typography>
                 You are editing a saved submission. Summary:
                 <br />
@@ -40,13 +40,13 @@ const EditPanel = ({ submission, role, classes }) => (
                     </span>
                 )}
             </Typography>
-        </div>
+        
     </Paper>
 );
 
 const styles = (theme) => ({
-    submission: { margin: '2em' },
-    field: { color: theme.palette.primary.dark, fontWeight: 'bold' },
+    container: { margin: '2em', padding: '2em' },
+    field: { color: theme.palette.primary.dark, fontWeight: 'bold', lineHeight: '2em', },
 });
 
 export default withStyles(styles)(EditPanel);

@@ -28,7 +28,7 @@ class Promote extends Component {
             materials.add(element.sampleType);
         });
 
-        materials = [...materials].join('_');
+    materials = [...materials].join('_');
         materials = materials.replace('/', '');
 
         // if (rows[0].index != '') {

@@ -25,7 +25,7 @@ axios.interceptors.response.use(
         return response;
     },
     function(error) {
-        console.log(error);
+        // console.log(error);
         if (error.response) {
             error.payload = error.response.data;
             if (error.response.status === 401) {
@@ -82,23 +82,9 @@ export const grid = (data) => {
 };
 
 //  HANDLE PATIENT IDs
-export const mrnToCid = (data) => {
-    const url = `${Config.NODE_API_ROOT}/upload/mrnToCid`;
-    return axios
-        .post(url, { ...data })
-        .then((resp) => {
-            return resp;
-        })
-        .catch((error) => {
-            throw error;
-        })
-        .then((resp) => {
-            return resp;
-        });
-};
 
-export const verifyCmoId = (data) => {
-    const url = `${Config.NODE_API_ROOT}/upload/verifyCmoId`;
+export const handlePatientIds = (data) => {
+    const url = `${Config.NODE_API_ROOT}/upload/deidentifyIds`;
     return axios
         .post(url, { ...data })
         .then((resp) => {
@@ -111,35 +97,64 @@ export const verifyCmoId = (data) => {
             return resp;
         });
 };
-export const patientIdToCid = (data) => {
-    const url = `${Config.NODE_API_ROOT}/upload/patientIdToCid`;
-    return axios
-        .post(url, { ...data })
-        .then((resp) => {
-            return resp;
-        })
-        .catch((error) => {
-            throw error;
-        })
-        .then((resp) => {
-            return resp;
-        });
-};
+// export const mrnToCid = (data) => {
+//     const url = `${Config.NODE_API_ROOT}/upload/mrnToCid`;
+//     return axios
+//         .post(url, { ...data })
+//         .then((resp) => {
+//             return resp;
+//         })
+//         .catch((error) => {
+//             throw error;
+//         })
+//         .then((resp) => {
+//             return resp;
+//         });
+// };
 
-export const verifyDmpId = (data) => {
-    const url = `${Config.NODE_API_ROOT}/upload/verifyDmpId`;
-    return axios
-        .post(url, { ...data })
-        .then((resp) => {
-            return resp;
-        })
-        .catch((error) => {
-            throw error;
-        })
-        .then((resp) => {
-            return resp;
-        });
-};
+// export const verifyCmoId = (data) => {
+//     const url = `${Config.NODE_API_ROOT}/upload/verifyCmoId`;
+//     return axios
+//         .post(url, { ...data })
+//         .then((resp) => {
+//             return resp;
+//         })
+//         .catch((error) => {
+//             throw error;
+//         })
+//         .then((resp) => {
+//             return resp;
+//         });
+// };
+// export const patientIdToCid = (data) => {
+//     const url = `${Config.NODE_API_ROOT}/upload/patientIdToCid`;
+//     return axios
+//         .post(url, { ...data })
+//         .then((resp) => {
+//             return resp;
+//         })
+//         .catch((error) => {
+//             throw error;
+//         })
+//         .then((resp) => {
+//             return resp;
+//         });
+// };
+
+// export const verifyDmpId = (data) => {
+//     const url = `${Config.NODE_API_ROOT}/upload/verifyDmpId`;
+//     return axios
+//         .post(url, { ...data })
+//         .then((resp) => {
+//             return resp;
+//         })
+//         .catch((error) => {
+//             throw error;
+//         })
+//         .then((resp) => {
+//             return resp;
+//         });
+// };
 
 export const getAdditionalRows = (data) => {
     const url = `${Config.NODE_API_ROOT}/upload/additionalRows`;
@@ -200,7 +215,6 @@ export const getSubmissionsSince = (time, submissionType) => {
             return resp;
         });
 };
-// TODO FIX
 export const downloadSubmission = (id, submissionType) => {
     const url = `${Config.NODE_API_ROOT}/submission/download?id=${id}&submissionType=${submissionType}`;
     return axios
@@ -419,10 +433,24 @@ export const updateDmpStatus = () => {
 };
 
 export const loadFromDmp = (data) => {
-    console.log(data);
     const url = `${Config.NODE_API_ROOT}/dmp/loadFromDmp`;
     return axios
         .post(url, { ...data })
+        .then((resp) => {
+            return resp;
+        })
+        .catch((error) => {
+            throw error;
+        })
+        .then((resp) => {
+            return resp;
+        });
+};
+
+export const importSqlSubmissions = () => {
+    const url = `${Config.NODE_API_ROOT}/submission/import`;
+    return axios
+        .get(url)
         .then((resp) => {
             return resp;
         })

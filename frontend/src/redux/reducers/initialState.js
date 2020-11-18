@@ -16,6 +16,7 @@ export const initialFormState = {
 
     selected: {
         application: '',
+        capturePanel: '',
         material: '',
         serviceId: '',
         numberOfSamples: '',
@@ -24,7 +25,7 @@ export const initialFormState = {
         patientIdType: '',
         patientIdTypeSpecified: '',
         groupingChecked: false,
-        altServiceId: false,
+        // altServiceId: false,
         isShared: false,
         sharedWith: '',
     },
@@ -75,6 +76,7 @@ export const initialGridState = {
     gridIsLoading: false,
     isSaving: false,
     nothingToChange: false,
+    validation: { message: [], affectedRows: [], emptyRows: [] },
 };
 
 export const initialPromoteState = {

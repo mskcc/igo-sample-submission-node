@@ -12,8 +12,8 @@ import { SubmissionsGrid } from '../../components/';
 
 export class SubmissionsPage extends Component {
     componentDidMount() {
-        const { getSubmissions, gridType } = this.props;
-        getSubmissions(gridType);
+        const { getSubmissionsSince, gridType } = this.props;
+        getSubmissionsSince('months', 3, gridType);
         // TODO make submissionsSince default once subs are imported
     }
 
@@ -71,6 +71,11 @@ export class SubmissionsPage extends Component {
         return unsubmit(submissionId, gridType);
     };
 
+    handleImport = () => {
+        const { importSqlSubmissions } = this.props;
+        return importSqlSubmissions();
+    };
+
     handleReceipt = (submissionId, serviceId) => {
         const { downloadReceipt, gridType } = this.props;
         return downloadReceipt(submissionId, serviceId, gridType);
@@ -86,7 +91,7 @@ export class SubmissionsPage extends Component {
     };
 
     render() {
-        const { submissions, gridType } = this.props;
+        const { submissions, gridType, user } = this.props;
 
         return submissions.grid.rows.length > 0 ? (
             <React.Fragment>
@@ -95,7 +100,9 @@ export class SubmissionsPage extends Component {
                     gridType={gridType}
                     handleGridClick={this.handleGridClick}
                     handleFilterClick={this.handleFilterClick}
+                    handleImport={this.handleImport}
                     handleCheckDmp={this.handleCheckDmp}
+                    user={user}
                 />
             </React.Fragment>
         ) : (
@@ -122,6 +129,7 @@ SubmissionsPage.propTypes = {
 
 const mapStateToProps = (state) => ({
     submissions: state.submissions,
+    user: state.user,
 });
 
 export default withLocalize(

@@ -125,11 +125,13 @@ UploadFormContainer.propTypes = {
     select: PropTypes.func,
     submitRowNumberUpdate: PropTypes.func,
     upload: PropTypes.shape({
-        form: PropTypes.shape({
-            allMaterials: PropTypes.array,
-            initialFetched: PropTypes.bool,
-            nothingToChange: PropTypes.bool,
-        }),
+        form: PropTypes.arrayOf(
+            PropTypes.shape({
+                allMaterials: PropTypes.array,
+                initialFetched: PropTypes.bool,
+                nothingToChange: PropTypes.bool,
+            })
+        ),
         grid: PropTypes.shape({
             form: PropTypes.shape({
                 numberOfSamples: PropTypes.any,

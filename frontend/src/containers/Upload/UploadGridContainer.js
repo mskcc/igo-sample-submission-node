@@ -2,32 +2,15 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
-import { gridActions, submissionActions, userActions } from '../../redux/actions';
+import { gridActions, submissionActions, userActions, commonActions } from '../../redux/actions';
 
 import { util, swal } from '../../util';
 import { UploadGrid } from '../../components';
 
 class UploadGridContainer extends Component {
-    handleChange = (changes) => {
-        const { registerGridChange } = this.props;
-        return registerGridChange(changes);
-    };
-    handleMRN = (rowIndex) => {
-        const { handleMRN } = this.props;
-        return handleMRN(rowIndex);
-    };
-    handleIndex = (colIndex, rowIndex, newValue) => {
-        const { handleIndex } = this.props;
-        return handleIndex(colIndex, rowIndex, newValue);
-    };
-    handleAssay = (rowIndex, colIndex, oldValue, newValue) => {
-        const { handleAssay } = this.props;
-        return handleAssay(rowIndex, colIndex, oldValue, newValue);
-    };
-
-    handleTumorType = (rowIndex, colIndex, oldValue, newValue) => {
-        const { handleTumorType } = this.props;
-        return handleTumorType(rowIndex, colIndex, oldValue, newValue);
+    handleChange = (changes, source) => {
+        const { handleGridChange } = this.props;        
+        handleGridChange(changes);
     };
 
     handleClear = () => {
@@ -45,7 +28,7 @@ class UploadGridContainer extends Component {
         const formValues = this.props[gridType].form.selected;
 
         const match = util.checkGridAndForm(formValues, grid.form);
-        if (!match.success) {
+        if (!match.success) {            
             return swal.formGridMismatch(match);
         }
 
@@ -78,7 +61,7 @@ class UploadGridContainer extends Component {
         if (!match.success) {
             return swal.formGridMismatch(match);
         }
-        let emptyColumns = util.checkEmptyColumns(grid.columnFeatures, grid.rows, grid.hiddenColumns);
+        let emptyColumns = util.getEmptyColumns(grid.columnFeatures, grid.rows, grid.hiddenColumns);
 
         if (emptyColumns.size > 0) {
             swal.emptyFieldsError(emptyColumns);
@@ -106,24 +89,18 @@ class UploadGridContainer extends Component {
     };
 
     render() {
-        const { grid, gridType, user, submissionToEdit, preValidate, handlePatientId, pasteTooMany } = this.props;
+        const { grid, gridType, user, submissionToEdit, pasteTooMany } = this.props;
         return grid.rows.length > 0 ? (
             <UploadGrid
                 grid={grid}
                 gridType={gridType}
                 user={user}
                 submissionToEdit={submissionToEdit}
-                handleMRN={this.handleMRN}
-                handleIndex={this.handleIndex}
-                handleAssay={this.handleAssay}
-                handleTumorType={this.handleTumorType}
                 handleSubmit={this.handleSubmit}
                 handleChange={this.handleChange}
                 handleSave={this.handleSave}
                 handleUpdate={this.handleUpdate}
                 handleDownload={this.handleDownload}
-                preValidate={preValidate}
-                handlePatientId={handlePatientId}
                 handleClear={this.handleClear}
                 pasteTooMany={pasteTooMany}
             />
@@ -136,18 +113,13 @@ UploadGridContainer.propTypes = {
     downloadGrid: PropTypes.func,
     grid: PropTypes.object,
     gridType: PropTypes.string,
-    handleAssay: PropTypes.func,
     handleChange: PropTypes.func,
     handleClear: PropTypes.func,
-    handleIndex: PropTypes.func,
-    handleMRN: PropTypes.func,
-    handlePatientId: PropTypes.func,
     handleSave: PropTypes.func,
     handleSubmit: PropTypes.func,
-    handleTumorType: PropTypes.func,
     pasteTooMany: PropTypes.func,
-    preValidate: PropTypes.func,
-    registerGridChange: PropTypes.func,
+    handleGridChange: PropTypes.func,
+    showLoader: PropTypes.func,
     submissionToEdit: PropTypes.object,
     submitDmpSubmission: PropTypes.func,
     submitSubmission: PropTypes.func,
@@ -158,15 +130,11 @@ UploadGridContainer.propTypes = {
 UploadGridContainer.defaultProps = {
     grid: {},
     user: {},
-    handleMRN: () => {},
-    handleIndex: () => {},
-    handleAssay: () => {},
     handleSubmit: () => {},
     handleChange: () => {},
     handleSave: () => {},
-    preValidate: () => {},
-    handlePatientId: () => {},
     handleClear: () => {},
+    showLoader: () => {},
 };
 
 const mapStateToProps = (state) => ({
@@ -183,6 +151,7 @@ const mapDispatchToProps = {
     ...gridActions,
     ...submissionActions,
     ...userActions,
+    ...commonActions,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UploadGridContainer);

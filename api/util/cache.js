@@ -1,6 +1,7 @@
 // https://medium.com/@danielsternlicht/caching-like-a-boss-in-nodejs-9bccbbc71b9b
 var _ = require('lodash');
 import NodeCache from 'node-cache';
+const { logger } = require('../util/winston');
 
 class Cache {
     constructor(ttlSeconds) {
@@ -21,7 +22,7 @@ class Cache {
         return storeFunction().then((result) => {
             if (!_.isEmpty(result)) {
                 this.cache.set(key, result);
-                console.log('added to cache: ' + key);
+                logger.info('added to cache: ' + key);
                 return result;
             } else {
                 return result;

@@ -4,6 +4,8 @@ const util = require('../util/helpers');
 const services = require('../services/services');
 const crdbServices = require('../services/crdbServices');
 import CacheService from '../util/cache';
+const { loggers } = require('winston');
+const logger = loggers.get('logger');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 const { constants } = require('../util/constants');
@@ -25,10 +27,20 @@ exports.headerValues = [
                 if (results.some((x) => x.length === 0)) {
                     return apiResponse.errorResponse(res, 'Could not retrieve picklists from LIMS.');
                 }
-                let [applicationsResult, materialsResult, speciesResult, patientIdTypesResult, patientIdTypesSpecResult] = results;
-
+                let [
+                    applicationsResult,
+                    materialsResult,
+                    speciesResult,
+                    patientIdTypesResult,
+                    patientIdTypesSpecResult,
+                    capturePanelResult,
+                ] = results;
+                let currentApplications = applicationsResult.filter(
+                    (application) => !constants.deprecatedApplications.includes(application.toLowerCase())
+                );
                 let responseObject = {
-                    applications: applicationsResult,
+                    applications: currentApplications,
+                    capturePanels: capturePanelResult,
                     materials: materialsResult,
                     species: speciesResult,
                     containers: containers,
@@ -147,7 +159,7 @@ exports.grid = [
     body('container').isLength({ min: 1 }).trim().withMessage('Container must be present.'),
     body('patientIdType').optional(),
     body('groupingChecked').optional(),
-    body('altServiceId').optional(),
+    // body('altServiceId').optional(),
     // sanitizeBody("*").escape(),
     function (req, res) {
         // try {
@@ -311,6 +323,44 @@ exports.patientIdToCid = [
 // MRN to C-ID
 // C-ID verification
 // DMP-ID to MRN to C-ID
+exports.deidentifyIds = [
+    body('ids').isJSON().isLength({ min: 1 }).trim().withMessage('ids must be specified.'),
+    body('username').optional(),
+    function (req, res) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
+            } else {
+                let ids = JSON.parse(req.body.ids);
+                let username = res.user.username;
+                // if submission is being edited, username of original submission will be sent along
+                if (req.body.username) username = req.body.username;
+                util.handlePatientIds(ids, username)
+                    .then((results) => {
+                        if (results) {
+                            return apiResponse.successResponseWithData(res, 'Operation success', { idResults: results });
+                        }
+                    })
+                    .catch(function (err) {
+                        logger.log('error', err);
+                        console.log(err);
+                        return apiResponse.errorResponse(
+                            res,
+                            'Something went wrong during Patient ID de-identification. To avoid accidental transmission of PHI, any MRNs have been removed and must be re-entered to be de-identified.'
+                        );
+                    });
+            }
+        } catch (err) {
+            logger.log('error', err);
+            return apiResponse.errorResponse(
+                res,
+                'Something went wrong during Patient ID de-identification. To avoid accidental transmission of PHI, any MRNs have been removed and must be re-entered to be de-identified.'
+            );
+        }
+    },
+];
+
 exports.verifyCmoId = [
     body('cmoId').isLength({ min: 1 }).trim().withMessage('cmoId must be specified.'),
 
@@ -365,7 +415,9 @@ exports.verifyDmpId = [
 
                 Promise.all([patientIdPromise])
                     .catch(function (err) {
-                        logger.log('error', err);
+                        console.log(err);
+
+                        logger.log('error', err.toString());
                         return apiResponse.errorResponse(res, err);
                     })
                     .then((results) => {

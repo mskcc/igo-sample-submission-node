@@ -5,12 +5,16 @@ const { constants } = require('./constants');
 const submitColumns = require('./columns');
 import CacheService from './cache';
 import { v4 as uuidv4 } from 'uuid';
+const fs = require('fs');
+
 var _ = require('lodash');
-import { isMatch } from 'lodash';
+
 const dmpColumns = require('./dmpColumns');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 
+const MRN_REDACTED = process.env.MRN_REDACTED;
+const CRDB_MAX_REQUESTS = process.env.CRDB_MAX_REQUESTS;
 exports.createSharedString = (shared, username) => {
     let sharedSet = new Set();
     let sharedArray = shared.split(',');
@@ -254,59 +258,67 @@ const fillAdditionalRows = (columns, formValues) => {
 const fillData = (columns, formValues) => {
     return new Promise((resolve) => {
         let rowData = [];
+        let { material, numberOfSamples, application, species } = formValues;
 
-        let numberOfRows = formValues.numberOfSamples;
-        for (var i = 0; i < numberOfRows; i++) {
-            columns.columnFeatures.map((entry) => {
-                rowData[i] = { ...rowData[i], [entry.data]: '' };
-                if (entry.type === 'checkbox') {
-                    rowData[i] = { ...rowData[i], [entry.data]: false };
+        for (var i = 0; i < numberOfSamples; i++) {
+            columns.columnFeatures.map((colDef) => {
+                let datafieldName = colDef.data;
+                rowData[i] = { ...rowData[i], [datafieldName]: '' };
+                if (colDef.type === 'checkbox') {
+                    rowData[i] = { ...rowData[i], [datafieldName]: false };
                 }
-                if (entry.data === 'species' || entry.data === 'organism') {
+                if (datafieldName === 'species' || datafieldName === 'organism') {
                     rowData[i] = {
                         ...rowData[i],
-                        organism: formValues.species,
+                        organism: species,
                     };
                 }
-                if (entry.data === 'preservation') {
-                    if (formValues.material === 'Blood') {
+                if (datafieldName === 'preservation') {
+                    if (material === 'Blood') {
                         rowData[i] = {
                             ...rowData[i],
                             preservation: 'EDTA-Streck',
                         };
-                    } else if (formValues.material === 'Buffy Coat') {
+                    }
+                    if (material === 'Buffy Coat') {
                         rowData[i] = {
                             ...rowData[i],
                             preservation: 'Frozen',
                         };
                     }
+                    if (material === 'Cells' && application.toUpperCase().includes('10X')) {
+                        rowData[i] = {
+                            ...rowData[i],
+                            preservation: 'Fresh',
+                        };
+                    }
                 }
-                if (entry.data === 'sampleOrigin') {
-                    if (formValues.material === 'Blood') {
+                if (datafieldName === 'sampleOrigin') {
+                    if (material === 'Blood') {
                         rowData[i] = {
                             ...rowData[i],
                             sampleOrigin: 'Whole Blood',
                         };
-                    } else if (formValues.material === 'Buffy Coat') {
+                    } else if (material === 'Buffy Coat') {
                         rowData[i] = {
                             ...rowData[i],
                             sampleOrigin: 'Buffy Coat',
                         };
                     }
                 }
-                if (entry.data === 'specimenType') {
-                    if (formValues.material === 'Blood' || formValues.material === 'Buffy Coat') {
+                if (datafieldName === 'specimenType') {
+                    if (material === 'Blood' || material === 'Buffy Coat') {
                         rowData[i] = {
                             ...rowData[i],
                             specimenType: 'Blood',
                         };
                     }
                 }
-                if (entry.data === 'patientId' && entry.columnHeader === 'Cell Line Name') {
+                if (datafieldName === 'patientId' && colDef.columnHeader === 'Cell Line Name') {
                     rowData[i] = { ...rowData[i], specimenType: 'CellLine' };
                 }
             });
-            if (rowData.length === parseInt(numberOfRows)) {
+            if (rowData.length === parseInt(numberOfSamples)) {
                 columns.rowData = rowData;
                 resolve(columns);
             }
@@ -566,6 +578,7 @@ export function submit(submission, user, transactionId) {
     return new Promise((resolve, reject) => {
         let serviceId = submission.formValues.serviceId;
         let recipe = submission.formValues.application;
+        let capturePanel = submission.formValues.capturePanel;
         let sampleType = submission.formValues.material;
         let samples = submission.gridValues;
         let submittedSamples = [];
@@ -574,6 +587,7 @@ export function submit(submission, user, transactionId) {
             let bankedSample = Object.assign({}, samples[i]);
             bankedSample.serviceId = serviceId;
             bankedSample.recipe = recipe;
+            bankedSample.capturePanel = capturePanel;
             bankedSample.sampleType = sampleType;
             bankedSample.transactionId = transactionId;
             bankedSample.igoUser = user.username;
@@ -894,17 +908,13 @@ export function parseDmpOutput(dmpOutput, submission) {
             translateDmpToBankedSample(dmpSamples, oncoResult, indexResult).then((result) => {
                 // console.log(translatedSamples);
                 let { igoSamples, translationIssues } = result;
-
                 let orderedTranslationIssues = {};
-                
+
                 Object.keys(translationIssues)
                     .sort()
                     .forEach(function (key) {
                         orderedTranslationIssues[key] = translationIssues[key];
                     });
-
-                console.log(translationIssues);
-                console.log(orderedTranslationIssues);
 
                 igoSamples.sort(compareByWellPosition);
 
@@ -918,14 +928,16 @@ export function parseDmpOutput(dmpOutput, submission) {
                         container: 'Plates',
                         groupingChecked: false,
                         patientIdType: 'MSK-Patients (or derived from MSK Patients)',
-                        patientIdTypeSpecified: 'DMP ID',
+                        patientIdTypeSpecified: 'DMP Patient ID',
                         serviceId: '000000',
                         species: 'Human',
                         numberOfSamples: numReturnedSamples,
                     },
                 };
                 delete parsedSubmission.formValues._id;
-                translationIssues.sampleMatch = doSamplesMatch(dmpSamples, parsedSubmission);
+                translationIssues.push({ sampleMatch: doSamplesMatch(dmpSamples, submission) });
+                // console.log(translationIssues);
+
                 resolve({ parsedSubmission, translationIssues });
             });
         });
@@ -971,7 +983,7 @@ function translateDmpToBankedSample(dmpSamples, oncoResult, indexResult) {
             let rowIssues = {};
             let dmpSample = dmpSamples[element];
             let igoUserId = dmpSample['Investigator Sample ID'];
-            const dmpPatientId = dmpSample['DMP ID'];
+            const dmpPatientId = dmpSample['DMP Patient ID'];
             // let igoPatientId = igoUserId.match(/P-[0-9]{7}/)[0];
             // ? DMP ID or Investigator Sample ID to get Patient ID?
             let igoPatientId = dmpPatientId.match(/P-[0-9]{7}/)[0];
@@ -1016,7 +1028,10 @@ function translateDmpToBankedSample(dmpSamples, oncoResult, indexResult) {
                 let [crdbResult, oncoMatch] = results;
 
                 rowIssues.tumorType = oncoMatch.status;
-                console.log(rowIssues);
+
+                if (!crdbResult.CMO_ID) {
+                    rowIssues.anonymizedId = `Could not anonymize ${igoPatientId}, no match found in CRDB.`;
+                }
 
                 let igoSample = {
                     vol: dmpSample['Volume (ul)'],
@@ -1070,13 +1085,24 @@ function doSamplesMatch(dmpSamples, translatedSubmission) {
     const dmpOutputSampleIds = Object.keys(dmpSamples);
     const dmpInputSampleIds = [];
     getApprovedSamples(translatedSubmission).forEach((sample) => dmpInputSampleIds.push(sample.dmpSampleId));
-    if (isMatch(dmpOutputSampleIds, dmpInputSampleIds)) {
+    console.log(dmpOutputSampleIds);
+    console.log(dmpInputSampleIds);
+    if (isEqual(dmpOutputSampleIds, dmpInputSampleIds)) {
         return 'We received all submitted (and approved) samples';
     } else {
-        return `The DMP returned ${dmpOutputSampleIds.length} samples out of ${dmpInputSampleIds.length} submitted.`;
+        return `Unexpected samples returned from DMP. Out of ${dmpInputSampleIds.length} submitted, ${dmpOutputSampleIds.length} returned.`;
     }
 }
-
+// simple comparison function TODO improve
+function isEqual(a, b) {
+    // if length is not equal
+    if (a.length != b.length) return false;
+    else {
+        // comapring each element of array
+        for (var i = 0; i < a.length; i++) if (a[i] != b[i]) return false;
+        return true;
+    }
+}
 /**
  * Well Position A1,A2...A12,B1,B2...H12
  * Well Position Rows = A-H
@@ -1122,7 +1148,9 @@ function findOncoMatch(tumorType, oncoResult) {
         let tumorTypeToMatch = tumorType.split(':')[1];
         oncoResult.forEach((element, index) => {
             if (element.includes(tumorTypeToMatch)) {
-                resolve({ status: `Closest match found for "${tumorType}" was "${tumorTypeToMatch}"`, tumorType: tumorTypeToMatch });
+                let tumorId = element.split(': ')[1];
+
+                resolve({ status: `Closest match found for "${tumorType}" was "${tumorTypeToMatch}"`, tumorType: tumorId });
                 return;
             }
             // no match found
@@ -1132,6 +1160,152 @@ function findOncoMatch(tumorType, oncoResult) {
         });
     });
 }
+
+// All investigator entered patient IDs are sent to the CRDB for anonymization. This is done in batches of 10 parallel requests at a time.
+// CRDB's oracle DB has a connection limit. To stay within it, we limited it to 10.
+// ID's need to be normalized/redacted/handled based on their type.
+// CMO IDs need to be sent to the CRDB without the C- that users enter.
+// MRNs need to be redacted and return sex information as well as the patient ID
+// DMP IDs only return a value if they were found in the CRDB. If they aren't, a message must be shown to the user recommending they enter a MRN instead.
+export function handlePatientIds(ids, username) {
+    return new Promise((resolve, reject) => {
+        let patientIdPromises = [];
+        const idsWithCrdbInputId = addCrdbInputId(ids, username);
+        const idsByType = sortPatientIdsByType(idsWithCrdbInputId, username);
+
+        // add crdb queries for each type of id, add empty promises if id type is not present on request so that Promise.all has reliable return value and order of dmp, cmo and standard ids
+        if (!_.isEmpty(idsByType.standardPatientIds)) {
+            let ids = [];
+            idsByType.standardPatientIds.forEach((element) => ids.push(element.crdbInputId));
+            patientIdPromises.push(crdbServices.getCrdbIds(ids));
+            countIdRequests('STANDARD ID', username);
+        } else patientIdPromises.push([]);
+        if (!_.isEmpty(idsByType.dmpPatientIds)) {
+            let { query, bindValues } = generateCrdbDbStatement(idsByType.dmpPatientIds, 'dmp_id');
+            patientIdPromises.push(crdbServices.crdbDbQuery(query, bindValues));
+            countIdRequests('DMP ID', username);
+        } else patientIdPromises.push([]);
+        if (!_.isEmpty(idsByType.cmoPatientIds)) {
+            let { query, bindValues } = generateCrdbDbStatement(idsByType.cmoPatientIds, 'cmo_id');
+            patientIdPromises.push(crdbServices.crdbDbQuery(query, bindValues));
+            countIdRequests('CMO ID', username);
+        } else patientIdPromises.push([]);
+
+        Promise.all(patientIdPromises)
+            .then((result) => {
+                let crdbResultIds = result.flat();
+                let deIdentifiedIds = JSON.parse(JSON.stringify(idsWithCrdbInputId));
+
+                deIdentifiedIds.forEach((idElement) => {
+                    //  Patient ID originally entered by User
+                    let userInputId = idElement.patientId;
+                    // Patient ID sent to CRDB
+                    let crdbInputId = idElement.crdbInputId;
+                    // Match CRDB Result values to its original ID
+                    let resultIdMatch = crdbResultIds.find(
+                        (resultIdElement) =>
+                            resultIdElement.crdbOutput === crdbInputId ||
+                            resultIdElement.dmpId === crdbInputId ||
+                            resultIdElement.mrn === crdbInputId
+                    );
+
+                    if (resultIdMatch) {
+                        idElement.cmoPatientId = `C-${resultIdMatch.crdbOutput}`;
+
+                        // finetuning
+                        if (idElement.idType === 'CMO Patient ID') {
+                            idElement.finalPatientId = idElement.cmoPatientId;
+                            idElement.normalizedPatientId = `${username.toUpperCase()}_C-${resultIdMatch.crdbOutput}`;
+                        } else if (idElement.idType === 'MRN') {
+                            idElement.finalPatientId = 'MRN_REDACTED';
+                            idElement.normalizedPatientId = `${username.toUpperCase()}_C-${resultIdMatch.crdbOutput}`;
+                        } else if (idElement.idType === 'DMP Patient ID') {
+                            idElement.finalPatientId = resultIdMatch.dmpId;
+                            idElement.normalizedPatientId = `${username.toUpperCase()}_${resultIdMatch.dmpId}`;
+                        } else {
+                            // no type matched? CRDB Input ID already includes username
+                            idElement.finalPatientId = userInputId;
+                            idElement.normalizedPatientId = idElement.crdbInputId.toUpperCase();
+                        }
+                       
+                        if ('sex' in resultIdMatch) idElement.sex = resultIdMatch.sex;
+
+                    } else {
+                        if (idElement.idType === 'MRN') idElement.message = 'MRN(s) could not be de-identified or verified.';
+                        else idElement.message = `${idElement.idType} ${userInputId} could not be de-identified or verified. `;
+                        idElement.finalPatientId = '';
+                        idElement.cmoPatientId = '';
+                        idElement.normalizedPatientId = '';
+                    }
+                    delete idElement.mrn;
+                    delete idElement.crdbInput;
+                    delete idElement.patientId;
+                    delete idElement.userInputId;
+                });
+                resolve(deIdentifiedIds);
+            })
+            .catch((reasons) => reject(reasons));
+    });
+}
+
+// to import submissions, export json from table (using mysqlworkbench, for example)
+// change first line to export const submissions = [...]
+export function translateSqlSubmissions(sqlSubmissions) {
+    let parsedSubmissions = [];
+    for (let i = 0; i < sqlSubmissions.length; i++) {
+        const submission = sqlSubmissions[i];
+
+        try {
+            let formValues = JSON.parse(submission.form_values);
+            console.log(formValues);
+            if (typeof formValues == 'string') {
+                formValues = JSON.parse(formValues);
+            }
+
+            let gridValues = JSON.parse(submission.grid_values);
+            if (typeof gridValues == 'string') {
+                gridValues = JSON.parse(gridValues);
+            }
+
+            // formValues need to be converted to camelCase
+            for (let element in formValues) {
+                if (element.includes('_')) {
+                    let camelKey = toCamel(element);
+                    formValues[camelKey] = formValues[element];
+                    delete formValues[element];
+                }
+            }
+            if (formValues.patientIdType === 'MSK-Patients (or derived from MSK Patients)') {
+                formValues.patientIdTypeSpecified = 'CMO Patient ID';
+            }
+            let transactionId = submission.transaction_id || null;
+            let createdAt = submission.created_on || null;
+            let updatedAt = submission.updated_on || null;
+
+            let parsedSubmission = {
+                ...submission,
+                formValues: formValues,
+                gridValues: gridValues,
+                appVersion: '2.0',
+                transactionId: transactionId,
+                createdAt: new Date(createdAt).valueOf() / 1000,
+                updatedAt: new Date(updatedAt).valueOf() / 1000,
+                submittedAt: transactionId,
+            };
+            delete parsedSubmission.form_values;
+            delete parsedSubmission.grid_values;
+            parsedSubmissions.push(parsedSubmission);
+        } catch (error) {
+            console.log(error);
+            console.log(submission);
+            console.log(typeof JSON.parse(submission.grid_values));
+            return [];
+        }
+    }
+
+    return parsedSubmissions;
+}
+
 //  UTIL
 export function getTransactionIdForDmp() {
     const now = Date.now();
@@ -1160,3 +1334,81 @@ function last7Days() {
         })(d.getDate(), d.getMonth(), d.getFullYear());
     });
 }
+
+function generateCrdbDbStatement(patientIds, table) {
+    let bindPlaceholders = [];
+    let bindValues = [];
+
+    let i = 0;
+    patientIds.forEach((element) => {
+        if (!bindValues.includes(element.crdbInputId)) {
+            bindPlaceholders.push(`:bv${i + 1}`);
+            bindValues.push(element.crdbInputId);
+            ++i;
+        }
+    });
+    console.log(bindValues);
+
+    // Trusting NODE OraclDB bind to sanitize
+    let query = `SELECT pt_mrn, cmo_id, dmp_id FROM crdb_cmo_loj_dmp_map WHERE ${table} IN (${bindPlaceholders})`;
+    return { query, bindValues };
+}
+
+function addCrdbInputId(ids, username) {
+    let result = [];
+    ids.forEach((idElement) => {
+        let idType = idElement.idType;
+        let patientId = idElement.patientId;
+        switch (idType) {
+            case 'MRN':
+            case 'DMP Patient ID':
+                result.push({ ...idElement, crdbInputId: patientId });
+                break;
+            case 'CMO Patient ID':
+                result.push({ ...idElement, crdbInputId: patientId.replace('C-', '') });
+                break;
+            case 'Cell Line Name':
+                result.push({ ...idElement, crdbInputId: `CELLLINE_${patientId}` });
+                break;
+            default:
+                result.push({ ...idElement, crdbInputId: `${username.toUpperCase()}_${patientId}` });
+        }
+    });
+    return result;
+}
+
+function sortPatientIdsByType(ids, username) {
+    let standardPatientIds = [];
+    let dmpPatientIds = [];
+    let cmoPatientIds = [];
+    ids.forEach((idElement) => {
+        let idType = idElement.idType;
+        switch (idType) {
+            case 'MRN':
+            case 'Cell Line Name':
+                standardPatientIds.push(idElement);
+                break;
+            case 'CMO Patient ID':
+                cmoPatientIds.push(idElement);
+                break;
+            case 'DMP Patient ID':
+                dmpPatientIds.push(idElement);
+                break;
+            default:
+                standardPatientIds.push(idElement);
+        }
+    });
+    return { standardPatientIds, dmpPatientIds, cmoPatientIds };
+}
+
+export const toCamel = (s) => {
+    return s.replace(/([-_][a-z])/gi, ($1) => {
+        return $1.toUpperCase().replace('-', '').replace('_', '');
+    });
+};
+
+const countIdRequests = (id, username) => {
+    fs.appendFile('idTypeCounter.txt', `${id}, ${username}, ${new Date().toLocaleDateString()}\r\n`, function (err) {
+        if (err) console.log(err);
+    });
+};

@@ -11,17 +11,22 @@ class SubmissionsGrid extends React.Component {
     }
 
     render() {
-        const { classes, handleGridClick, handleFilterClick, handleCheckDmp, grid, gridType } = this.props;
+        const { classes, handleGridClick, handleImport, handleFilterClick, handleCheckDmp, grid, gridType, user } = this.props;
         let headline = gridType.toUpperCase() === 'UPLOAD' ? 'IGO Submissions' : `${gridType.toUpperCase()} Submissions`;
         return (
             <div className={classes.container}>
                 <div className={classes.header}>
                     <Typography color='inherit' variant='h6'>
                         {headline}
-                    </Typography>{' '}
+                    </Typography>
                     {gridType === 'dmp' && (
                         <Button variant='contained' color='primary' onClick={() => handleCheckDmp('', 0, true)}>
                             Update DMP Status
+                        </Button>
+                    )}
+                    {gridType === 'upload' && user.username === 'wagnerl' && (
+                        <Button variant='contained' color='primary' onClick={() => handleImport()}>
+                            Import Submissions
                         </Button>
                     )}
                 </div>
@@ -57,7 +62,7 @@ class SubmissionsGrid extends React.Component {
                             if (actionElement) {
                                 let submitted = actionElement.getAttribute('submitted') === 'true' || undefined;
                                 let serviceId = actionElement.getAttribute('service-id') || undefined;
-                                let mongoId= actionElement.getAttribute('submission-id') || undefined;
+                                let mongoId = actionElement.getAttribute('submission-id') || undefined;
                                 handleGridClick(coords, submitted, mongoId, serviceId);
                             }
                         }
