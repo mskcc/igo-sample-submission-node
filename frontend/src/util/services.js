@@ -326,7 +326,7 @@ export const logout = (data) => {
         });
 };
 
-export const fetchUser = (data) => {
+export const fetchUser = () => {
     const url = `${Config.AUTH_URL}/api/session/user`;
     return axios
         .get(url)

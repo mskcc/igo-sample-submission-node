@@ -12,32 +12,34 @@ var _ = require('lodash');
 const dmpColumns = require('./dmpColumns');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
-['log', 'warn', 'error'].forEach((methodName) => {
-    const originalMethod = console[methodName];
-    console[methodName] = (...args) => {
-        let initiator = 'unknown place';
-        try {
-            throw new Error();
-        } catch (e) {
-            if (typeof e.stack === 'string') {
-                let isFirst = true;
-                for (const line of e.stack.split('\n')) {
-                    const matches = line.match(/^\s+at\s+(.*)/);
-                    if (matches) {
-                        if (!isFirst) {
-                            // first line - current function
-                            // second line - caller (what we are looking for)
-                            initiator = matches[1];
-                            break;
-                        }
-                        isFirst = false;
-                    }
-                }
-            }
-        }
-        originalMethod.apply(console, [...args, '\n', `  at ${initiator}`]);
-    };
-});
+
+//  * Use this to find where console.log statements are coming from
+// ['log', 'warn', 'error'].forEach((methodName) => {
+//     const originalMethod = console[methodName];
+//     console[methodName] = (...args) => {
+//         let initiator = 'unknown place';
+//         try {
+//             throw new Error();
+//         } catch (e) {
+//             if (typeof e.stack === 'string') {
+//                 let isFirst = true;
+//                 for (const line of e.stack.split('\n')) {
+//                     const matches = line.match(/^\s+at\s+(.*)/);
+//                     if (matches) {
+//                         if (!isFirst) {
+//                             // first line - current function
+//                             // second line - caller (what we are looking for)
+//                             initiator = matches[1];
+//                             break;
+//                         }
+//                         isFirst = false;
+//                     }
+//                 }
+//             }
+//         }
+//         originalMethod.apply(console, [...args, '\n', `  at ${initiator}`]);
+//     };
+// });
 
 exports.createSharedString = (shared, username) => {
     let sharedSet = new Set();
