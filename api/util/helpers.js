@@ -1215,15 +1215,15 @@ export function handlePatientIds(ids, username) {
                         // finetuning
                         if (idElement.idType === 'CMO Patient ID') {
                             idElement.finalPatientId = idElement.cmoPatientId;
-                            idElement.normalizedPatientId = `${username.toUpperCase()}_C-${resultIdMatch.crdbOutput}`;
+                            idElement.normalizedPatientId = idElement.cmoPatientId;
                         } else if (idElement.idType === 'MRN') {
                             idElement.finalPatientId = constants.mrnRedactedString;
-                            idElement.normalizedPatientId = `${username.toUpperCase()}_C-${resultIdMatch.crdbOutput}`;
+                            idElement.normalizedPatientId = constants.mrnRedactedString;
                         } else if (idElement.idType === 'DMP Patient ID') {
                             idElement.finalPatientId = resultIdMatch.dmpId;
-                            idElement.normalizedPatientId = `${username.toUpperCase()}_${resultIdMatch.dmpId}`;
+                            idElement.normalizedPatientId = resultIdMatch.dmpId;
                         } else {
-                            // no type matched? CRDB Input ID already includes username
+                            // no type matched? CRDB Input ID already includes USERNAME_ or CELLLINE_
                             idElement.finalPatientId = userInputId;
                             idElement.normalizedPatientId = idElement.crdbInputId.toUpperCase();
                         }

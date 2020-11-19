@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import { commonActions, userActions } from '../redux/actions';
 import DevTools from './DevTools';
 
-import { Header, SnackMessage } from '../components';
+import { Header, SnackMessage, Message } from '../components';
 
 import UploadPage from './Upload/UploadPage';
 import SubmissionsPage from './Submissions/SubmissionsContainer';
@@ -98,6 +98,7 @@ class Root extends Component {
                             <CircularProgress color='inherit' />
                         </Backdrop>
                         <Header userRole={role} />
+                        <Message />
                         {Config.ENV !== 'production' ? <DevTools /> : <div />}
 
                         {common.serverError ? (
