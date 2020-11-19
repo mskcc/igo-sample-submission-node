@@ -15,7 +15,7 @@ class Cache {
     get(key, storeFunction) {
         const value = this.cache.get(key);
         if (value) {
-            console.log('retrieved from cache: ' + key);
+            logger.info('retrieved from cache: ' + key);
             return Promise.resolve(value);
         }
 

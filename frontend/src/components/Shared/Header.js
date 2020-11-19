@@ -23,7 +23,7 @@ function Header(userRole) {
                 <Avatar alt='mskcc logo' src={logo} className={classes.avatar} />
 
                 <Typography color='inherit' variant='h6' className={classes.title}>
-                    IGO Sample Submission
+                    IGO Sample Submission 3.0 BETA
                 </Typography>
 
                 <React.Fragment>

@@ -142,36 +142,6 @@ exports.crdbDbQuery = (sql, values) => {
     });
 };
 
-//  TODO Refactor DB queries to do WHERE ... IN ...
-exports.verifyCmoId = (cmoId) => {
-    return new Promise((resolve, reject) => {
-        oracledb
-            .getConnection({
-                user: CRDB_DB_USER,
-                password: CRDB_DB_PW,
-                connectString: CRDB_DB_URL,
-            })
-            .then((connection) => {
-                connection
-                    .execute('SELECT pt_mrn, dmp_id, cmo_id FROM crdb_cmo_loj_dmp_map WHERE cmo_id = :cmoId', [cmoId])
-
-                    .then(function (result) {
-                        connection.close();
-                        logger.log('info', 'Successfully retrieved response from CRDB for CMO ID query.');
-                        resolve(formatDbResponse(result));
-                    })
-                    .catch(function (error) {
-                        connection.close();
-                        logger.log('info', 'Error retrieving response from CRDB');
-                        reject(error);
-                    });
-            })
-
-            .catch((error) => {
-                reject(error);
-            });
-    });
-};
 
 exports.verifyDmpId = (sql, values) => {
     return new Promise((resolve, reject) => {
@@ -187,34 +157,6 @@ exports.verifyDmpId = (sql, values) => {
                     .then(function (result) {
                         connection.close();
                         logger.log('info', 'Successfully retrieved response from CRDB for DMP ID query.');
-                        resolve(formatDbResponse(result));
-                    })
-                    .catch(function (error) {
-                        connection.close();
-                        logger.log('info', 'Error retrieving response from CRDB');
-                        reject(error);
-                    });
-            })
-            .catch((error) => {
-                reject(error);
-            });
-    });
-};
-
-exports.mrnToDmpId = (mrn) => {
-    return new Promise((resolve, reject) => {
-        oracledb
-            .getConnection({
-                user: CRDB_DB_USER,
-                password: CRDB_DB_PW,
-                connectString: CRDB_DB_URL,
-            })
-            .then((connection) => {
-                connection
-                    .execute('SELECT pt_mrn, cmo_id, dmp_id FROM crdb_cmo_loj_dmp_map WHERE pt_mrn = :mrn', [mrn])
-                    .then(function (result) {
-                        connection.close();
-                        logger.log('info', 'Successfully retrieved response from CRDB');
                         resolve(formatDbResponse(result));
                     })
                     .catch(function (error) {
