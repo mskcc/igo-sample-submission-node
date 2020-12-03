@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 import { withLocalize } from 'react-localize-redux';
@@ -111,21 +110,6 @@ export class SubmissionsPage extends Component {
     }
 }
 
-SubmissionsPage.propTypes = {
-    deleteSubmission: PropTypes.func,
-    downloadReceipt: PropTypes.func,
-    getSubmissions: PropTypes.func,
-    getSubmissionsSince: PropTypes.func,
-    gridType: PropTypes.string,
-    populateGridFromSubmission: PropTypes.func,
-    submissions: PropTypes.shape({
-        grid: PropTypes.shape({
-            columnFeatures: PropTypes.array,
-            rows: PropTypes.array,
-        }),
-    }),
-    unsubmit: PropTypes.func,
-};
 
 const mapStateToProps = (state) => ({
     submissions: state.submissions,

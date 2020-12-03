@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 import { promoteActions } from '../../redux/actions';
@@ -64,15 +63,6 @@ class Promote extends Component {
         );
     }
 }
-
-Promote.propTypes = {
-    getPromoteGrid: PropTypes.func,
-    loadBankedSamples: PropTypes.func,
-    promote: PropTypes.shape({
-        initialFetched: PropTypes.any,
-    }),
-    promoteDry: PropTypes.func,
-};
 
 const mapStateToProps = (state) => ({
     promote: state.promote,

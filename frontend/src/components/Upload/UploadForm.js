@@ -1,7 +1,6 @@
 import React from 'react';
 import { Translate } from 'react-localize-redux';
-import PropTypes from 'prop-types';
-
+ 
 import { FormControl, InputAdornment, Paper, withStyles } from '@material-ui/core';
 
 import { Button, Checkbox, Dropdown, Input } from '../index';
@@ -522,12 +521,6 @@ UploadForm.defaultProps = {
     },
 };
 
-UploadForm.propTypes = {
-    form: PropTypes.object.isRequired,
-    handleSubmit: PropTypes.func,
-    handleApplicationChange: PropTypes.func,
-    handleMaterialChange: PropTypes.func,
-};
 
 const styles = (theme) => ({
     container: {

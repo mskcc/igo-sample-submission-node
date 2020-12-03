@@ -1,7 +1,6 @@
 import React from 'react';
 import { Translate } from 'react-localize-redux';
-import PropTypes from 'prop-types';
-
+ 
 import { FormControl, Paper, withStyles, Typography } from '@material-ui/core';
 
 import { Button, Checkbox, Dropdown, Input } from '../index';
@@ -247,32 +246,6 @@ class DmpForm extends React.Component {
         );
     }
 }
-
-DmpForm.propTypes = {
-    classes: PropTypes.shape({
-        container: PropTypes.any,
-        form: PropTypes.any,
-        lastItem: PropTypes.any,
-    }),
-    form: PropTypes.shape({
-        applications: PropTypes.array,
-        formIsLoading: PropTypes.any,
-        materials: PropTypes.array,
-        selected: PropTypes.shape({
-            application: PropTypes.any,
-            isShared: PropTypes.bool,
-            material: PropTypes.any,
-            numberOfSamples: PropTypes.any,
-            sharedWith: PropTypes.string,
-        }),
-    }),
-    gridIsLoading: PropTypes.any,
-    gridNumberOfSamples: PropTypes.any,
-    handleInputChange: PropTypes.func,
-    handleSubmit: PropTypes.any,
-    nothingToChange: PropTypes.any,
-    submitRowNumberUpdate: PropTypes.any,
-};
 
 const styles = (theme) => ({
     container: {
