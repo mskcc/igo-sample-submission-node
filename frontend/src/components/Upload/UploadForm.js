@@ -1,11 +1,10 @@
 import React from 'react';
 import { Translate } from 'react-localize-redux';
- 
+
 import { FormControl, InputAdornment, Paper, withStyles } from '@material-ui/core';
-
 import { Button, Checkbox, Dropdown, Input } from '../index';
+import { guessMatch } from '../../util/helpers';
 
-import { swal } from '../../util';
 
 class UploadForm extends React.Component {
     constructor(props) {
@@ -29,6 +28,7 @@ class UploadForm extends React.Component {
             },
         };
     }
+
 
     showGroupingCheckbox = () => {
         return this.state.values.species === 'Mouse' || this.state.values.species === 'Mouse_GeneticallyModified';
@@ -69,28 +69,6 @@ class UploadForm extends React.Component {
         this.props.handleInputChange(event.target.id, event.target.value);
     };
 
-    // handleServiceIdCheck = (name) => (event) => {
-    //     var date = new Date();
-    //     var timestamp = date.getTime();
-
-    //     this.setState({
-    //         values: {
-    //             ...this.state.values,
-    //             serviceId: timestamp,
-    //             [name]: event.target.checked,
-    //         },
-
-    //         formValid: { ...this.state.formValid, serviceId: true },
-    //     });
-    //     if (event.target.checked) {
-    //         this.props.handleInputChange('serviceId', timestamp);
-    //         this.props.handleInputChange('altServiceId', true);
-    //         swal.altServiceIdNotice();
-    //     } else {
-    //         this.props.handleInputChange('serviceId', '');
-    //         this.props.handleInputChange('altServiceId', false);
-    //     }
-    // };
     handleCheckbox = (name) => (event) => {
         this.setState({
             values: { ...this.state.values, [name]: event.target.checked },
@@ -155,9 +133,7 @@ class UploadForm extends React.Component {
                         values[value] = '';
                         break;
                     }
-                    let findValidOption = this.props.form.capturePanels.find(function(el) {
-                        return el.toLowerCase().replace(/_|\s/g, '') === values[value].toLowerCase().replace(/_|\s/g, '');
-                    });
+                    let findValidOption = guessMatch(values[value], this.props.form.capturePanels);
                     if (findValidOption) isValidOption = true;
                     else isValidOption = false;
                     formValid[value] = isValidOption && values[value].length > 0;
@@ -520,7 +496,6 @@ UploadForm.defaultProps = {
         nothingToChange: () => {},
     },
 };
-
 
 const styles = (theme) => ({
     container: {

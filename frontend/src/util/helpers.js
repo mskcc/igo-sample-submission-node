@@ -1,4 +1,6 @@
 import { Config } from '../config.js';
+import didYouMean  from 'didyoumean';
+import { genericMessage } from './swal';
 
 export const maybeSingularize = (count, noun) => (count === 1 ? `${noun.replace('s', '')}` : `${count} ${noun}`);
 // generate rows depending on whether we need to add or substract rows, prefill some
@@ -326,7 +328,7 @@ export const redactMRNs = (rows, ids) => {
 
 export const redactMRNsFromGrid = (grid) => {
     console.log(Config.MRN_REDACTED_STRING);
-    
+
     grid.rows.forEach((element) => {
         if (/^[0-9]{8}$/.test(element.patientId.trim())) {
             element.patientId = Config.MRN_REDACTED_STRING;
@@ -523,7 +525,6 @@ export const autoFillGridBasedOnInput = (changes, grid) => {
 // assay
 // drodpown selection restricted to picklist (if done through handsontable, validation experience very different from overall user experience)
 export const validateGrid = (changes, grid) => {
-
     return new Promise((resolve) => {
         console.log(grid);
 
@@ -718,3 +719,49 @@ export const parseDate = (mongooseDate) => {
 };
 
 export const isMRN = (patientId) => /^[0-9]{8}$/.test(patientId.trim());
+
+export const guessMatch = (value, options) => {
+    console.log(options);
+    
+    // input too short to reasonably guess
+    if (value.length < 3) return undefined;
+    // lowerCase, remove spaces and _
+    let normalizedValue = value.toLowerCase().replace(/_|\s/g, '');
+    // is there a pretty similar match?
+    let slightlyNormalizedMatch = options.find(function(el) {
+        return el.toLowerCase().replace(/_|\s/g, '') === normalizedValue;
+    });
+    if (slightlyNormalizedMatch) return slightlyNormalizedMatch;
+    // is there a misspelled match? (using didYouMean library (using levenshtein distance))
+    let didYouMeanMatch = didYouMean(value, options);
+    if (didYouMeanMatch) return didYouMeanMatch;
+    // for more adventures matches, return error but show 'did you mean ..?' message
+    let adventureGuesses = [];
+    // does an option include the value as a substring?
+    let guesses = options.filter(function(el) {
+        return el
+            .toLowerCase()
+            .replace(/_|\s/g, '')
+            .includes(normalizedValue);
+    });
+    if (guesses.length > 0) adventureGuesses = guesses;
+    // okay, I give up. maybe the first two characters are identical? (leads to very few false positives)
+    else {
+        let lastResort = options.filter(function(el) {
+            return (
+                el
+                    .toLowerCase()
+                    .replace(/_|\s/g, '')
+                    .substring(0, 2) === normalizedValue.substring(0, 2)
+            );
+        });
+        if (lastResort.length > 0) adventureGuesses = lastResort;
+    }
+    if (adventureGuesses.length > 0) {
+        let message = `We could not find a perfect match for capture panel <strong>${value}</strong>. 
+        Did you mean <strong>${adventureGuesses.join(' or ')}</strong>? 
+        If so, please replace. If not, please check with your PI or reach out to zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org.`;
+        genericMessage('info', message);
+    }
+    return undefined;
+};

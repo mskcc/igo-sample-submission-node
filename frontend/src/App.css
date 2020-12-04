@@ -94,6 +94,15 @@ input.htCheckboxRendererInput {
     text-align: center;
     cursor: not-allowed;
 }
+
+.swal2-icon {
+    height: 4em;
+    width: 4em;
+}
+
+.swal2-popup {
+    width: 38em;
+}
 .alert #swal2-content {
     text-align: left !important;
 }
