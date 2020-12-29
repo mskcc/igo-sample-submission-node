@@ -55,9 +55,9 @@ export class UploadPage extends Component {
                 />
 
                 {/* grid.gridType is the type used to generate this grid */}
-                {grid.rows.length > 0 && gridType === grid.gridType && (
+                {/* {grid.rows.length > 0 && gridType === grid.gridType && (
                     <UploadGridContainer gridType={gridType} handleSubmit={this.handleGridSubmit} pasteTooMany={this.pasteTooMany} />
-                )}
+                )} */}
             </React.Fragment>
         );
     }
