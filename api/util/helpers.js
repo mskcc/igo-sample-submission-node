@@ -1218,7 +1218,7 @@ export function handlePatientIds(ids, username) {
                             idElement.finalPatientId = idElement.cmoPatientId;
                             idElement.normalizedPatientId = `${username.toUpperCase()}_C-${resultIdMatch.crdbOutput}`;
                         } else if (idElement.idType === 'MRN') {
-                            idElement.finalPatientId = 'MRN_REDACTED';
+                            idElement.finalPatientId = constants.MRN_REDACTED_STRING;
                             idElement.normalizedPatientId = `${username.toUpperCase()}_C-${resultIdMatch.crdbOutput}`;
                         } else if (idElement.idType === 'DMP Patient ID') {
                             idElement.finalPatientId = resultIdMatch.dmpId;

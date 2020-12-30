@@ -75,10 +75,6 @@ code {
     margin-bottom: 28px;
 }
 
-/* .htColumnHeaders { */
-/* overflow: visible !important; */
-/* } */
-
 .htDimmed {
     background-color: var(--material-gray) !important;
 }

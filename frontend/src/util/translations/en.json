@@ -5,7 +5,7 @@
         "application_label": "Application*",
         "application_helptext": "Select Application",
         "capturePanel_label": "Custom Panel*",
-        "capturePanel_helptext": "Select Panel",
+        "capturePanel_helptext": "Select Panel. Name must match name registered with IGO. If unsure, please check with your PI.",
         "species_label": "Species*",
         "species_helptext": "Select Species",
         "groupingCheckbox_label": "Are your samples in groups, pairs or replicates?",

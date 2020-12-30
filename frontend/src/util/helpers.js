@@ -324,10 +324,12 @@ export const redactMRNs = (rows, ids) => {
     return updatedRows;
 };
 
-export const redactMRNsFromGrid = (grid, value='MRN_REDACTED') => {
+export const redactMRNsFromGrid = (grid) => {
+    console.log(Config.MRN_REDACTED_STRING);
+    
     grid.rows.forEach((element) => {
-        if (/^[0-9]{8}$/.test(element.patientId)) {
-            element.patientId = value;
+        if (/^[0-9]{8}$/.test(element.patientId.trim())) {
+            element.patientId = Config.MRN_REDACTED_STRING;
         }
     });
     return grid;
@@ -521,7 +523,6 @@ export const autoFillGridBasedOnInput = (changes, grid) => {
 // assay
 // drodpown selection restricted to picklist (if done through handsontable, validation experience very different from overall user experience)
 export const validateGrid = (changes, grid) => {
-    console.log('autofill', changes);
 
     return new Promise((resolve) => {
         console.log(grid);
