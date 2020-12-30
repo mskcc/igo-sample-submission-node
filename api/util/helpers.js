@@ -14,9 +14,34 @@ const dmpColumns = require('./dmpColumns');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 
-const APP_VERSION = process.env.APP_VERSION;
-const MRN_REDACTED = process.env.MRN_REDACTED;
-const CRDB_MAX_REQUESTS = process.env.CRDB_MAX_REQUESTS;
+//  * Use this to find where console.log statements are coming from
+// ['log', 'warn', 'error'].forEach((methodName) => {
+//     const originalMethod = console[methodName];
+//     console[methodName] = (...args) => {
+//         let initiator = 'unknown place';
+//         try {
+//             throw new Error();
+//         } catch (e) {
+//             if (typeof e.stack === 'string') {
+//                 let isFirst = true;
+//                 for (const line of e.stack.split('\n')) {
+//                     const matches = line.match(/^\s+at\s+(.*)/);
+//                     if (matches) {
+//                         if (!isFirst) {
+//                             // first line - current function
+//                             // second line - caller (what we are looking for)
+//                             initiator = matches[1];
+//                             break;
+//                         }
+//                         isFirst = false;
+//                     }
+//                 }
+//             }
+//         }
+//         originalMethod.apply(console, [...args, '\n', `  at ${initiator}`]);
+//     };
+// });
+
 exports.createSharedString = (shared, username) => {
     let sharedSet = new Set();
     let sharedArray = shared.split(',');
@@ -52,7 +77,7 @@ const cacheAllPicklists = (limsColumns, allColumns) => {
         let picklists = {};
         limsColumns.map((columnName) => {
             if (!allColumns.gridColumns[columnName]) {
-                logger.log('info', `Column '${columnName}' not found in possible columns.`);
+                logger.info(`Column '${columnName}' not found in possible columns.`);
                 if (!allColumns.deprecatedColumns.includes(columnName)) {
                     reject(`Column '${columnName}' not found in possible or deprecated columns.`);
                 }
@@ -138,9 +163,9 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
 
             let colDef = allColumns.gridColumns[columnName];
             if (!colDef) {
-                logger.log('info', `Column '${columnName}' not found in possible columns.`);
+                logger.info(`Column '${columnName}' not found in possible columns.`);
                 if (!allColumns.deprecatedColumns.includes(columnName)) {
-                    logger.log('info', `Column '${columnName}' not found in possible or deprecated columns.`);
+                    logger.info(`Column '${columnName}' not found in possible or deprecated columns.`);
                     reject(`Column '${columnName}' not found in possible or deprecated columns.`);
                 }
             } else {
@@ -625,7 +650,7 @@ export function submit(submission, user, transactionId) {
             services
                 .submit(bankedSample)
                 .then((response) => {
-                    logger.log('info', `Submitted ${bankedSample.userId}.`);
+                    logger.info(`Submitted ${bankedSample.userId}.`);
                     submittedSamples.push(response);
                     if (submittedSamples.length === samples.length) {
                         resolve(submittedSamples);
@@ -730,7 +755,7 @@ export function generatePromoteGrid(limsColumnOrdering) {
             } else if (columnName in submitColumns.gridColumns) {
                 promoteColFeature = Object.assign({}, submitColumns.gridColumns[columnName]);
             } else {
-                logger.log('info', `${columnName} not found`);
+                logger.info(`${columnName} not found`);
                 promoteColFeature = {
                     name: columnName,
                     data: camelize(columnName),
@@ -946,26 +971,26 @@ export function parseDmpOutput(dmpOutput, submission) {
             // translationIssues.push(failedIdsMessage);
             igoSamples.sort(compareByWellPosition);
 
-            let parsedSubmission = {
-                username: submission.username,
-                gridValues: igoSamples,
-                submitted: false,
-                transactionId: submission.transactionId,
-                formValues: {
-                    ...submission.formValues,
-                    container: 'Plates',
-                    groupingChecked: false,
-                    patientIdType: 'MSK-Patients (or derived from MSK Patients)',
-                    patientIdTypeSpecified: 'DMP Patient ID',
-                    serviceId: '000000',
-                    species: 'Human',
-                    numberOfSamples: numReturnedSamples,
-                },
-            };
-            delete parsedSubmission.formValues._id;
-            translationIssues.unshift(
-                `Summary: ${submission.gridValues.length} total samples in original submission, ${numReturnedSamples} returned from DMP.`
-            );
+                igoSamples.sort(compareByWellPosition);
+
+                let parsedSubmission = {
+                    username: submission.username,
+                    gridValues: igoSamples,
+                    submitted: false,
+                    transactionId: submission.transactionId,
+                    formValues: {
+                        ...submission.formValues,
+                        container: 'Plates',
+                        groupingChecked: false,
+                        patientIdType: 'MSK-Patients (or derived from MSK Patients)',
+                        patientIdTypeSpecified: 'DMP Patient ID',
+                        serviceId: '000000',
+                        species: 'Human',
+                        numberOfSamples: numReturnedSamples,
+                    },
+                };
+                delete parsedSubmission.formValues._id;
+                translationIssues.push({ sampleMatch: doSamplesMatch(dmpSamples, submission) });
 
             resolve({ parsedSubmission, translationIssues });
         });
@@ -1216,15 +1241,15 @@ export function handlePatientIds(ids, username) {
                         // finetuning
                         if (idElement.idType === 'CMO Patient ID') {
                             idElement.finalPatientId = idElement.cmoPatientId;
-                            idElement.normalizedPatientId = `${username.toUpperCase()}_C-${resultIdMatch.crdbOutput}`;
+                            idElement.normalizedPatientId = idElement.cmoPatientId;
                         } else if (idElement.idType === 'MRN') {
-                            idElement.finalPatientId = constants.MRN_REDACTED_STRING;
-                            idElement.normalizedPatientId = `${username.toUpperCase()}_C-${resultIdMatch.crdbOutput}`;
+                            idElement.finalPatientId = constants.mrnRedactedString;
+                            idElement.normalizedPatientId = constants.mrnRedactedString;
                         } else if (idElement.idType === 'DMP Patient ID') {
                             idElement.finalPatientId = resultIdMatch.dmpId;
-                            idElement.normalizedPatientId = `${username.toUpperCase()}_${resultIdMatch.dmpId}`;
+                            idElement.normalizedPatientId = resultIdMatch.dmpId;
                         } else {
-                            // no type matched? CRDB Input ID already includes username
+                            // no type matched? CRDB Input ID already includes USERNAME_ or CELLLINE_
                             idElement.finalPatientId = userInputId;
                             idElement.normalizedPatientId = idElement.crdbInputId.toUpperCase();
                         }
@@ -1407,6 +1432,6 @@ export const toCamel = (s) => {
 
 const countIdRequests = (id, username) => {
     fs.appendFile('idTypeCounter.txt', `${id}, ${username}, ${new Date().toLocaleDateString()}\r\n`, function (err) {
-        if (err) console.log(err);
+        if (err) logger.error(err);
     });
 };

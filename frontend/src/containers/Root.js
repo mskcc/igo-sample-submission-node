@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+ import React, { Component } from 'react';
 
 import { HashRouter as Router, Route } from 'react-router-dom';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -14,7 +13,7 @@ import { connect } from 'react-redux';
 import { commonActions, userActions } from '../redux/actions';
 import DevTools from './DevTools';
 
-import { Header, SnackMessage } from '../components';
+import { Header, SnackMessage, Message } from '../components';
 
 import UploadPage from './Upload/UploadPage';
 import SubmissionsPage from './Submissions/SubmissionsContainer';
@@ -98,7 +97,8 @@ class Root extends Component {
                             <CircularProgress color='inherit' />
                         </Backdrop>
                         <Header userRole={role} />
-                        {Config.ENV !== 'production' ? <DevTools /> : <div />}
+                        <Message />
+                        {Config.ENV === 'production' ? <DevTools /> : <div />}
 
                         {common.serverError ? (
                             <ErrorPage />
@@ -137,21 +137,6 @@ class Root extends Component {
         );
     }
 }
-
-Root.propTypes = {
-    common: PropTypes.shape({
-        loading: PropTypes.bool,
-        message: PropTypes.string,
-        serverError: PropTypes.bool,
-    }),
-    error: PropTypes.bool,
-    role: PropTypes.string,
-    username: PropTypes.string,
-    fetchUser: PropTypes.func,
-    // redux-localize
-    initialize: PropTypes.func,
-    resetMessage: PropTypes.func,
-};
 
 const mapStateToProps = (state) => ({
     common: state.common,

@@ -6,6 +6,7 @@ var _ = require('lodash');
 var mongoose = require('mongoose');
 var ObjectId = mongoose.Types.ObjectId;
 // const { sqlSubmissions } = require('./sqlSubmissions');
+const { logger } = require('../util/winston');
 
 const SubmissionModel = require('../models/SubmissionModel');
 const DmpSubmissionModel = require('../models/DmpSubmissionModel');
@@ -16,6 +17,7 @@ exports.list = [
             .sort({ createdAt: 'desc' })
             .exec(function (err, submissions) {
                 if (err) {
+                    logger.error('Error pulling submissions from mongoDB');
                     return apiResponse.errorResponse(res, 'Could not retrieve submissions.');
                 }
                 return apiResponse.successResponseWithData(res, 'Operation success', {
@@ -37,6 +39,7 @@ exports.submission = [
         let model = submissionType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
         model.findById(ObjectId(req.params.id)).exec(function (err, submission) {
             if (err || !submission) {
+                logger.error('Error finding submission. If ID was displayed to user, it should exist.');
                 return apiResponse.errorResponse(res, 'Could not retrieve submission.');
             }
             return apiResponse.successResponseWithData(res, 'Operation success', {
@@ -65,6 +68,7 @@ exports.unsubmit = [
             })
             .exec(function (err, submission) {
                 if (err) {
+                    logger.error('Error finding submission during unsubmit. If ID was displayed to user, it should exist.');
                     return apiResponse.errorResponse(res, 'Could not retrieve submission.');
                 }
                 return apiResponse.successResponseWithData(res, 'Operation success', {
@@ -113,6 +117,7 @@ exports.grid = [
                         }
                     })
                     .catch((reasons) => {
+                        logger.error(reasons);
                         return apiResponse.errorResponse(res, reasons);
                     });
             });
@@ -149,6 +154,7 @@ exports.since = [
                         return apiResponse.successResponseWithData(res, 'Operation success', submissionGridResult);
                     })
                     .catch((reasons) => {
+                        logger.error(reasons);
                         return apiResponse.errorResponse(res, reasons);
                     });
             });
@@ -189,6 +195,7 @@ exports.create = [
         }
         submission.save(function (err) {
             if (err) {
+                logger.error(`Error saving submission: ${error}`);
                 return apiResponse.errorResponse(res, 'Submission could not be saved.');
             }
             return apiResponse.successResponseWithData(res, 'Submission saved.', {
@@ -241,6 +248,7 @@ exports.update = [
                 console.log(submission);
                 
                 if (err || !submission) {
+                    logger.error('Error updating submission. If ID was displayed to user, it should exist.');
                     return apiResponse.errorResponse(res, 'Could not update submission.');
                 }
                 return apiResponse.successResponseWithData(res, 'Operation success', {
@@ -305,7 +313,6 @@ exports.submit = [
                         submissionToSubmit.transactionId = transactionId;
                         submissionToSubmit.submittedAt = transactionId;
                         submissionToSubmit.save(function (err) {
-                            
                             if (err) {
                                 return apiResponse.errorResponse(
                                     res,
@@ -317,10 +324,12 @@ exports.submit = [
                         });
                     })
                     .catch((reasons) => {
+                        logger.error(reasons);
                         return apiResponse.errorResponse(res, reasons);
                     });
             })
             .catch((reasons) => {
+                logger.error(reasons);
                 return apiResponse.errorResponse(res, reasons);
             });
     },
@@ -340,6 +349,7 @@ exports.delete = [
         let model = gridType === 'dmp' ? DmpSubmissionModel : SubmissionModel;
         model.findByIdAndDelete(ObjectId(id)).exec(function (err) {
             if (err) {
+                logger.error('Error deleting submission. If ID was displayed to user, it should exist.');
                 return apiResponse.errorResponse(res, 'Could not delete submission.');
             }
             return apiResponse.successResponse(res, 'Operation success');
@@ -390,7 +400,7 @@ exports.import = [
                 return apiResponse.successResponse(res, `${documents.length} submissions imported.`);
             })
             .catch((error) => {
-                console.log(error);
+                console.log(error); //DEV only
 
                 return apiResponse.errorResponse(res, 'Could not import submissions.');
             });

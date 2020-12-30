@@ -11,10 +11,12 @@ export function fetchUser() {
             .then((response) => {
                 return dispatch({
                     type: FETCH_USER_SUCCESS,
-                    user: response.payload,
+                    user: response,
                 });
             })
             .catch((error) => {
+                console.log(error);
+                
                 return dispatch({
                     type: FETCH_USER_FAIL,
                     error: error,

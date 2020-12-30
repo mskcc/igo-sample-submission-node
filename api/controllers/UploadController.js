@@ -4,12 +4,10 @@ const util = require('../util/helpers');
 const services = require('../services/services');
 const crdbServices = require('../services/crdbServices');
 import CacheService from '../util/cache';
-const { loggers } = require('winston');
-const logger = loggers.get('logger');
+const { logger } = require('../util/winston');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 const { constants } = require('../util/constants');
-
 
 /**
  * Initial State, returns header values for submission form.
@@ -51,6 +49,7 @@ exports.headerValues = [
                 return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
             })
             .catch(() => {
+                logger.error('Error caught retrieving picklists from LIMS, check if all picklists exist.');
                 return apiResponse.errorResponse(res, 'Could not retrieve picklists from LIMS.');
             });
     },
@@ -116,7 +115,7 @@ exports.applicationsAndContainers = [
                 });
             }
         } catch (err) {
-            logger.log('error', err);
+            logger.error(err);
             return apiResponse.errorResponse(res, err);
         }
     },
@@ -145,7 +144,7 @@ exports.picklist = [
                     });
             }
         } catch (err) {
-            logger.log('error', err);
+            logger.error(err);
             return apiResponse.errorResponse(res, err);
         }
     },
@@ -160,10 +159,7 @@ exports.grid = [
     body('container').isLength({ min: 1 }).trim().withMessage('Container must be present.'),
     body('patientIdType').optional(),
     body('groupingChecked').optional(),
-    // body('altServiceId').optional(),
-    // sanitizeBody("*").escape(),
     function (req, res) {
-        // try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
@@ -173,26 +169,32 @@ exports.grid = [
             let application = formValues.application;
 
             let columnsPromise = cache.get(`${material}-${application}-Columns`, () => services.getColumns(material, application));
-            Promise.all([columnsPromise]).then((results) => {
-                if (!results || results.some((x) => x.length === 0)) {
-                    return apiResponse.errorResponse(res, `Could not retrieve grid for '${material}' and '${application}'.`);
-                }
-                let [columnsResult] = results;
-                let gridPromise = util.generateGrid(columnsResult, res.user.role, formValues);
-                // let gridPromise = util.generateGrid(columnsResult, 'lab_member', formValues);
+            Promise.all([columnsPromise])
+                .then((results) => {
+                    if (!results || results.some((x) => x.length === 0)) {
+                        return apiResponse.errorResponse(res, `Could not retrieve grid for '${material}' and '${application}'.`);
+                    }
+                    let [columnsResult] = results;
+                    let gridPromise = util.generateGrid(columnsResult, res.user.role, formValues);
+                    // let gridPromise = util.generateGrid(columnsResult, 'lab_member', formValues);
 
-                Promise.all([gridPromise])
-                    .then((results) => {
-                        if (results.some((x) => x.length === 0)) {
-                            return apiResponse.errorResponse(res, `Could not retrieve grid for '${material}' and '${application}'.`);
-                        }
-                        let [gridResult] = results;
-                        return apiResponse.successResponseWithData(res, 'Operation success', gridResult);
-                    })
-                    .catch((reasons) => {
-                        return apiResponse.errorResponse(res, reasons);
-                    });
-            });
+                    Promise.all([gridPromise])
+                        .then((results) => {
+                            if (results.some((x) => x.length === 0)) {
+                                return apiResponse.errorResponse(res, `Could not retrieve grid for '${material}' and '${application}'.`);
+                            }
+                            let [gridResult] = results;
+                            return apiResponse.successResponseWithData(res, 'Operation success', gridResult);
+                        })
+                        .catch((reasons) => {
+                            logger.error(reasons);
+                            return apiResponse.errorResponse(res, reasons);
+                        });
+                })
+                .catch((reasons) => {
+                    logger.error(reasons);
+                    return apiResponse.errorResponse(res, reasons);
+                });
         }
     },
 ];
@@ -213,10 +215,7 @@ exports.mrnToCid = [
                 let patientIdPromise = crdbServices.getCrdbId(patientId);
 
                 Promise.all([patientIdPromise])
-                    .catch(function (err) {
-                        logger.log('error', err);
-                        return apiResponse.errorResponse(res, err);
-                    })
+
                     .then((results) => {
                         if (results.some((x) => x.length === 0)) {
                             return apiResponse.errorResponse(res, 'Could not anonymize ID.');
@@ -227,95 +226,14 @@ exports.mrnToCid = [
                             normalizedPatientId: constants.MRN_REDACTED_STRING,
                         };
                         return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
-                    });
-            }
-        } catch (err) {
-            logger.log('error', err);
-            return apiResponse.errorResponse(res, err);
-        }
-    },
-];
-
-// MRN to C-ID
-exports.mrnToDmpId = [
-    body('patientId').isLength({ min: 1 }).trim().withMessage('patientId must be specified.'),
-    function (req, res) {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
-            } else {
-                // remove leading and trailing whitespaces just in case
-                let patientId = req.body.patientId.replace(/^\s+|\s+$/g, '');
-
-                let patientIdPromise = crdbServices.mrnToDmpId(patientId);
-
-                Promise.all([patientIdPromise])
-                    .catch(function (err) {
-                        logger.log('error', err);
-                        return apiResponse.errorResponse(res, err);
                     })
-                    .then((results) => {
-                        if (results.some((x) => x.length === 0)) {
-                            return apiResponse.errorResponse(res, 'Could not anonymize ID.');
-                        }
-                        let [patientIdResult] = results;
-                        let responseObject = {
-                            ...patientIdResult,
-                            normalizedPatientId: constants.MRN_REDACTED_STRING,
-                        };
-                        return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
+                    .catch(function (reasons) {
+                        logger.error(reasons);
+                        return apiResponse.errorResponse(res, reasons);
                     });
             }
         } catch (err) {
-            logger.log('error', err);
-            return apiResponse.errorResponse(res, err);
-        }
-    },
-];
-
-// default patient id scrambler (not MRN, not C-ID, not DMP)
-exports.patientIdToCid = [
-    body('patientId').isLength({ min: 1 }).trim().withMessage('patientIdType must be specified.'),
-    body('type').isLength({ min: 1 }).trim().withMessage('type must be specified.'),
-    function (req, res) {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
-            } else {
-                // remove leading and trailing whitespaces just in case
-                let patientId = req.body.patientId;
-                let type = req.body.type;
-                let normalizedPatientId;
-                if (type === 'cellline') {
-                    normalizedPatientId = `CELLLINE_${patientId.toUpperCase()}`;
-                } else {
-                    // normalizedPatientId = `NAKAUCHM_${patientId.toUpperCase()}`;
-                    normalizedPatientId = `${res.user.username.toUpperCase()}_${patientId.toUpperCase()}`;
-                }
-
-                let patientIdPromise = crdbServices.getCrdbId(normalizedPatientId);
-
-                Promise.all([patientIdPromise])
-                    .catch(function (err) {
-                        logger.log('error', err);
-                        return apiResponse.errorResponse(res, err);
-                    })
-                    .then((results) => {
-                        if (results.some((x) => x.length === 0)) {
-                            return apiResponse.errorResponse(res, 'Could not anonymize ID.');
-                        }
-                        let [patientIdResult] = results;
-                        let responseObject = {
-                            ...patientIdResult,
-                            normalizedPatientId: normalizedPatientId,
-                        };
-                        return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
-                    });
-            }
-        } catch (err) {
-            logger.log('error', err);
+            logger.error('Error calling CRDB.');
             return apiResponse.errorResponse(res, err);
         }
     },
@@ -344,7 +262,7 @@ exports.deidentifyIds = [
                         }
                     })
                     .catch(function (err) {
-                        logger.log('error', err);
+                        logger.error(err);
                         console.log(err);
                         return apiResponse.errorResponse(
                             res,
@@ -353,85 +271,11 @@ exports.deidentifyIds = [
                     });
             }
         } catch (err) {
-            logger.log('error', err);
+            logger.error(err);
             return apiResponse.errorResponse(
                 res,
                 'Something went wrong during Patient ID de-identification. To avoid accidental transmission of PHI, any MRNs have been removed and must be re-entered to be de-identified.'
             );
-        }
-    },
-];
-
-exports.verifyCmoId = [
-    body('cmoId').isLength({ min: 1 }).trim().withMessage('cmoId must be specified.'),
-
-    function (req, res) {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
-            } else {
-                // remove leading and trailing whitespaces just in case
-                let cmoId = req.body.cmoId.replace(/^\s+|\s+$/g, '');
-                let username = res.user.username;
-                let normalizedPatientId = `${username.toUpperCase()}_${cmoId}`;
-
-                let patientIdPromise = crdbServices.verifyCmoId(cmoId);
-
-                Promise.all([patientIdPromise])
-                    .catch(function (err) {
-                        logger.log('error', err);
-                        return apiResponse.errorResponse(res, err);
-                    })
-                    .then((results) => {
-                        if (results.some((x) => x.length === 0)) {
-                            return apiResponse.errorResponse(res, 'Could not verify ID.');
-                        }
-                        let responseObject = {
-                            patientId: cmoId,
-                            normalizedPatientId: normalizedPatientId,
-                        };
-                        return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
-                    });
-            }
-        } catch (err) {
-            return apiResponse.errorResponse(res, err);
-        }
-    },
-];
-
-// verify DMP ID and send back anonymized C-ID
-exports.verifyDmpId = [
-    body('dmpId').isLength({ min: 1 }).trim().withMessage('dmpId must be specified.'),
-    function (req, res) {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
-            } else {
-                // remove leading and trailing whitespaces just in case
-                let dmpId = req.body.dmpId.replace(/^\s+|\s+$/g, '');
-                let normalizedPatientId = `${res.user.username.toUpperCase()}_${dmpId}`;
-                let patientIdPromise = util.handleDmpId(dmpId);
-
-                Promise.all([patientIdPromise])
-                    .catch(function (err) {
-                        console.log(err);
-
-                        logger.log('error', err.toString());
-                        return apiResponse.errorResponse(res, err);
-                    })
-                    .then((results) => {
-                        let [patientIdResult] = results;
-                        let responseObject = {
-                            ...patientIdResult,
-                            normalizedPatientId: normalizedPatientId,
-                        };
-                        return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
-                    });
-            }
-        } catch (err) {
-            return apiResponse.errorResponse(res, err);
         }
     },
 ];
@@ -466,7 +310,7 @@ exports.additionalRows = [
                 });
             }
         } catch (err) {
-            logger.log('error', err);
+            logger.error(err);
             return apiResponse.errorResponse(res, err);
         }
     },

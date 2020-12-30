@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
-import PropTypes from 'prop-types';
-import MuiDownshift from 'mui-downshift';
+ import MuiDownshift from 'mui-downshift';
 
 import { Translate } from 'react-localize-redux';
 
@@ -74,18 +73,6 @@ Dropdown.defaultProps = {
     ],
 };
 
-Dropdown.propTypes = {
-    items: PropTypes.arrayOf(PropTypes.object.isRequired).isRequired,
-    id: PropTypes.string.isRequired,
-    label: PropTypes.string,
-    helptext: PropTypes.string,
-    loading: PropTypes.bool,
-    error: PropTypes.bool,
-    dynamic: PropTypes.bool,
-    onChange: PropTypes.func.isRequired,
-    onSelect: PropTypes.func,
-    // value: PropTypes.string.isRequired,
-};
 
 const styles = (theme) => ({
     input: {

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-
+ 
 import { withLocalize } from 'react-localize-redux';
 import { connect } from 'react-redux';
 import { gridActions, userActions } from '../../redux/actions';
@@ -64,28 +63,6 @@ export class UploadPage extends Component {
     }
 }
 
-UploadPage.propTypes = {
-    addGridToBankedSample: PropTypes.func,
-    decreaseRowNumber: PropTypes.func,
-    dmpForm: PropTypes.shape({
-        selected: PropTypes.shape({
-            numberOfSamples: PropTypes.any,
-        }),
-    }),
-    form: PropTypes.shape({
-        selected: PropTypes.shape({
-            numberOfSamples: PropTypes.any,
-        }),
-    }),
-    getColumns: PropTypes.func,
-    grid: PropTypes.object,
-    gridType: PropTypes.string,
-    increaseRowNumber: PropTypes.func,
-};
-
-UploadPage.defaultProps = {
-    grid: {},
-};
 
 const mapStateToProps = (state) => ({
     grid: state.upload.grid,

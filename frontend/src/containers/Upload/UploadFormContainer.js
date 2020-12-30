@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 import { formActions, dmpFormActions } from '../../redux/actions';
@@ -94,53 +93,6 @@ export class UploadFormContainer extends Component {
         );
     }
 }
-
-UploadFormContainer.propTypes = {
-    clear: PropTypes.func,
-    clearApplication: PropTypes.func,
-    clearForm: PropTypes.func,
-    clearMaterial: PropTypes.func,
-    clearSpecies: PropTypes.func,
-    dmp: PropTypes.shape({
-        form: PropTypes.shape({
-            initialFetched: PropTypes.bool,
-        }),
-    }),
-    dmpClear: PropTypes.func,
-    dmpGetInitialState: PropTypes.func,
-    dmpSelect: PropTypes.func,
-    form: PropTypes.array,
-    formType: PropTypes.string,
-    getApplicationsForMaterial: PropTypes.func,
-    getInitialState: PropTypes.func,
-    getMaterialsForApplication: PropTypes.func,
-    gridIsLoading: PropTypes.bool,
-    handleApplicationChange: PropTypes.func,
-    handleClear: PropTypes.func,
-    handleInputChange: PropTypes.func,
-    handleMaterialChange: PropTypes.func,
-    handleSpeciesChange: PropTypes.func,
-    handleSubmit: PropTypes.func,
-    nothingToChange: PropTypes.bool,
-    select: PropTypes.func,
-    submitRowNumberUpdate: PropTypes.func,
-    upload: PropTypes.shape({
-        form: PropTypes.arrayOf(
-            PropTypes.shape({
-                allMaterials: PropTypes.array,
-                initialFetched: PropTypes.bool,
-                nothingToChange: PropTypes.bool,
-            })
-        ),
-        grid: PropTypes.shape({
-            form: PropTypes.shape({
-                numberOfSamples: PropTypes.any,
-            }),
-            gridIsLoading: PropTypes.bool,
-            nothingToChange: PropTypes.bool,
-        }),
-    }),
-};
 
 const mapStateToProps = (state) => ({
     upload: state.upload,

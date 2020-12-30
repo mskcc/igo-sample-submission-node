@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import React from 'react';
+ import React from 'react';
 import { connect } from 'react-redux';
 import { commonActions } from '../redux/actions';
 import { Redirect } from 'react-router-dom';
@@ -22,11 +21,6 @@ class ErrorPage extends React.Component {
     }
 }
 
-ErrorPage.propTypes = {
-    error: PropTypes.bool,
-    loading: PropTypes.bool,
-    message: PropTypes.string,
-};
 const mapStateToProps = (state) => ({
     ...state.common,
 });

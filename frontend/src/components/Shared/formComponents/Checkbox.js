@@ -1,7 +1,6 @@
 import React from 'react';
 import { Translate } from 'react-localize-redux';
-import PropTypes from 'prop-types';
-
+ 
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -53,12 +52,6 @@ const CheckboxComponent = ({ id, value, onChange, classes, checked, hasHelptext 
         )}
     </Translate>
 );
-
-CheckboxComponent.propTypes = {
-    id: PropTypes.string.isRequired,
-    checked: PropTypes.bool.isRequired,
-    onChange: PropTypes.func.isRequired,
-};
 
 CheckboxComponent.defaultProps = {
     id: 'checkbox',

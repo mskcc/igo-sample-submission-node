@@ -21,7 +21,6 @@ function commonReducer(state = initialState, action) {
             loading: loading,
         };
     } else {
-        console.log('loading DONE');
         state = {
             ...state,
             loading: false,

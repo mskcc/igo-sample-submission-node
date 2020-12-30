@@ -1,12 +1,10 @@
 import React from 'react';
 import { Translate } from 'react-localize-redux';
-import PropTypes from 'prop-types';
 
 import { FormControl, InputAdornment, Paper, withStyles } from '@material-ui/core';
-
 import { Button, Checkbox, Dropdown, Input } from '../index';
+import { guessMatch } from '../../util/helpers';
 
-import { swal } from '../../util';
 
 class UploadForm extends React.Component {
     constructor(props) {
@@ -30,6 +28,7 @@ class UploadForm extends React.Component {
             },
         };
     }
+
 
     showGroupingCheckbox = () => {
         return this.state.values.species === 'Mouse' || this.state.values.species === 'Mouse_GeneticallyModified';
@@ -70,28 +69,6 @@ class UploadForm extends React.Component {
         this.props.handleInputChange(event.target.id, event.target.value);
     };
 
-    // handleServiceIdCheck = (name) => (event) => {
-    //     var date = new Date();
-    //     var timestamp = date.getTime();
-
-    //     this.setState({
-    //         values: {
-    //             ...this.state.values,
-    //             serviceId: timestamp,
-    //             [name]: event.target.checked,
-    //         },
-
-    //         formValid: { ...this.state.formValid, serviceId: true },
-    //     });
-    //     if (event.target.checked) {
-    //         this.props.handleInputChange('serviceId', timestamp);
-    //         this.props.handleInputChange('altServiceId', true);
-    //         swal.altServiceIdNotice();
-    //     } else {
-    //         this.props.handleInputChange('serviceId', '');
-    //         this.props.handleInputChange('altServiceId', false);
-    //     }
-    // };
     handleCheckbox = (name) => (event) => {
         this.setState({
             values: { ...this.state.values, [name]: event.target.checked },
@@ -151,15 +128,18 @@ class UploadForm extends React.Component {
                 // Investigators need to know the panel they're requesting. Case, underscores and spaces are normalized for matching.
                 // The picklist is not public to avoid lab's requesting each other's custom panels without consent.
                 case 'capturePanel':
-                    let findValidOption = this.props.form.capturePanels.find(function(el) {                        
-                        return el.toLowerCase().replace(/_|\s/g,'') === values[value].toLowerCase().replace(/_|\s/g,'');
-                    });            
+                    if (!this.showCapturePanelDropdown()) {
+                        formValid[value] = true;
+                        values[value] = '';
+                        break;
+                    }
+                    let findValidOption = guessMatch(values[value], this.props.form.capturePanels);
                     if (findValidOption) isValidOption = true;
                     else isValidOption = false;
                     formValid[value] = isValidOption && values[value].length > 0;
                     if (formValid[value]) values[value] = findValidOption;
                     break;
-                    
+
                 case 'container':
                     isValidOption = this.props.form.filteredContainers.some(function(el) {
                         return el === values[value];
@@ -515,13 +495,6 @@ UploadForm.defaultProps = {
         gridIsLoading: () => {},
         nothingToChange: () => {},
     },
-};
-
-UploadForm.propTypes = {
-    form: PropTypes.object.isRequired,
-    handleSubmit: PropTypes.func,
-    handleApplicationChange: PropTypes.func,
-    handleMaterialChange: PropTypes.func,
 };
 
 const styles = (theme) => ({

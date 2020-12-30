@@ -20,10 +20,18 @@ function Header(userRole) {
         // <div className={classes.mskccHeader}>
         <AppBar position='static' title={logo} className={classes.header}>
             <Toolbar>
-                <Avatar alt='mskcc logo' src={logo} className={classes.avatar} />
+                <Avatar
+                    onClick={() => {
+                        console.log(userRole);
+                        console.log(userRole.userRole === 'user');
+                    }}
+                    alt='mskcc logo'
+                    src={logo}
+                    className={classes.avatar}
+                />
 
                 <Typography color='inherit' variant='h6' className={classes.title}>
-                    IGO Sample Submission
+                    IGO Sample Submission 3.0 BETA
                 </Typography>
 
                 <React.Fragment>
@@ -88,7 +96,7 @@ function Header(userRole) {
                         </MenuItem>
                     </Menu>
                     <div className={classes.divider}>&#8226;</div>
-                    {userRole !== '' && userRole !== 'user' && (
+                    {userRole.userRole !== 'user' && (
                         <React.Fragment>
                             <Button>
                                 <NavLink to='/promote' activeClassName={classes.active} className={classes.navlink}>

@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 import { gridActions, submissionActions, userActions, commonActions } from '../../redux/actions';
@@ -108,24 +107,6 @@ class UploadGridContainer extends Component {
     }
 }
 
-UploadGridContainer.propTypes = {
-    createPartialSubmission: PropTypes.func,
-    downloadGrid: PropTypes.func,
-    grid: PropTypes.object,
-    gridType: PropTypes.string,
-    handleChange: PropTypes.func,
-    handleClear: PropTypes.func,
-    handleSave: PropTypes.func,
-    handleSubmit: PropTypes.func,
-    pasteTooMany: PropTypes.func,
-    handleGridChange: PropTypes.func,
-    showLoader: PropTypes.func,
-    submissionToEdit: PropTypes.object,
-    submitDmpSubmission: PropTypes.func,
-    submitSubmission: PropTypes.func,
-    updatePartialSubmission: PropTypes.func,
-    user: PropTypes.object,
-};
 
 UploadGridContainer.defaultProps = {
     grid: {},

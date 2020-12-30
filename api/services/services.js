@@ -10,10 +10,6 @@ const LIMS_AUTH = {
 const LIMS_URL = process.env.LIMS_URL;
 const DMP_URL = process.env.DMP_URL;
 const ONCO_URL = process.env.ONCO_URL;
-const CRDB_URL = process.env.CRDB_URL;
-const CRDB_USERNAME = process.env.CRDB_USERNAME;
-const CRDB_PASSWORD = process.env.CRDB_PASSWORD;
-const CRDB_SERVER_ID = process.env.CRDB_SERVER_ID;
 
 const AXIOS_TIMEOUT = parseInt(process.env.AXIOS_TIMEOUT);
 
@@ -26,6 +22,9 @@ const axiosConfig = {
     timeout: AXIOS_TIMEOUT,
     httpsAgent: agent,
 };
+
+const info = (url) => logger.info(`Successfully retrieved response from ${url}`);
+const error = (url) => error(url);
 
 const formatData = function (resp) {
     const data = resp.data || [];
@@ -42,19 +41,6 @@ const formatBarcodes = function (resp) {
 
 const formatDataMaterialsOrApps = function (resp) {
     const data = resp.data[0] || [];
-    return data;
-};
-
-const formatCrdb = function (resp) {
-    let data = {};
-    if (resp.data.PRM_JOB_STATUS.toString() === '0') {
-        data = {
-            patientId: resp.data.PRM_PT_ID,
-            sex: resp.data.PRM_PT_GENDER || '',
-        };
-    } else {
-        data = [];
-    }
     return data;
 };
 
@@ -101,14 +87,14 @@ exports.getPicklist = (listname) => {
         })
         .then((resp) => {
             if (resp.data && resp.data[0].includes('ERROR')) {
-                logger.info(`Error retrieving response from ${url}`);
+                error(url);
                 return [];
             }
-            logger.info(`Successfully retrieved response from ${url}`);
+            info(url);
             return resp;
         })
         .catch((error) => {
-            logger.info(`Error retrieving response from ${url}`);
+            error(url);
             throw error;
         })
         .then((resp) => {
@@ -125,11 +111,11 @@ exports.getBarcodes = () => {
             ...axiosConfig,
         })
         .then((resp) => {
-            logger.info(`Successfully retrieved response from ${url}`);
+            info(url);
             return resp;
         })
         .catch((error) => {
-            logger.info(`Error retrieving response from ${url}`);
+            error(url);
             throw error;
         })
         .then((resp) => {
@@ -146,11 +132,11 @@ exports.getMaterials = (application) => {
             ...axiosConfig,
         })
         .then((resp) => {
-            logger.info(`Successfully retrieved response from ${url}`);
+            info(url);
             return resp;
         })
         .catch((error) => {
-            logger.info(`Error retrieving response from ${url}`);
+            error(url);
             throw error;
         })
         .then((resp) => {
@@ -167,12 +153,11 @@ exports.getApplications = (material) => {
             ...axiosConfig,
         })
         .then((resp) => {
-            // console.log(resp);
-            logger.info(`Successfully retrieved response from ${url}`);
+            info(url);
             return resp;
         })
         .catch((error) => {
-            logger.info(`Error retrieving response from ${url}`);
+            error(url);
             throw error;
         })
         .then((resp) => {
@@ -191,11 +176,11 @@ exports.getColumns = (material, application) => {
             ...axiosConfig,
         })
         .then((resp) => {
-            logger.info(`Successfully retrieved response from ${url}`);
+            info(url);
             return resp;
         })
         .catch((error) => {
-            logger.info(`Error retrieving response from ${url}`);
+            error(url);
             throw error;
         })
         .then((resp) => {
@@ -217,11 +202,11 @@ exports.submit = (bankedSample) => {
             }
         )
         .then((resp) => {
-            logger.info(`Successfully retrieved response from ${url}`);
+            info(url);
             return resp;
         })
         .catch((error) => {
-            logger.info(`Error retrieving response from ${url}`);
+            error(url);
             if (error.response) {
                 throw error.response.data;
             } else {
@@ -243,39 +228,11 @@ exports.getOnco = () => {
             return resp;
         })
         .catch((error) => {
-            logger.info('Error retrieving response from OncoTree');
+            logger.error('Error retrieving response from OncoTree');
             throw error;
         })
         .then((resp) => {
             return formatOncoData(resp);
-        });
-};
-exports.getCrdbId = (patientId) => {
-    const url = CRDB_URL;
-    logger.info('Sending request to CRDB');
-    let data = {
-        username: CRDB_USERNAME,
-        password: CRDB_PASSWORD,
-        mrn: patientId,
-        sid: CRDB_SERVER_ID,
-    };
-
-    let headers = {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-    };
-    return axios
-        .post(url, { ...data, headers })
-        .then((resp) => {
-            logger.info('Successfully retrieved response from CRDB');
-            return resp;
-        })
-        .catch((error) => {
-            logger.info('Error retrieving response from CRDB');
-            throw error;
-        })
-        .then((resp) => {
-            return formatCrdb(resp);
         });
 };
 
@@ -288,11 +245,11 @@ exports.loadBankedSamples = (queryType, query) => {
             ...axiosConfig,
         })
         .then((resp) => {
-            logger.info(`Successfully retrieved response from ${url}`);
+            info(url);
             return resp;
         })
         .catch((error) => {
-            logger.info(`Error retrieving response from ${url}`);
+            error(url);
             return error;
         })
         .then((resp) => {
@@ -316,12 +273,12 @@ exports.promote = (data) => {
             }
         )
         .then((resp) => {
-            logger.info(`Successfully retrieved response from ${url}`);
+            info(url);
 
             return resp;
         })
         .catch((error) => {
-            logger.info(`Error retrieving response from ${url}`);
+            error(url);
             if (error.response && error.response.data) {
                 throw error.response.data;
             }
@@ -341,11 +298,11 @@ exports.getAvailableProjectsFromDmp = (date) => {
             ...axiosConfig,
         })
         .then((resp) => {
-            logger.info(`Successfully retrieved response from ${url}`);
+            info(url);
             return resp;
         })
         .catch((error) => {
-            logger.info(`Error retrieving response from ${url}`);
+            error(url);
             return error;
         })
         .then((resp) => {
@@ -362,11 +319,11 @@ exports.getProjectFromDmp = (trackingId) => {
             ...axiosConfig,
         })
         .then((resp) => {
-            logger.info(`Successfully retrieved response from ${url}`);
+            info(url);
             return resp;
         })
         .catch((error) => {
-            logger.info(`Error retrieving response from ${url}`);
+            error(url);
             return error;
         })
         .then((resp) => {

@@ -24,6 +24,7 @@
         "clsx": "^1.1.1",
         "cross-fetch": "^3.0.6",
         "css-loader": "1.0.0",
+        "didyoumean": "^1.2.1",
         "dotenv": "6.0.0",
         "dotenv-expand": "4.2.0",
         "exceljs": "^4.1.1",

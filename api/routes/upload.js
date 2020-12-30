@@ -9,11 +9,7 @@ router.get('/applicationsAndContainers', UploadController.applicationsAndContain
 router.get('/picklist', UploadController.picklist);
 router.post('/grid', UploadController.grid);
 router.post('/deidentifyIds', UploadController.deidentifyIds);
-router.post('/patientIdToCid', UploadController.patientIdToCid);
 router.post('/mrnToCid', UploadController.mrnToCid);
-router.post('/mrnToDmpId', UploadController.mrnToDmpId);
-router.post('/verifyCmoId', UploadController.verifyCmoId);
-router.post('/verifyDmpId', UploadController.verifyDmpId);
 router.post('/additionalRows', UploadController.additionalRows);
 router.post('/export', UploadController.export);
 
