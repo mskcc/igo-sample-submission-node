@@ -34,7 +34,7 @@ const Message = ({ type, msg, classes }) => (
                         </a>{' '}
                         instead. 
                         
-                        <br>IGO will not receive any samples from Monday 12/28 to Thursday 12/31. Scheduled sample drop offs will resume on Monday, January 4th. </br>
+                        <br></br>
                         
                     </Typography>
                     <Typography align='center' variant='subtitle1'>As always, your feedback is incredibly valuable to us.</Typography>
