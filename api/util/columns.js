@@ -4,6 +4,7 @@ export const validationPatterns = {
     blockslidetube: '^.{1,25}$',
     number: '^[0-9.]*$',
     collectionYear: 'd{4}|^$',
+    
     wellPosition: '[A-Za-z]+[0-9]+|^$',
     micronicTubeBarcode: '^[0-9]{10}$',
     alphanum: '[0-9a-zA-Z]',

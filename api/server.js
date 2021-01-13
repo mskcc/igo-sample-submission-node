@@ -79,7 +79,8 @@ app.get('/favicon.ico', function (req, res) {
 });
 
 app.use('*', function (req, res) {
-    return apiResponse.notFoundResponse(res, 'Page not found');
+    res.sendFile(path.join(publicDir, 'index.html'));
+    // return apiResponse.notFoundResponse(res, 'Page not found');
 });
 
 const server = http.createServer(app);

@@ -31,7 +31,7 @@ function Header(userRole) {
                 />
 
                 <Typography color='inherit' variant='h6' className={classes.title}>
-                    IGO Sample Submission 3.0 BETA
+                    IGO Sample Submission 3.0
                 </Typography>
 
                 <React.Fragment>
