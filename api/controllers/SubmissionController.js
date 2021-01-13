@@ -96,6 +96,12 @@ exports.grid = [
                 if (err) {
                     return apiResponse.errorResponse(res, 'Could not retrieve submissions.');
                 }
+                if (res.user.role === 'user') {
+                    submissions = submissions.filter(
+                        (submission) =>
+                            submission.username === res.user.username || submission.formValues.sharedWith.includes(res.user.username)
+                    );
+                }
                 let submissionGridPromise = util.generateSubmissionGrid(submissions, 'cmo_pm', submissionType);
                 Promise.all([submissionGridPromise])
                     .then((results) => {
@@ -143,6 +149,13 @@ exports.since = [
             .exec(function (err, submissions) {
                 if (err || _.isEmpty(submissions)) {
                     return apiResponse.errorResponse(res, 'No submissions found.');
+                }
+
+                if (res.user.role === 'user') {
+                    submissions = submissions.filter(
+                        (submission) =>
+                            submission.username === res.user.username || submission.formValues.sharedWith.includes(res.user.username)
+                    );
                 }
                 let submissionGridPromise = util.generateSubmissionGrid(submissions, res.user.role, submissionType);
                 Promise.all([submissionGridPromise])
