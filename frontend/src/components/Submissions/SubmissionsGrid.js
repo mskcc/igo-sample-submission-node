@@ -57,7 +57,7 @@ class SubmissionsGrid extends React.Component {
                     dropdownMenu={['filter_by_value', 'filter_action_bar']}
                     // make actions clickable
                     afterOnCellMouseDown={(event, coords, TD) => {
-                        if (coords.row !== -1 && coords.col !== -1) {
+                        if (coords.row !== -1 && coords.col !== -1 && event.button === 0) {
                             let actionElement = TD.firstElementChild || undefined;
                             if (actionElement) {
                                 let submitted = actionElement.getAttribute('submitted') === 'true' || undefined;
