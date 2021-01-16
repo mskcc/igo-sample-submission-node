@@ -417,6 +417,10 @@ export const translateTumorType = (tumorTypes, oldValue, newValue) => {
     if (newValue === 'Normal') {
         return 'Normal';
     }
+    // unknown
+    if (newValue === 'Unknown') {
+        return 'Unknown';
+    }
     //  translate to ID
     else {
         let tumorId = '';
