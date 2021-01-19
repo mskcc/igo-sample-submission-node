@@ -548,7 +548,8 @@ export function addDmpColsToSubmissionGrid(submissions, grid, userRole) {
         let rows = dmpGrid.rows;
         for (let i = 0; i < submissions.length; i++) {
             let submission = submissions[i];
-            let dmpTrackingId = submission.dmpTrackingId;
+
+            let dmpTrackingId = _.isEmpty(submission.dmpTrackingId) ? '' : submission.dmpTrackingId;
             let isSubmitted = submission.submitted;
 
             const samplesApproved = submission.gridValues.filter((element) => {
@@ -562,26 +563,35 @@ export function addDmpColsToSubmissionGrid(submissions, grid, userRole) {
             rows[i].reviewedBy = submission.reviewedBy ? submission.reviewedBy : '';
             rows[i].dmpTrackingId = dmpTrackingId;
             rows[i].relatedIgoSubmission_id = submission.relatedIgoSubmission_id;
-            // TODO
+            //  TODO: once DMP can pick up reviewed submissions, set this correctly
             // let isAvailableAtDmp = submission.isAvailableAtDmp;
-            let isAvailableAtDmp = true;
-            rows[i].loadFromDmp = `<span submitted=${isAvailableAtDmp} service-id=${dmpTrackingId} submission-id=${
-                submission.id
-            } class="material-icons grid-action${isAvailableAtDmp ? '' : '-disabled'}">${
-                isAvailableAtDmp ? 'cloud_download' : 'cloud_off'
-            }</span>`;
+            let isAvailableAtDmp = false;
+            // only loadable if exposed to DMP
 
-            rows[i].edit = `<span  submitted=${isSubmitted} service-id=${dmpTrackingId} submission-id=${
-                submission.id
-            } class="material-icons grid-action${isSubmitted || isAvailableAtDmp ? '-disabled' : ''}">edit</span>`;
+            rows[
+                i
+            ].loadFromDmp = `<span submitted=${isAvailableAtDmp} service-id="${dmpTrackingId}" submission-id=${submission.id} class="material-icons grid-action">cloud_download</span>`;
+            // only editable if unsubmitted
+            let editButtonClass = 'grid-action';
+            if (isSubmitted) editButtonClass = 'grid-action-disabled';
+            rows[
+                i
+            ].edit = `<span  submitted=${isSubmitted} service-id="${dmpTrackingId}" submission-id=${submission.id} class="material-icons ${editButtonClass}">edit</span>`;
 
             if (userRole !== 'user') {
-                rows[i].review = `<span  submitted=${isSubmitted} service-id=${dmpTrackingId} submission-id=${
-                    submission.id
-                } class="material-icons grid-action${isSubmitted && !isReviewed ? '' : '-disabled'}">assignment_turned_in</span>`;
-                rows[i].unsubmit = `<span submitted=${isSubmitted && !isAvailableAtDmp} service-id=${dmpTrackingId} submission-id=${
-                    submission.id
-                } class="material-icons grid-action${isSubmitted && !isAvailableAtDmp ? '' : '-disabled'}">undo</span>`;
+                // review is disabled if unsubmitted or already reviewed
+                let reviewButtonClass = 'grid-action';
+                if (!isSubmitted || isReviewed) reviewButtonClass = 'grid-action-disabled';
+                rows[
+                    i
+                ].review = `<span submitted=${isSubmitted} service-id="${dmpTrackingId}" submission-id="${submission.id}" class="material-icons ${reviewButtonClass}">assignment_turned_in</span>`;
+
+                // can only unsubmit prior to exposing to DMP
+                let unsubmitButtonClass = 'grid-action';
+                if (!isSubmitted) unsubmitButtonClass = 'grid-action-disabled';
+                rows[
+                    i
+                ].unsubmit = `<span submitted=${isSubmitted} service-id="${dmpTrackingId}" submission-id="${submission.id}" class="material-icons ${unsubmitButtonClass}">undo</span>`;
             }
 
             if (rows.length === submissions.length) {
@@ -971,26 +981,26 @@ export function parseDmpOutput(dmpOutput, submission) {
             // translationIssues.push(failedIdsMessage);
             igoSamples.sort(compareByWellPosition);
 
-                igoSamples.sort(compareByWellPosition);
+            igoSamples.sort(compareByWellPosition);
 
-                let parsedSubmission = {
-                    username: submission.username,
-                    gridValues: igoSamples,
-                    submitted: false,
-                    transactionId: submission.transactionId,
-                    formValues: {
-                        ...submission.formValues,
-                        container: 'Plates',
-                        groupingChecked: false,
-                        patientIdType: 'MSK-Patients (or derived from MSK Patients)',
-                        patientIdTypeSpecified: 'DMP Patient ID',
-                        serviceId: '000000',
-                        species: 'Human',
-                        numberOfSamples: numReturnedSamples,
-                    },
-                };
-                delete parsedSubmission.formValues._id;
-                translationIssues.push({ sampleMatch: doSamplesMatch(dmpSamples, submission) });
+            let parsedSubmission = {
+                username: submission.username,
+                gridValues: igoSamples,
+                submitted: false,
+                transactionId: submission.transactionId,
+                formValues: {
+                    ...submission.formValues,
+                    container: 'Plates',
+                    groupingChecked: false,
+                    patientIdType: 'MSK-Patients (or derived from MSK Patients)',
+                    patientIdTypeSpecified: 'DMP Patient ID',
+                    serviceId: '000000',
+                    species: 'Human',
+                    numberOfSamples: numReturnedSamples,
+                },
+            };
+            delete parsedSubmission.formValues._id;
+            translationIssues.push({ sampleMatch: doSamplesMatch(dmpSamples, submission) });
 
             resolve({ parsedSubmission, translationIssues });
         });
