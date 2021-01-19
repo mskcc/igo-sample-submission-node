@@ -72,8 +72,6 @@ const formatOncoData = function (resp) {
         }
         oncotree = oncotree.sort();
         oncotree.unshift('Normal');
-        oncotree.unshift('Unknown');
-
         return oncotree;
     }
 };

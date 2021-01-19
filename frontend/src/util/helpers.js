@@ -514,10 +514,25 @@ export const autoFillGridBasedOnInput = (changes, grid) => {
                     }
                 }
             });
-            resolve(result);
-        } else {
-            resolve(result);
+         
+        } 
+        const sampleClassChanges = changes.filter((element) => element.includes('sampleClass'));
+        if (sampleClassChanges) {
+          changes.forEach((changeElement) => {
+            let changedRow = changeElement[0];
+            let newValue = changeElement[3];
+            if ('cancerType' in grid.rows[changedRow]) {
+              let overrideTumorType =
+                autofilledGrid.rows[changedRow].cancerType === '' || autofilledGrid.rows[changedRow].cancerType === 'Normal';
+              //   let rowWithSamePatientId = grid.rows.find((element) => element.patientId === newValue && element.gender !== '');
+              if (newValue === 'Unknown Tumor' && overrideTumorType) {
+                autofilledGrid.rows[changedRow].cancerType = 'OTHER';
+              }
+            }
+          });
         }
+        resolve(result);
+        
     });
 };
 
