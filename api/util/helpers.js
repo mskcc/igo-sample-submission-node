@@ -1000,7 +1000,7 @@ export function parseDmpOutput(dmpOutput, submission) {
                 },
             };
             delete parsedSubmission.formValues._id;
-            translationIssues.push({ sampleMatch: doSamplesMatch(dmpSamples, submission) });
+            // translationIssues.push({ sampleMatch: doSamplesMatch(dmpSamples, submission) });
 
             resolve({ parsedSubmission, translationIssues });
         });

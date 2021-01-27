@@ -10,6 +10,9 @@ router.get('/updateStatus', DmpController.updateStatus);
 router.post('/grid', DmpController.grid);
 router.post('/submit', DmpController.submit);
 router.post('/loadFromDmp', DmpController.loadFromDmp);
+router.get('/trackingIdList', DmpController.trackingIdList);
+router.get('/igoSampleInformation', DmpController.igoSampleInformation);
+
 // router.post('/crdbId', DmpController.crdbId);
 // router.post('/additionalRows', DmpController.additionalRows);
 // router.post('/export', DmpController.export);

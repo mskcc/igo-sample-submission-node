@@ -83,6 +83,7 @@ exports.grid = [
     param('type').exists().withMessage('type must be specified.'),
     function (req, res) {
         const errors = validationResult(req);
+        console.log(res.user);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
@@ -110,8 +111,10 @@ exports.grid = [
                         }
                         let [submissionGridResult] = results;
                         if (submissionType === 'dmp') {
+                            console.log(res.user.role);
+
                             util.getAvailableProjectsFromDmp().then((ids) => {
-                                console.log(Array.from(ids));
+                                // console.log(Array.from(ids));
 
                                 apiResponse.successResponseWithData(res, 'Operation success', {
                                     ...submissionGridResult,
@@ -252,14 +255,14 @@ exports.update = [
         console.log(id);
         console.log(id);
         console.log(id);
-        
+
         model
             .findByIdAndUpdate(ObjectId(id), updatedSubmission, { new: true })
             .lean()
             .exec(function (err, submission) {
                 console.log(err);
                 console.log(submission);
-                
+
                 if (err || !submission) {
                     logger.error('Error updating submission. If ID was displayed to user, it should exist.');
                     return apiResponse.errorResponse(res, 'Could not update submission.');

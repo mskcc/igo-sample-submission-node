@@ -33,7 +33,7 @@ export class SubmissionsPage extends Component {
             this.handleEdit(mongoId);
         } else if (column === 'pullFromDmp' && readyForAction) {
             this.handleCheckDmp();
-        } else if (column === 'loadFromDmp' && readyForAction) {
+        } else if (column === 'loadFromDmp') {
             const row = submissions.grid.rows[coords.row];
             this.handleLoadFromDmp(serviceId, mongoId, row);
         } else if (column === 'unsubmit' && readyForAction) {
