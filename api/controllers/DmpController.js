@@ -395,7 +395,8 @@ exports.loadFromDmp = [
 ];
 
 //  Shows tracking IDs of DMP Submissions ready for dmp pickup (have isReviewed status)
-//  shows ids of projects reviewedAt within 7 days of submitted date
+//  shows ids of projects reviewedAt before requested timestamp
+// TODO: Show only ids reviewed within 7 days of requested timestamp
 //  date format: UNIX timestamp in seconds. 01/27/2021 @ 2:45pm (UTC) => 1596746317
 exports.trackingIdList = [
     query('date').isString().trim().withMessage('date must be present.'),
@@ -421,7 +422,7 @@ exports.trackingIdList = [
                 }
                 let idList = [];
                 submissions.map((sub) => {
-                    idList.push(sub.dmpTrackingId);
+                    idList.push(sub.gridValues[0].dmpTrackingId);
                     // console.log(sub.trackingId);
                     // console.log(sub.transactionId);
                     // console.log(sub.trackingId);
