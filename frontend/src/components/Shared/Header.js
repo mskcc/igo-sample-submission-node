@@ -117,11 +117,11 @@ function Header(userRole) {
                     </Button>
                     <Typography color='inherit' variant='h5' className={classes.lastItem}>
                         <Button>
-                            <NavLink to='/help' activeClassName={classes.active} className={classes.navlink}>
+                            <a target="_blank" href='https://genomics.mskcc.org/submission-guidelines' className={classes.navlink}>
                                 <Typography color='inherit' variant='h6' className={classes.lastItem}>
                                     Help
                                 </Typography>
-                            </NavLink>
+                            </a>
                         </Button>
                     </Typography>
                 </React.Fragment>
