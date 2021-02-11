@@ -38,7 +38,8 @@ class UploadForm extends React.Component {
     };
 
     showCapturePanelDropdown = () => {
-        return this.state.values.application === 'CustomCapture';
+        return this.state.values.application === 'CustomCapture' &&
+            this.state.values.material !== 'Pooled Library';
     };
     showPatientIdTypeSpecDropdown = () => {
         return (
