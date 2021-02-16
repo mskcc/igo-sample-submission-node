@@ -3,7 +3,7 @@ export const validationPatterns = {
     patientId: '^[A-Za-z0-9][A-Za-z0-9\\,_-]*$',
     blockslidetube: '^.{1,25}$',
     number: '^[0-9.]*$',
-    collectionYear: 'd{4}|^$',
+    collectionYear: '[0-9]{4}|^$',
     
     wellPosition: '[A-Za-z]+[0-9]+|^$',
     micronicTubeBarcode: '^[0-9]{10}$',
@@ -316,7 +316,7 @@ export const gridColumns = {
         name: 'Collection Year',
         columnHeader: 'Collection Year',
         data: 'collectionYear',
-        pattern: 'collectionYear',
+        pattern: validationPatterns.collectionYear,
         error: 'Four digits, please.',
         //  "type": "number",
         tooltip: 'Years only, dates are PHI and are unacceptable',

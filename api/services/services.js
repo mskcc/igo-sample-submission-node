@@ -24,7 +24,7 @@ const axiosConfig = {
 };
 
 const info = (url) => logger.info(`Successfully retrieved response from ${url}`);
-const error = (url) => error(url);
+const errorlog = (url) => logger.error(url);
 
 const formatData = function (resp) {
     const data = resp.data || [];
@@ -72,7 +72,6 @@ const formatOncoData = function (resp) {
         }
         oncotree = oncotree.sort();
         oncotree.unshift('Normal');
-
         return oncotree;
     }
 };
@@ -87,14 +86,14 @@ exports.getPicklist = (listname) => {
         })
         .then((resp) => {
             if (resp.data && resp.data[0].includes('ERROR')) {
-                error(url);
+                errorlog(url);
                 return [];
             }
             info(url);
             return resp;
         })
         .catch((error) => {
-            error(url);
+            errorlog(url);
             throw error;
         })
         .then((resp) => {
@@ -115,7 +114,7 @@ exports.getBarcodes = () => {
             return resp;
         })
         .catch((error) => {
-            error(url);
+            errorlog(url);
             throw error;
         })
         .then((resp) => {
@@ -136,7 +135,7 @@ exports.getMaterials = (application) => {
             return resp;
         })
         .catch((error) => {
-            error(url);
+            errorlog(url);
             throw error;
         })
         .then((resp) => {
@@ -157,7 +156,7 @@ exports.getApplications = (material) => {
             return resp;
         })
         .catch((error) => {
-            error(url);
+            errorlog(url);
             throw error;
         })
         .then((resp) => {
@@ -180,7 +179,7 @@ exports.getColumns = (material, application) => {
             return resp;
         })
         .catch((error) => {
-            error(url);
+            errorlog(url);
             throw error;
         })
         .then((resp) => {
@@ -206,7 +205,7 @@ exports.submit = (bankedSample) => {
             return resp;
         })
         .catch((error) => {
-            error(url);
+            errorlog(url);
             if (error.response) {
                 throw error.response.data;
             } else {
@@ -249,7 +248,7 @@ exports.loadBankedSamples = (queryType, query) => {
             return resp;
         })
         .catch((error) => {
-            error(url);
+            errorlog(url);
             return error;
         })
         .then((resp) => {
@@ -278,7 +277,7 @@ exports.promote = (data) => {
             return resp;
         })
         .catch((error) => {
-            error(url);
+            errorlog(url);
             if (error.response && error.response.data) {
                 throw error.response.data;
             }
@@ -302,7 +301,7 @@ exports.getAvailableProjectsFromDmp = (date) => {
             return resp;
         })
         .catch((error) => {
-            error(url);
+            errorlog(url);
             return error;
         })
         .then((resp) => {
@@ -323,7 +322,7 @@ exports.getProjectFromDmp = (trackingId) => {
             return resp;
         })
         .catch((error) => {
-            error(url);
+            errorlog(url);
             return error;
         })
         .then((resp) => {
