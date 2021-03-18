@@ -1007,6 +1007,14 @@ export function parseDmpOutput(dmpOutput, submission) {
     });
 }
 
+// Method to translate DMP sequence to IGO Index ID.
+// Match the dual index sequence submitted by DMP with 'DUAL_IDT_LIB' dual barcode sequences at IGO.
+// If match is found return IGO dual index ID.
+function getDualIndex(dualSequence, indexEntries){
+    let match = indexEntries.find(entry => entry[0].includes("DUAL_IDT_LIB_") && entry[1]===dualSequence);
+  	return match ? match[0] : "";
+}
+
 // DNA Input Into Library: 250.0 | not needed,
 // Tracking ID: 20200619YJ | not needed,
 //      Sex: M | Gender/gender (to our great shame),
@@ -1042,13 +1050,9 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
     let igoSamples = [];
     let translationIssues = [];
     const hasIndex = submission.formValues.material.includes('Library');
-    console.log("logging DMP translation results.");
-    console.log(indexResult);
-    console.log(Object.entries(indexResult));
 
     Object.keys(dmpSamples).forEach((element, index) => {
         let rowIssues = [];
-
         const dmpSample = dmpSamples[element];
         const dmpInvestigatorSampleId = dmpSample['Investigator Sample ID'];
         const dmpWellPosition = dmpSample['Well Position'];
@@ -1115,17 +1119,22 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
 
         if (hasIndex) {
             let igoIndex = dmpSample['Index'].replace('DMP0', '');
-
+            let indexEntries = Object.entries(indexResult);
             // Rough logic for translating DMP Dual barcodes to IGO Barcodes
-            // let dmpSequence = dmpSample['Index Sequence']
-            // let isDual = dmpSequence.split('-').length === 2;
-
-            let indexMatch = indexResult[igoIndex];
-            // if (dual){
-
-            // }
-        
-            if (!indexMatch) {
+            let dmpSequence = dmpSample['Index Sequence']
+            let isDual = dmpSequence.split('-').length === 2;
+            let indexMatch = "";
+            if (isDual){
+                igoIndex = getDualIndex(dmpSequence, indexEntries);;
+                indexMatch = igoDualIndex;
+            }else{
+                indexMatch = indexResult[igoIndex];
+            }
+    
+            if (isDual && !indexMatch) {
+                rowIssues.push(`${dmpSequence} dual sequence is not known to IGO.`);
+            }
+            if (!isDual && !indexMatch){
                 rowIssues.push(`${igoIndex} is not known to IGO.`);
             }
             igoSample = {
