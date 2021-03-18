@@ -469,40 +469,46 @@ exports.igoSampleInformation = [
                 }
                 let result = {};
                 result[trackingId] = {
-                    projectTitle: submission.gridValues[0].projectTitle,
-                    projectPi: submission.gridValues[0].projectPi,
                     samples: [],
                 };
                 submission.gridValues.forEach((sample) => {
-                    result[trackingId].samples.push({
-                        sampleType: sample.sampleType,
-                        studySubjectIdentifier: sample.studySubjectIdentifier,
-                        studySampleIdentifier: sample.studySampleIdentifier,
-                        specimenType: sample.specimenType,
-                        sampleApprovedByCmo: sample.sampleApprovedByCmo,
-                        dmpToTransfer: sample.dmpToTransfer,
-                        // Sample Type
-                        // Study Subject Identifier
-                        // Study Sample Identifier
-                        // Tracking ID
-                        // Project Title
-                        // Project PI
-                        // Specimen Type
-                        // Sample Approved by CMO
-                        // DMP to Transfer
-                    });
+                    // only include samples approved by Cmo PM's
+                    if (sample.isApproved) {
+                        result[trackingId].samples.push({
+                            dmpId: sample.dmpSampleId,
+                            requestType: sample.sampleType,
+                            studySubjectIdentifier: sample.studySubjectIdentifier ? sample.studySampleIdentifier : "",
+                            trackingId: sample.dmpTrackingId,
+                            projectName: sample.projectTitle ? sample.projectTitle : "",
+                            pIName: sample.projectPi ? sample.projectPi : "",
+                            studySampleIdentifier: sample.studySampleIdentifier ? sample.studySampleIdentifier : "",
+                            specimenType: submission.formValues.material.includes("Library") ? "Library" : submission.formValues.material,
+                            sampleApprovedByCmo: sample.isApproved,
+                            dmpToTransfer: sample.dmpToTransfer,
+                            recordStatus: "",
+                            updateFieldList: []
+                            // Based on the requirements list following are:
+                            // Implemented: 
+                            // dmpId	                    P-0005004-T01-IM5
+                            // requestType	                Request Type
+                            // studySubjectIdentifier	    Study Subject Identifier
+                            // trackingID	                CMO Tracking ID
+                            // projectName	                Project Name
+                            // pIName	                    PI Name
+                            // studySampleIdentifier	    Study Sample Identifier
+                            // specimenType	                Specimen Type
+                            // sampleApprovedByCMO	        Sample Approved By CMO
+                            // dMPToTransfer	            DMP to Transfer (Yes/No)
+
+                            // Implemented as empty values. Required logic will be implemented in Phase 2.
+                            // recordStatus	                Record new, update or remove
+                            // updateFieldList	            Array of field where updates to be made
+                        });
+                    }
                 });
 
-                // submission.map((sub) => {
-                //     samples.push(sub.dmpTrackingId);
-                //     console.log(sub.trackingId);
-                //     console.log(sub.transactionId);
-                //     console.log(sub.trackingId);
-                // });
                 console.log(result);
-
                 return apiResponse.successResponseWithData(res, 'Operation success', { result });
-                // });
             })
             .catch((reasons) => {
                 return apiResponse.errorResponse(res, reasons);

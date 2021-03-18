@@ -1042,6 +1042,9 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
     let igoSamples = [];
     let translationIssues = [];
     const hasIndex = submission.formValues.material.includes('Library');
+    console.log("logging DMP translation results.");
+    console.log(indexResult);
+    console.log(Object.entries(indexResult));
 
     Object.keys(dmpSamples).forEach((element, index) => {
         let rowIssues = [];
@@ -1112,7 +1115,16 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
 
         if (hasIndex) {
             let igoIndex = dmpSample['Index'].replace('DMP0', '');
+
+            // Rough logic for translating DMP Dual barcodes to IGO Barcodes
+            // let dmpSequence = dmpSample['Index Sequence']
+            // let isDual = dmpSequence.split('-').length === 2;
+
             let indexMatch = indexResult[igoIndex];
+            // if (dual){
+
+            // }
+        
             if (!indexMatch) {
                 rowIssues.push(`${igoIndex} is not known to IGO.`);
             }
