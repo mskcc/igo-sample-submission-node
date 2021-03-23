@@ -8,7 +8,7 @@ export const validationPatterns = {
     wellPosition: '[A-Za-z]+[0-9]+|^$',
     micronicTubeBarcode: '^[0-9]{10}$',
     alphanum: '[0-9a-zA-Z]',
-    alphanumFour: '[0-9a-zA-Z]{4,}',
+    alphanumFour: '^[0-9a-zA-Z]{4,}$',
     alphanumdash: '^[A-Za-z0-9](?!.*__)[A-Za-z0-9\\,_-]{2}[A-Za-z0-9\\,_-]*$',
     // alphanumdash: '^[a-zA-Z0-9-_]+$',
     cmoId: '^C[-|_].{6}$',
