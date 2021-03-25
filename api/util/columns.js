@@ -480,7 +480,7 @@ export const formattingAdjustments = {
             'Invalid format. Please use at least four alpha-numeric characters. Dashes and underscores are allowed. Every 8 digit ID is considered a MRN.',
     },
     'Strain or Line Name': {
-        pattern: validationPatterns.alphanumFour,
+        pattern: validationPatterns.userId, // alphanumFour,
         columnHeader: 'Strain or Line Name',
         error: 'Invalid format. Please use at least four alpha-numeric characters. Every 8 digit ID is considered a MRN.',
     },
