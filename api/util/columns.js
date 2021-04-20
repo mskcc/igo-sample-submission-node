@@ -154,18 +154,6 @@ export const gridColumns = {
         strict: true,
         picklistName: 'Illumina+Sequencing+Run+Types',
     },
-    'Reads Requested/Coverage': {
-        name: 'Reads Requested/Coverage',
-        columnHeader: 'Reads Requested/Coverage',
-        data: 'requestedReads',
-        tooltip:
-            'Please tell us how many reads you would us to generate per sample.  If you are submitting for custom capture or whole exome capture, please tell us how much coverage you would like.  If you are submitting pre-made libraries, you must request by lane.  If you are using a custom sequencing primer, you must request an entire flow cell. Please contact IGO if you have any questions',
-        editableCellTemplate: 'ui-grid/dropdownEditor',
-        type: 'autocomplete',
-        error: 'Only dropdown options are permitted as values',
-        strict: true,
-        picklistName: 'SubmissionReadsCoverage',
-    },
     'Requested Reads': {
         name: 'Requested Reads',
         columnHeader: 'Requested Reads',
