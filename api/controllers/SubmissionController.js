@@ -154,7 +154,9 @@ exports.since = [
                 if (res.user.role === 'user') {
                     submissions = submissions.filter(
                         (submission) =>
-                            submission.username === res.user.username || submission.formValues.sharedWith.includes(res.user.username)
+                            submission.username &&
+                            ( submission.username.toLowerCase() === res.user.username.toLowerCase() ||
+                              submission.formValues.sharedWith.includes(res.user.username))
                     );
                 }
                 let submissionGridPromise = util.generateSubmissionGrid(submissions, res.user.role, submissionType);
