@@ -759,10 +759,11 @@ export function generatePromoteGrid(limsColumnOrdering) {
                 promoteColFeature = Object.assign({}, submitColumns.gridColumns[columnName]);
                 promoteColFeature.data = 'barcodeId';
             }
-            if (columnName === 'Reads Requested/Coverage') {
-                promoteColFeature = Object.assign({}, submitColumns.gridColumns[columnName]);
-                promoteColFeature.data = 'readSummary';
-            } else if (columnName in submitColumns.gridColumns) {
+            // if (columnName === 'Reads Requested/Coverage') {
+            //     promoteColFeature = Object.assign({}, submitColumns.gridColumns[columnName]);
+            //     promoteColFeature.data = 'readSummary';
+            // } 
+            else if (columnName in submitColumns.gridColumns) {
                 promoteColFeature = Object.assign({}, submitColumns.gridColumns[columnName]);
             } else {
                 logger.info(`${columnName} not found`);

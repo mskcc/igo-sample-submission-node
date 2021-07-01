@@ -8,7 +8,7 @@ const styles = (theme) => ({
     ...theme.mixins.gutters(),
     paddingTop: theme.spacing(2),
     paddingBottom: theme.spacing(2),
-    maxWidth: 600,
+    maxWidth: 700,
     margin: '0 auto',
   },
 });
@@ -26,12 +26,12 @@ const Message = ({ type, msg, classes }) => (
             IGO updated SampleSubmission to version 3.0.
           </Typography>
 
-          <Typography align='justify' variant='body1'>
-            Please report all issues to zzPDL_SKI_IGO_DATA@mskcc.org.
+          <Typography  variant='body1'>
+            Please report all issues to zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org.
             <br></br>
           </Typography>
           <Typography align='center' variant='subtitle1'>
-            As always, your feedback is incredibly valuable to us.
+            As always, your <a href="https://genomics.mskcc.org/feedback/sample-submission" target="_blank">feedback</a> is incredibly valuable to us.
           </Typography>
         </React.Fragment>
       )}
