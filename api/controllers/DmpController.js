@@ -395,8 +395,7 @@ exports.loadFromDmp = [
 ];
 
 //  Shows tracking IDs of DMP Submissions ready for dmp pickup (have isReviewed status)
-//  shows ids of projects reviewedAt before requested timestamp
-// TODO: Show only ids reviewed within 7 days of requested timestamp
+//  shows ids of projects reviewedAt up to 60 days prior of requested timestamp
 //  date format: UNIX timestamp in seconds. 01/27/2021 @ 2:45pm (UTC) => 1596746317
 exports.trackingIdList = [
     query('date').isString().trim().withMessage('date must be present.'),
@@ -405,20 +404,23 @@ exports.trackingIdList = [
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
-        let date = parseInt(req.query.date);
-        console.log(date, isNaN(date));
+        let date = new Date(parseInt(req.query.date) * 1000);
+        // returns date 60 days prior
+        date.setDate(date.getDate() - 60);
+        // return to UNIX timestamp in seconds
+        let sixtyDaysPrior = date.getTime() / 1000;
 
         if (isNaN(date)) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', 'Date must be unix timestamp (seconds) string.');
         }
 
-        let dmpPromise = DmpSubmissionModel.find({ reviewedAt: { $lt: date } });
+        let dmpPromise = DmpSubmissionModel.find({ reviewedAt: { $gt: sixtyDaysPrior } });
         res.user = 'dmp';
         Promise.all([dmpPromise])
             .then((results) => {
                 let submissions = results[0];
                 if (_.isEmpty(submissions)) {
-                    return apiResponse.errorResponse(res, 'No submissions within 7 days of this timestamp.');
+                    return apiResponse.errorResponse(res, 'No submissions within 60 days of this timestamp.');
                 }
                 let idList = [];
                 submissions.map((sub) => {
@@ -477,18 +479,18 @@ exports.igoSampleInformation = [
                         result[trackingId].samples.push({
                             dmpId: sample.dmpSampleId,
                             requestType: sample.sampleType,
-                            studySubjectIdentifier: sample.studySubjectIdentifier ? sample.studySampleIdentifier : "",
+                            studySubjectIdentifier: sample.studySubjectIdentifier ? sample.studySampleIdentifier : '',
                             trackingId: sample.dmpTrackingId,
-                            projectName: sample.projectTitle ? sample.projectTitle : "",
-                            pIName: sample.projectPi ? sample.projectPi : "",
-                            studySampleIdentifier: sample.studySampleIdentifier ? sample.studySampleIdentifier : "",
-                            specimenType: submission.formValues.material.includes("Library") ? "Library" : submission.formValues.material,
+                            projectName: sample.projectTitle ? sample.projectTitle : '',
+                            pIName: sample.projectPi ? sample.projectPi : '',
+                            studySampleIdentifier: sample.studySampleIdentifier ? sample.studySampleIdentifier : '',
+                            specimenType: submission.formValues.material.includes('Library') ? 'Library' : submission.formValues.material,
                             sampleApprovedByCmo: sample.isApproved,
                             dmpToTransfer: sample.dmpToTransfer,
-                            recordStatus: "",
-                            updateFieldList: []
+                            recordStatus: '',
+                            updateFieldList: [],
                             // Based on the requirements list following are:
-                            // Implemented: 
+                            // Implemented:
                             // dmpId	                    P-0005004-T01-IM5
                             // requestType	                Request Type
                             // studySubjectIdentifier	    Study Subject Identifier
