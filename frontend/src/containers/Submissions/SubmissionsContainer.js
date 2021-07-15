@@ -23,8 +23,7 @@ export class SubmissionsPage extends Component {
     };
 
     handleGridClick = (coords, readyForAction, mongoId, serviceId) => {
-        const { submissions } = this.props;
-        console.log(mongoId);
+        const { submissions, user } = this.props;
         const column = submissions.grid.columnFeatures[coords.col].data;
 
         if (column === 'edit' && !readyForAction) {
@@ -34,8 +33,11 @@ export class SubmissionsPage extends Component {
         } else if (column === 'pullFromDmp' && readyForAction) {
             this.handleCheckDmp();
         } else if (column === 'loadFromDmp') {
-            const row = submissions.grid.rows[coords.row];
-            this.handleLoadFromDmp(serviceId, mongoId, row);
+            // users do not load from DMP
+            if (user.role != 'user') {
+                const row = submissions.grid.rows[coords.row];
+                this.handleLoadFromDmp(serviceId, mongoId, row);
+            }
         } else if (column === 'unsubmit' && readyForAction) {
             this.handleUnsubmit(mongoId);
         } else if (column === 'receipt' && readyForAction) {

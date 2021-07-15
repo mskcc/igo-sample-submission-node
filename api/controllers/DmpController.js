@@ -221,7 +221,6 @@ exports.submit = [
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
-
         let formValues = JSON.parse(req.body.formValues);
         let gridValues = JSON.parse(req.body.gridValues);
         let transactionId = req.body.transactionId;
@@ -299,6 +298,7 @@ exports.updateStatus = [
                 if (!availableTrackingIds) {
                     return apiResponse.successResponse(res, 'No projects returned by the DMP.');
                 }
+                // sets isAvailableAtDmp to true for any tracking IDs that are returned from the DMP - then PMs will be able to load samples from DMP and submit to IGO
                 DmpSubmissionModel.updateMany(
                     { dmpTrackingId: { $in: [...availableTrackingIds] }, isAvailableAtDmp: false },
                     { isAvailableAtDmp: true }

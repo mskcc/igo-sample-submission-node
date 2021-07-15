@@ -62,7 +62,7 @@ export function dmpSelect(id, value) {
                     'Please note that when requesting samples for transfer, the standard process is to first request sequenced libraries; gDNA can be requested after libraries are confirmed as depleted in the DMP.',
             });
         }
-
+        // this is not working
         if (id === 'number_of_samples') {
             if (value > 199) {
                 return dispatch({

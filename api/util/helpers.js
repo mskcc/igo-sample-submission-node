@@ -515,12 +515,13 @@ export function fillSubmissionGrid(submissions, userRole, gridColumns) {
 //       ]
 //     }
 //   }
+// TODO Anna- get last 7 dates? will PMs check weekly?
 export function getAvailableProjectsFromDmp() {
     return new Promise((resolve, reject) => {
-        const datesToFetch = ['05-20-2020', '05-21-2020', '05-23-2020', '05-24-2020', '05-25-2020', '05-26-2020', '05-27-2020'];
+        // const datesToFetch = ['05-20-2020', '05-21-2020', '05-23-2020', '05-24-2020', '05-25-2020', '05-26-2020', '05-27-2020'];
+        const datesToFetch = ['05-30-2021'];
         let promises = [];
         datesToFetch.forEach((date) => promises.push(services.getAvailableProjectsFromDmp(date)));
-
         Promise.all(promises)
             .then((results) => {
                 try {
@@ -564,13 +565,16 @@ export function addDmpColsToSubmissionGrid(submissions, grid, userRole) {
             rows[i].dmpTrackingId = dmpTrackingId;
             rows[i].relatedIgoSubmission_id = submission.relatedIgoSubmission_id;
             //  TODO: once DMP can pick up reviewed submissions, set this correctly
-            // let isAvailableAtDmp = submission.isAvailableAtDmp;
-            let isAvailableAtDmp = false;
+            let isAvailableAtDmp = submission.isAvailableAtDmp;
             // only loadable if exposed to DMP
-
+            
+            let loadButtonClass = 'grid-action';
+            if (userRole === 'user' || !isAvailableAtDmp) {
+                loadButtonClass = 'grid-action-disabled';
+            }
             rows[
                 i
-            ].loadFromDmp = `<span submitted=${isAvailableAtDmp} service-id="${dmpTrackingId}" submission-id=${submission.id} class="material-icons grid-action">cloud_download</span>`;
+            ].loadFromDmp = `<span submitted=${isAvailableAtDmp} service-id="${dmpTrackingId}" submission-id=${submission.id} class="material-icons ${loadButtonClass}">cloud_download</span>`;
             // only editable if unsubmitted
             let editButtonClass = 'grid-action';
             if (isSubmitted) editButtonClass = 'grid-action-disabled';
