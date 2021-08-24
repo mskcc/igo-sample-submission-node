@@ -43,15 +43,16 @@ function Header(userRole) {
                         </NavLink>
                     </Button>
                     <div className={classes.divider}>&#8226;</div>
-
-                    <Button>
-                        <NavLink to='/dmp' activeClassName={classes.active} className={classes.navlink}>
-                            <Typography color='inherit' variant='h6'>
-                                 DMP
-                            </Typography>
-                        </NavLink>
-                    </Button>
-                    <div className={classes.divider}>&#8226;</div>
+                    {userRole.userRole !== 'user' && (
+                        <Button>
+                            <NavLink to='/dmp' activeClassName={classes.active} className={classes.navlink}>
+                                <Typography color='inherit' variant='h6'>
+                                    DMP
+                                </Typography>
+                            </NavLink>
+                        </Button>
+                    )}
+                    {/* <div className={classes.divider}>&#8226;</div> */}
                     {/* <Button>
                         <NavLink to='/submissions/igo' activeClassName={classes.active} className={classes.navlink}>
                             <Typography color='inherit' variant='h6'>
@@ -87,13 +88,15 @@ function Header(userRole) {
                                 </Typography>
                             </NavLink>
                         </MenuItem>
-                        <MenuItem onClick={handleClose}>
-                            <NavLink to='/submissions/dmp' activeClassName={classes.activeMenu} className={classes.navlinkMenu}>
-                                <Typography color='inherit' variant='subtitle1'>
-                                    DMP Submissions
-                                </Typography>
-                            </NavLink>
-                        </MenuItem>
+                        {userRole.userRole !== 'user' && (
+                            <MenuItem onClick={handleClose}>
+                                <NavLink to='/submissions/dmp' activeClassName={classes.activeMenu} className={classes.navlinkMenu}>
+                                    <Typography color='inherit' variant='subtitle1'>
+                                        DMP Submissions
+                                    </Typography>
+                                </NavLink>
+                            </MenuItem>
+                        )}
                     </Menu>
                     <div className={classes.divider}>&#8226;</div>
                     {userRole.userRole !== 'user' && (

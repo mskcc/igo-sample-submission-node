@@ -20,7 +20,7 @@ class SubmissionsGrid extends React.Component {
                         {headline}
                     </Typography>
                     {/* should users see this button? */}
-                    {gridType === 'dmp' && user.role != 'user' && (
+                    {gridType === 'dmp' && user.role !== 'user' && (
                         <Button variant='contained' color='primary' onClick={() => handleCheckDmp('', 0, true)}>
                             Update DMP Status
                         </Button>
