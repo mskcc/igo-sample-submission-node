@@ -213,7 +213,7 @@ exports.submit = [
     authenticate,
     body('id').optional().isMongoId().withMessage('id must be valid MongoDB ID.'),
     body('transactionId').isInt().withMessage('id must be Int.'),
-    body('reviewed').isBoolean().withMessage('reviewd must be Boolean.'),
+    body('reviewed').isBoolean().withMessage('reviewed must be Boolean.'),
     body('formValues').isJSON().isLength({ min: 1 }).trim().withMessage('formValues must be JSON.'),
     body('gridValues').isJSON().isLength({ min: 1 }).trim().withMessage('gridValues must be JSON.'),
     function (req, res) {

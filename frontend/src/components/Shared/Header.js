@@ -23,7 +23,6 @@ function Header(userRole) {
                 <Avatar
                     onClick={() => {
                         console.log(userRole);
-                        console.log(userRole.userRole === 'user');
                     }}
                     alt='mskcc logo'
                     src={logo}
@@ -44,15 +43,17 @@ function Header(userRole) {
                     </Button>
                     <div className={classes.divider}>&#8226;</div>
                     {userRole.userRole !== 'user' && (
-                        <Button>
-                            <NavLink to='/dmp' activeClassName={classes.active} className={classes.navlink}>
-                                <Typography color='inherit' variant='h6'>
-                                    DMP
-                                </Typography>
-                            </NavLink>
-                        </Button>
+                        <React.Fragment>
+                            <Button>
+                                <NavLink to='/dmp' activeClassName={classes.active} className={classes.navlink}>
+                                    <Typography color='inherit' variant='h6'>
+                                        DMP
+                                    </Typography>
+                                </NavLink>
+                            </Button>
+                            <div className={classes.divider}>&#8226;</div>
+                        </React.Fragment>
                     )}
-                    {/* <div className={classes.divider}>&#8226;</div> */}
                     {/* <Button>
                         <NavLink to='/submissions/igo' activeClassName={classes.active} className={classes.navlink}>
                             <Typography color='inherit' variant='h6'>
