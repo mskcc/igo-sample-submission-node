@@ -34,7 +34,7 @@ export class SubmissionsPage extends Component {
             this.handleCheckDmp();
         } else if (column === 'loadFromDmp') {
             // users do not load from DMP
-            if (user.role != 'user') {
+            if (user.role !== 'user') {
                 const row = submissions.grid.rows[coords.row];
                 this.handleLoadFromDmp(serviceId, mongoId, row);
             }
