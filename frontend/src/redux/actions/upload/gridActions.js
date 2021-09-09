@@ -8,7 +8,8 @@ import { Config } from '../../../config.js';
 export const REGISTER_GRID_CHANGE = 'REGISTER_GRID_CHANGE';
 export const REGISTER_GRID_CHANGE_PRE_VALIDATE = 'REGISTER_GRID_CHANGE_PRE_VALIDATE';
 export const REGISTER_GRID_CHANGE_POST_VALIDATE = 'REGISTER_GRID_CHANGE_POST_VALIDATE';
-export const handleGridChange = (changes) => {
+export const SET_VALIDATION_MESSAGE = 'SET_VALIDATION_MESSAGE';
+export const handleGridChange = (changes, gridType) => {
     return (dispatch, getState) => {
         dispatch({ type: REGISTER_GRID_CHANGE_PRE_VALIDATE, message: 'Validating...', loading: true });
         let {
@@ -27,14 +28,12 @@ export const handleGridChange = (changes) => {
                 const includesPatientIdChange = changes.some((element) => element.includes('patientId'));
 
                 if (includesPatientIdChange) {
-                    dispatch({ type: REGISTER_GRID_CHANGE_PRE_VALIDATE, message: 'De-identifying IDs...', loading: true });
                     const patientIdType = grid.columnFeatures.find((element) => element.data === 'patientId');
                     let newPatientIds = util.getPatientIdsFromChanges(changes, patientIdType);
                     let emptyIds = newPatientIds.filter((element) => element.patientId === '');
                     validatedGrid.rows = util.clearIds(validatedGrid.rows, emptyIds);
                     // TODO REDACT empty ids from grid
                     let nonEmptyIds = newPatientIds.filter((element) => element.patientId !== '');
-                    let username = submissions.submissionToEdit ? submissions.submissionToEdit.username : user.username;
                     if (nonEmptyIds.length > 0) {
                         const containsMRNs = nonEmptyIds.some((element) => /^[0-9]{8}$/.test(element.patientId.trim()));
                         // Redact MRNs even before sending them off to be de-identified.
@@ -42,10 +41,12 @@ export const handleGridChange = (changes) => {
                             validatedGrid = util.redactMRNsFromGrid(validationResult.grid);
                         }
 
+                        dispatch({ type: REGISTER_GRID_CHANGE_PRE_VALIDATE, message: 'De-identifying IDs...', loading: true });
+
+                        let username = submissions.submissionToEdit ? submissions.submissionToEdit.username : user.username;
+
                         handlePatientIds(validatedGrid, nonEmptyIds, emptyIds, username)
                             .then((patientIdResult) => {
-                                console.log('handlePatientIds Result', patientIdResult);
-
                                 validationResult = {
                                     ...validationResult,
                                     grid: { ...validatedGrid, rows: patientIdResult.rows },
@@ -59,7 +60,6 @@ export const handleGridChange = (changes) => {
                                     type: REGISTER_GRID_CHANGE_POST_VALIDATE,
                                     payload: validationResult,
                                     message: message,
-                                    
                                 });
                             })
                             .catch((error) => {
@@ -69,7 +69,6 @@ export const handleGridChange = (changes) => {
                                     type: REGISTER_GRID_CHANGE_POST_VALIDATE,
                                     payload: validationResult,
                                     message: 'Error while de-identifying. Please try again or reach out to zzPDL_SKI_IGO_DATA@mskcc.org.',
-                                    
                                 });
                             });
                     } else {
@@ -77,7 +76,6 @@ export const handleGridChange = (changes) => {
                             type: REGISTER_GRID_CHANGE_POST_VALIDATE,
                             payload: validationResult,
                             message: 'clear',
-                            
                         });
                     }
                 } else {
@@ -88,7 +86,6 @@ export const handleGridChange = (changes) => {
                         type: REGISTER_GRID_CHANGE_POST_VALIDATE,
                         payload: validationResult,
                         message: message,
-                        
                     });
                 }
             });
@@ -256,16 +253,14 @@ export function populateGridFromSubmission(submissionId, ownProps) {
                 let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
                 Promise.all([columnPromise])
                     .then(() => {
-                        console.log(submission.appVersion);
-                        console.log(Config.APP_VERSION);
-
                         if (submission.appVersion !== Config.APP_VERSION) {
                             swal.genericMessage(
-                                'Previous Version',
+                                'Version Mismatch',
                                 'The submission you are editing was created with an older version of this site. If you run into any issues, please reach out to <a href="mailto:zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org?subject=SampleSubmission Version Issue">the IGO Sample and Project Management Team.</a>'
                             );
                         }
                         let type = page === 'dmp' ? GET_DMP_SUBMISSION_TO_EDIT_SUCCESS : GET_SUBMISSION_TO_EDIT_SUCCESS;
+
                         dispatch({
                             type: type,
                             payload: {
@@ -296,10 +291,11 @@ export function populateGridFromSubmission(submissionId, ownProps) {
 export const LOAD_FROM_DMP = 'LOAD_FROM_DMP';
 export const LOAD_FROM_DMP_FAIL = 'LOAD_FROM_DMP_FAIL';
 export const LOAD_FROM_DMP_SUCCESS = 'LOAD_FROM_DMP_SUCCESS';
-export function loadFromDmp(trackingId, dmpSubmissionId, ownProps) {
+
+export function loadFromDmp(dmpTrackingId, dmpSubmissionId, ownProps) {
     return (dispatch, getState) => {
         dispatch({ type: LOAD_FROM_DMP, message: 'Loading and parsing submission from DMP...', loading: true });
-        const data = { trackingId, dmpSubmissionId };
+        const data = { dmpTrackingId, dmpSubmissionId };
 
         services
             .loadFromDmp(data)
@@ -309,39 +305,29 @@ export function loadFromDmp(trackingId, dmpSubmissionId, ownProps) {
                 let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
                 Promise.all([columnPromise])
                     .then(() => {
-                        let type = GET_SUBMISSION_TO_EDIT_SUCCESS;
                         dispatch({
-                            type: type,
+                            type: LOAD_FROM_DMP_SUCCESS,
                             payload: {
                                 ...submission,
                                 gridType: page,
                             },
                             message: 'Parsed!',
                         });
-                        let summary = '';
-                        let filtered = resp.payload.issues.filter((element) => element);
-                        let sampleMatch = filtered.filter((element) => 'sampleMatch' in element)[0];
-                        summary += sampleMatch.sampleMatch;
-                        filtered.map((element) => {
-                            let issues = '';
-                            Object.keys(element).forEach((key) => {
-                                if (key !== 'sample' && element && element[key]) {
-                                    issues += `<strong>${key}:</strong> ${element[key]}<br/>`;
-                                }
-                            });
-                            summary += `<ul style="text-align:left;">Sample ${element.sample}<br/>${issues}</ul>`;
+                        dispatch({
+                            type: SET_VALIDATION_MESSAGE,
+                            payload: { errorMessage: resp.payload.issues, affectedRows: [] },
+                            message: 'Parsed!',
                         });
-                        swal.genericMessage('info', `Parsing Summary: ${summary}`);
+
                         return ownProps.history.push(`/${page}`);
                     })
                     .catch((error) => {
+                        console.log(error);
                         return dispatch({
-                            type: GET_SUBMISSION_TO_EDIT_FAIL,
+                            type: LOAD_FROM_DMP_FAIL,
                             error: error,
                         });
                     });
-
-                return ownProps.history.push(`/${page}`);
             })
             .catch((error) => {
                 dispatch({
@@ -400,7 +386,7 @@ export function handlePatientIds(grid, ids, emptyIds, username) {
                 let message = new Set([]);
                 let affectedRows = [];
                 let failedIds = response.payload.idResults.filter((element) => element.message);
-                if (failedIds.length > 0) {
+                if (failedIds && failedIds.length > 0) {
                     failedIds.forEach((element) => {
                         message.add(element.message);
                         affectedRows.push(element.gridRowIndex);

@@ -511,8 +511,8 @@ export const submissionColumns = {
         readOnly: 'true',
         renderer: 'html',
     },
-    // 'DMP Patient ID': {
-    //     name: 'DMP Patient ID',
+    // 'DMP Tracking ID': {
+    //     name: 'DMP Tracking ID',
     //     data: 'dmpTrackingId',
     //     readOnly: 'true',
     // },

@@ -213,7 +213,7 @@ exports.submit = [
     authenticate,
     body('id').optional().isMongoId().withMessage('id must be valid MongoDB ID.'),
     body('transactionId').isInt().withMessage('id must be Int.'),
-    body('reviewed').isBoolean().withMessage('reviewd must be Boolean.'),
+    body('reviewed').isBoolean().withMessage('reviewed must be Boolean.'),
     body('formValues').isJSON().isLength({ min: 1 }).trim().withMessage('formValues must be JSON.'),
     body('gridValues').isJSON().isLength({ min: 1 }).trim().withMessage('gridValues must be JSON.'),
     function (req, res) {
@@ -221,7 +221,6 @@ exports.submit = [
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
-
         let formValues = JSON.parse(req.body.formValues);
         let gridValues = JSON.parse(req.body.gridValues);
         let transactionId = req.body.transactionId;
@@ -299,8 +298,9 @@ exports.updateStatus = [
                 if (!availableTrackingIds) {
                     return apiResponse.successResponse(res, 'No projects returned by the DMP.');
                 }
+                // sets isAvailableAtDmp to true for any tracking IDs that are returned from the DMP - then PMs will be able to load samples from DMP and submit to IGO
                 DmpSubmissionModel.updateMany(
-                    { trackingId: { $in: [...availableTrackingIds] }, isAvailableAtDmp: false },
+                    { dmpTrackingId: { $in: [...availableTrackingIds] }, isAvailableAtDmp: false },
                     { isAvailableAtDmp: true }
                 )
                     .lean()
@@ -319,17 +319,17 @@ exports.updateStatus = [
 ];
 
 exports.loadFromDmp = [
-    body('trackingId').isLength({ min: 1 }).trim().withMessage('TrackingId must be present.'),
+    body('dmpTrackingId').isLength({ min: 1 }).trim().withMessage('TrackingId must be present.'),
     body('dmpSubmissionId').isMongoId().withMessage('dmpSubmissionId must be valid MongoDB ID.'),
     function (req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         } else {
-            let trackingId = req.body.trackingId;
+            let dmpTrackingId = req.body.dmpTrackingId;
             let dmpSubmissionId = req.body.dmpSubmissionId;
 
-            let dmpOutputPromise = services.getProjectFromDmp(trackingId);
+            let dmpOutputPromise = services.getProjectFromDmp(dmpTrackingId);
             let dmpSubmissionPromise = DmpSubmissionModel.findById(ObjectId(dmpSubmissionId)).lean();
 
             Promise.all([dmpOutputPromise, dmpSubmissionPromise])
@@ -343,42 +343,46 @@ exports.loadFromDmp = [
                     } else if (_.isEmpty(retrievedDmpSubmission)) {
                         return apiResponse.errorResponse(res, 'Error retrieving this submission from DB.');
                     } else {
-                        util.parseDmpOutput(dmpOutput, retrievedDmpSubmission).then((result) => {
-                            let translatedSubmission = result.parsedSubmission;
-                            let issues = result.translationIssues;
+                        util.parseDmpOutput(dmpOutput, retrievedDmpSubmission)
+                            .then((result) => {
+                                let translatedSubmission = result.parsedSubmission;
+                                let issues = result.translationIssues;
 
-                            // if this has been previously loaded from DMP, overwrite previous submission instead of creating a new one
-                            let relatedIgoSubmission_id = retrievedDmpSubmission.relatedIgoSubmission_id || '';
-                            let username = retrievedDmpSubmission.username;
+                                // if this has been previously loaded from DMP, overwrite previous submission instead of creating a new one
+                                let relatedIgoSubmission_id = retrievedDmpSubmission.relatedIgoSubmission_id || '';
+                                let username = retrievedDmpSubmission.username;
 
-                            SubmissionModel.findOrCreateSub(relatedIgoSubmission_id, username).then((igoSubmission) => {
-                                igoSubmission.gridValues = translatedSubmission.gridValues;
-                                igoSubmission.formValues = translatedSubmission.formValues;
-                                igoSubmission.dmpTrackingId = trackingId;
+                                SubmissionModel.findOrCreateSub(relatedIgoSubmission_id, username).then((igoSubmission) => {
+                                    igoSubmission.gridValues = translatedSubmission.gridValues;
+                                    igoSubmission.formValues = translatedSubmission.formValues;
+                                    igoSubmission.dmpTrackingId = dmpTrackingId;
 
-                                igoSubmission.save(function (err) {
-                                    if (err) {
-                                        return apiResponse.errorResponse(res, 'IGO Submission could not be saved.');
-                                    }
-                                    // update existing dmpSubmission document to connect igoSubmission and indicate last load date
-                                    DmpSubmissionModel.findByIdAndUpdate(ObjectId(dmpSubmissionId), {
-                                        relatedIgoSubmission_id: igoSubmission._id,
-                                        loadedFromDmpAt: util.getTransactionIdForMongo(),
-                                    }).exec(function (err, result) {
+                                    igoSubmission.save(function (err) {
                                         if (err) {
-                                            console.log(err);
-                                            return apiResponse.errorResponse(res, 'Retrieved DMP submission could not be updated.');
+                                            return apiResponse.errorResponse(res, 'IGO Submission could not be saved.');
                                         }
-                                        console.log(issues);
+                                        // update existing dmpSubmission document to connect igoSubmission and indicate last load date
+                                        DmpSubmissionModel.findByIdAndUpdate(ObjectId(dmpSubmissionId), {
+                                            relatedIgoSubmission_id: igoSubmission._id,
+                                            loadedFromDmpAt: util.getTransactionIdForMongo(),
+                                        }).exec(function (err, result) {
+                                            if (err) {
+                                                console.log(err);
+                                                return apiResponse.errorResponse(res, 'Retrieved DMP submission could not be updated.');
+                                            }
+                                            // console.log(issues);
 
-                                        return apiResponse.successResponseWithData(res, 'Submission saved.', {
-                                            submission: igoSubmission._doc,
-                                            issues: issues,
+                                            return apiResponse.successResponseWithData(res, 'Submission saved.', {
+                                                submission: igoSubmission._doc,
+                                                issues: issues,
+                                            });
                                         });
                                     });
                                 });
+                            })
+                            .catch((reasons) => {
+                                return apiResponse.errorResponse(res, reasons);
                             });
-                        });
                     }
                 })
                 .catch((reasons) => {
@@ -387,5 +391,129 @@ exports.loadFromDmp = [
                     return apiResponse.errorResponse(res, reasons);
                 });
         }
+    },
+];
+
+//  Shows tracking IDs of DMP Submissions ready for dmp pickup (have isReviewed status)
+//  shows ids of projects reviewedAt up to 60 days prior of requested timestamp
+//  date format: UNIX timestamp in seconds. 01/27/2021 @ 2:45pm (UTC) => 1596746317
+exports.trackingIdList = [
+    query('date').isString().trim().withMessage('date must be present.'),
+    function (req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
+        }
+        let date = new Date(parseInt(req.query.date) * 1000);
+        // returns date 60 days prior
+        date.setDate(date.getDate() - 60);
+        // return to UNIX timestamp in seconds
+        let sixtyDaysPrior = date.getTime() / 1000;
+
+        if (isNaN(date)) {
+            return apiResponse.validationErrorWithData(res, 'Validation error.', 'Date must be unix timestamp (seconds) string.');
+        }
+
+        let dmpPromise = DmpSubmissionModel.find({ reviewedAt: { $gt: sixtyDaysPrior } });
+        res.user = 'dmp';
+        Promise.all([dmpPromise])
+            .then((results) => {
+                let submissions = results[0];
+                if (_.isEmpty(submissions)) {
+                    return apiResponse.errorResponse(res, 'No submissions within 60 days of this timestamp.');
+                }
+                let idList = [];
+                submissions.map((sub) => {
+                    idList.push(sub.gridValues[0].dmpTrackingId);
+                    // console.log(sub.trackingId);
+                    // console.log(sub.transactionId);
+                    // console.log(sub.trackingId);
+                });
+                // console.log(idList);
+
+                return apiResponse.successResponseWithData(res, 'Operation success', { idList });
+                // });
+            })
+            .catch((reasons) => {
+                return apiResponse.errorResponse(res, reasons);
+            });
+    },
+];
+
+//  Show meta information for a given dmp tracking id
+// Fields DMP needs:DMP Sample ID
+// Sample Type
+// Study Subject Identifier
+// Study Sample Identifier
+// Tracking ID
+// Project Title
+// Project PI
+// Specimen Type
+// Sample Approved by CMO
+// DMP to Transfer
+// TODO: Only show samples approved for dmp transfer
+exports.igoSampleInformation = [
+    query('trackingId').isString().trim().withMessage('trackingIS must be present.'),
+    function (req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
+        }
+        let trackingId = req.query.trackingId;
+
+        let dmpPromise = DmpSubmissionModel.findOne({ dmpTrackingId: trackingId });
+        res.user = 'dmp';
+        Promise.all([dmpPromise])
+            .then((results) => {
+                let submission = results[0];
+                if (_.isEmpty(submission)) {
+                    return apiResponse.errorResponse(res, 'No submission found for this tracking ID.');
+                }
+                let result = {};
+                result[trackingId] = {
+                    samples: [],
+                };
+                submission.gridValues.forEach((sample) => {
+                    // only include samples approved by Cmo PM's
+                    if (sample.isApproved) {
+                        result[trackingId].samples.push({
+                            dmpId: sample.dmpSampleId,
+                            requestType: sample.sampleType,
+                            studySubjectIdentifier: sample.studySubjectIdentifier ? sample.studySampleIdentifier : '',
+                            trackingId: sample.dmpTrackingId,
+                            projectName: sample.projectTitle ? sample.projectTitle : '',
+                            pIName: sample.projectPi ? sample.projectPi : '',
+                            studySampleIdentifier: sample.studySampleIdentifier ? sample.studySampleIdentifier : '',
+                            specimenType: submission.formValues.material.includes('Library') ? 'Library' : submission.formValues.material,
+                            sampleApprovedByCmo: sample.isApproved,
+                            dmpToTransfer: sample.dmpToTransfer,
+                            recordStatus: '',
+                            updateFieldList: [],
+                            // Based on the requirements list following are:
+                            // Implemented:
+                            // dmpId	                    P-0005004-T01-IM5
+                            // requestType	                Request Type
+                            // studySubjectIdentifier	    Study Subject Identifier
+                            // trackingID	                CMO Tracking ID
+                            // projectName	                Project Name
+                            // pIName	                    PI Name
+                            // studySampleIdentifier	    Study Sample Identifier
+                            // specimenType	                Specimen Type
+                            // sampleApprovedByCMO	        Sample Approved By CMO
+                            // dMPToTransfer	            DMP to Transfer (Yes/No)
+
+                            // Implemented as empty values. Required logic will be implemented in Phase 2.
+                            // recordStatus	                Record new, update or remove
+                            // updateFieldList	            Array of field where updates to be made
+                        });
+                    }
+                });
+
+                console.log(result);
+                return apiResponse.successResponseWithData(res, 'Operation success', { result });
+            })
+            .catch((reasons) => {
+                return apiResponse.errorResponse(res, reasons);
+            });
     },
 ];

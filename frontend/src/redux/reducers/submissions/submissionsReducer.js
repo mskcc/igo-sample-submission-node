@@ -63,6 +63,7 @@ function submissionsReducer(state = initialState, action) {
                     _id: action.payload._id,
                     gridType: action.payload.gridType,
                     serviceId: action.payload.formValues.serviceId,
+                    dmpTrackingId: action.payload.dmpTrackingId,
                     material: action.payload.formValues.material,
                     application: action.payload.formValues.application,
                     numberOfSamples: action.payload.formValues.numberOfSamples,
@@ -93,6 +94,7 @@ function submissionsReducer(state = initialState, action) {
                     _id: action.payload._id,
                     gridType: action.payload.gridType,
                     serviceId: action.payload.formValues.serviceId,
+                    dmpTrackingId: action.payload.dmpTrackingId,
                     material: action.payload.formValues.material,
                     application: action.payload.formValues.application,
                     numberOfSamples: action.payload.formValues.numberOfSamples,
@@ -171,12 +173,14 @@ function submissionsReducer(state = initialState, action) {
 
         case GridActionTypes.GET_SUBMISSION_TO_EDIT_SUCCESS:
         case GridActionTypes.GET_DMP_SUBMISSION_TO_EDIT_SUCCESS:
+        case GridActionTypes.LOAD_FROM_DMP_SUCCESS:
             return {
                 ...state,
                 submissionToEdit: {
                     _id: action.payload._id,
                     gridType: action.payload.gridType,
                     serviceId: action.payload.formValues.serviceId,
+                    dmpTrackingId: action.payload.dmpTrackingId,
                     material: action.payload.formValues.material,
                     application: action.payload.formValues.application,
                     numberOfSamples: action.payload.formValues.numberOfSamples,
