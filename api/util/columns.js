@@ -429,6 +429,14 @@ export const gridColumns = {
         pattern: validationPatterns.alphanum,
         data: 'platform',
     },
+    'Number of Amplicons': {
+        name: 'Number of Amplicons',
+        columnHeader: 'Number of Amplicons',
+        pattern: validationPatterns.number,
+        data: 'numberOfAmplicons',
+        error: 'Numbers only, please.',
+        tooltip: 'Please tell us how many amplicons you are requesting per sample.'
+    }
 };
 
 export const formattingAdjustments = {
