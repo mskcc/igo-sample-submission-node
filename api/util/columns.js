@@ -429,6 +429,11 @@ export const gridColumns = {
         pattern: validationPatterns.alphanum,
         data: 'platform',
     },
+    'Row Index': {
+        name: 'Row Index',
+        columnHeader: 'Row Index',
+        data: 'rowIndex'
+    }
 };
 
 export const formattingAdjustments = {
