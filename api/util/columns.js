@@ -613,6 +613,6 @@ export const formColumns = {
     // },
 };
 
-export const noShowColumns = ['rowIndex', '_id', 'groupingChecked', 'cmoPatientId', 'normalizedPatientId'];
+export const noShowColumns = ['_id', 'groupingChecked', 'cmoPatientId', 'normalizedPatientId'];
 
 export const noShowEmptyColumns = ['patientIdType', 'sharedWith'];

@@ -54,7 +54,9 @@ export function loadBankedSamples(queryType, query) {
                 // let rowsBackup = samples.map((a) => Object.assign({}, a));
                 dispatch({
                     type: RECEIVE_BANKED_SAMPLES_SUCCESS,
-                    rows: util.rowsWithRowIndex(rows),
+                    // rows: util.rowsWithRowIndex(rows),
+                    // we want the SPM team to see bankedSample.rowIndex while promoting
+                    rows: rows,
                     // rowsBackup: util.rowsWithRowIndex(rowsBackup),
                     message: 'clear',
                 });
