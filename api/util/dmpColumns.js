@@ -157,10 +157,11 @@ export const gridColumns = {
         hiddenFrom: 'user',
     },
 
-    'Additional Info': {
-        name: 'Additional Info',
-        columnHeader: 'Additional Info',
-        data: 'additionalInfo',
+    'Amount Requested': {
+        name: 'Amount Requested',
+        columnHeader: 'Amount Requested (ng)',
+        data: 'amountRequested',
+        pattern: validationPatterns.number,
         hiddenFrom: 'user',
     },
     'Approved for DMP': {
@@ -334,7 +335,7 @@ export const dmpIntakeForms = {
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
-        ['Additional Info', 'Optional'],
+        ['Amount Requested', 'Optional'],
     ],
     'DNA+QC_Pickup': [
         ['Approved for DMP', 'Required'],
@@ -349,7 +350,7 @@ export const dmpIntakeForms = {
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
-        ['Additional Info', 'Optional'],
+        ['Amount Requested', 'Optional'],
     ],
     'DNA+ImmunoSeq': [
         ['Approved for DMP', 'Required'],
@@ -364,7 +365,7 @@ export const dmpIntakeForms = {
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
-        ['Additional Info', 'Optional'],
+        ['Amount Requested', 'Optional'],
     ],
     'DNA+HumanWholeGenome': [
         ['Approved for DMP', 'Required'],
@@ -379,7 +380,7 @@ export const dmpIntakeForms = {
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
-        ['Additional Info', 'Optional'],
+        ['Amount Requested', 'Optional'],
     ],
     'DNA+IMPACT505': [
         ['Approved for DMP', 'Required'],
@@ -394,7 +395,7 @@ export const dmpIntakeForms = {
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
-        ['Additional Info', 'Optional'],
+        ['Amount Requested', 'Optional'],
     ],
     'DNA+ddPCR': [
         ['Approved for DMP', 'Required'],
@@ -410,7 +411,7 @@ export const dmpIntakeForms = {
         ['Project Title', 'Required'],
         ['Gene and Mutation', 'Optional'],
         ['Molecular Pathology Accession Number', 'Optional'],
-        ['Additional Info', 'Optional'],
+        ['Amount Requested', 'Optional'],
     ],
     'DNA+WholeExomeSequencing': [
         ['Approved for DMP', 'Required'],
@@ -429,7 +430,7 @@ export const dmpIntakeForms = {
         ['Investigator Provided Patient ID', 'Required'],
         ['Investigator Provided Sample ID', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
-        ['Additional Info', 'Optional'],
+        ['Amount Requested', 'Optional'],
     ],
     // 'DNA Library+HumanWholeGenome': [
     //     ['Approved for DMP', 'Required'],
@@ -442,7 +443,7 @@ export const dmpIntakeForms = {
     //     ['Project Title', 'Required'],
     //     ['DMP to Transfer', 'Required'],
     //     ['Molecular Pathology Accession Number', 'Optional'],
-    //     ['Additional Info', 'Optional'],
+    //     ['Amount Requested', 'Optional'],
     // ],
     'DNA Library+IMPACT505': [
         ['Approved for DMP', 'Required'],
@@ -457,7 +458,7 @@ export const dmpIntakeForms = {
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
-        ['Additional Info', 'Optional'],
+        ['Amount Requested', 'Optional'],
     ],
     'DNA Library+ddPCR': [
         ['Approved for DMP', 'Required'],
@@ -491,7 +492,7 @@ export const dmpIntakeForms = {
         ['Investigator Provided Patient ID', 'Required'],
         ['Investigator Provided Sample ID', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
-        ['Additional Info', 'Optional'],
+        ['Amount Requested', 'Optional'],
     ],
     'DNA Library+CustomCapture': [
         ['Approved for DMP', 'Required'],
@@ -506,7 +507,7 @@ export const dmpIntakeForms = {
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
-        ['Additional Info', 'Optional'],
+        ['Amount Requested', 'Optional'],
     ],
     'DNA Library+QC_Pickup': [
         ['Approved for DMP', 'Required'],
@@ -521,7 +522,7 @@ export const dmpIntakeForms = {
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
-        ['Additional Info', 'Optional'],
+        ['Amount Requested', 'Optional'],
     ],
     'DNA Library+ImmunoSeq': [
         ['Approved for DMP', 'Required'],
@@ -536,6 +537,6 @@ export const dmpIntakeForms = {
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
-        ['Additional Info', 'Optional'],
+        ['Amount Requested', 'Optional'],
     ],
 };

@@ -489,6 +489,7 @@ exports.igoSampleInformation = [
                             dmpToTransfer: sample.dmpToTransfer,
                             recordStatus: '',
                             updateFieldList: [],
+                            amountRequested: sample.amountRequested,
                             // Based on the requirements list following are:
                             // Implemented:
                             // dmpId	                    P-0005004-T01-IM5
