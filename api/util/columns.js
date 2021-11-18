@@ -429,6 +429,16 @@ export const gridColumns = {
         pattern: validationPatterns.alphanum,
         data: 'platform',
     },
+    'Row Index': {
+        name: 'Row Index',
+        columnHeader: 'Row Index',
+        data: 'rowIndex'
+    },
+    'Transaction ID': {
+        name: 'Transaction ID',
+        columnHeader: 'Transaction ID',
+        data: 'transactionId'
+    }
 };
 
 export const formattingAdjustments = {
@@ -608,6 +618,6 @@ export const formColumns = {
     // },
 };
 
-export const noShowColumns = ['rowIndex', '_id', 'groupingChecked', 'cmoPatientId', 'normalizedPatientId'];
+export const noShowColumns = ['_id', 'groupingChecked', 'cmoPatientId', 'normalizedPatientId'];
 
 export const noShowEmptyColumns = ['patientIdType', 'sharedWith'];
