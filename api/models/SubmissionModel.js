@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 // by default, you need to set it to false.
 mongoose.set('useFindAndModify', false);
 var ObjectId = mongoose.Types.ObjectId;
+const APP_VERSION = process.env.APP_VERSION;
 
 var FormSchema = new mongoose.Schema({
     sharedWith: { type: String, default: '' },
@@ -27,7 +28,7 @@ var SubmissionSchema = new mongoose.Schema(
         submitted: { type: Boolean, default: false },
         submittedAt: { type: Number, required: false },
         transactionId: { type: Number, required: false },
-        appVersion: { type: String, default: process.env.APP_VERSION },
+        appVersion: { type: String, default: APP_VERSION },
         dmpTrackingId: { type: String, default: '' },
         createdAt: Number,
         updatedAt: Number,

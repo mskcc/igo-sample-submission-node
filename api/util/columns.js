@@ -436,6 +436,16 @@ export const gridColumns = {
         data: 'numberOfAmplicons',
         error: 'Numbers only, please.',
         tooltip: 'Please tell us how many amplicons you are requesting per sample.'
+    },
+    'Row Index': {
+        name: 'Row Index',
+        columnHeader: 'Row Index',
+        data: 'rowIndex'
+    },
+    'Transaction ID': {
+        name: 'Transaction ID',
+        columnHeader: 'Transaction ID',
+        data: 'transactionId'
     }
 };
 
@@ -519,8 +529,8 @@ export const submissionColumns = {
         readOnly: 'true',
         renderer: 'html',
     },
-    // 'DMP Patient ID': {
-    //     name: 'DMP Patient ID',
+    // 'DMP Tracking ID': {
+    //     name: 'DMP Tracking ID',
     //     data: 'dmpTrackingId',
     //     readOnly: 'true',
     // },
@@ -616,6 +626,6 @@ export const formColumns = {
     // },
 };
 
-export const noShowColumns = ['rowIndex', '_id', 'groupingChecked', 'cmoPatientId', 'normalizedPatientId'];
+export const noShowColumns = ['_id', 'groupingChecked', 'cmoPatientId', 'normalizedPatientId'];
 
 export const noShowEmptyColumns = ['patientIdType', 'sharedWith'];
