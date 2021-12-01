@@ -27,6 +27,9 @@ exports.sendNotification = function (submission) {
     if (sendToPms(submission.formValues)) {
         recipients.push(emailConfig.cmoPmEmail);
     }
+    if (sendToSingleCellTeam(submission.formValues)) {
+        recipients.push(emailConfig.singleCellTeamEmail);
+    }
     let email = {
         subject: `${emailConfig.subject} ${submission.formValues.serviceId}`,
         content: `The following ${submission.formValues.material} samples were submitted to IGO for ${submission.formValues.application} by ${submission.username} under service id ${submission.formValues.serviceId}.  <br> ${sampleIdsString} `,
@@ -51,6 +54,14 @@ const sendToPms = (submissionFormValues) => {
     let isPmApp = emailConfig.cmoPmEmailApplications.includes(submissionFormValues.application);
     let isHuman = submissionFormValues.species === 'Human';
     if (isHuman && isPmApp) {
+        return true;
+    } else return false;
+};
+
+const sendToSingleCellTeam = (submissionFormValues) => {
+    let isSingleCellApp = emailConfig.singleCellEmailApplications.includes(submissionFormValues.application);
+    let notLibraryOrPool = !(submissionFormValues.material === 'DNA Library' || submissionFormValues.material === 'Pooled Library');
+    if (isSingleCellApp && notLibraryOrPool) {
         return true;
     } else return false;
 };
