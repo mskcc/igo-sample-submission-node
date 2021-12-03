@@ -185,7 +185,7 @@ export const gridColumns = {
         pattern: validationPatterns.alphanum,
         error: 'Index ID is not known to IGO.',
         tooltip:
-            'This list represents barcodes that are already registered with IGO.  Please select from the list.  If you are submitting custom barcodes, you must pre-register them with IGO, and confirm your design and construct in advance.  Once you have identified the barcode by name, the sequence will appear in the adjacent field.  Please confirm that the sequence is expected based on your documentation.',
+            'Please enter your barcode name or select it from the list, and the sequence will auto-populate in the adjacent field (NOTICE: if your i7 index sequence is taken directly from your reverse PCR primer, then the sequence will be reverse complemented in our database). Examples of valid entries include: TS1, N701-N501, UDI0001, SI-GA-A1, etc. If your barcode name is not in the dropdown, contact IGO to confirm your sequences and have them added to our database if necessary.',
     },
     'Barcode Position': {
         name: 'Barcode Position',

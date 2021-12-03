@@ -100,7 +100,7 @@ function Header(userRole) {
                         )}
                     </Menu>
                     <div className={classes.divider}>&#8226;</div>
-                    {userRole.userRole !== 'user' && (
+                    {userRole.userRole === 'lab_member' && (
                         <React.Fragment>
                             <Button>
                                 <NavLink to='/promote' activeClassName={classes.active} className={classes.navlink}>
