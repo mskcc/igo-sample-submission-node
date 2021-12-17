@@ -438,6 +438,11 @@ export const gridColumns = {
         name: 'Transaction ID',
         columnHeader: 'Transaction ID',
         data: 'transactionId'
+    },
+    'Capture Panel': {
+        name: 'Capture Panel',
+        columnHeader: 'Capture Panel',
+        data: 'capturePanel'
     }
 };
 
