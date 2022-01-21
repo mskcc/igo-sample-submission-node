@@ -6,7 +6,7 @@ export const validationPatterns = {
     collectionYear: '[0-9]{4}|^$',
     
     wellPosition: '[A-Za-z]+[0-9]+|^$',
-    micronicTubeBarcode: '^[0-9]{10}$',
+    micronicTubeBarcode: '^[0-9]{10}$|^[0-9]{6} [0-9]{7} [0-9]{5}$',
     alphanum: '[0-9a-zA-Z]',
     alphanumFour: '[0-9a-zA-Z]{4,}',
     alphanumdash: '^[A-Za-z0-9](?!.*__)[A-Za-z0-9\\,_-]{2}[A-Za-z0-9\\,_-]*$',
@@ -33,7 +33,7 @@ export const gridColumns = {
         columnHeader: 'Micronic Tube Barcode',
         data: 'micronicTubeBarcode',
         pattern: validationPatterns.micronicTubeBarcode,
-        error: 'Micronic tubes have a ten digit barcode.',
+        error: 'Micronic tubes have either a 10-digit OR 6-7-5 digit barcode.',
         tooltip:
             'Micronic tubes have been provided to you in advance by the Sample and Project Management Team. The barcode can be found on the side of the tube or can be read by a reader on the bottom of the tube.',
     },
