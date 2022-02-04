@@ -2,10 +2,10 @@ export const constants = {
     containers: ['Plates', 'Micronic Barcoded Tubes', 'Blocks/Slides/Tubes'],
     headerPicklists: ['Recipe', 'Exemplar+Sample+Types', 'Species', 'PatientIDTypes', 'PatientIdTypesSpecified', 'Bait+Selection+Choices'],
     containersByMaterial: {
-        Tissue: ['Blocks/Slides/Tubes'],
-        Cells: ['Plates', 'Blocks/Slides/Tubes'],
-        'Blocks/Slides': ['Blocks/Slides/Tubes'],
-        Blood: ['Blocks/Slides/Tubes'],
+        Tissue: ['Blocks/Slides/Tubes', 'Micronic Barcoded Tubes'],
+        Cells: ['Plates', 'Blocks/Slides/Tubes', 'Micronic Barcoded Tubes'],
+        'Blocks/Slides': ['Blocks/Slides/Tubes', 'Micronic Barcoded Tubes'],
+        Blood: ['Blocks/Slides/Tubes', 'Micronic Barcoded Tubes'],
         'Buffy Coat': ['Micronic Barcoded Tubes', 'Blocks/Slides/Tubes'],
         RNA: ['Plates'],
         DNA: ['Plates', 'Micronic Barcoded Tubes'],
@@ -15,7 +15,7 @@ export const constants = {
         cDNA: ['Plates'],
         'cDNA Library': ['Plates'],
         other: ['Plates', 'Micronic Barcoded Tubes', 'Blocks/Slides/Tubes'],
-        Nuclei: ['Blocks/Slides/Tubes'],
+        Nuclei: ['Blocks/Slides/Tubes', 'Micronic Barcoded Tubes'],
     },
 
     deprecatedApplications: ['nanostring'],
