@@ -23,7 +23,6 @@ function Header(userRole) {
                 <Avatar
                     onClick={() => {
                         console.log(userRole);
-                        console.log(userRole.userRole === 'user');
                     }}
                     alt='mskcc logo'
                     src={logo}
@@ -43,23 +42,26 @@ function Header(userRole) {
                         </NavLink>
                     </Button>
                     <div className={classes.divider}>&#8226;</div>
-
+                    {userRole.userRole !== 'user' && (
+                        <React.Fragment>
+                            <Button>
+                                <NavLink to='/dmp' activeClassName={classes.active} className={classes.navlink}>
+                                    <Typography color='inherit' variant='h6'>
+                                        DMP
+                                    </Typography>
+                                </NavLink>
+                            </Button>
+                            <div className={classes.divider}>&#8226;</div>
+                        </React.Fragment>
+                    )}
                     {/* <Button>
-                        <NavLink to='/dmp' activeClassName={classes.active} className={classes.navlink}>
-                            <Typography color='inherit' variant='h6'>
-                                 DMP
-                            </Typography>
-                        </NavLink>
-                    </Button> */}
-                    {/* <div className={classes.divider}>&#8226;</div> */}
-                    <Button>
                         <NavLink to='/submissions/igo' activeClassName={classes.active} className={classes.navlink}>
                             <Typography color='inherit' variant='h6'>
                                 Submissions
                             </Typography>
                         </NavLink>
-                    </Button>
-                    {/* <Button
+                    </Button> */}
+                    <Button
                         className={classes.navlink}
                         aria-controls='simple-menu'
                         aria-haspopup='true'
@@ -87,16 +89,18 @@ function Header(userRole) {
                                 </Typography>
                             </NavLink>
                         </MenuItem>
-                        <MenuItem onClick={handleClose}>
-                            <NavLink to='/submissions/dmp' activeClassName={classes.activeMenu} className={classes.navlinkMenu}>
-                                <Typography color='inherit' variant='subtitle1'>
-                                    DMP Submissions
-                                </Typography>
-                            </NavLink>
-                        </MenuItem>
-                    </Menu> */}
+                        {userRole.userRole !== 'user' && (
+                            <MenuItem onClick={handleClose}>
+                                <NavLink to='/submissions/dmp' activeClassName={classes.activeMenu} className={classes.navlinkMenu}>
+                                    <Typography color='inherit' variant='subtitle1'>
+                                        DMP Submissions
+                                    </Typography>
+                                </NavLink>
+                            </MenuItem>
+                        )}
+                    </Menu>
                     <div className={classes.divider}>&#8226;</div>
-                    {userRole.userRole !== 'user' && (
+                    {userRole.userRole === 'lab_member' && (
                         <React.Fragment>
                             <Button>
                                 <NavLink to='/promote' activeClassName={classes.active} className={classes.navlink}>

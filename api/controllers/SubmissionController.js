@@ -83,6 +83,7 @@ exports.grid = [
     param('type').exists().withMessage('type must be specified.'),
     function (req, res) {
         const errors = validationResult(req);
+        console.log(res.user);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
         }
@@ -112,12 +113,14 @@ exports.grid = [
                         }
                         let [submissionGridResult] = results;
                         if (submissionType === 'dmp') {
+                            console.log(res.user.role);
+
                             util.getAvailableProjectsFromDmp().then((ids) => {
-                                console.log(Array.from(ids));
+                                // console.log(Array.from(ids));
 
                                 apiResponse.successResponseWithData(res, 'Operation success', {
                                     ...submissionGridResult,
-                                    trackingIds: Array.from(ids),
+                                    dmpTrackingIds: Array.from(ids),
                                 });
                             });
                         } else {
@@ -201,7 +204,7 @@ exports.create = [
                 username: res.user.username,
                 formValues: formValues,
                 gridValues: gridValues,
-                trackingId: gridValues[0].trackingId || '',
+                dmpTrackingId: gridValues[0].dmpTrackingId || '',
             });
         } else {
             submission = new SubmissionModel({
@@ -246,16 +249,24 @@ exports.update = [
         };
         let submissionType = req.body.submissionType;
         let id = req.body.id;
+        console.log(req.body);
 
         let model = SubmissionModel;
         if (submissionType === 'dmp') {
             model = DmpSubmissionModel;
-            updatedSubmission.trackingId = gridValues[0].trackingId || '';
+            updatedSubmission.dmpTrackingId = gridValues[0].dmpTrackingId || '';
         }
+        console.log(id);
+        console.log(id);
+        console.log(id);
+
         model
             .findByIdAndUpdate(ObjectId(id), updatedSubmission, { new: true })
             .lean()
             .exec(function (err, submission) {
+                console.log(err);
+                console.log(submission);
+
                 if (err || !submission) {
                     logger.error('Error updating submission. If ID was displayed to user, it should exist.');
                     return apiResponse.errorResponse(res, 'Could not update submission.');
@@ -300,7 +311,7 @@ exports.submit = [
                 submissionToSubmit.formValues = formValues;
                 submissionToSubmit.gridValues = gridValues;
                 if (gridType === 'dmp') {
-                    submissionToSubmit.trackingId = gridValues[0].trackingId || '';
+                    submissionToSubmit.dmpTrackingId = gridValues[0].dmpTrackingId || '';
                 }
 
                 //  save pre LIMS submit so data is safe

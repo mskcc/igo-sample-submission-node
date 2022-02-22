@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 // by default, you need to set it to false.
 mongoose.set('useFindAndModify', false);
 var ObjectId = mongoose.Types.ObjectId;
+const APP_VERSION = process.env.APP_VERSION;
 
 var FormSchema = new mongoose.Schema({
     sharedWith: { type: String, default: '' },
@@ -23,9 +24,9 @@ var DmpSubmissionSchema = new mongoose.Schema(
         reviewedAt: { type: Number, required: false },
         reviewedBy: { type: String, required: false },
         isAvailableAtDmp: { type: Boolean, default: false },
-        trackingId: { type: String, required: false },
+        dmpTrackingId: { type: String, required: false },
         transactionId: { type: Number, required: false },
-        appVersion: { type: String, default: '2.5' },
+        appVersion: { type: String, default: APP_VERSION },
         // grr, adding this id is bad style since it should by rights belong in a relational DB
         // adding DMP submissions made it necessary/convenient
         relatedIgoSubmission_id: { type: mongoose.Types.ObjectId, required: false },

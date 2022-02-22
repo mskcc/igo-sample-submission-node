@@ -19,7 +19,8 @@ class SubmissionsGrid extends React.Component {
                     <Typography color='inherit' variant='h6'>
                         {headline}
                     </Typography>
-                    {gridType === 'dmp' && (
+                    {/* should users see this button? */}
+                    {gridType === 'dmp' && user.role !== 'user' && (
                         <Button variant='contained' color='primary' onClick={() => handleCheckDmp('', 0, true)}>
                             Update DMP Status
                         </Button>
@@ -57,7 +58,7 @@ class SubmissionsGrid extends React.Component {
                     dropdownMenu={['filter_by_value', 'filter_action_bar']}
                     // make actions clickable
                     afterOnCellMouseDown={(event, coords, TD) => {
-                        if (coords.row !== -1 && coords.col !== -1) {
+                        if (coords.row !== -1 && coords.col !== -1 && event.button === 0) {
                             let actionElement = TD.firstElementChild || undefined;
                             if (actionElement) {
                                 let submitted = actionElement.getAttribute('submitted') === 'true' || undefined;
