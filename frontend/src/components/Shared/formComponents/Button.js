@@ -2,9 +2,6 @@ import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import MuiButton from '@material-ui/core/Button';
 import Fade from '@material-ui/core/Fade';
-import Grow from '@material-ui/core/Grow';
-
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import { Translate } from 'react-localize-redux';
 

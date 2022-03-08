@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withStyles, Divider, Paper, IconButton, InputBase, InputAdornment } from '@material-ui/core';
+import { withStyles, Divider, Paper, IconButton, InputBase } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { HotTable } from '@handsontable/react';
 import { GridButton, Input } from '../index.js';

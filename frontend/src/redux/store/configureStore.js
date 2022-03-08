@@ -1,10 +1,7 @@
 import { createStore, applyMiddleware, compose } from 'redux';
-import { Provider } from 'react-redux';
-
 import thunk from 'redux-thunk';
 import multi from 'redux-multi';
 import { persistStore } from 'redux-persist';
-import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers/rootReducer';
 import DevTools from '../../containers/DevTools';
 

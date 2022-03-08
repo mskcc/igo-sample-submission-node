@@ -4,8 +4,6 @@ import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import MuiButton from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
-
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import { Translate } from 'react-localize-redux';
 

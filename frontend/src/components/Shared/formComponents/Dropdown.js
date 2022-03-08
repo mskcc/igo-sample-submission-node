@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
-
- import MuiDownshift from 'mui-downshift';
-
+import MuiDownshift from 'mui-downshift';
 import { Translate } from 'react-localize-redux';
-
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 
 class Dropdown extends Component {
