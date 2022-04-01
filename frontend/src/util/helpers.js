@@ -463,16 +463,18 @@ const isValidTumorType = (tumorTypes, newValue) => {
       return false;
     }
 
-    for (let i = 0; i < tumorTypes.length; i++) {
-      let el = tumorTypes[i];
-      let id = el.split(/ ID: /)[1];
+  // UNREACHABLE CODE
+  //   for (let i = 0; i < tumorTypes.length; i++) {
+  //     let el = tumorTypes[i];
+  //     let id = el.split(/ ID: /)[1];
 
-      if (el === newValue || id === newValue.toUpperCase()) {
-        return true;
-      }
-    }
+  //     if (el === newValue || id === newValue.toUpperCase()) {
+  //       return true;
+  //     }
+  //   }
+  // }
+  // return false;
   }
-  return false;
 };
 
 // Multiselect field

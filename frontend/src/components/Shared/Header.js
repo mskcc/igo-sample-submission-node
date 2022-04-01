@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Avatar, AppBar, Menu, MenuItem, Toolbar, Button, Typography, makeStyles } from '@material-ui/core';
 

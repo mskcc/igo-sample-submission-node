@@ -1,21 +1,13 @@
 import React from 'react';
 import { Translate } from 'react-localize-redux';
- 
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
-
 import Checkbox from '@material-ui/core/Checkbox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
 import CardContent from '@material-ui/core/CardContent';
 import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
-import Popover from '@material-ui/core/Popover';
-
 import Fade from '@material-ui/core/Fade';
 
 const CheckboxComponent = ({ id, value, onChange, classes, checked, hasHelptext }) => (
