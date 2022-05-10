@@ -22,10 +22,6 @@ const Message = ({ type, msg, classes }) => (
         </Typography>
       ) : (
         <React.Fragment>
-          <Typography align='center' variant='h6'>
-            IGO updated SampleSubmission to version 3.0.
-          </Typography>
-
           <Typography  variant='body1'>
             Please report all issues to zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org.
             <br></br>
