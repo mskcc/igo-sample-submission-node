@@ -147,3 +147,8 @@ td > div.red-chemistry {
 .MuiFormHelperText-root {
   max-width: 310px !important;
 }
+
+.routerDiv {
+  margin-top: -75px;
+  margin-bottom: -40px;
+}
