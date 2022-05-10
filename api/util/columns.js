@@ -79,11 +79,12 @@ export const gridColumns = {
         data: 'userId',
         pattern: validationPatterns.userId,
         tooltip:
-            'The Sample ID stays with your sample for its lifetime. Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively.Cannot contain "sample" or "IGO-".',
+            'The Sample ID stays with your sample for its lifetime. Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively. Cannot contain "sample" or "IGO-". Cannot have preceding zeros.',
         error:
-            'Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively. Cannot contain "sample" or "IGO-".',
+            'Letters, numbers, dashes, and underscores only, three char min. You cannot have more than one underscore consecutively. Cannot contain "sample" or "IGO-". Cannot have preceding zeros.',
         uniqueError: 'Sample ID needs to be unique.',
         containsSampleError: 'Sample ID cannot contain the word "sample" or "IGO-.',
+        precedingZerosError: 'Sample ID cannot begin with zeros.',
     },
     Species: {
         name: 'Species',
