@@ -606,6 +606,14 @@ export const validateGrid = (changes, grid) => {
           updatedGrid.rows[rowIndex][columnName] = '';
           continue;
         }
+
+        // sampleid cannot have preceding zeros
+        if (newValue.charAt(0) === '0') {
+          affectedRows.add(rowIndex + 1);
+          errors.add(columnHeader + ': ' + updatedGrid.columnFeatures[columnIndex].precedingZerosError);
+          updatedGrid.rows[rowIndex][columnName] = '';
+          continue;
+        }
       }
 
       if (columnName === 'cancerType') {

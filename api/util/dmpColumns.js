@@ -65,6 +65,7 @@ export const gridColumns = {
         hiddenFrom: 'user',
         uniqueError: 'Sample ID needs to be unique.',
         containsSampleError: 'Sample ID cannot contain the word "sample" or "IGO-.',
+        precedingZerosError: 'Sample ID cannot begin with zeros.',
     },
 
     // Used by CMO PMs for WES requests
@@ -84,6 +85,7 @@ export const gridColumns = {
         error: 'Only letters, digits, - and _, please.',
         uniqueError: 'Sample ID needs to be unique.',
         containsSampleError: 'Sample ID cannot contain the word "sample" or "IGO-.',
+        precedingZerosError: 'Sample ID cannot begin with zeros.',
     },
 
     'Sample Type': {
