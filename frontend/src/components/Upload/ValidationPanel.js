@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = (theme) => ({
-    container: { margin: '0 auto', padding: '2em', minWidth: '40%', maxHeight: '30vh', overflow: 'auto' },
+    container: { margin: '0 auto', padding: '2em', minWidth: '40%', maxHeight: '30vh', overflow: 'auto', backgroundColor: '#eceff1' },
     sad: {
         color: theme.palette.secondary.main,
         fontWeight: 'bold',
