@@ -97,14 +97,12 @@ class Root extends Component {
                             <CircularProgress color='inherit' />
                         </Backdrop>
                         <Header userRole={role} />
-                        <Message />
                         {Config.ENV === 'production' ? <DevTools /> : <div />}
-
                         {common.serverError ? (
                             <ErrorPage />
                         ) : (
                             <React.Fragment>
-                                <div>
+                                <div className='routerDiv'>
                                     <Route path='/(upload|)' render={(routeProps) => <UploadPage {...routeProps} gridType='upload' />} />
                                     <Route path='/promote' component={PromotePage} />
                                     <Route
@@ -131,6 +129,7 @@ class Root extends Component {
                                 )}
                             </React.Fragment>
                         )}
+                        <Message />
                     </div>
                 </Router>
             </MuiThemeProvider>
