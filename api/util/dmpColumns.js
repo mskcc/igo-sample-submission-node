@@ -91,9 +91,10 @@ export const gridColumns = {
     'Sample Type': {
         name: 'Sample Type',
         columnHeader: 'Sample Type',
-        data: 'sampleType',
+        data: 'requestType',
         type: 'autocomplete',
         strict: true,
+        source: ['Tumor', 'Normal'],
         error: 'Only dropdown options are permitted as values',
         picklistName: 'DmpSampleTypes',
         sendToDmp: true,
@@ -213,7 +214,7 @@ export const submissionColumns = {
 
     'Sample Type': {
         name: 'Sample Type',
-        data: 'sampleType',
+        data: 'requestType',
         readOnly: 'true',
     },
     Application: {
