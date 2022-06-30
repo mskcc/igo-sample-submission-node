@@ -91,7 +91,7 @@ export const gridColumns = {
     'Sample Type': {
         name: 'Sample Type',
         columnHeader: 'Sample Type',
-        data: 'requestType',
+        data: 'sampleType',
         type: 'autocomplete',
         strict: true,
         error: 'Only dropdown options are permitted as values',
@@ -213,7 +213,7 @@ export const submissionColumns = {
 
     'Sample Type': {
         name: 'Sample Type',
-        data: 'requestType',
+        data: 'sampleType',
         readOnly: 'true',
     },
     Application: {
