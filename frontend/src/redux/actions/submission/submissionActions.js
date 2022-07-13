@@ -174,6 +174,7 @@ export function submitSubmission() {
     dispatch({ type: SUBMIT, message: 'Submitting...' });
 
     let data = util.generateSubmitData(getState());
+    console.log(data);
     services
       .submitSubmission(data)
       .then(() => {
