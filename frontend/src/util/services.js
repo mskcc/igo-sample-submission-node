@@ -232,7 +232,7 @@ export const submitSubmission = (data) => {
         });
 };
 
-export const submitLargeSubmission = async (data) => {
+export const submitLargeSubmission = (data) => {
     const url = `${Config.NODE_API_ROOT}/submission/submit`;
     const gridDataArray = data.gridValues;
     const chunkSize = 50;

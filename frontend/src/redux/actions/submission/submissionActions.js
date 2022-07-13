@@ -193,7 +193,7 @@ export function submitSubmission() {
   };
 }
 
-export async function submitLargeSubmission() {
+export function submitLargeSubmission() {
   return (dispatch, getState) => {
     dispatch({ type: SUBMIT, message: 'Submitting a large request, please allow for extra processing time...' });
 
