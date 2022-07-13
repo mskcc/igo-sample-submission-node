@@ -174,7 +174,6 @@ export function submitSubmission() {
     dispatch({ type: SUBMIT, message: 'Submitting...' });
 
     let data = util.generateSubmitData(getState());
-    console.log(`Submitting a regular request ${data}`);
     services
       .submitSubmission(data)
       .then(() => {
@@ -194,12 +193,11 @@ export function submitSubmission() {
   };
 }
 
-export function submitLargeSubmission() {
+export async function submitLargeSubmission() {
   return (dispatch, getState) => {
     dispatch({ type: SUBMIT, message: 'Submitting a large request, please allow for extra processing time...' });
 
     let data = util.generateSubmitData(getState(), false, true);
-    console.log(`Submitting a large request ${data}`);
     services
       .submitLargeSubmission(data)
       .then(() => {

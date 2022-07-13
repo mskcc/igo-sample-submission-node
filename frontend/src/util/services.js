@@ -232,7 +232,7 @@ export const submitSubmission = (data) => {
         });
 };
 
-export const submitLargeSubmission = (data) => {
+export const submitLargeSubmission = async (data) => {
     const url = `${Config.NODE_API_ROOT}/submission/submit`;
     const gridDataArray = data.gridValues;
     const chunkSize = 50;
@@ -241,7 +241,7 @@ export const submitLargeSubmission = (data) => {
         const chunk = gridDataArray.slice(i, i + chunkSize);
         const stringifiedChunk = JSON.stringify(chunk);
         const fullDataChunkToSend = { ...data, gridValues: stringifiedChunk };
-        console.log(`Chunk to Send: ${fullDataChunkToSend}`);
+        console.log(`Chunk to Send: ${stringifiedChunk}`);
         promiseArray.push(axios({
             url: url,
             method: 'post',
@@ -255,6 +255,9 @@ export const submitLargeSubmission = (data) => {
         .catch((error) => {
             console.log(error.response);
             throw error;
+        })
+        .then((response) => {
+            return response;
         });
 };
 
