@@ -206,7 +206,7 @@ export const generateAdditionalRowData = (columnFeatures, formValues, prevRowNum
 
 // generate data object to send to sample-rec-backend for
 // partial submission save or banked sample
-export const generateSubmitData = (state, isPartial = false) => {
+export const generateSubmitData = (state, isPartial = false, isLargeSampleSet = false) => {
   let data = {
     submissionType: '',
     gridValues: '',
@@ -220,8 +220,14 @@ export const generateSubmitData = (state, isPartial = false) => {
   }
 
   let rowsWithIndex = rowsWithRowIndex(state.upload.grid.rows);
+  // dont stringify yet if dataset is too large - we have to chunk the data so we dont timeout
+  if (isLargeSampleSet) {
+    data.gridValues = rowsWithIndex;
+  } else {
+    data.gridValues = JSON.stringify(rowsWithIndex);
+  }
+  
   data.submissionType = state.upload.grid.gridType;
-  data.gridValues = JSON.stringify(rowsWithIndex);
   data.formValues = JSON.stringify(state.upload.grid.form);
 
   return data;

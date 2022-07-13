@@ -174,9 +174,34 @@ export function submitSubmission() {
     dispatch({ type: SUBMIT, message: 'Submitting...' });
 
     let data = util.generateSubmitData(getState());
-    console.log(data);
+    console.log(`Submitting a regular request ${data}`);
     services
       .submitSubmission(data)
+      .then(() => {
+        dispatch({
+          type: SUBMIT_SUCCESS,
+          message: 'clear',
+        });
+        return swal.submitSuccess();
+      })
+      .catch((error) => {
+        dispatch({
+          type: SUBMIT_FAIL,
+          error: error,
+        });
+        return error;
+      });
+  };
+}
+
+export function submitLargeSubmission() {
+  return (dispatch, getState) => {
+    dispatch({ type: SUBMIT, message: 'Submitting a large request, please allow for extra processing time...' });
+
+    let data = util.generateSubmitData(getState(), false, true);
+    console.log(`Submitting a large request ${data}`);
+    services
+      .submitLargeSubmission(data)
       .then(() => {
         dispatch({
           type: SUBMIT_SUCCESS,

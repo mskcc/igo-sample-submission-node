@@ -53,7 +53,7 @@ class UploadGridContainer extends Component {
     };
 
     handleSubmit = () => {
-        const { grid, user, submitSubmission, submitDmpSubmission } = this.props;
+        const { grid, user, submitSubmission, submitDmpSubmission, submitLargeSubmission } = this.props;
         const formValues = this.props[grid.gridType].form.selected;
 
         const match = util.checkGridAndForm(formValues, grid.form);
@@ -78,6 +78,8 @@ class UploadGridContainer extends Component {
                         .then((decision) => decision && submitDmpSubmission(reviewed));
                 }
                 return submitDmpSubmission();
+            } else if (grid.rows.length > 50) {
+                return submitLargeSubmission();
             } else return submitSubmission();
         }
     };
