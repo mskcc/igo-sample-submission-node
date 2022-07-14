@@ -74,6 +74,7 @@ app.use('/api/', apiRouter);
 app.get('/', function (req, res) {
     res.sendFile(path.join(publicDir, 'index.html'));
 });
+
 app.get('/favicon.ico', function (req, res) {
     res.sendFile(path.join(publicDir, 'favicon.ico'));
 });
@@ -87,5 +88,6 @@ const server = http.createServer(app);
 server.listen(port, hostname, () => {
     console.log(`Server running at http://${hostname}:${port}/`);
 });
+server.timeout = 240000;
 
 module.exports = server;
