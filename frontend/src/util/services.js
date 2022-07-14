@@ -2,7 +2,6 @@ import axios from 'axios';
 import { Config } from '../config.js';
 
 axios.defaults.withCredentials = true;
-axios.defaults.timeout = 300000;
 
 // Add a request interceptor
 // axios.interceptors.request.use(
@@ -246,7 +245,8 @@ export const submitLargeSubmission = (data) => {
         promiseArray.push(axios({
             url: url,
             method: 'post',
-            data: fullDataChunkToSend
+            data: fullDataChunkToSend,
+            timeout: 300000
          }));
     }
     Promise.all(promiseArray)
