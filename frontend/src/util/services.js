@@ -241,7 +241,7 @@ export const submitLargeSubmission = (data) => {
         const chunk = gridDataArray.slice(i, i + chunkSize);
         const stringifiedChunk = JSON.stringify(chunk);
         const fullDataChunkToSend = { ...data, gridValues: stringifiedChunk };
-        console.log(`Chunk to Send: ${stringifiedChunk}`);
+        // console.log(`Chunk to Send: ${stringifiedChunk}`);
         promiseArray.push(axios({
             url: url,
             method: 'post',
