@@ -249,7 +249,7 @@ export const submitLargeSubmission = (data) => {
             timeout: 300000
          }));
     }
-    Promise.all(promiseArray)
+    return Promise.all(promiseArray)
         .then((responses) => {
             return responses;
         })

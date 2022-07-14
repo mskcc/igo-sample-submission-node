@@ -195,7 +195,7 @@ export function submitSubmission() {
 
 export function submitLargeSubmission() {
   return (dispatch, getState) => {
-    dispatch({ type: SUBMIT, message: 'Submitting a large request, please allow for extra processing time...' });
+    dispatch({ type: SUBMIT, message: 'Submitting a large request, please allow for extra processing time...', loading: true });
 
     let data = util.generateSubmitData(getState(), false, true);
     services
