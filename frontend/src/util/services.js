@@ -232,36 +232,6 @@ export const submitSubmission = (data) => {
         });
 };
 
-export const submitLargeSubmission = (data) => {
-    const url = `${Config.NODE_API_ROOT}/submission/submit`;
-    const gridDataArray = data.gridValues;
-    const chunkSize = 50;
-    const promiseArray = [];
-    for (let i = 0; i < gridDataArray.length; i += chunkSize) {
-        const chunk = gridDataArray.slice(i, i + chunkSize);
-        const stringifiedChunk = JSON.stringify(chunk);
-        const fullDataChunkToSend = { ...data, gridValues: stringifiedChunk };
-        // console.log(`Chunk to Send: ${stringifiedChunk}`);
-        promiseArray.push(axios({
-            url: url,
-            method: 'post',
-            data: fullDataChunkToSend,
-            timeout: 300000
-         }));
-    }
-    return Promise.all(promiseArray)
-        .then((responses) => {
-            return responses;
-        })
-        .catch((error) => {
-            console.log(error.response);
-            throw error;
-        })
-        .then((response) => {
-            return response;
-        });
-};
-
 export const deleteSubmission = (id, submissionType) => {
     const url = `${Config.NODE_API_ROOT}/submission/delete`;
     return axios
