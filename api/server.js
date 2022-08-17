@@ -33,14 +33,13 @@ var publicDir = path.join(__dirname, 'public');
 
 var app = express();
 
-// middleware
-app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
-app.use(bodyparser.json({limit: '50mb'}));
-
 app.use(cookieParser());
 const jwtInCookie = require('jwt-in-cookie');
 jwtInCookie.configure({ secret: process.env.JWT_SECRET });
 
+// middleware
+app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000, type:'application/x-www-form-urlencoded' }));
+app.use(bodyparser.json({limit: '50mb', type:'application/json'}));
 const corsConfig = {
     origin: true,
     credentials: true,
