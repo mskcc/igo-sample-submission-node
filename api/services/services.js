@@ -85,7 +85,7 @@ exports.getPicklist = (listname) => {
             ...axiosConfig,
         })
         .then((resp) => {
-            if (resp.data && resp.data[0].includes('ERROR')) {
+            if (resp.data && resp.data[0] && resp.data[0].includes('ERROR')) {
                 errorlog(url);
                 return [];
             }
