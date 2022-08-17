@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser');
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
-const bodyparser = require('body-parser');
+// const bodyparser = require('body-parser');
 // DB connection
 var MONGODB_URL = process.env.MONGODB_URL;
 var mongoose = require('mongoose');
@@ -38,8 +38,8 @@ const jwtInCookie = require('jwt-in-cookie');
 jwtInCookie.configure({ secret: process.env.JWT_SECRET });
 
 // middleware
-// app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000, type:'application/x-www-form-urlencoded' }));
-// app.use(bodyparser.json({limit: '50mb', type:'application/json'}));
+// app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
+// app.use(bodyparser.json({limit: '50mb'}));
 
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 50000}));
