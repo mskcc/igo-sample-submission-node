@@ -38,7 +38,7 @@ const jwtInCookie = require('jwt-in-cookie');
 jwtInCookie.configure({ secret: process.env.JWT_SECRET });
 
 // middleware
-app.use(bodyparser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
 app.use(bodyparser.json({limit: '50mb'}));
 const corsConfig = {
     origin: true,
