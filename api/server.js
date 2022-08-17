@@ -38,8 +38,12 @@ const jwtInCookie = require('jwt-in-cookie');
 jwtInCookie.configure({ secret: process.env.JWT_SECRET });
 
 // middleware
-app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000, type:'application/x-www-form-urlencoded' }));
-app.use(bodyparser.json({limit: '50mb', type:'application/json'}));
+// app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000, type:'application/x-www-form-urlencoded' }));
+// app.use(bodyparser.json({limit: '50mb', type:'application/json'}));
+
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 50000}));
+
 const corsConfig = {
     origin: true,
     credentials: true,
