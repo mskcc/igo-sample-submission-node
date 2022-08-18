@@ -33,7 +33,7 @@ var publicDir = path.join(__dirname, 'public');
 
 var app = express();
 
-app.use(cookieParser());
+// app.use(cookieParser());
 const jwtInCookie = require('jwt-in-cookie');
 jwtInCookie.configure({ secret: process.env.JWT_SECRET });
 
