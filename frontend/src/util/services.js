@@ -219,17 +219,30 @@ export const unsubmitSubmission = (id, submissionType) => {
 
 export const submitSubmission = (data) => {
     const url = `${Config.NODE_API_ROOT}/submission/submit`;
-    return axios
-        .post(url, { ...data })
-        .then((resp) => {
-            return resp;
-        })
-        .catch((error) => {
-            throw error;
-        })
-        .then((resp) => {
-            return resp;
-        });
+    let resp = axios({
+        method: 'post',
+        url,
+        data: { ...data },
+        maxContentLength: 100000000,
+        maxBodyLength: 100000000
+    }).catch((error) => {
+        throw error;
+    });
+    return resp;
+    // return axios
+    //     .post(
+    //         url,
+    //         {...data }
+    //     )
+    //     .then((resp) => {
+    //         return resp;
+    //     })
+    //     .catch((error) => {
+    //         throw error;
+    //     })
+    //     .then((resp) => {
+    //         return resp;
+    //     });
 };
 
 export const deleteSubmission = (id, submissionType) => {
