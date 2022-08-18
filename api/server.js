@@ -42,7 +42,7 @@ jwtInCookie.configure({ secret: process.env.JWT_SECRET });
 // app.use(bodyparser.json({limit: '50mb'}));
 
 app.use(express.json({limit: '50mb'}));
-app.use(express.urlencoded({limit: '50mb', extended: true, parameterLimit: 50000}));
+app.use(express.urlencoded({limit: 1024*1024*20, extended: true, parameterLimit: 50000}));
 
 const corsConfig = {
     origin: true,
