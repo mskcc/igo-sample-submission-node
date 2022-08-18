@@ -219,12 +219,13 @@ export const unsubmitSubmission = (id, submissionType) => {
 
 export const submitSubmission = (data) => {
     const url = `${Config.NODE_API_ROOT}/submission/submit`;
+    console.log('submitting...');
     let resp = axios({
         method: 'post',
         url,
         data: { ...data },
-        maxContentLength: 100000000,
-        maxBodyLength: 100000000
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
     }).catch((error) => {
         throw error;
     });
