@@ -41,7 +41,7 @@ export const gridColumns = {
     'DMP Sample ID': {
         name: 'DMP Sample ID',
         pattern: validationPatterns.alphanumdash,
-        columnHeader: 'DMP Sample ID or Molecular Accession Number',
+        columnHeader: 'DMP Sample ID',
         data: 'dmpSampleId',
         error: 'Only valid DMP Sample IDs, e.g. P-0000000-T00-IM0.',
         sendToDmp: true,

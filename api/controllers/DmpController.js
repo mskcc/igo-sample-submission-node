@@ -478,7 +478,7 @@ exports.igoSampleInformation = [
                     if (sample.isApproved) {
                         result[trackingId].samples.push({
                             dmpId: sample.dmpSampleId,
-                            requestType: sample.sampleType,
+                            requestType: sample.requestType,
                             studySubjectIdentifier: sample.studySubjectIdentifier ? sample.studySampleIdentifier : '',
                             trackingId: sample.dmpTrackingId,
                             projectName: sample.projectTitle ? sample.projectTitle : '',
