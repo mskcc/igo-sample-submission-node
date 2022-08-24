@@ -78,6 +78,8 @@ class UploadGridContainer extends Component {
                         .then((decision) => decision && submitDmpSubmission(reviewed));
                 }
                 return submitDmpSubmission();
+            } else if (grid.rows.length > 50) {
+                return submitSubmission(true);
             } else return submitSubmission();
         }
     };

@@ -220,7 +220,7 @@ export const unsubmitSubmission = (id, submissionType) => {
 export const submitSubmission = (data) => {
     const url = `${Config.NODE_API_ROOT}/submission/submit`;
     return axios
-        .post(url, { ...data })
+        .post(url, {...data })
         .then((resp) => {
             return resp;
         })

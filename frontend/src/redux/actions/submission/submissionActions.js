@@ -169,10 +169,14 @@ export function downloadReceipt(submissionId, serviceId, gridType) {
 export const SUBMIT = 'SUBMIT';
 export const SUBMIT_FAIL = 'SUBMIT_FAIL';
 export const SUBMIT_SUCCESS = 'SUBMIT_SUCCESS';
-export function submitSubmission() {
+export function submitSubmission(isLargeSubmission = false) {
   return (dispatch, getState) => {
-    dispatch({ type: SUBMIT, message: 'Submitting...' });
-
+    if (isLargeSubmission) {
+      dispatch({ type: SUBMIT, message: 'Submitting a large request, please allow for extra processing time...', loading: true });
+    } else {
+      dispatch({ type: SUBMIT, message: 'Submitting...', loading: true });
+    }
+    
     let data = util.generateSubmitData(getState());
     services
       .submitSubmission(data)
