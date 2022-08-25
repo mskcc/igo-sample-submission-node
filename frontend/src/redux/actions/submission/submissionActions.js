@@ -215,8 +215,8 @@ export function submitDmpSubmission(reviewed = false) {
         });
         return swal.genericMessage(
           'success',
-          `Please make a note of your transaction ID ${data.transactionId} and use it to fill out the required  <a href='https://docs.google.com/forms/d/e/1FAIpQLSf2YyzR_MdGHuaT27TOJCxuy2wyL4MyrC2G2_TLlbymau6Qxg/viewform?usp=sf_link'>
-                MSKCC DMP Specimen Transfer Request Form.
+          `Please make a note of your transaction ID ${data.transactionId} and use it to fill out the required  <a href='https://redcap.mskcc.org/surveys/?s=3MDAEWTYXK'>
+              MSKCC Tumor Genomic Profiling Project Proposal Form.
             </a> You can also retrieve this ID under Submissions &#8594; DMP Submissions.`
         );
       })

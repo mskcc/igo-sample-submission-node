@@ -155,8 +155,8 @@ class DmpForm extends React.Component {
                     <Paper className={classes.container} elevation={1}>
                         <Typography className={classes.message} align='justify'>
                             Please complete and submit the required{' '}
-                            <a href='https://docs.google.com/forms/d/e/1FAIpQLSf2YyzR_MdGHuaT27TOJCxuy2wyL4MyrC2G2_TLlbymau6Qxg/viewform?usp=sf_link'>
-                                MSKCC DMP Specimen Transfer Request Form
+                            <a href='https://redcap.mskcc.org/surveys/?s=3MDAEWTYXK' target='_blank'>
+                                MSKCC Tumor Genomic Profiling Project Proposal Form
                             </a>
                             . You will need the 10 digit transaction ID generated from this DMP Sample Submission to complete the form.<br/>
                             If you do not have access to DMP Patient IDs, you can enter MRNs instead.
