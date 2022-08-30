@@ -42,18 +42,16 @@ function Header(userRole) {
                         </NavLink>
                     </Button>
                     <div className={classes.divider}>&#8226;</div>
-                    {userRole.userRole !== 'user' && (
-                        <React.Fragment>
-                            <Button>
-                                <NavLink to='/dmp' activeClassName={classes.active} className={classes.navlink}>
-                                    <Typography color='inherit' variant='h6'>
-                                        DMP
-                                    </Typography>
-                                </NavLink>
-                            </Button>
-                            <div className={classes.divider}>&#8226;</div>
-                        </React.Fragment>
-                    )}
+                    <React.Fragment>
+                        <Button>
+                            <NavLink to='/dmp' activeClassName={classes.active} className={classes.navlink}>
+                                <Typography color='inherit' variant='h6'>
+                                    DMP
+                                </Typography>
+                            </NavLink>
+                        </Button>
+                        <div className={classes.divider}>&#8226;</div>
+                    </React.Fragment>
                     {/* <Button>
                         <NavLink to='/submissions/igo' activeClassName={classes.active} className={classes.navlink}>
                             <Typography color='inherit' variant='h6'>
