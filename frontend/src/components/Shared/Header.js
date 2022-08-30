@@ -87,15 +87,13 @@ function Header(userRole) {
                                 </Typography>
                             </NavLink>
                         </MenuItem>
-                        {userRole.userRole !== 'user' && (
-                            <MenuItem onClick={handleClose}>
-                                <NavLink to='/submissions/dmp' activeClassName={classes.activeMenu} className={classes.navlinkMenu}>
-                                    <Typography color='inherit' variant='subtitle1'>
-                                        DMP Submissions
-                                    </Typography>
-                                </NavLink>
-                            </MenuItem>
-                        )}
+                        <MenuItem onClick={handleClose}>
+                            <NavLink to='/submissions/dmp' activeClassName={classes.activeMenu} className={classes.navlinkMenu}>
+                                <Typography color='inherit' variant='subtitle1'>
+                                    DMP Submissions
+                                </Typography>
+                            </NavLink>
+                        </MenuItem>
                     </Menu>
                     <div className={classes.divider}>&#8226;</div>
                     {userRole.userRole === 'lab_member' && (
