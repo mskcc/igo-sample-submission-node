@@ -214,7 +214,7 @@ export const submissionColumns = {
 
     'Sample Type': {
         name: 'Sample Type',
-        data: 'requestType',
+        data: 'sampleType',
         readOnly: 'true',
     },
     Application: {
