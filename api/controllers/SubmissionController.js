@@ -289,6 +289,7 @@ exports.submit = [
     body('formValues').isJSON().isLength({ min: 1 }).trim().withMessage('formValues must be JSON.'),
     body('gridValues').isJSON().isLength({ min: 1 }).trim().withMessage('gridValues must be JSON.'),
     function (req, res) {
+        req.setTimeout(300000);
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
