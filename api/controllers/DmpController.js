@@ -477,7 +477,7 @@ exports.igoSampleInformation = [
                     // only include samples approved by Cmo PM's
                     if (sample.isApproved) {
                         result[trackingId].samples.push({
-                            dmpId: sample.dmpSampleId,
+                            dmpId: sample.dmpSampleId ? sample.dmpSampleId : '',
                             requestType: sample.requestType,
                             studySubjectIdentifier: sample.studySubjectIdentifier ? sample.studySampleIdentifier : '',
                             trackingId: sample.dmpTrackingId,
