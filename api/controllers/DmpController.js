@@ -453,7 +453,7 @@ exports.trackingIdList = [
 // DMP to Transfer
 // TODO: Only show samples approved for dmp transfer
 exports.igoSampleInformation = [
-    query('trackingId').isString().trim().withMessage('trackingIS must be present.'),
+    query('trackingId').isString().trim().withMessage('trackingID must be present.'),
     function (req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -478,6 +478,7 @@ exports.igoSampleInformation = [
                     if (sample.isApproved) {
                         result[trackingId].samples.push({
                             dmpId: sample.dmpSampleId ? sample.dmpSampleId : '',
+                            accessionNumber: sample.molecularPathologyAccessionNumber ? sample.molecularPathologyAccessionNumber : '',
                             requestType: sample.requestType,
                             studySubjectIdentifier: sample.studySubjectIdentifier ? sample.studySampleIdentifier : '',
                             trackingId: sample.dmpTrackingId,
@@ -509,6 +510,10 @@ exports.igoSampleInformation = [
                         });
                     }
                 });
+
+                if (!result[trackingId].samples.length) {
+                    return apiResponse.errorResponse(res, `No approved samples available for tracking ID ${trackingId}`);
+                }
 
                 console.log(result);
                 return apiResponse.successResponseWithData(res, 'Operation success', { result });
