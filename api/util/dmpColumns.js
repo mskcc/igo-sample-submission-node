@@ -62,7 +62,6 @@ export const gridColumns = {
         data: 'userId',
         pattern: validationPatterns.alphanumdash,
         error: 'Only letters, digits, - and _, please.',
-        hiddenFrom: 'user',
         uniqueError: 'Sample ID needs to be unique.',
         containsSampleError: 'Sample ID cannot contain the word "sample" or "IGO-.',
         precedingZerosError: 'Sample ID cannot begin with zeros.',
