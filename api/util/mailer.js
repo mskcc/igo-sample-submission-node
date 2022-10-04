@@ -24,7 +24,9 @@ exports.sendNotification = function (submission) {
         sampleIdsString += `<br> ${element.userId}`;
     });
 
-    if (sendToPms(submission.formValues)) {
+    const isDMPSubmission = submission.gridType === 'dmp';
+
+    if (sendToPms(submission.formValues) || isDMPSubmission) {
         recipients.push(emailConfig.cmoPmEmail);
     }
     if (sendToSingleCellTeam(submission.formValues)) {

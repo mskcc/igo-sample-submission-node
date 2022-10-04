@@ -311,6 +311,7 @@ exports.submit = [
 
                 submissionToSubmit.formValues = formValues;
                 submissionToSubmit.gridValues = gridValues;
+                submissionToSubmit.gridType = gridType;
                 if (gridType === 'dmp') {
                     submissionToSubmit.dmpTrackingId = gridValues[0].dmpTrackingId || '';
                 }
