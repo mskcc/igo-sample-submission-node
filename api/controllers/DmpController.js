@@ -441,7 +441,7 @@ exports.trackingIdList = [
 ];
 
 //  Show meta information for a given dmp tracking id
-// Fields DMP needs:DMP Sample ID
+// Fields DMP needs:DMP Sample ID (or molecular accession number)
 // Sample Type
 // Study Subject Identifier
 // Study Sample Identifier
