@@ -528,8 +528,9 @@ export function getAvailableProjectsFromDmp() {
                 try {
                     let dmpTrackingIds = new Set();
                     results.forEach((idList) => {
-                        alert(idList);
-                        idList.content['TrackingId List'].forEach((id) => dmpTrackingIds.add(id));
+                        if (idList && idList.content) {
+                            idList.content['TrackingId List'].forEach((id) => dmpTrackingIds.add(id));
+                        }
                     });
                     resolve(dmpTrackingIds);
                 } catch (error) {
