@@ -5,6 +5,7 @@ const { constants } = require('./constants');
 const submitColumns = require('./columns');
 import CacheService from './cache';
 import { v4 as uuidv4 } from 'uuid';
+import moment from 'moment';
 import { Logform } from 'winston';
 const fs = require('fs');
 
@@ -515,11 +516,11 @@ export function fillSubmissionGrid(submissions, userRole, gridColumns) {
 //       ]
 //     }
 //   }
-// TODO Anna- get last 7 dates? will PMs check weekly?
 export function getAvailableProjectsFromDmp() {
     return new Promise((resolve, reject) => {
-        // const datesToFetch = ['05-20-2020', '05-21-2020', '05-23-2020', '05-24-2020', '05-25-2020', '05-26-2020', '05-27-2020'];
-        const datesToFetch = ['05-30-2021'];
+        const datesToFetch = getLast7Dates();
+        console.log(datesToFetch.toString());
+        // const datesToFetch = ['05-30-2021'];
         let promises = [];
         datesToFetch.forEach((date) => promises.push(services.getAvailableProjectsFromDmp(date)));
         Promise.all(promises)
@@ -536,6 +537,15 @@ export function getAvailableProjectsFromDmp() {
             })
             .catch(() => reject('Error retrieving data from the DMP.'));
     });
+}
+
+function getLast7Dates() {
+    let currentDate = moment().format("MM-DD-YYYY");
+    let dates = [currentDate];
+    for (let i = 1; i < 7; i++) {
+        dates.push(moment().subtract(i, 'days').format("MM-DD-YYYY"));
+    }
+    return dates;
 }
 
 // user can submit => if user not yet submitted or if unsubmitted
