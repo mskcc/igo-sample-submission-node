@@ -519,7 +519,7 @@ export function fillSubmissionGrid(submissions, userRole, gridColumns) {
 export function getAvailableProjectsFromDmp() {
     return new Promise((resolve, reject) => {
         const datesToFetch = getLast7Dates();
-        console.log(datesToFetch.toString());
+        
         // const datesToFetch = ['05-30-2021'];
         let promises = [];
         datesToFetch.forEach((date) => promises.push(services.getAvailableProjectsFromDmp(date)));
@@ -532,14 +532,14 @@ export function getAvailableProjectsFromDmp() {
                     });
                     resolve(dmpTrackingIds);
                 } catch (error) {
-                    reject('Unexpected DMP result format.');
+                    reject(`Unexpected DMP result format. ${error}`);
                 }
             })
             .catch(() => reject('Error retrieving data from the DMP.'));
     });
 }
 
-function getLast7Dates() {
+const getLast7Dates = () => {
     let currentDate = moment().format("MM-DD-YYYY");
     let dates = [currentDate];
     for (let i = 1; i < 7; i++) {
