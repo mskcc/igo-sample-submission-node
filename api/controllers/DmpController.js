@@ -2,6 +2,7 @@ const apiResponse = require('../util/apiResponse');
 const { body, query, validationResult } = require('express-validator');
 const util = require('../util/helpers');
 const services = require('../services/services');
+const mailer = require('../util/mailer');
 const { authenticate } = require('../middlewares/jwt');
 var _ = require('lodash');
 import CacheService from '../util/cache';
@@ -240,6 +241,8 @@ exports.submit = [
                 submissionToSubmit.reviewed = reviewed;
                 submissionToSubmit.reviewedAt = reviewed ? transactionId : undefined;
                 submissionToSubmit.reviewedBy = reviewed ? res.user.username : undefined;
+
+                mailer.sendDMPSubNotification(submissionToSubmit);
 
                 // submissionToSubmit.samplesApproved = approvals.length;
                 //  save pre LIMS submit so data is safe
