@@ -528,6 +528,7 @@ export function getAvailableProjectsFromDmp() {
                 try {
                     let dmpTrackingIds = new Set();
                     results.forEach((idList) => {
+                        alert(idList);
                         idList.content['TrackingId List'].forEach((id) => dmpTrackingIds.add(id));
                     });
                     resolve(dmpTrackingIds);
@@ -535,7 +536,7 @@ export function getAvailableProjectsFromDmp() {
                     reject(`Unexpected DMP result format. ${error}`);
                 }
             })
-            .catch(() => reject('Error retrieving data from the DMP.'));
+            .catch((error) => reject(`Error retrieving data from the DMP. ${error}`));
     });
 }
 
