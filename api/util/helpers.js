@@ -884,6 +884,9 @@ export function getDmpColumns(material, application) {
             if (material === 'DNA Library' && application === 'HumanWholeGenome') {
                 reject(`HumanWholeGenome requires DNA, please select DNA as the material. `);
             }
+            if (material === 'DNA Library' && application === 'CHPanel') {
+                reject(`CHPanel requires DNA, please select DNA as the material. `);
+            }
             reject(`We do not accept '${material}' for '${application}'.`);
         }
         const columns = dmpColumns.dmpIntakeForms[combination];
@@ -900,8 +903,33 @@ export function cleanDMPFormValues(formValues) {
     if (formValues.material === 'DNA (Molecular Accession Number only)' || formValues.material === 'DNA (DMP Sample ID only)') {
         cleanedFormValues.material = 'DNA';
     }
+    alert(cleanedFormValues);
     return cleanedFormValues;
 }
+
+export function updateDMPFormValuesForEditing(submission) {
+    let updatedFormValues = Object.assign({}, submission.formValues);
+    if (submission.formValues.material === 'DNA') {
+        if (submission.gridValues[0].molecularPathologyAccessionNumber && submission.gridValues[0].molecularPathologyAccessionNumber !== '') {
+            updatedFormValues.material = 'DNA (Molecular Accession Number only)';
+        } else {
+            updatedFormValues.material = 'DNA (DMP Sample ID only)';
+        }
+    }
+    return updatedFormValues;
+}
+
+// export function fixOldDMPSubmissions(submission) {
+//     let cleanedSubmission = Object.assign({}, submission);
+//     if (submission.formValues.material === 'DNA') {
+//         if (submission.gridValues[0].molecularPathologyAccessionNumber && submission.gridValues[0].molecularPathologyAccessionNumber !== '') {
+//             cleanedSubmission.formValues.material === 'DNA (Molecular Accession Number only)';
+//         } else {
+//             cleanedSubmission.formValues.material === 'DNA (DMP Sample ID only)';
+//         }
+//     }
+//     return cleanedSubmission;
+// }
 
 export function publishDmpData(submissions, dmpRequestId) {
     // cmorequests will be array of objects with each objects being on submission with an array of samples
