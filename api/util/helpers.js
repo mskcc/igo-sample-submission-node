@@ -903,7 +903,6 @@ export function cleanDMPFormValues(formValues) {
     if (formValues.material === 'DNA (Molecular Accession Number only)' || formValues.material === 'DNA (DMP Sample ID only)') {
         cleanedFormValues.material = 'DNA';
     }
-    alert(cleanedFormValues);
     return cleanedFormValues;
 }
 
