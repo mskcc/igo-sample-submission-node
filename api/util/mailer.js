@@ -59,8 +59,8 @@ exports.sendDMPSubNotification = function (submission) {
     });
 
     let email = {
-        subject: `${emailConfig.DMPsubject} ${submission.formValues.serviceId}`,
-        content: `The following ${submission.formValues.material} samples were submitted to IGO for ${submission.formValues.application} by ${submission.username} under service id ${submission.formValues.serviceId}.  <br> ${sampleIdsString} `,
+        subject: `${emailConfig.DMPsubject}`,
+        content: `The following ${submission.formValues.material} samples were submitted to IGO for ${submission.formValues.application} by ${submission.username}.  <br> ${sampleIdsString} `,
         footer: emailConfig.footer,
     };
     console.log(email);

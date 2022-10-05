@@ -460,6 +460,7 @@ export function fillSubmissionGrid(submissions, userRole, gridColumns) {
             for (let i = 0; i < submissions.length; i++) {
                 let submission = submissions[i];
                 let serviceId = submission.formValues.serviceId;
+                let cleanedFormValues = cleanDMPFormValues(submission.formValues);
 
                 let isSubmitted = submission.submitted;
                 rows[i] = {
@@ -467,7 +468,7 @@ export function fillSubmissionGrid(submissions, userRole, gridColumns) {
                     transactionId: submission.transactionId,
                     dmpTrackingId: submission.dmpTrackingId,
                     username: submission.username,
-                    sampleType: submission.formValues.material,
+                    sampleType: cleanedFormValues.material,
                     application: submission.formValues.application,
                     numberOfSamples: submission.formValues.numberOfSamples,
                     submitted: isSubmitted ? 'yes' : 'no',
@@ -890,6 +891,15 @@ export function getDmpColumns(material, application) {
         }
     });
 }
+
+export function cleanDMPFormValues(formValues) {
+    let cleanedFormValues = Object.create({}, formValues);
+    if (formValues.material === 'DNA (Molecular Accession Number only)' || formValues.material === 'DNA (DMP Sample ID only)') {
+        cleanedFormValues.material = 'DNA';
+    }
+    return cleanedFormValues;
+}
+
 export function publishDmpData(submissions, dmpRequestId) {
     // cmorequests will be array of objects with each objects being on submission with an array of samples
     return new Promise((resolve, reject) => {

@@ -233,7 +233,7 @@ exports.submit = [
         Promise.all([findOrCreateSubPromise])
             .then((results) => {
                 let [submissionToSubmit] = results;
-                submissionToSubmit.formValues = formValues;
+                submissionToSubmit.formValues = util.cleanDMPFormValues(formValues);
                 submissionToSubmit.gridValues = gridValues;
                 submissionToSubmit.submitted = true;
                 submissionToSubmit.transactionId = transactionId;
