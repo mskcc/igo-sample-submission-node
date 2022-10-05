@@ -112,7 +112,7 @@ export function getColumns(page, formValues) {
         dispatch({ type: GET_COLUMNS });
         // no grid? get inital columns
         if (getState().upload.grid.columnFeatures.length === 0) {
-            return dispatch(getInitialColumns(page, formValues, getState().user.role));
+            return dispatch(getInitialColumns(page, formValues));
         } else {
             let grid = getState().upload.grid;
             let diffValues = util.diff(grid.form, formValues);
@@ -141,7 +141,7 @@ export function getColumns(page, formValues) {
                         'It looks like you have an open submission in another tab. If you generate this grid, the other grid will be cleared.'
                     ).then((decision) => {
                         if (decision) {
-                            return dispatch(getInitialColumns(page, formValues, getState().user.role));
+                            return dispatch(getInitialColumns(page, formValues));
                         } else {
                             return dispatch({ type: NO_CHANGE_RESET });
                         }
@@ -152,7 +152,7 @@ export function getColumns(page, formValues) {
                         'Changing Material, Application, Species, Patient ID Type or Container causes the grid to be cleared and re-generated.'
                     ).then((decision) => {
                         if (decision) {
-                            return dispatch(getInitialColumns(page, formValues, getState().user.role));
+                            return dispatch(getInitialColumns(page, formValues));
                         } else {
                             return dispatch({ type: NO_CHANGE_RESET });
                         }
@@ -163,14 +163,20 @@ export function getColumns(page, formValues) {
     };
 }
 
-export function getInitialColumns(page, formValues, userRole) {
+export function getInitialColumns(page, formValues, adjustedMaterial) {
     return (dispatch) => {
         dispatch({ type: GET_INITIAL_COLUMNS, loading: true });
-        let material = formValues.material;
-        let application = formValues.application;
+        let updatedFormValues = Object.assign({}, formValues);
+        if (adjustedMaterial && adjustedMaterial !== '') {
+            updatedFormValues.material = adjustedMaterial;
+        } else {
+            updatedFormValues.material = formValues.material;
+        }
+        let material = updatedFormValues.material;
+        let application = updatedFormValues.application;
         return axios
             .post(`${Config.NODE_API_ROOT}/${page}/grid`, {
-                ...formValues,
+                ...updatedFormValues,
             })
             .then((response) => {
                 let data = response.payload;
@@ -250,7 +256,19 @@ export function populateGridFromSubmission(submissionId, ownProps) {
             .getSubmission(submissionId, page)
             .then((resp) => {
                 let submission = resp.payload.submission;
-                let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
+                let formValues = submission.formValues;
+
+                // adjust material for DMP DNA -> DNA (Sample Id only), etc
+                let adjustedMaterial;
+                if (page === 'dmp' && formValues.material === 'DNA') {
+                    if (submission.gridValues[0].molecularPathologyAccessionNumber && submission.gridValues[0].molecularPathologyAccessionNumber !== '') {
+                        adjustedMaterial = 'DNA (Molecular Accession Number only)';
+                    } else {
+                        adjustedMaterial = 'DNA (DMP Sample ID only)';
+                    }
+                }
+
+                let columnPromise = dispatch(getInitialColumns(page, formValues, adjustedMaterial), getState().user.role);
                 Promise.all([columnPromise])
                     .then(() => {
                         if (submission.appVersion !== Config.APP_VERSION) {
@@ -357,7 +375,7 @@ export const DOWNLOAD_GRID_SUCCESS = 'DOWNLOAD_GRID_SUCCESS';
 export function downloadGrid() {
     return (dispatch, getState) => {
         dispatch({ type: DOWNLOAD_GRID });
-        
+
         // clean material for DMP DNA options
         let material = getState().upload.grid.form.material;
         if (material === 'DNA (Molecular Accession Number only)' || material === 'DNA (DMP Sample ID only)') {
