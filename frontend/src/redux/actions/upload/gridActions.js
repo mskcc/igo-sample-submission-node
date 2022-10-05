@@ -357,9 +357,15 @@ export const DOWNLOAD_GRID_SUCCESS = 'DOWNLOAD_GRID_SUCCESS';
 export function downloadGrid() {
     return (dispatch, getState) => {
         dispatch({ type: DOWNLOAD_GRID });
+        
+        // clean material for DMP DNA options
+        let material = getState().upload.grid.form.material;
+        if (material === 'DNA (Molecular Accession Number only)' || material === 'DNA (DMP Sample ID only)') {
+            material = 'DNA';
+        }
+
         let rows = getState().upload.grid.rows;
         let columns = getState().upload.grid.columnFeatures;
-        let material = getState().upload.grid.form.material;
         let application = getState().upload.grid.form.application;
         let data = {
             columns: columns,

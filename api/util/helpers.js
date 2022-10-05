@@ -893,7 +893,7 @@ export function getDmpColumns(material, application) {
 }
 
 export function cleanDMPFormValues(formValues) {
-    let cleanedFormValues = Object.create({}, formValues);
+    let cleanedFormValues = Object.assign({}, formValues);
     if (formValues.material === 'DNA (Molecular Accession Number only)' || formValues.material === 'DNA (DMP Sample ID only)') {
         cleanedFormValues.material = 'DNA';
     }
