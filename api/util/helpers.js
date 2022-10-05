@@ -427,7 +427,7 @@ export function generateSubmissionGrid(submissions, userRole, submissionType) {
     return new Promise((resolve, reject) => {
         let gridColumns = submissionType === 'dmp' ? dmpColumns.submissionColumns : submitColumns.submissionColumns;
 
-        fillSubmissionGrid(submissions, userRole, gridColumns)
+        fillSubmissionGrid(submissions, userRole, gridColumns, submissionType)
             .then((grid) => {
                 if (submissionType === 'dmp') {
                     return addDmpColsToSubmissionGrid(submissions, grid, userRole)
@@ -441,7 +441,7 @@ export function generateSubmissionGrid(submissions, userRole, submissionType) {
     });
 }
 
-export function fillSubmissionGrid(submissions, userRole, gridColumns) {
+export function fillSubmissionGrid(submissions, userRole, gridColumns, submissionType) {
     return new Promise((resolve, reject) => {
         try {
             let grid = { columnHeaders: [], rows: [], columnFeatures: [] };
@@ -460,15 +460,18 @@ export function fillSubmissionGrid(submissions, userRole, gridColumns) {
             for (let i = 0; i < submissions.length; i++) {
                 let submission = submissions[i];
                 let serviceId = submission.formValues.serviceId;
-                let cleanedFormValues = cleanDMPFormValues(submission.formValues);
-
+                let cleanedFormValueMaterial = submission.formValues.material;
+                if (submissionType === 'dmp') {
+                    cleanedFormValueMaterial = cleanDMPFormValues(submission.formValues).material;
+                }
+                
                 let isSubmitted = submission.submitted;
                 rows[i] = {
                     serviceId: serviceId,
                     transactionId: submission.transactionId,
                     dmpTrackingId: submission.dmpTrackingId,
                     username: submission.username,
-                    sampleType: cleanedFormValues.material,
+                    sampleType: cleanedFormValueMaterial,
                     application: submission.formValues.application,
                     numberOfSamples: submission.formValues.numberOfSamples,
                     submitted: isSubmitted ? 'yes' : 'no',
