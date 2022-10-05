@@ -900,23 +900,25 @@ export function getDmpColumns(material, application) {
 
 export function cleanDMPFormValues(formValues) {
     let cleanedFormValues = Object.assign({}, formValues);
-    if (formValues.material === 'DNA (Molecular Accession Number only)' || formValues.material === 'DNA (DMP Sample ID only)') {
+    if (formValues.material === 'DNA (Molecular Accession Number only)' || formValues.material === 'DNA (DMP Sample ID only)' || formValues.material === 'DNA') {
         cleanedFormValues.material = 'DNA';
+    } else {
+        cleanedFormValues.material = 'DNA Library';
     }
     return cleanedFormValues;
 }
 
-export function updateDMPFormValuesForEditing(submission) {
-    let updatedFormValues = Object.assign({}, submission.formValues);
-    if (submission.formValues.material === 'DNA') {
-        if (submission.gridValues[0].molecularPathologyAccessionNumber && submission.gridValues[0].molecularPathologyAccessionNumber !== '') {
-            updatedFormValues.material = 'DNA (Molecular Accession Number only)';
-        } else {
-            updatedFormValues.material = 'DNA (DMP Sample ID only)';
-        }
-    }
-    return updatedFormValues;
-}
+// export function updateDMPFormValuesForEditing(submission) {
+//     let updatedFormValues = Object.assign({}, submission.formValues);
+//     if (submission.formValues.material === 'DNA') {
+//         if (submission.gridValues[0].molecularPathologyAccessionNumber && submission.gridValues[0].molecularPathologyAccessionNumber !== '') {
+//             updatedFormValues.material = 'DNA (Molecular Accession Number only)';
+//         } else {
+//             updatedFormValues.material = 'DNA (DMP Sample ID only)';
+//         }
+//     }
+//     return updatedFormValues;
+// }
 
 // export function fixOldDMPSubmissions(submission) {
 //     let cleanedSubmission = Object.assign({}, submission);
