@@ -24,12 +24,12 @@ exports.successResponseWithData = function (res, msg, data) {
     res.status(200).json(resData);
 };
 
-exports.errorResponse = function (res, msg) {
+exports.errorResponse = function (res, msg, errorData, result) {
     var data = {
         status: 0,
         message: 'Warning: ' + msg,
     };
-    console.log(msg);
+    console.log(`${msg} DMPOUTPUT: ${errorData} ...... dmpOutput.result: ${result}`);
     
 
     res.status(500).json(data);
@@ -41,7 +41,7 @@ exports.notFoundResponse = function (res, msg) {
         message: msg,
     };
     logger.log('error', msg);
-    // console.log(data);
+    console.log(msg);
     res.status(404).json(data);
 };
 
