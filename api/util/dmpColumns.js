@@ -600,6 +600,7 @@ export const dmpIntakeForms = {
         ['Project Title', 'Required'],
         ['Gene and Mutation', 'Optional'],
         ['Molecular Pathology Accession Number', 'Optional'],
+        ['Amount Requested', 'Optional'],
     ],
     'DNA Library+WholeExomeSequencing': [
         ['Approved for DMP', 'Required'],
