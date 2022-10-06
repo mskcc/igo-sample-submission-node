@@ -5,6 +5,7 @@ const { constants } = require('./constants');
 const submitColumns = require('./columns');
 import CacheService from './cache';
 import { v4 as uuidv4 } from 'uuid';
+import moment from 'moment';
 import { Logform } from 'winston';
 const fs = require('fs');
 
@@ -426,7 +427,7 @@ export function generateSubmissionGrid(submissions, userRole, submissionType) {
     return new Promise((resolve, reject) => {
         let gridColumns = submissionType === 'dmp' ? dmpColumns.submissionColumns : submitColumns.submissionColumns;
 
-        fillSubmissionGrid(submissions, userRole, gridColumns)
+        fillSubmissionGrid(submissions, userRole, gridColumns, submissionType)
             .then((grid) => {
                 if (submissionType === 'dmp') {
                     return addDmpColsToSubmissionGrid(submissions, grid, userRole)
@@ -440,7 +441,7 @@ export function generateSubmissionGrid(submissions, userRole, submissionType) {
     });
 }
 
-export function fillSubmissionGrid(submissions, userRole, gridColumns) {
+export function fillSubmissionGrid(submissions, userRole, gridColumns, submissionType) {
     return new Promise((resolve, reject) => {
         try {
             let grid = { columnHeaders: [], rows: [], columnFeatures: [] };
@@ -459,14 +460,18 @@ export function fillSubmissionGrid(submissions, userRole, gridColumns) {
             for (let i = 0; i < submissions.length; i++) {
                 let submission = submissions[i];
                 let serviceId = submission.formValues.serviceId;
-
+                let cleanedFormValueMaterial = submission.formValues.material;
+                if (submissionType === 'dmp') {
+                    cleanedFormValueMaterial = cleanDMPFormValues(submission.formValues).material;
+                }
+                
                 let isSubmitted = submission.submitted;
                 rows[i] = {
                     serviceId: serviceId,
                     transactionId: submission.transactionId,
                     dmpTrackingId: submission.dmpTrackingId,
                     username: submission.username,
-                    sampleType: submission.formValues.material,
+                    sampleType: cleanedFormValueMaterial,
                     application: submission.formValues.application,
                     numberOfSamples: submission.formValues.numberOfSamples,
                     submitted: isSubmitted ? 'yes' : 'no',
@@ -515,11 +520,11 @@ export function fillSubmissionGrid(submissions, userRole, gridColumns) {
 //       ]
 //     }
 //   }
-// TODO Anna- get last 7 dates? will PMs check weekly?
 export function getAvailableProjectsFromDmp() {
     return new Promise((resolve, reject) => {
-        // const datesToFetch = ['05-20-2020', '05-21-2020', '05-23-2020', '05-24-2020', '05-25-2020', '05-26-2020', '05-27-2020'];
-        const datesToFetch = ['05-30-2021'];
+        const datesToFetch = getLast7Dates();
+        
+        // const datesToFetch = ['05-30-2021'];
         let promises = [];
         datesToFetch.forEach((date) => promises.push(services.getAvailableProjectsFromDmp(date)));
         Promise.all(promises)
@@ -527,15 +532,26 @@ export function getAvailableProjectsFromDmp() {
                 try {
                     let dmpTrackingIds = new Set();
                     results.forEach((idList) => {
-                        idList.content['TrackingId List'].forEach((id) => dmpTrackingIds.add(id));
+                        if (idList && idList.content) {
+                            idList.content['TrackingId List'].forEach((id) => dmpTrackingIds.add(id));
+                        }
                     });
                     resolve(dmpTrackingIds);
                 } catch (error) {
-                    reject('Unexpected DMP result format.');
+                    reject(`Unexpected DMP result format. ${error}`);
                 }
             })
-            .catch(() => reject('Error retrieving data from the DMP.'));
+            .catch((error) => reject(`Error retrieving data from the DMP. ${error}`));
     });
+}
+
+const getLast7Dates = () => {
+    let currentDate = moment().format("MM-DD-YYYY");
+    let dates = [currentDate];
+    for (let i = 1; i < 7; i++) {
+        dates.push(moment().subtract(i, 'days').format("MM-DD-YYYY"));
+    }
+    return dates;
 }
 
 // user can submit => if user not yet submitted or if unsubmitted
@@ -868,6 +884,9 @@ export function getDmpColumns(material, application) {
             if (material === 'DNA Library' && application === 'HumanWholeGenome') {
                 reject(`HumanWholeGenome requires DNA, please select DNA as the material. `);
             }
+            if (material === 'DNA Library' && application === 'CHPanel') {
+                reject(`CHPanel requires DNA, please select DNA as the material. `);
+            }
             reject(`We do not accept '${material}' for '${application}'.`);
         }
         const columns = dmpColumns.dmpIntakeForms[combination];
@@ -878,6 +897,41 @@ export function getDmpColumns(material, application) {
         }
     });
 }
+
+export function cleanDMPFormValues(formValues) {
+    let cleanedFormValues = Object.assign({}, formValues);
+    if (formValues.material === 'DNA (Molecular Accession Number only)' || formValues.material === 'DNA (DMP Sample ID only)' || formValues.material === 'DNA') {
+        cleanedFormValues.material = 'DNA';
+    } else {
+        cleanedFormValues.material = 'DNA Library';
+    }
+    return cleanedFormValues;
+}
+
+// export function updateDMPFormValuesForEditing(submission) {
+//     let updatedFormValues = Object.assign({}, submission.formValues);
+//     if (submission.formValues.material === 'DNA') {
+//         if (submission.gridValues[0].molecularPathologyAccessionNumber && submission.gridValues[0].molecularPathologyAccessionNumber !== '') {
+//             updatedFormValues.material = 'DNA (Molecular Accession Number only)';
+//         } else {
+//             updatedFormValues.material = 'DNA (DMP Sample ID only)';
+//         }
+//     }
+//     return updatedFormValues;
+// }
+
+// export function fixOldDMPSubmissions(submission) {
+//     let cleanedSubmission = Object.assign({}, submission);
+//     if (submission.formValues.material === 'DNA') {
+//         if (submission.gridValues[0].molecularPathologyAccessionNumber && submission.gridValues[0].molecularPathologyAccessionNumber !== '') {
+//             cleanedSubmission.formValues.material === 'DNA (Molecular Accession Number only)';
+//         } else {
+//             cleanedSubmission.formValues.material === 'DNA (DMP Sample ID only)';
+//         }
+//     }
+//     return cleanedSubmission;
+// }
+
 export function publishDmpData(submissions, dmpRequestId) {
     // cmorequests will be array of objects with each objects being on submission with an array of samples
     return new Promise((resolve, reject) => {

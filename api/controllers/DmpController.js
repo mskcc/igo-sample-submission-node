@@ -2,6 +2,7 @@ const apiResponse = require('../util/apiResponse');
 const { body, query, validationResult } = require('express-validator');
 const util = require('../util/helpers');
 const services = require('../services/services');
+const mailer = require('../util/mailer');
 const { authenticate } = require('../middlewares/jwt');
 var _ = require('lodash');
 import CacheService from '../util/cache';
@@ -232,7 +233,7 @@ exports.submit = [
         Promise.all([findOrCreateSubPromise])
             .then((results) => {
                 let [submissionToSubmit] = results;
-                submissionToSubmit.formValues = formValues;
+                submissionToSubmit.formValues = util.cleanDMPFormValues(formValues);
                 submissionToSubmit.gridValues = gridValues;
                 submissionToSubmit.submitted = true;
                 submissionToSubmit.transactionId = transactionId;
@@ -240,6 +241,8 @@ exports.submit = [
                 submissionToSubmit.reviewed = reviewed;
                 submissionToSubmit.reviewedAt = reviewed ? transactionId : undefined;
                 submissionToSubmit.reviewedBy = reviewed ? res.user.username : undefined;
+
+                mailer.sendDMPSubNotification(submissionToSubmit);
 
                 // submissionToSubmit.samplesApproved = approvals.length;
                 //  save pre LIMS submit so data is safe
@@ -441,7 +444,7 @@ exports.trackingIdList = [
 ];
 
 //  Show meta information for a given dmp tracking id
-// Fields DMP needs:DMP Sample ID
+// Fields DMP needs:DMP Sample ID (or molecular accession number)
 // Sample Type
 // Study Subject Identifier
 // Study Sample Identifier

@@ -50,6 +50,34 @@ exports.sendNotification = function (submission) {
         .catch((error) => console.log(error));
 };
 
+exports.sendDMPSubNotification = function (submission) {
+    let recipients = [emailConfig.notificationDMPRecipients];
+
+    let sampleIdsString = '';
+    submission.gridValues.map((element) => {
+        sampleIdsString += `<br> ${element.userId}`;
+    });
+
+    let email = {
+        subject: `${emailConfig.DMPsubject}`,
+        content: `The following ${submission.formValues.material} samples were submitted to IGO for ${submission.formValues.application} by ${submission.username}.  <br> ${sampleIdsString} `,
+        footer: emailConfig.footer,
+    };
+    console.log(email);
+
+    logger.log('info', `${email} sent to recipients.`);
+    transporter
+        .sendMail({
+            from: emailConfig.notificationSender, // sender address e.g. no-reply@xyz.com or "Fred Foo 👻" <foo@example.com>
+            to: recipients.join(','), // list of receivers e.g. bar@example.com, baz@example.com
+            subject: email.subject, // Subject line e.g. 'Hello ✔'
+            html: email.content + email.footer, // html body e.g. '<b>Hello world?</b>'
+            //text: text, // plain text body e.g. Hello world?
+        })
+        // .then((result) => console.log(result))
+        .catch((error) => console.log(error));
+};
+
 const sendToPms = (submissionFormValues) => {
     let isPmApp = emailConfig.cmoPmEmailApplications.includes(submissionFormValues.application);
     let isHuman = submissionFormValues.species === 'Human';

@@ -46,10 +46,12 @@ export const emailConfig = {
         '10X_Genomics_FeatureBarcoding-5',
     ],
     notificationRecipients: 'zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org, zzPDL_SKI_IGO_DATA@mskcc.org',
+    notificationDMPRecipients: 'skicmopm@mskcc.org, zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org, zzPDL_SKI_IGO_DATA@mskcc.org',
     notificationSender: 'igoski@mskcc.org',
     cmoPmEmail: 'skicmopm@mskcc.org',
     // #skicmopm@mskcc.org
     singleCellTeamEmail: 'zzPDL_SKI_IGO_SingleCell@mskcc.org',
     subject: '[IGO Submission]',
+    DMPsubject: '[DMP Submission]',
     footer: '<br><br><br>Thank you, <br><br><a href="https://genomics.mskcc.org/">Integrated Genomics Operation</a><br><a href="https://www.mskcc.org">Memorial Sloan Kettering Cancer Center</a><br>T 646.888.3765<br>Follow us on <a href="https://www.instagram.com/genomics212/?hl=en">Instagram</a> and <a href="https://twitter.com/genomics212?lang=en">Twitter</a>!<br><br>Please rate your submission experience <a href="https://genomics.mskcc.org/feedback/sample-submission">here</a>',
 };
