@@ -340,6 +340,8 @@ exports.loadFromDmp = [
                     const [dmpOutput, retrievedDmpSubmission] = results;
 
                     if (dmpOutput.result !== 'Success') {
+                        console.log(`DMPOUTPUT: ${dmpOutput}`);
+                        console.log(`dmpOutput.result : ${dmpOutput.result}`);
                         return apiResponse.errorResponse(res, 'Issues communicating with DMP.');
                     } else if (_.isEmpty(dmpOutput.content['CMO Sample Request Details'])) {
                         return apiResponse.errorResponse(res, 'No sample information returned from DMP.');
