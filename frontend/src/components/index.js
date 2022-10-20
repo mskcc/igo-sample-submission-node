@@ -19,6 +19,7 @@ import SubmissionsGrid from './Submissions/SubmissionsGrid.js';
 import Header from './Shared/Header.js';
 import Message from './Shared/Message.js';
 import SnackMessage from './Shared/SnackMessage.js';
+import Announcement from './Shared/Announcement.js';
 
 export {
     Button,
@@ -37,4 +38,5 @@ export {
     DmpForm,
     SubmissionsGrid,
     DmpStatusPanel,
+    Announcement,
 };
