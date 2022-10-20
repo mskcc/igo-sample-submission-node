@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Announcement = () => {
+const Announcement = () => {
     return (
         <div className='announcement'>
             <p>
@@ -10,3 +10,5 @@ export const Announcement = () => {
         </div>
     );
 };
+
+export default Announcement;
