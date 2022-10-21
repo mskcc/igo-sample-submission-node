@@ -227,6 +227,12 @@ exports.submit = [
         let transactionId = req.body.transactionId;
         let reviewed = req.body.reviewed;
         let id = req.body.id || undefined;
+        let samplesApproved = [];
+        if (reviewed) {
+            samplesApproved = gridValues.filter((element) => {
+                return element.isApproved;
+            });
+        }
 
         let findOrCreateSubPromise = DmpSubmissionModel.findOrCreateSub(id, res.user.username);
 
@@ -241,10 +247,10 @@ exports.submit = [
                 submissionToSubmit.reviewed = reviewed;
                 submissionToSubmit.reviewedAt = reviewed ? transactionId : undefined;
                 submissionToSubmit.reviewedBy = reviewed ? res.user.username : undefined;
+                submissionToSubmit.approvals = samplesApproved.length;
 
                 mailer.sendDMPSubNotification(submissionToSubmit);
 
-                // submissionToSubmit.samplesApproved = approvals.length;
                 //  save pre LIMS submit so data is safe
                 submissionToSubmit.save(function (err) {
                     if (err) {
@@ -273,6 +279,7 @@ exports.readyForDmp = [
         const dmpRequestId = req.query.dmpRequestId;
         const model = DmpSubmissionModel;
         const filter = { reviewed: true };
+        // const approvedSamplesFilter = { approvals > 0 };
         const sort = { createdAt: 'desc' };
 
         model
@@ -427,7 +434,21 @@ exports.trackingIdList = [
                 }
                 let idList = [];
                 submissions.map((sub) => {
-                    idList.push(sub.gridValues[0].dmpTrackingId);
+                    // We can use this logic in the future when all submissions have accurate 'approval' field
+                    // let subHasApprovedSamples = false;
+                    // if (sub.approvals && sub.approvals > 0) {
+                    //     subHasApprovedSamples = true;
+                    // }
+
+                    // for backwards compatibility - old submissions don't have 'approvals' field
+                    let samplesApproved = [];
+                    samplesApproved = sub.gridValues.filter((element) => {
+                        return element.isApproved;
+                    });
+                    if (samplesApproved.length > 0) {
+                        idList.push(sub.gridValues[0].dmpTrackingId);
+                    }
+
                     // console.log(sub.trackingId);
                     // console.log(sub.transactionId);
                     // console.log(sub.trackingId);
