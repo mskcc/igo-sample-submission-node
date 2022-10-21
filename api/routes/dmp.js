@@ -9,15 +9,16 @@ router.get('/headerValues', DmpController.headerValues);
 router.post('/grid', DmpController.grid);
 // saves submissions to db, PMs and investigators can submit; if PMs submit submission.isReviewed is set to true
 router.post('/submit', DmpController.submit);
-// returns samples that were approved by PMs - not documented on Confluence are DMP developers aware of this endpoint?
-router.get('/readyForDmp', DmpController.readyForDmp);
 // used when PM clicks Update DMP Status button
 router.get('/updateStatus', DmpController.updateStatus);
 // router.get('/picklist', DmpController.picklist);
 router.post('/loadFromDmp', DmpController.loadFromDmp);
+
 // IGO endpoints used by DMP
 router.get('/trackingIdList', DmpController.trackingIdList);
 router.get('/igoSampleInformation', DmpController.igoSampleInformation);
+// returns samples that were approved by PMs - CURRENTLY NOT USED BY DMP TEAM
+router.get('/readyForDmp', DmpController.readyForDmp);
 
 // router.post('/crdbId', DmpController.crdbId);
 // router.post('/additionalRows', DmpController.additionalRows);
