@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { commonActions, userActions } from '../redux/actions';
 import DevTools from './DevTools';
 
-import { Header, SnackMessage, Message, Announcement } from '../components';
+import { Header, SnackMessage, Message } from '../components';
 
 import UploadPage from './Upload/UploadPage';
 import SubmissionsPage from './Submissions/SubmissionsContainer';
@@ -102,7 +102,6 @@ class Root extends Component {
                             <ErrorPage />
                         ) : (
                             <React.Fragment>
-                                <Announcement />
                                 <div className='routerDiv'>
                                     <Route path='/(upload|)' render={(routeProps) => <UploadPage {...routeProps} gridType='upload' />} />
                                     <Route path='/promote' component={PromotePage} />
