@@ -469,61 +469,6 @@ exports.trackingIdList = [
     },
 ];
 
-//  Shows iLabs Service IDs of DMP Submissions ready for dmp pickup (have isReviewed status)
-//  shows ids of projects reviewedAt up to 60 days prior of requested timestamp
-//  date format: UNIX timestamp in seconds. 01/27/2021 @ 2:45pm (UTC) => 1596746317
-exports.serviceIdList = [
-    query('date').isString().trim().withMessage('date must be present.'),
-    function(req, res) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
-        }
-        let date = new Date(parseInt(req.query.date) * 1000);
-        // returns date 60 days prior
-        date.setDate(date.getDate() - 60);
-        // return to UNIX timestamp in seconds
-        let sixtyDaysPrior = date.getTime() / 1000;
-
-        if (isNaN(date)) {
-            return apiResponse.validationErrorWithData(res, 'Validation error.', 'Date must be unix timestamp (seconds) string.');
-        }
-
-        let dmpPromise = DmpSubmissionModel.find({ reviewedAt: { $gt: sixtyDaysPrior } });
-        res.user = 'dmp';
-        Promise.all([dmpPromise])
-            .then((results) => {
-                let submissions = results[0];
-                if (_.isEmpty(submissions)) {
-                    return apiResponse.errorResponse(res, 'No submissions within 60 days of this timestamp.');
-                }
-                let idList = [];
-                submissions.map((sub) => {
-                    // We can use this logic in the future when all submissions have accurate 'approval' field
-                    // let subHasApprovedSamples = false;
-                    // if (sub.approvals && sub.approvals > 0) {
-                    //     subHasApprovedSamples = true;
-                    // }
-
-                    // for backwards compatibility - old submissions don't have 'approvals' field
-                    let samplesApproved = [];
-                    samplesApproved = sub.gridValues.filter((element) => {
-                        return element.isApproved;
-                    });
-                    if (samplesApproved.length > 0) {
-                        idList.push(sub.formValues.serviceId);
-                    }
-                
-                    return apiResponse.successResponseWithData(res, 'Operation success', { idList });
-
-                });
-            })
-            .catch((reasons) => {
-                return apiResponse.errorResponse(res, reasons);
-            });
-    }
-]
-
 //  Show meta information for a given dmp tracking id
 // Fields DMP needs:DMP Sample ID (or molecular accession number)
 // Sample Type
