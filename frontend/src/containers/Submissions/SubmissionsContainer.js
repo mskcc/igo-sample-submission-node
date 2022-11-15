@@ -94,8 +94,9 @@ export class SubmissionsPage extends Component {
     render() {
         const { submissions, gridType, user } = this.props;
 
-        return submissions.grid.rows.length > 0 ? (
+        return (
             <React.Fragment>
+                {submissions.grid.rows.length > 0 ? '' : 'No Submissions Available.'}
                 <SubmissionsGrid
                     grid={submissions.grid}
                     gridType={gridType}
@@ -106,8 +107,6 @@ export class SubmissionsPage extends Component {
                     user={user}
                 />
             </React.Fragment>
-        ) : (
-            'No submissions available.'
         );
     }
 }
