@@ -235,6 +235,9 @@ exports.submit = [
         }
 
         // let dmpValidationPromise = DmpSubmissionModel.find({ dmpTrackingId: gridValues[0].dmpTrackingId }).count();
+        if (!formValues.serviceId || formValues.serviceId.length === 0) {
+            return apiResponse.errorResponse(res, 'iLabs Service ID is required. Please enter your six digit iLabs Service ID in the form above.');
+        }
 
         let findOrCreateSubPromise = DmpSubmissionModel.findOrCreateSub(id, res.user.username);
 
