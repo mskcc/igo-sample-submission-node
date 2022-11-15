@@ -40,6 +40,7 @@ class SubmissionsGrid extends React.Component {
                     <Button onClick={() => handleFilterClick('', 0, true)}>All</Button>
                 </ButtonGroup>
 
+                {grid.rows.length > 0 ? (
                 <HotTable
                     licenseKey='non-commercial-and-evaluation'
                     id='hot'
@@ -78,6 +79,7 @@ class SubmissionsGrid extends React.Component {
                         else if (grid.rows.length < 5) return '350';
                     }}
                 />
+                ) : 'No submissions available for this timeframe.'}
             </div>
         );
     }

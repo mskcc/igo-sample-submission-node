@@ -31,7 +31,10 @@ export const GET_SUBMISSIONS_SINCE_FAIL = 'GET_SUBMISSIONS_SINCE_FAIL';
 export const GET_SUBMISSIONS_SINCE_SUCCESS = 'GET_SUBMISSIONS_SINCE_SUCCESS';
 export function getSubmissionsSince(unit, time, submissionType) {
   return (dispatch) => {
-    dispatch({ type: GET_SUBMISSIONS_SINCE });
+    dispatch({
+      type: GET_SUBMISSIONS_SINCE,
+      message: 'Loading Submissions...' 
+    });
     let limit = moment()
       .subtract(unit, time)
       .unix();
