@@ -544,7 +544,8 @@ exports.igoSampleInformation = [
         if (trackingId && trackingId.length > 0) {
             dmpPromise = DmpSubmissionModel.findOne({ dmpTrackingId: trackingId });
         } else if (serviceId && serviceId.length > 0) {
-            dmpPromise = DmpSubmissionModel.findOne({ formValues: { serviceId: serviceId }});
+            // const subId = "formValues.serviceId";
+            dmpPromise = DmpSubmissionModel.findOne({ "formValues.serviceId": serviceId });
         } else {
             return apiResponse.validationErrorWithData(res, 'Validation error: trackingId or serviceId must be present.');
         }
