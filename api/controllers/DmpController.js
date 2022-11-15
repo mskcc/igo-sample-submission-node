@@ -554,7 +554,7 @@ exports.igoSampleInformation = [
             .then((results) => {
                 let submission = results[0];
                 if (_.isEmpty(submission)) {
-                    return apiResponse.errorResponse(res, 'No submission found for this tracking ID.');
+                    return apiResponse.errorResponse(res, 'No submission found for this ID.');
                 }
                 let result = {};
                 result[trackingId] = {
