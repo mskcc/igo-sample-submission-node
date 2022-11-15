@@ -408,7 +408,7 @@ exports.loadFromDmp = [
     },
 ];
 
-//  Shows tracking IDs of DMP Submissions ready for dmp pickup (have isReviewed status)
+//  Shows tracking IDs OR service IDs of DMP Submissions ready for dmp pickup (have isReviewed status)
 //  shows ids of projects reviewedAt up to 60 days prior of requested timestamp
 //  date format: UNIX timestamp in seconds. 01/27/2021 @ 2:45pm (UTC) => 1596746317
 exports.trackingIdList = [
@@ -450,7 +450,8 @@ exports.trackingIdList = [
                         return element.isApproved;
                     });
                     if (samplesApproved.length > 0) {
-                        idList.push(sub.gridValues[0].dmpTrackingId);
+                        const idToPush = sub.formValues.serviceId ? sub.formValues.serviceId : sub.gridValues[0].dmpTrackingId;
+                        idList.push(idToPush);
                     }
 
                     // console.log(sub.trackingId);
@@ -539,12 +540,14 @@ exports.igoSampleInformation = [
     function (req, res) {
         let trackingId = req.query.trackingId;
         let serviceId = req.query.serviceId;
+        let requestId;
         let dmpPromise;
 
         if (trackingId && trackingId.length > 0) {
+            requestId = trackingId;
             dmpPromise = DmpSubmissionModel.findOne({ dmpTrackingId: trackingId });
         } else if (serviceId && serviceId.length > 0) {
-            // const subId = "formValues.serviceId";
+            requestId = serviceId;
             dmpPromise = DmpSubmissionModel.findOne({ "formValues.serviceId": serviceId });
         } else {
             return apiResponse.validationErrorWithData(res, 'Validation error: trackingId or serviceId must be present.');
@@ -558,13 +561,14 @@ exports.igoSampleInformation = [
                     return apiResponse.errorResponse(res, 'No submission found for this ID.');
                 }
                 let result = {};
-                result[trackingId] = {
+                result[requestId] = {
                     samples: [],
                 };
+                
                 submission.gridValues.forEach((sample) => {
                     // only include samples approved by Cmo PM's
                     if (sample.isApproved) {
-                        result[trackingId].samples.push({
+                        result[requestId].samples.push({
                             ilabServiceId: serviceId ? serviceId : '',
                             dmpId: sample.dmpSampleId ? sample.dmpSampleId : '',
                             accessionNumber: sample.molecularPathologyAccessionNumber ? sample.molecularPathologyAccessionNumber : '',
@@ -600,8 +604,8 @@ exports.igoSampleInformation = [
                     }
                 });
 
-                if (!result[trackingId].samples.length) {
-                    return apiResponse.errorResponse(res, `No approved samples available for tracking ID ${trackingId}`);
+                if (!result[requestId].samples.length) {
+                    return apiResponse.errorResponse(res, `No approved samples available for ID ${requestId}`);
                 }
 
                 console.log(result);
