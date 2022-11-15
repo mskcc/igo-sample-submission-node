@@ -234,16 +234,16 @@ exports.submit = [
             });
         }
 
-        let dmpValidationPromise = DmpSubmissionModel.find({ dmpTrackingId: gridValues[0].dmpTrackingId }).count();
+        // let dmpValidationPromise = DmpSubmissionModel.find({ dmpTrackingId: gridValues[0].dmpTrackingId }).count();
 
         let findOrCreateSubPromise = DmpSubmissionModel.findOrCreateSub(id, res.user.username);
 
         Promise.all([dmpValidationPromise, findOrCreateSubPromise])
             .then((results) => {
-                let [dmpTrackingIdCount, submissionToSubmit] = results;
-                if (dmpTrackingIdCount > 0) {
-                    return apiResponse.errorResponse(res, `Submission could not be submitted. TrackingId ${dmpTrackingId} already exists.`);
-                }
+                let [submissionToSubmit] = results;
+                // if (dmpTrackingIdCount > 0) {
+                //     return apiResponse.errorResponse(res, `Submission could not be submitted. TrackingId ${dmpTrackingId} already exists.`);
+                // }
 
                 submissionToSubmit.formValues = util.cleanDMPFormValues(formValues);
                 submissionToSubmit.gridValues = gridValues;
