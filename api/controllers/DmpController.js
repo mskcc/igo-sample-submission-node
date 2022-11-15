@@ -255,10 +255,10 @@ exports.submit = [
                 submissionToSubmit.save(function (err) {
                     if (err) {
                         let errString = '';
-                        if (err.includes('`serviceId` is required')) {
+                        if (err.toString().includes('`serviceId` is required')) {
                             errString = 'iLabs Service ID is required. Please enter your six digit iLabs Service ID in the form above.'
                         }
-                        return apiResponse.errorResponse(res, `Submission could not be saved. ${err}`);
+                        return apiResponse.errorResponse(res, `Submission could not be saved. ${errString}`);
                     } else {
                         return apiResponse.successResponseWithData(res, 'Operation success', submissionToSubmit);
                     }
