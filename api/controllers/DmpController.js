@@ -254,7 +254,7 @@ exports.submit = [
                 //  save pre LIMS submit so data is safe
                 submissionToSubmit.save(function (err) {
                     if (err) {
-                        return apiResponse.errorResponse(res, 'Submission could not be saved.');
+                        return apiResponse.errorResponse(res, `Submission could not be saved. ${err}`);
                     } else {
                         return apiResponse.successResponseWithData(res, 'Operation success', submissionToSubmit);
                     }
@@ -369,7 +369,7 @@ exports.loadFromDmp = [
 
                                     igoSubmission.save(function (err) {
                                         if (err) {
-                                            return apiResponse.errorResponse(res, 'IGO Submission could not be saved.');
+                                            return apiResponse.errorResponse(res, `IGO Submission could not be saved. ${err}`);
                                         }
                                         // update existing dmpSubmission document to connect igoSubmission and indicate last load date
                                         DmpSubmissionModel.findByIdAndUpdate(ObjectId(dmpSubmissionId), {
