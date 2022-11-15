@@ -1,7 +1,7 @@
 import React from 'react';
 import { Translate } from 'react-localize-redux';
  
-import { FormControl, Paper, withStyles, Typography } from '@material-ui/core';
+import { FormControl, InputAdornment, Paper, withStyles, Typography } from '@material-ui/core';
 
 import { Button, Checkbox, Dropdown, Input } from '../index';
 
@@ -18,6 +18,7 @@ class DmpForm extends React.Component {
                 application: true,
                 numberOfSamples: true,
                 sharedWith: true,
+                serviceId: true,
             },
         };
     }
@@ -77,7 +78,11 @@ class DmpForm extends React.Component {
         e.preventDefault();
         e.stopPropagation();
         if (this.validate()) {
-            handleParentSubmit('dmp', this.state.values);
+            handleParentSubmit('dmp', {
+                ...this.state.values,
+
+                serviceId: 'IGO-' + this.state.values.serviceId.toString(),
+            });
         }
     };
 
@@ -88,6 +93,9 @@ class DmpForm extends React.Component {
         let values = form.selected;
         for (let value in values) {
             switch (value) {
+                case 'serviceId':
+                    formValid[value] = /\d{6}/g.test(values[value]) && values[value].length === 6;
+                    break;
                 case 'material':
                     isValidOption = form.materials.some(function(el) {
                         return el === values[value];
@@ -139,6 +147,7 @@ class DmpForm extends React.Component {
 
     validateForm() {
         return (
+            this.state.formValid.serviceId &&
             this.state.formValid.material &&
             this.state.formValid.application &&
             this.state.formValid.numberOfSamples &&
@@ -204,6 +213,18 @@ class DmpForm extends React.Component {
                                 }}
                                 value={form.selected.numberOfSamples}
                             />
+
+                            <FormControl component='fieldset'>
+                                <Input
+                                    id='serviceId'
+                                    value={form.selected.serviceId}
+                                    error={!formValid.serviceId}
+                                    onChange={this.handleChange}
+                                    inputProps={{
+                                        startAdornment: <InputAdornment position='start'>IGO-</InputAdornment>,
+                                    }}
+                                />
+                            </FormControl>
 
                             <FormControl component='fieldset' className={classes.lastItem}>
                                 <Checkbox

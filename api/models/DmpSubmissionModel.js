@@ -10,6 +10,7 @@ var FormSchema = new mongoose.Schema({
     application: { type: String, required: true },
     material: { type: String, required: true },
     numberOfSamples: { type: Number, required: true },
+    serviceId: { type: String, required: true },
 });
 
 var DmpSubmissionSchema = new mongoose.Schema(

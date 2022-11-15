@@ -507,7 +507,7 @@ export function fillSubmissionGrid(submissions, userRole, gridColumns, submissio
     });
 }
 
-// queries DMP endpoint for past week
+// queries DMP endpoint for past 2 months
 // DMP results look like
 // {
 //     runDate: '05-27-2020',
@@ -522,7 +522,7 @@ export function fillSubmissionGrid(submissions, userRole, gridColumns, submissio
 //   }
 export function getAvailableProjectsFromDmp() {
     return new Promise((resolve, reject) => {
-        const datesToFetch = getLast7Dates();
+        const datesToFetch = getLast2MDates();
         
         // const datesToFetch = ['05-30-2021'];
         let promises = [];
@@ -545,10 +545,10 @@ export function getAvailableProjectsFromDmp() {
     });
 }
 
-const getLast7Dates = () => {
+const getLast2MDates = () => {
     let currentDate = moment().format("MM-DD-YYYY");
     let dates = [currentDate];
-    for (let i = 1; i < 7; i++) {
+    for (let i = 1; i < 60; i++) {
         dates.push(moment().subtract(i, 'days').format("MM-DD-YYYY"));
     }
     return dates;
@@ -1038,7 +1038,7 @@ export function parseDmpOutput(dmpOutput, submission) {
             // let mergedSamplesResult = mergePatientIdsIntoSamples(igoSamples, patientIdResult);
             // let { mergedSamples, failedIdsMessage } = mergedSamplesResult;
             // translationIssues.push(failedIdsMessage);
-            igoSamples.sort(compareByWellPosition);
+            // igoSamples.sort(compareByWellPosition);
 
             igoSamples.sort(compareByWellPosition);
 
@@ -1053,7 +1053,7 @@ export function parseDmpOutput(dmpOutput, submission) {
                     groupingChecked: false,
                     patientIdType: 'MSK-Patients (or derived from MSK Patients)',
                     patientIdTypeSpecified: 'DMP Patient ID',
-                    serviceId: '000000',
+                    serviceId: submission.formValues.serviceId ? submission.formValues.serviceId : '000000',
                     species: 'Human',
                     numberOfSamples: numReturnedSamples,
                 },

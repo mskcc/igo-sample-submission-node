@@ -28,6 +28,13 @@ export const formattingAdjustments = {
     },
 };
 export const gridColumns = {
+    'Service ID': {
+        name: 'Service ID',
+        columnHeader: 'Service ID',
+        data: 'serviceId',
+        pattern: validationPatterns.alphanumdash,
+    },
+    
     'Tracking ID': {
         name: 'Tracking ID',
         columnHeader: 'Tracking ID',
@@ -198,6 +205,11 @@ export const submissionColumns = {
     //     readOnly: 'true',
     //     hiddenFrom: 'user'
     // },
+    'Service ID': {
+        name: 'Service ID',
+        data: 'serviceId',
+        readOnly: 'true',
+    },
 
     'Tracking ID': {
         name: 'Tracking ID',

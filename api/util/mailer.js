@@ -52,6 +52,7 @@ exports.sendNotification = function (submission) {
 
 exports.sendDMPSubNotification = function (submission) {
     let recipients = [emailConfig.notificationDMPRecipients];
+    let serviceId = submission.formValues.serviceId ? submission.formValues.serviceId : '';
 
     let sampleIdsString = '';
     submission.gridValues.map((element) => {
@@ -59,7 +60,7 @@ exports.sendDMPSubNotification = function (submission) {
     });
 
     let email = {
-        subject: `${emailConfig.DMPsubject}`,
+        subject: `${emailConfig.DMPsubject} ${serviceId}`,
         content: `The following ${submission.formValues.material} samples were submitted to IGO for ${submission.formValues.application} by ${submission.username}.  <br> ${sampleIdsString} `,
         footer: emailConfig.footer,
     };
