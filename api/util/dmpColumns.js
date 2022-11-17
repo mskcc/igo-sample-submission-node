@@ -404,7 +404,7 @@ export const dmpIntakeForms = {
         ['Sample Type', 'Required'],
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
-        ['Gene and Mutation', 'Optional'],
+        ['Gene and Mutation', 'Required'],
         ['Amount Requested', 'Optional'],
     ],
     'DNA (DMP Sample ID only)+WholeExomeSequencing': [
@@ -521,7 +521,7 @@ export const dmpIntakeForms = {
         ['Sample Type', 'Required'],
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
-        ['Gene and Mutation', 'Optional'],
+        ['Gene and Mutation', 'Required'],
         ['Amount Requested', 'Optional'],
     ],
     'DNA (Molecular Accession Number only)+WholeExomeSequencing': [
@@ -596,7 +596,7 @@ export const dmpIntakeForms = {
         ['Sample Type', 'Required'],
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
-        ['Gene and Mutation', 'Optional'],
+        ['Gene and Mutation', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
         ['Amount Requested', 'Optional'],
     ],
