@@ -47,14 +47,12 @@ export const gridColumns = {
         sendToDmp: true,
     },
 
-    'DMP Patient ID': {
-        pattern: validationPatterns.dmpPatientId,
+    'MRN': {
+        pattern: validationPatterns.mrn,
+        columnHeader: 'MRN',
+        tooltip: 'The patient MRN.',
         data: 'patientId',
-        columnHeader: 'DMP Patient ID or MRN',
-        tooltip: 'The patient DMP ID.',
-        error:
-            'DMP ID is incorrectly formatted, please correct, or speak to a project manager if unsure. The usual DMP Patient ID format is P-0000000.',
-        type: 'text',
+        error: 'MRN is incorrectly formatted, please correct, or speak to a project manager if unsure.',
     },
 
     'Investigator Sample ID': {
