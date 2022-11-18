@@ -234,20 +234,15 @@ exports.submit = [
             });
         }
 
-        // let dmpValidationPromise = DmpSubmissionModel.find({ dmpTrackingId: gridValues[0].dmpTrackingId }).count();
         if (!formValues.serviceId || formValues.serviceId.length === 0) {
             return apiResponse.errorResponse(res, 'iLabs Service ID is required. Please enter your six digit iLabs Service ID in the form above.');
         }
 
         let findOrCreateSubPromise = DmpSubmissionModel.findOrCreateSub(id, res.user.username);
 
-        Promise.all([dmpValidationPromise, findOrCreateSubPromise])
+        Promise.all([findOrCreateSubPromise])
             .then((results) => {
                 let [submissionToSubmit] = results;
-                // if (dmpTrackingIdCount > 0) {
-                //     return apiResponse.errorResponse(res, `Submission could not be submitted. TrackingId ${dmpTrackingId} already exists.`);
-                // }
-
                 submissionToSubmit.formValues = util.cleanDMPFormValues(formValues);
                 submissionToSubmit.gridValues = gridValues;
                 submissionToSubmit.submitted = true;
