@@ -168,7 +168,7 @@ class DmpForm extends React.Component {
                                 MSKCC Tumor Genomic Profiling Project Proposal Form
                             </a>
                             . You will need the 10 digit transaction ID generated from this DMP Sample Submission to complete the form.<br/>
-                            If you do not have access to DMP Patient IDs, you can enter MRNs instead.
+                            You will need to use MRNs for Patient IDs.
                         </Typography>
                         <form id='dmp-upload-form' className={classes.form} onSubmit={(e) => this.handleSubmit(e, handleSubmit)}>
                             <Dropdown
