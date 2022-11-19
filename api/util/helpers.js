@@ -1052,7 +1052,7 @@ export function parseDmpOutput(dmpOutput, submission) {
                     container: 'Plates',
                     groupingChecked: false,
                     patientIdType: 'MSK-Patients (or derived from MSK Patients)',
-                    patientIdTypeSpecified: 'DMP Patient ID',
+                    patientIdTypeSpecified: 'MRN',
                     serviceId: '000000',
                     species: 'Human',
                     numberOfSamples: numReturnedSamples,

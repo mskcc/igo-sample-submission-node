@@ -54,20 +54,25 @@ exports.sendDMPSubNotification = function (submission) {
     let recipients = [emailConfig.notificationDMPRecipients];
 
     let subject = `${emailConfig.DMPsubject}`;
+    let serviceIdText = '';
     let serviceId = submission.formValues.serviceId;
     if (serviceId && serviceId.length > 0) {
         subject = `${emailConfig.DMPsubject} ${serviceId}`;
+        serviceIdText = ` under service id ${serviceId}`;
     }
-    
 
     let sampleIdsString = '';
     submission.gridValues.map((element) => {
-        sampleIdsString += `<br> ${element.userId}`;
+        if (element.molecularPathologyAccessionNumber && element.molecularPathologyAccessionNumber.length > 0) {
+            sampleIdsString += `<br> ${element.molecularPathologyAccessionNumber}`;
+        } else {
+            sampleIdsString += `<br> ${element.dmpSampleId}`;
+        }
     });
 
     let email = {
         subject: `${subject}`,
-        content: `The following ${submission.formValues.material} samples were submitted for transfer from DMP to IGO for ${submission.formValues.application} by ${submission.username}.  <br> ${sampleIdsString} `,
+        content: `The following ${submission.gridValues.length} ${submission.formValues.material} samples were submitted for transfer from DMP to IGO for ${submission.formValues.application} by ${submission.username}${serviceIdText}.  <br> ${sampleIdsString} `,
         footer: emailConfig.footer,
     };
     console.log(email);
