@@ -98,5 +98,6 @@ export const initialDmpFormState = {
         numberOfSamples: '',
         isShared: false,
         sharedWith: '',
+        serviceId: '',
     },
 };

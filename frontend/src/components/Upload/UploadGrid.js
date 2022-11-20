@@ -83,7 +83,7 @@ class UploadGrid extends React.Component {
                         headerTooltips={true}
                         manualColumnResize={true}
                         comments={true}
-                        columnSorting={gridType === 'dmp' ? 'true' : 'false'}
+                        columnSorting={gridType === 'dmp' ? true : false}
                         ref={this.hotTableComponent}
                         beforeChange={(changes, source) => {
                             // only do something if rows can fit the changes/if

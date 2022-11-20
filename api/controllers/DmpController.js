@@ -234,6 +234,10 @@ exports.submit = [
             });
         }
 
+        if (!formValues.serviceId || formValues.serviceId.length === 0) {
+            return apiResponse.errorResponse(res, 'iLabs Service ID is required. Please enter your six digit iLabs Service ID in the form above.');
+        }
+
         let findOrCreateSubPromise = DmpSubmissionModel.findOrCreateSub(id, res.user.username);
 
         Promise.all([findOrCreateSubPromise])
@@ -254,7 +258,11 @@ exports.submit = [
                 //  save pre LIMS submit so data is safe
                 submissionToSubmit.save(function (err) {
                     if (err) {
-                        return apiResponse.errorResponse(res, 'Submission could not be saved.');
+                        let errString = '';
+                        if (err.toString().includes('`serviceId` is required')) {
+                            errString = 'iLabs Service ID is required. Please enter your six digit iLabs Service ID in the form above.'
+                        }
+                        return apiResponse.errorResponse(res, `Submission could not be saved. ${errString}`);
                     } else {
                         return apiResponse.successResponseWithData(res, 'Operation success', submissionToSubmit);
                     }
@@ -369,7 +377,7 @@ exports.loadFromDmp = [
 
                                     igoSubmission.save(function (err) {
                                         if (err) {
-                                            return apiResponse.errorResponse(res, 'IGO Submission could not be saved.');
+                                            return apiResponse.errorResponse(res, `IGO Submission could not be saved. ${err}`);
                                         }
                                         // update existing dmpSubmission document to connect igoSubmission and indicate last load date
                                         DmpSubmissionModel.findByIdAndUpdate(ObjectId(dmpSubmissionId), {
@@ -404,7 +412,7 @@ exports.loadFromDmp = [
     },
 ];
 
-//  Shows tracking IDs of DMP Submissions ready for dmp pickup (have isReviewed status)
+//  Shows tracking IDs OR service IDs of DMP Submissions ready for dmp pickup (have isReviewed status)
 //  shows ids of projects reviewedAt up to 60 days prior of requested timestamp
 //  date format: UNIX timestamp in seconds. 01/27/2021 @ 2:45pm (UTC) => 1596746317
 exports.trackingIdList = [
@@ -446,7 +454,8 @@ exports.trackingIdList = [
                         return element.isApproved;
                     });
                     if (samplesApproved.length > 0) {
-                        idList.push(sub.gridValues[0].dmpTrackingId);
+                        const idToPush = sub.formValues.serviceId ? sub.formValues.serviceId : sub.gridValues[0].dmpTrackingId;
+                        idList.push(idToPush);
                     }
 
                     // console.log(sub.trackingId);
@@ -477,35 +486,44 @@ exports.trackingIdList = [
 // DMP to Transfer
 // TODO: Only show samples approved for dmp transfer
 exports.igoSampleInformation = [
-    query('trackingId').isString().trim().withMessage('trackingID must be present.'),
     function (req, res) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
-        }
         let trackingId = req.query.trackingId;
+        let serviceId = req.query.serviceId;
+        let requestId;
+        let dmpPromise;
 
-        let dmpPromise = DmpSubmissionModel.findOne({ dmpTrackingId: trackingId });
+        if (trackingId && trackingId.length > 0) {
+            requestId = trackingId;
+            dmpPromise = DmpSubmissionModel.findOne({ dmpTrackingId: trackingId });
+        } else if (serviceId && serviceId.length > 0) {
+            requestId = serviceId;
+            dmpPromise = DmpSubmissionModel.findOne({ "formValues.serviceId": serviceId });
+        } else {
+            return apiResponse.validationErrorWithData(res, 'Validation error: trackingId or serviceId must be present.');
+        }
+        
         res.user = 'dmp';
         Promise.all([dmpPromise])
             .then((results) => {
                 let submission = results[0];
                 if (_.isEmpty(submission)) {
-                    return apiResponse.errorResponse(res, 'No submission found for this tracking ID.');
+                    return apiResponse.errorResponse(res, 'No submission found for this ID.');
                 }
                 let result = {};
-                result[trackingId] = {
+                result[requestId] = {
                     samples: [],
                 };
+                
                 submission.gridValues.forEach((sample) => {
                     // only include samples approved by Cmo PM's
                     if (sample.isApproved) {
-                        result[trackingId].samples.push({
+                        result[requestId].samples.push({
+                            ilabServiceId: serviceId ? serviceId : '',
                             dmpId: sample.dmpSampleId ? sample.dmpSampleId : '',
                             accessionNumber: sample.molecularPathologyAccessionNumber ? sample.molecularPathologyAccessionNumber : '',
                             requestType: sample.requestType,
                             studySubjectIdentifier: sample.studySubjectIdentifier ? sample.studySampleIdentifier : '',
-                            trackingId: sample.dmpTrackingId,
+                            trackingId: sample.dmpTrackingId ? sample.dmpTrackingId : '',
                             projectName: sample.projectTitle ? sample.projectTitle : '',
                             pIName: sample.projectPi ? sample.projectPi : '',
                             studySampleIdentifier: sample.studySampleIdentifier ? sample.studySampleIdentifier : '',
@@ -535,8 +553,8 @@ exports.igoSampleInformation = [
                     }
                 });
 
-                if (!result[trackingId].samples.length) {
-                    return apiResponse.errorResponse(res, `No approved samples available for tracking ID ${trackingId}`);
+                if (!result[requestId].samples.length) {
+                    return apiResponse.errorResponse(res, `No approved samples available for ID ${requestId}`);
                 }
 
                 console.log(result);
