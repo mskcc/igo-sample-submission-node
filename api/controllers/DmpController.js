@@ -498,7 +498,7 @@ exports.igoSampleInformation = [
         let sampleTrackingId = '';
         if (trackingId.includes('IGO-')) {
             sampleTrackingId = trackingId;
-            dmpPromise = DmpSubmissionModel.findOne({ "formValues.serviceId": serviceId });
+            dmpPromise = DmpSubmissionModel.findOne({ "formValues.serviceId": trackingId });
         } else {
             dmpPromise = DmpSubmissionModel.findOne({ dmpTrackingId: trackingId });
         }
