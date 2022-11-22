@@ -518,12 +518,11 @@ exports.igoSampleInformation = [
                     // only include samples approved by Cmo PM's
                     if (sample.isApproved) {
                         result[requestId].samples.push({
-                            ilabServiceId: serviceId ? serviceId : '',
                             dmpId: sample.dmpSampleId ? sample.dmpSampleId : '',
                             accessionNumber: sample.molecularPathologyAccessionNumber ? sample.molecularPathologyAccessionNumber : '',
                             requestType: sample.requestType,
                             studySubjectIdentifier: sample.studySubjectIdentifier ? sample.studySampleIdentifier : '',
-                            trackingId: sample.dmpTrackingId ? sample.dmpTrackingId : '',
+                            trackingId: serviceId ? serviceId : sample.dmpTrackingId,
                             projectName: sample.projectTitle ? sample.projectTitle : '',
                             pIName: sample.projectPi ? sample.projectPi : '',
                             studySampleIdentifier: sample.studySampleIdentifier ? sample.studySampleIdentifier : '',
