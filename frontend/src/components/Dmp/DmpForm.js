@@ -168,11 +168,13 @@ class DmpForm extends React.Component {
                                 here
                             </a>. 
                             <br></br>
+                            <br></br>
                             Once you complete this request, you will need to complete and submit the required{' '}
                             <a href='https://redcap.mskcc.org/surveys/?s=3MDAEWTYXK' target='_blank'>
                                 MSKCC Tumor Genomic Profiling Project Proposal Form
                             </a>
                             {' '} using the iLabs Service ID from this request.
+                            <br></br>
                             <br></br>
                             Please see the following{' '}
                             <a href='https://cmo.mskcc.org/index.php/requesting-leftover-genetic-material/#Frequently_Asked_Questions' target='_blank'>
