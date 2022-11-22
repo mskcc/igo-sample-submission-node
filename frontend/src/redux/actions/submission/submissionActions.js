@@ -216,12 +216,7 @@ export function submitDmpSubmission(reviewed = false) {
           type: DMP_SUBMIT_SUCCESS,
           message: 'Saved!',
         });
-        return swal.genericMessage(
-          'success',
-          `Please make a note of your transaction ID ${data.transactionId} and use it to fill out the required  <a href='https://redcap.mskcc.org/surveys/?s=3MDAEWTYXK'>
-              MSKCC Tumor Genomic Profiling Project Proposal Form.
-            </a> You can also retrieve this ID under Submissions &#8594; DMP Submissions.`
-        );
+        return swal.genericMessage('success');
       })
       .catch((error) => {
         dispatch({
