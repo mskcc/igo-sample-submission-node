@@ -163,12 +163,32 @@ class DmpForm extends React.Component {
                 {({ translate }) => (
                     <Paper className={classes.container} elevation={1}>
                         <Typography className={classes.message} align='justify'>
-                            Please complete and submit the required{' '}
+                            Before beginning this request, please review the workflow for requesting leftover genomic material from the Diagnostic Molecular Pathology Lab, and the accompanying documentation required to support the request{' '}
+                            <a href='http://cmo.mskcc.org/wp-content/uploads/2022/11/DMPSS_-Investigator-DMP-Request_V2-Process.docx' target='_blank'>
+                                here
+                            </a>. 
+                            <br></br>
+                            <br></br>
+                            Once you complete this request, you will need to complete and submit the required{' '}
                             <a href='https://redcap.mskcc.org/surveys/?s=3MDAEWTYXK' target='_blank'>
                                 MSKCC Tumor Genomic Profiling Project Proposal Form
                             </a>
-                            . You will need the 10 digit transaction ID generated from this DMP Sample Submission to complete the form.<br/>
-                            You will need to use MRNs for Patient IDs.
+                            {' '} using the iLabs Service ID from this request.
+                            <br></br>
+                            <br></br>
+                            Please see the following{' '}
+                            <a href='https://cmo.mskcc.org/index.php/requesting-leftover-genetic-material/#Frequently_Asked_Questions' target='_blank'>
+                                FAQ
+                            </a>
+                            {' '}for support on the{' '}
+                            <a href='https://cmo.mskcc.org/index.php/requesting-leftover-genetic-material/#Leftover_Genomic_Materialnbspfromnbspthe_DMP' target='_blank'>
+                                CMO website
+                            </a>.
+                            {' '}Please reach out to{' '}
+                            <a href='mailto:skicmopm@mskcc.org' target='_blank'>
+                                skicmopm@mskcc.org
+                            </a>.
+                            {' '}with any questions or concerns.
                         </Typography>
                         <form id='dmp-upload-form' className={classes.form} onSubmit={(e) => this.handleSubmit(e, handleSubmit)}>
                             <Dropdown
