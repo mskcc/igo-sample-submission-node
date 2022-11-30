@@ -127,7 +127,7 @@ export default function dmpFormReducer(state = initialDmpFormState, action) {
                 ...state,
                 selected: {
                     ...form,
-                    serviceId: form.serviceId.replace('IGO-', '')
+                    serviceId: form.serviceId ? form.serviceId.replace('IGO-', '') : ''
                 },
             };
 
