@@ -188,7 +188,7 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                     columnFeatures: data.columnFeatures,
                     hiddenColumns: data.hiddenColumns,
                     rows: data.rowData,
-                    form: updatedFormValues,
+                    form: formValues,
                     message: 'Grid generated for ' + material + ' for ' + application + '. Green columns are optional.',
                 });
             })
