@@ -174,6 +174,7 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
         }
         let material = updatedFormValues.material;
         let application = updatedFormValues.application;
+        let serviceId = updatedFormValues.serviceId;
         return axios
             .post(`${Config.NODE_API_ROOT}/${page}/grid`, {
                 ...updatedFormValues,
@@ -187,7 +188,7 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                     columnFeatures: data.columnFeatures,
                     hiddenColumns: data.hiddenColumns,
                     rows: data.rowData,
-                    form: formValues,
+                    form: updatedFormValues,
                     message: 'Grid generated for ' + material + ' for ' + application + '. Green columns are optional.',
                 });
             })
@@ -197,6 +198,7 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                     error: error,
                     application: application,
                     material: material,
+                    serviceId: serviceId,
                 });
                 return error;
             });
