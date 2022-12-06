@@ -94,7 +94,7 @@ class DmpForm extends React.Component {
         for (let value in values) {
             switch (value) {
                 case 'serviceId':
-                    formValid[value] = /\d{6}/g.test(values[value]) && values[value].length === 6;
+                    formValid[value] = (/\d{6}/g.test(values[value]) || /\d{6}_\d{1}/g.test(values[value])) && (values[value].length === 6 || values[value].length === 8);
                     break;
                 case 'material':
                     isValidOption = form.materials.some(function(el) {
@@ -239,6 +239,7 @@ class DmpForm extends React.Component {
                                     id='serviceId'
                                     value={form.selected.serviceId}
                                     error={!formValid.serviceId}
+                                    type='text'
                                     onChange={this.handleChange}
                                     inputProps={{
                                         startAdornment: <InputAdornment position='start'>IGO-</InputAdornment>,
