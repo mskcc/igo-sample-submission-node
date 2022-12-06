@@ -209,6 +209,7 @@ exports.create = [
             const serviceId = formValues.serviceId;
             if (serviceId) {
                 const idCount = DmpSubmissionModel.find({"formValues.serviceId": serviceId}).count();
+                console.log(idCount);
                 if (idCount > 0) {
                     return apiResponse.errorResponse(res, `Submission could not be created. A request with the iLabs Service ID ${serviceId} already exists.`);
                 }
