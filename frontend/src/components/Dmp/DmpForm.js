@@ -81,7 +81,7 @@ class DmpForm extends React.Component {
             handleParentSubmit('dmp', {
                 ...this.state.values,
 
-                serviceId: 'IGO-' + this.state.values.serviceId.toString(),
+                serviceId: 'IGO-' + this.state.values.serviceId,
             });
         }
     };
