@@ -81,7 +81,7 @@ class DmpForm extends React.Component {
             handleParentSubmit('dmp', {
                 ...this.state.values,
 
-                serviceId: 'IGO-' + this.state.values.serviceId,
+                serviceId: 'IGO-' + this.state.values.serviceId.toString(),
             });
         }
     };
@@ -239,6 +239,7 @@ class DmpForm extends React.Component {
                                     id='serviceId'
                                     value={form.selected.serviceId}
                                     error={!formValid.serviceId}
+                                    type='text'
                                     onChange={this.handleChange}
                                     inputProps={{
                                         startAdornment: <InputAdornment position='start'>IGO-</InputAdornment>,
