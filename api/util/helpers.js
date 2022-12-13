@@ -469,7 +469,7 @@ export function fillSubmissionGrid(submissions, userRole, gridColumns, submissio
                 rows[i] = {
                     serviceId: serviceId,
                     transactionId: submission.transactionId,
-                    dmpTrackingId: submission.dmpTrackingId,
+                    dmpTrackingId: serviceId,
                     username: submission.username,
                     sampleType: cleanedFormValueMaterial,
                     application: submission.formValues.application,
@@ -566,7 +566,7 @@ export function addDmpColsToSubmissionGrid(submissions, grid, userRole) {
         for (let i = 0; i < submissions.length; i++) {
             let submission = submissions[i];
 
-            let dmpTrackingId = _.isEmpty(submission.dmpTrackingId) ? '' : submission.dmpTrackingId;
+            let dmpTrackingId = _.isEmpty(submission.formValues.serviceId) ? '' : submission.formValues.serviceId;
             let isSubmitted = submission.submitted;
 
             const samplesApproved = submission.gridValues.filter((element) => {
