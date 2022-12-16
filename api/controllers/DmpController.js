@@ -88,6 +88,19 @@ exports.grid = [
             let material = formValues.material;
             let application = formValues.application;
 
+            const serviceId = formValues.serviceId;
+            let idCount = 0;
+            if (serviceId) {
+                const query = DmpSubmissionModel.find({"formValues.serviceId": serviceId});
+                query.count(function(err, count) {
+                    idCount = count;
+                });
+                console.log(idCount);
+                if (idCount > 0) {
+                    return apiResponse.errorResponse(res, `Submission could not be created. A request with the iLabs Service ID ${serviceId} already exists.`);
+                }
+            }
+
             let columnsPromise = cache.get(`${material}-${application}-Columns`, () => util.getDmpColumns(material, application));
             columnsPromise
                 .then((results) => {

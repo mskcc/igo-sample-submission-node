@@ -206,18 +206,6 @@ exports.create = [
                 gridValues: gridValues,
                 dmpTrackingId: gridValues[0].dmpTrackingId || '',
             });
-            const serviceId = formValues.serviceId;
-            let idCount = 0;
-            if (serviceId) {
-                const query = DmpSubmissionModel.find({"formValues.serviceId": serviceId});
-                query.count(function(err, count) {
-                    idCount = count;
-                });
-                console.log(idCount);
-                if (idCount > 0) {
-                    return apiResponse.errorResponse(res, `Submission could not be created. A request with the iLabs Service ID ${serviceId} already exists.`);
-                }
-            }
         } else {
             submission = new SubmissionModel({
                 username: res.user.username,

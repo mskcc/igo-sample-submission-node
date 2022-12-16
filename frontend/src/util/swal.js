@@ -1,7 +1,5 @@
 import Swal from 'sweetalert2';
 
-
-
 export const genericMessage = (type, msg) => {
     Swal.fire({
         title: type.charAt(0).toUpperCase() + type.slice(1),
@@ -19,6 +17,25 @@ export const genericMessageWithTitle = (type, title, msg) => {
         type: type,
         animation: false,
         confirmButtonText: 'Dismiss',
+    });
+};
+
+export const serviceIdDecision = (title, message) => {
+    return new Promise((resolve) => {
+        Swal.fire({
+            title: title,
+            html: message,
+            type: 'warning',
+            showCancelButton: true,
+            showDenyButton: true,
+            animation: false,
+            confirmButtonColor: '#006098',
+            denyButtonColor: '#007cba',
+            cancelButtonColor: '#f29934',
+            confirmButtonText: 'Add Request Cohort',
+            cancelButtonText: 'Cancel',
+            denyButtonText: 'Edit Previous Request',
+        }).then((result) => (resolve(result)));
     });
 };
 

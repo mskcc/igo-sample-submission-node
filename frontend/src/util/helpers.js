@@ -227,6 +227,17 @@ export const generateSubmitData = (state, isPartial = false) => {
   return data;
 };
 
+export const getCohortServiceId = (serviceId) => {
+  // already a cohort, increment id
+  if (serviceId.includes('_')) {
+    const originalId = serviceId.split('_')[0];
+    let cohortNum = parseInt(serviceId.split('_')[1]);
+    const newCohort = cohortNum++;
+    return `${originalId}_${newCohort}`;
+  }
+  return `${serviceId}_1`;
+};
+
 export const rowsWithRowIndex = function(rows) {
   for (let i = 0; i < rows.length; i++) {
     rows[i].rowIndex = i + 1;
