@@ -44,7 +44,7 @@
     "jwt-in-cookie": "^1.0.16",
     "ldapauth-fork": "^4.3.3",
     "lodash": "^4.17.21",
-    "mocha": "^7.2.0",
+    "mocha": "^10.2.0",
     "moment": "^2.29.0",
     "mongoose": "^5.10.6",
     "morgan": "^1.10.0",
