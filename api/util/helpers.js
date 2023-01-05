@@ -1199,7 +1199,7 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
             igoSample = {
                 ...igoSample,
                 index: igoIndex,
-                indexSequence: indexMatch || '',
+                indexSequence: indexMatch || dmpSequence,
             };
         }
         // ADD ORIGINAL SAMPLE VALUES

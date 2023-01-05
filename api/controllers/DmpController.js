@@ -266,7 +266,10 @@ exports.submit = [
                 submissionToSubmit.reviewedBy = reviewed ? res.user.username : undefined;
                 submissionToSubmit.approvals = samplesApproved.length;
 
-                mailer.sendDMPSubNotification(submissionToSubmit);
+                // only send the submission email when user submits, not when CMO PM submits
+                if (!reviewed) {
+                    mailer.sendDMPSubNotification(submissionToSubmit);
+                }
 
                 //  save pre LIMS submit so data is safe
                 submissionToSubmit.save(function (err) {
