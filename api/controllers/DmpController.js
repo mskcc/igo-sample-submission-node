@@ -88,28 +88,40 @@ exports.grid = [
             let application = formValues.application;
 
             const serviceId = formValues.serviceId;
+            // if (serviceId) {
+            //     DmpSubmissionModel.countDocuments({"formValues.serviceId": serviceId}, function(err, count) {
+            //         if (count > 0) {
+            //             return apiResponse.errorResponse(res, `Submission could not be created. A request with the iLabs Service ID ${serviceId} already exists.`);
+            //         }
+            //     });
+            // }
+
             // check for duplicate service IDs
-            if (serviceId) {
-                DmpSubmissionModel.countDocuments({"formValues.serviceId": serviceId}, function(err, count) {
-                    if (count > 0) {
+            let serviceIdCheckPromise = DmpSubmissionModel.countDocuments({"formValues.serviceId": serviceId}).exec();
+            serviceIdCheckPromise
+                .then((result) => {
+                    console.log(`COUNT RESULT ${result}`);
+                    if (result && result > 0) {
                         return apiResponse.errorResponse(res, `Submission could not be created. A request with the iLabs Service ID ${serviceId} already exists.`);
                     }
-                });
-            }
 
-            let columnsPromise = cache.get(`${material}-${application}-Columns`, () => util.getDmpColumns(material, application));
-            columnsPromise
-                .then((results) => {
-                    if (!results || results.some((x) => x.length === 0)) {
-                        return apiResponse.errorResponse(res, `Could not retrieve grid for '${material}' and '${application}'.`);
-                    }
-                    let columnsResult = results;
-                    // let gridPromise = util.generateGrid(columnsResult, 'lab_member', formValues, 'dmp');
-                    let gridPromise = util.generateGrid(columnsResult, res.user.role, formValues, 'dmp');
-                    gridPromise
+                    let columnsPromise = cache.get(`${material}-${application}-Columns`, () => util.getDmpColumns(material, application));
+                    columnsPromise
                         .then((results) => {
-                            let gridResult = results;
-                            return apiResponse.successResponseWithData(res, 'Operation success', gridResult);
+                            if (!results || results.some((x) => x.length === 0)) {
+                                return apiResponse.errorResponse(res, `Could not retrieve grid for '${material}' and '${application}'.`);
+                            }
+                            let columnsResult = results;
+                            // let gridPromise = util.generateGrid(columnsResult, 'lab_member', formValues, 'dmp');
+                            let gridPromise = util.generateGrid(columnsResult, res.user.role, formValues, 'dmp');
+                            gridPromise
+                                .then((results) => {
+                                    let gridResult = results;
+                                    return apiResponse.successResponseWithData(res, 'Operation success', gridResult);
+                                })
+                                .catch((reasons) => {
+                                    return apiResponse.errorResponse(res, reasons);
+                                });
                         })
                         .catch((reasons) => {
                             return apiResponse.errorResponse(res, reasons);
