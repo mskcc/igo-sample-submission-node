@@ -88,20 +88,12 @@ exports.grid = [
             let application = formValues.application;
 
             const serviceId = formValues.serviceId;
-            // if (serviceId) {
-            //     DmpSubmissionModel.countDocuments({"formValues.serviceId": serviceId}, function(err, count) {
-            //         if (count > 0) {
-            //             return apiResponse.errorResponse(res, `Submission could not be created. A request with the iLabs Service ID ${serviceId} already exists.`);
-            //         }
-            //     });
-            // }
 
             // check for duplicate service IDs
             let serviceIdCheckPromise = DmpSubmissionModel.countDocuments({"formValues.serviceId": serviceId}).exec();
             serviceIdCheckPromise
-                .then((result) => {
-                    console.log(`COUNT RESULT ${result}`);
-                    if (result && result > 0) {
+                .then((count) => {
+                    if (count && count > 0) {
                         return apiResponse.errorResponse(res, `Submission could not be created. A request with the iLabs Service ID ${serviceId} already exists.`);
                     }
 

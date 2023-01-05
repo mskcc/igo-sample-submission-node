@@ -207,6 +207,8 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                     serviceId: serviceId,
                 });
                 // NOTE this should only be hit on DMP submissions
+                console.log(error);
+                console.log(error.message);
                 if (error.message && error.message.includes('already exists')) {
                     return swal
                                 .serviceIdDecision(
