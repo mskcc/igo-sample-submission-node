@@ -206,10 +206,8 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                     material: material,
                     serviceId: serviceId,
                 });
-                // NOTE this should only be hit on DMP submissions
-                console.log(error.payload);
-                console.log(error.payload.message);
-                if (error.message && error.message.includes('already exists')) {
+                // NOTE this should only be hit on DMP submissions!
+                if (error.payload && error.payload.message && error.payload.message.includes('already exists')) {
                     return swal
                                 .serviceIdDecision(
                                     'iLabs Service ID Already Used',
