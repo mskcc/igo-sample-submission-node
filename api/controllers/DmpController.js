@@ -79,7 +79,6 @@ exports.grid = [
     body('material').isLength({ min: 1 }).trim().withMessage('Material must be present.'),
     body('numberOfSamples').isLength({ min: 1 }).trim().withMessage('NumberOfSamples must be present.'),
     function (req, res) {
-        // try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
@@ -91,11 +90,12 @@ exports.grid = [
             const serviceId = formValues.serviceId;
             let idCount = 0;
             if (serviceId) {
-                const query = DmpSubmissionModel.find({"formValues.serviceId": serviceId});
-                query.count(function(err, count) {
+                DmpSubmissionModel.countDocuments({"formValues.serviceId": serviceId}, function(err, count) {
                     idCount = count;
+                    console.log(`count: ${count}`);
                 });
-                console.log(idCount);
+                console.log(serviceId);
+                console.log(`idCount ${idCount}`);
                 if (idCount > 0) {
                     return apiResponse.errorResponse(res, `Submission could not be created. A request with the iLabs Service ID ${serviceId} already exists.`);
                 }
