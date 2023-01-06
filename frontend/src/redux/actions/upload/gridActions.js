@@ -219,15 +219,20 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                                     if (decision.isConfirmed) {
                                         // Need to adjust serviceId for cohorts before creating submission
                                         const newServiceId = getCohortServiceId(serviceId);
+                                        // const newServiceIdNum = newServiceId.split('-')[1];
                                         const newFormValues = {
                                             ...updatedFormValues,
                                             serviceId: newServiceId
                                         };
-                                        dmpSelect('service_id', newServiceId);
-                                        getColumns(page, newFormValues);
+                                        return handleDMPCohort(newFormValues);
+                                        // return dispatch => {
+                                        //     dispatch(dmpSelect('serviceId', newServiceIdNum));
+                                        //     dispatch(getColumns(page, newFormValues));
+                                        // };
+                                        // return dispatch(getColumns(page, newFormValues));
                                     // isDenied === edit past submission
                                     } else if (decision.isDenied) {
-                                        return this.props.history.push('/submissions/dmp');
+                                        return window.location = `/${Config.HOME_PAGE_PATH}/submissions/dmp`;
                                     }
                                 });
                 } else {
@@ -463,4 +468,13 @@ export function handlePatientIds(grid, ids, emptyIds, username) {
                 });
             });
     });
+}
+
+export function handleDMPCohort(formValues) {
+    return (dispatch, getState) => {
+        const newServiceId = formValues.serviceId;
+        const newServiceIdNum = newServiceId.split('-')[1];
+        dispatch(dmpSelect('serviceId', newServiceIdNum));
+        dispatch(getColumns('dmp', formValues));
+    };
 }

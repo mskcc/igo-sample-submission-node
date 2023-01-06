@@ -232,7 +232,7 @@ export const getCohortServiceId = (serviceId) => {
   if (serviceId.includes('_')) {
     const originalId = serviceId.split('_')[0];
     let cohortNum = parseInt(serviceId.split('_')[1]);
-    const newCohort = cohortNum++;
+    const newCohort = cohortNum + 1;
     return `${originalId}_${newCohort}`;
   }
   return `${serviceId}_1`;
