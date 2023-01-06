@@ -219,12 +219,13 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                                     if (decision.isConfirmed) {
                                         // Need to adjust serviceId for cohorts before creating submission
                                         const newServiceId = getCohortServiceId(serviceId);
-                                        // const newServiceIdNum = newServiceId.split('-')[1];
-                                        const newFormValues = {
-                                            ...updatedFormValues,
-                                            serviceId: newServiceId
-                                        };
-                                        return handleDMPCohort(newFormValues);
+                                        const newServiceIdNum = newServiceId.split('-')[1];
+                                        // const newFormValues = {
+                                        //     ...updatedFormValues,
+                                        //     serviceId: newServiceId
+                                        // };
+                                        return dispatch(dmpSelect('serviceId', newServiceIdNum));
+                                        // return handleDMPCohort(newFormValues);
                                         // return dispatch => {
                                         //     dispatch(dmpSelect('serviceId', newServiceIdNum));
                                         //     dispatch(getColumns(page, newFormValues));
@@ -232,7 +233,7 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                                         // return dispatch(getColumns(page, newFormValues));
                                     // isDenied === edit past submission
                                     } else if (decision.isDenied) {
-                                        return window.location = `/${Config.HOME_PAGE_PATH}/submissions/dmp`;
+                                        return window.location = `${window.location.origin}/${Config.HOME_PAGE_PATH}/submissions/dmp`;
                                     }
                                 });
                 } else {
