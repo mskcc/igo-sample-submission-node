@@ -44,7 +44,7 @@ export function dmpSelect(id, value, showMessage) {
                 return dispatch({
                     type: DMP_SELECT,
                     payload: { id: id, value: value },
-                    message: 'Service Id updated.',
+                    message: 'Service Id updated. Please generate table again.',
                 });
             }
             return dispatch({
