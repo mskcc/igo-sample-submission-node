@@ -39,7 +39,7 @@ export const DMP_SELECT = 'DMP_SELECT';
 
 export function dmpSelect(id, value) {
     return (dispatch) => {
-        if (id === 'service_id') {
+        if (id === 'serviceId') {
             return dispatch({
                 type: DMP_SELECT,
                 payload: { id: id, value: value },

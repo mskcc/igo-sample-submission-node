@@ -36,8 +36,8 @@ export const serviceIdDecision = (title, message) => {
             cancelButtonText: 'Cancel',
             denyButtonText: 'Edit Past Request',
             customClass: {
-                actions: 'my-actions',
-                cancelButton: 'order-1 right-gap',
+                actions: 'my-actionsImportant',
+                cancelButton: 'order-1 right-gapImportant',
                 confirmButton: 'order-2',
                 denyButton: 'order-3',
             }

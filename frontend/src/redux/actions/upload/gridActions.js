@@ -233,7 +233,7 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                                         // return dispatch(getColumns(page, newFormValues));
                                     // isDenied === edit past submission
                                     } else if (decision.isDenied) {
-                                        return window.location = `${window.location.origin}/${Config.HOME_PAGE_PATH}/submissions/dmp`;
+                                        return window.location = `${window.location.href}/${Config.HOME_PAGE_PATH}/submissions/dmp/`;
                                     }
                                 });
                 } else {
