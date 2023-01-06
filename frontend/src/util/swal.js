@@ -1,12 +1,10 @@
 import Swal from 'sweetalert2';
 
-
-
 export const genericMessage = (type, msg) => {
     Swal.fire({
         title: type.charAt(0).toUpperCase() + type.slice(1),
         html: msg,
-        type: type,
+        icon: type,
         animation: false,
         confirmButtonText: 'Dismiss',
     });
@@ -16,9 +14,34 @@ export const genericMessageWithTitle = (type, title, msg) => {
     Swal.fire({
         title: title,
         html: msg,
-        type: type,
+        icon: type,
         animation: false,
         confirmButtonText: 'Dismiss',
+    });
+};
+
+export const serviceIdDecision = (title, message) => {
+    return new Promise((resolve) => {
+        Swal.fire({
+            title: title,
+            html: message,
+            icon: 'warning',
+            showCancelButton: true,
+            showDenyButton: true,
+            animation: false,
+            confirmButtonColor: '#006098',
+            denyButtonColor: '#007cba',
+            cancelButtonColor: '#f29934',
+            confirmButtonText: 'Add Request Cohort',
+            cancelButtonText: 'Cancel',
+            denyButtonText: 'Edit Past Request',
+            customClass: {
+                actions: 'my-actions',
+                cancelButton: 'order-1 right-gap',
+                confirmButton: 'order-2',
+                denyButton: 'order-3',
+            }
+        }).then((result) => (resolve(result)));
     });
 };
 
@@ -27,7 +50,7 @@ export const genericDecision = (title, message) => {
         Swal.fire({
             title: title,
             html: message,
-            type: 'warning',
+            icon: 'warning',
             showCancelButton: true,
             animation: false,
             confirmButtonColor: '#df4602',
@@ -44,7 +67,7 @@ export const formGridMismatch = (match) => {
         html:
             'Please make sure your current header values match the ones used to generate the table. <br>(Header value x Table value) <br>' +
             match.message,
-        type: 'error',
+        icon: 'error',
         animation: false,
         confirmButtonText: 'Dismiss',
     });
@@ -56,7 +79,7 @@ export const confirmGridOverwrite = (msg) => {
         Swal.fire({
             title: 'Are you sure?',
             text: msg,
-            type: 'warning',
+            icon: 'warning',
             showCancelButton: true,
             animation: false,
             confirmButtonColor: '#df4602',
@@ -74,7 +97,7 @@ export const confirmDelete = () => {
     return new Promise((resolve) => {
         Swal.fire({
             title: 'Are you sure?',
-            type: 'warning',
+            icon: 'warning',
             showCancelButton: true,
             animation: false,
             confirmButtonColor: '#df4602',
@@ -91,7 +114,7 @@ export const confirmClear = () => {
     return new Promise((resolve) => {
         Swal.fire({
             title: 'Are you sure?',
-            type: 'warning',
+            icon: 'warning',
             showCancelButton: true,
             animation: false,
             confirmButtonColor: '#df4602',
@@ -109,7 +132,7 @@ export const confirmGridClear = () => {
         Swal.fire({
             title: 'Are you sure?',
             text: 'You will not be able to revert this unless you have a saved partial submission.',
-            type: 'warning',
+            icon: 'warning',
             showCancelButton: true,
             animation: false,
             confirmButtonColor: '#df4602',
@@ -128,7 +151,7 @@ export const confirmUpdate = () => {
         Swal.fire({
             title: 'Update?',
             html: 'You are editing an existing partial submission. Are you sure you want to update it?',
-            type: 'info',
+            icon: 'info',
             showCancelButton: true,
             animation: false,
             confirmButtonColor: '#df4602',
@@ -154,7 +177,7 @@ export const apiRequestValidationError = (msg, data) => {
     Swal.fire({
         title: msg,
         html: errors,
-        type: 'error',
+        icon: 'error',
         animation: false,
         confirmButtonText: 'Dismiss',
     });
@@ -163,7 +186,7 @@ export const emptyFieldsError = (emptyColumns) => {
     Swal.fire({
         title: 'Required Fields',
         html: [...emptyColumns].join('<br> '),
-        type: 'error',
+        icon: 'error',
         animation: false,
         confirmButtonText: 'Dismiss',
     });
@@ -173,7 +196,7 @@ export const submitSuccess = () => {
     Swal.fire({
         title: 'Submitted!',
         text: 'Download your Receipt under Submissions.',
-        type: 'success',
+        icon: 'success',
         animation: false,
         confirmButtonColor: '#007cba',
         confirmButtonText: 'Dismiss',
@@ -185,7 +208,7 @@ export const alertEmptyLoad = (queryType) => {
     Swal.fire({
         title: 'Required',
         text: `Please fill enter a value for ${queryType}.`,
-        type: 'error',
+        icon: 'error',
         animation: false,
         confirmButtonText: 'Dismiss',
     });
@@ -198,7 +221,7 @@ export const genericPromise = (title, message) => {
         Swal.fire({
             title: title,
             html: message,
-            type: 'info',
+            icon: 'info',
             showCancelButton: false,
             animation: false,
             confirmButtonColor: '#df4602',
@@ -213,7 +236,7 @@ export const dryRunSuccess = (message) => {
         Swal.fire({
             // title: 'Do you want to proceed?',
             html: `${message} <br> Do you want to proceed?`,
-            type: 'success',
+            icon: 'success',
             showCancelButton: true,
             animation: false,
             confirmButtonColor: '#007cba',

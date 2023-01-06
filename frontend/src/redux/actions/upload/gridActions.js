@@ -2,8 +2,10 @@
 
 import axios from 'axios';
 import { util, swal, services, excel } from '../../../util';
+import { getCohortServiceId } from '../../../util/helpers';
 
 import { Config } from '../../../config.js';
+import { dmpSelect } from '../dmp/dmpFormActions';
 
 export const REGISTER_GRID_CHANGE = 'REGISTER_GRID_CHANGE';
 export const REGISTER_GRID_CHANGE_PRE_VALIDATE = 'REGISTER_GRID_CHANGE_PRE_VALIDATE';
@@ -147,9 +149,13 @@ export function getColumns(page, formValues) {
                         }
                     });
                 } else {
+                    let message = 'Changing Material, Application, Species, Patient ID Type or Container causes the grid to be cleared and re-generated.';
+                    if (grid.gridType === 'dmp') {
+                        message = 'Changing Material, Application or iLabs Service ID causes the grid to be cleared and re-generated.';
+                    }
                     swal.genericDecision(
                         'Are you sure?',
-                        'Changing Material, Application, Species, Patient ID Type or Container causes the grid to be cleared and re-generated.'
+                        message
                     ).then((decision) => {
                         if (decision) {
                             return dispatch(getInitialColumns(page, formValues));
@@ -200,7 +206,38 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                     material: material,
                     serviceId: serviceId,
                 });
-                return error;
+                // NOTE this should only be hit on DMP submissions!
+                if (error.payload && error.payload.message && error.payload.message.includes('already exists')) {
+                    return swal
+                                .serviceIdDecision(
+                                    'iLabs Service ID Already Used',
+                                    `The Service ID ${serviceId} has already been used. Please choose if you'd like to edit a past request, or create an additional request cohort. Cancel if you'd like to enter a different serviceId.`
+                                )
+                                .then((decision) => {
+                                    // swal is a bit weird with 3 buttons
+                                    // isConfirmed === request cohort
+                                    if (decision.isConfirmed) {
+                                        // Need to adjust serviceId for cohorts before creating submission
+                                        const newServiceId = getCohortServiceId(serviceId);
+                                        // const newServiceIdNum = newServiceId.split('-')[1];
+                                        const newFormValues = {
+                                            ...updatedFormValues,
+                                            serviceId: newServiceId
+                                        };
+                                        return handleDMPCohort(newFormValues);
+                                        // return dispatch => {
+                                        //     dispatch(dmpSelect('serviceId', newServiceIdNum));
+                                        //     dispatch(getColumns(page, newFormValues));
+                                        // };
+                                        // return dispatch(getColumns(page, newFormValues));
+                                    // isDenied === edit past submission
+                                    } else if (decision.isDenied) {
+                                        return window.location = `/${Config.HOME_PAGE_PATH}/submissions/dmp`;
+                                    }
+                                });
+                } else {
+                    return error;
+                }
             });
     };
 }
@@ -431,4 +468,13 @@ export function handlePatientIds(grid, ids, emptyIds, username) {
                 });
             });
     });
+}
+
+export function handleDMPCohort(formValues) {
+    return (dispatch, getState) => {
+        const newServiceId = formValues.serviceId;
+        const newServiceIdNum = newServiceId.split('-')[1];
+        dispatch(dmpSelect('serviceId', newServiceIdNum));
+        dispatch(getColumns('dmp', formValues));
+    };
 }

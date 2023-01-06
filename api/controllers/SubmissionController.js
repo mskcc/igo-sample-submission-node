@@ -257,8 +257,6 @@ exports.update = [
             updatedSubmission.dmpTrackingId = gridValues[0].dmpTrackingId || '';
         }
         console.log(id);
-        console.log(id);
-        console.log(id);
 
         model
             .findByIdAndUpdate(ObjectId(id), updatedSubmission, { new: true })

@@ -79,7 +79,6 @@ exports.grid = [
     body('material').isLength({ min: 1 }).trim().withMessage('Material must be present.'),
     body('numberOfSamples').isLength({ min: 1 }).trim().withMessage('NumberOfSamples must be present.'),
     function (req, res) {
-        // try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, 'Validation error.', errors.array());
@@ -88,19 +87,33 @@ exports.grid = [
             let material = formValues.material;
             let application = formValues.application;
 
-            let columnsPromise = cache.get(`${material}-${application}-Columns`, () => util.getDmpColumns(material, application));
-            columnsPromise
-                .then((results) => {
-                    if (!results || results.some((x) => x.length === 0)) {
-                        return apiResponse.errorResponse(res, `Could not retrieve grid for '${material}' and '${application}'.`);
+            const serviceId = formValues.serviceId;
+
+            // check for duplicate service IDs
+            let serviceIdCheckPromise = DmpSubmissionModel.countDocuments({"formValues.serviceId": serviceId}).exec();
+            serviceIdCheckPromise
+                .then((count) => {
+                    if (count && count > 0) {
+                        return apiResponse.errorResponse(res, `Submission could not be created. A request with the iLabs Service ID ${serviceId} already exists.`);
                     }
-                    let columnsResult = results;
-                    // let gridPromise = util.generateGrid(columnsResult, 'lab_member', formValues, 'dmp');
-                    let gridPromise = util.generateGrid(columnsResult, res.user.role, formValues, 'dmp');
-                    gridPromise
+
+                    let columnsPromise = cache.get(`${material}-${application}-Columns`, () => util.getDmpColumns(material, application));
+                    columnsPromise
                         .then((results) => {
-                            let gridResult = results;
-                            return apiResponse.successResponseWithData(res, 'Operation success', gridResult);
+                            if (!results || results.some((x) => x.length === 0)) {
+                                return apiResponse.errorResponse(res, `Could not retrieve grid for '${material}' and '${application}'.`);
+                            }
+                            let columnsResult = results;
+                            // let gridPromise = util.generateGrid(columnsResult, 'lab_member', formValues, 'dmp');
+                            let gridPromise = util.generateGrid(columnsResult, res.user.role, formValues, 'dmp');
+                            gridPromise
+                                .then((results) => {
+                                    let gridResult = results;
+                                    return apiResponse.successResponseWithData(res, 'Operation success', gridResult);
+                                })
+                                .catch((reasons) => {
+                                    return apiResponse.errorResponse(res, reasons);
+                                });
                         })
                         .catch((reasons) => {
                             return apiResponse.errorResponse(res, reasons);
@@ -253,7 +266,10 @@ exports.submit = [
                 submissionToSubmit.reviewedBy = reviewed ? res.user.username : undefined;
                 submissionToSubmit.approvals = samplesApproved.length;
 
-                mailer.sendDMPSubNotification(submissionToSubmit);
+                // only send the submission email when user submits, not when CMO PM submits
+                if (!reviewed) {
+                    mailer.sendDMPSubNotification(submissionToSubmit);
+                }
 
                 //  save pre LIMS submit so data is safe
                 submissionToSubmit.save(function (err) {

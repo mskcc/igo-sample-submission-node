@@ -74,7 +74,7 @@
         "sass-loader": "7.1.0",
         "style-loader": "0.23.0",
         "sweetalert": "^2.1.2",
-        "sweetalert2": "^8.19.0",
+        "sweetalert2": "^10.3.3",
         "sweetalert2-react-content": "^1.1.0",
         "terser-webpack-plugin": "^2.3.8",
         "url-loader": "1.1.1",
