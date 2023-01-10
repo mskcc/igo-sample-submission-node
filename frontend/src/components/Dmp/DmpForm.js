@@ -164,7 +164,7 @@ class DmpForm extends React.Component {
                     <Paper className={classes.container} elevation={1}>
                         <Typography className={classes.message} align='justify'>
                             Before beginning this request, please review the workflow for requesting leftover genomic material from the Diagnostic Molecular Pathology Lab, and the accompanying documentation required to support the request{' '}
-                            <a href='http://cmo.mskcc.org/wp-content/uploads/2022/11/DMPSS_-Investigator-DMP-Request_V2-Process.docx' target='_blank'>
+                            <a href='http://cmo.mskcc.org/wp-content/uploads/2022/11/DMPSS_-Investigator-DMP-Request_V2-Process.docx' download>
                                 here
                             </a>. 
                             <br></br>
