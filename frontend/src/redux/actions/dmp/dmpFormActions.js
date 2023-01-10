@@ -37,14 +37,21 @@ export function dmpGetInitialState() {
 
 export const DMP_SELECT = 'DMP_SELECT';
 
-export function dmpSelect(id, value) {
+export function dmpSelect(id, value, showMessage) {
     return (dispatch) => {
-        if (id === 'service_id') {
+        if (id === 'serviceId') {
+            if (showMessage) {
+                return dispatch({
+                    type: DMP_SELECT,
+                    payload: { id: id, value: value },
+                    message: 'Service ID updated. Please generate table again.',
+                });
+            }
             return dispatch({
                 type: DMP_SELECT,
                 payload: { id: id, value: value },
-                message: 'Service Id updated.',
             });
+            
         }
 
         if (id === 'application' && value === 'WholeExomeSequencing') {

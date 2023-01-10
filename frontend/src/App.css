@@ -162,14 +162,11 @@ td > div.red-chemistry {
 }
 
 /* SWEETALERT SPECIAL CLASSES */
-.my-actions { margin-top: 2em; }
+.my-actions { margin-top: 2em !important; }
 .order-1 { order: 1; }
 .order-2 { order: 2; }
 .order-3 { order: 3; }
 
 .right-gap {
-  margin-right: auto;
-}
-.swal-wide{
-  width:850px !important;
+  margin-right: auto !important;
 }
