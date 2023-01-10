@@ -224,13 +224,14 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                                             ...updatedFormValues,
                                             serviceId: newServiceId
                                         };
+                                        return dispatch(handleDMPCohort(newFormValues));
                                         // return dispatch(dmpSelect('serviceId', newServiceIdNum, true));
                                         // return handleDMPCohort(newFormValues);
                                         // return dispatch => {
                                         //     dispatch(dmpSelect('serviceId', newServiceIdNum));
                                         //     dispatch(getColumns(page, newFormValues));
                                         // };
-                                        return dispatch(getColumns(page, newFormValues));
+                                        // return dispatch(getColumns(page, newFormValues));
                                     // isDenied === edit past submission
                                     } else if (decision.isDenied) {
                                         return window.location = 'https://igo.mskcc.org/sample-submission/#/sample-submission/submissions/dmp';
