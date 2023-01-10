@@ -115,9 +115,6 @@ export function getColumns(page, formValues) {
         // no grid? get inital columns
         if (getState().upload.grid.columnFeatures.length === 0) {
             return dispatch(getInitialColumns(page, formValues));
-        //check for dmp grid too
-        } else if (getState().dmp.grid.columnFeatures.length === 0) {
-            return dispatch(getInitialColumns(page, formValues));
         } else {
             let grid = getState().upload.grid;
             let diffValues = util.diff(grid.form, formValues);
@@ -172,7 +169,7 @@ export function getColumns(page, formValues) {
     };
 }
 
-export function getInitialColumns(page, formValues, adjustedMaterial) {
+export function getInitialColumns(page, formValues, adjustedMaterial, isEditingPastSubmission) {
     return (dispatch) => {
         dispatch({ type: GET_INITIAL_COLUMNS, loading: true });
         let updatedFormValues = Object.assign({}, formValues);
@@ -187,6 +184,7 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
         return axios
             .post(`${Config.NODE_API_ROOT}/${page}/grid`, {
                 ...updatedFormValues,
+                isEdit: isEditingPastSubmission,
             })
             .then((response) => {
                 let data = response.payload;
@@ -210,7 +208,7 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                     serviceId: serviceId,
                 });
                 // NOTE this should only be hit on DMP submissions!
-                if (error.payload && error.payload.message && error.payload.message.includes('already exists')) {
+                if (!isEditingPastSubmission && error.payload && error.payload.message && error.payload.message.includes('already exists')) {
                     return swal
                                 .serviceIdDecision(
                                     'iLabs Service ID Already Used',
@@ -304,7 +302,8 @@ export function populateGridFromSubmission(submissionId, ownProps) {
                     }
                 }
 
-                let columnPromise = dispatch(getInitialColumns(page, formValues, adjustedMaterial), getState().user.role);
+                const editingPastSubmission = true;
+                let columnPromise = dispatch(getInitialColumns(page, formValues, adjustedMaterial, editingPastSubmission), getState().user.role);
                 Promise.all([columnPromise])
                     .then(() => {
                         if (submission.appVersion !== Config.APP_VERSION) {

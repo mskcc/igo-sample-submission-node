@@ -86,14 +86,14 @@ exports.grid = [
             let formValues = req.body;
             let material = formValues.material;
             let application = formValues.application;
-
             const serviceId = formValues.serviceId;
+            const isGeneratingGridFromEdit = req.body.isEdit;
 
             // check for duplicate service IDs
             let serviceIdCheckPromise = DmpSubmissionModel.countDocuments({"formValues.serviceId": serviceId}).exec();
             serviceIdCheckPromise
                 .then((count) => {
-                    if (count && count > 0) {
+                    if (count && count > 0 && !isGeneratingGridFromEdit) {
                         return apiResponse.errorResponse(res, `Submission could not be created. A request with the iLabs Service ID ${serviceId} already exists.`);
                     }
 
