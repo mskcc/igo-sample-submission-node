@@ -224,7 +224,7 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                                         //     ...updatedFormValues,
                                         //     serviceId: newServiceId
                                         // };
-                                        return dispatch(dmpSelect('serviceId', newServiceIdNum, true));
+                                        return dispatch(dmpSelect('service_id', newServiceIdNum, true));
                                         // return handleDMPCohort(newFormValues);
                                         // return dispatch => {
                                         //     dispatch(dmpSelect('serviceId', newServiceIdNum));
