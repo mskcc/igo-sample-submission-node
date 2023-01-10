@@ -169,7 +169,7 @@ export function getColumns(page, formValues) {
     };
 }
 
-export function getInitialColumns(page, formValues, adjustedMaterial) {
+export function getInitialColumns(page, formValues, adjustedMaterial, isEditingPastSubmission) {
     return (dispatch) => {
         dispatch({ type: GET_INITIAL_COLUMNS, loading: true });
         let updatedFormValues = Object.assign({}, formValues);
@@ -184,6 +184,7 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
         return axios
             .post(`${Config.NODE_API_ROOT}/${page}/grid`, {
                 ...updatedFormValues,
+                isEdit: isEditingPastSubmission,
             })
             .then((response) => {
                 let data = response.payload;
@@ -207,7 +208,7 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                     serviceId: serviceId,
                 });
                 // NOTE this should only be hit on DMP submissions!
-                if (error.payload && error.payload.message && error.payload.message.includes('already exists')) {
+                if (!isEditingPastSubmission && error.payload && error.payload.message && error.payload.message.includes('already exists')) {
                     return swal
                                 .serviceIdDecision(
                                     'iLabs Service ID Already Used',
@@ -219,19 +220,11 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                                     if (decision.isConfirmed) {
                                         // Need to adjust serviceId for cohorts before creating submission
                                         const newServiceId = getCohortServiceId(serviceId);
-                                        // const newServiceIdNum = newServiceId.split('-')[1];
                                         const newFormValues = {
                                             ...updatedFormValues,
                                             serviceId: newServiceId
                                         };
                                         return dispatch(handleDMPCohort(newFormValues));
-                                        // return dispatch(dmpSelect('serviceId', newServiceIdNum, true));
-                                        // return handleDMPCohort(newFormValues);
-                                        // return dispatch => {
-                                        //     dispatch(dmpSelect('serviceId', newServiceIdNum));
-                                        //     dispatch(getColumns(page, newFormValues));
-                                        // };
-                                        // return dispatch(getColumns(page, newFormValues));
                                     // isDenied === edit past submission
                                     } else if (decision.isDenied) {
                                         return window.location = 'https://igo.mskcc.org/sample-submission/#/sample-submission/submissions/dmp';
@@ -309,7 +302,8 @@ export function populateGridFromSubmission(submissionId, ownProps) {
                     }
                 }
 
-                let columnPromise = dispatch(getInitialColumns(page, formValues, adjustedMaterial), getState().user.role);
+                const editingPastSubmission = true;
+                let columnPromise = dispatch(getInitialColumns(page, formValues, adjustedMaterial, editingPastSubmission), getState().user.role);
                 Promise.all([columnPromise])
                     .then(() => {
                         if (submission.appVersion !== Config.APP_VERSION) {
