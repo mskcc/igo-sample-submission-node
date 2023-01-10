@@ -104,7 +104,7 @@ class UploadForm extends React.Component {
                     // if (values.altServiceId) {
                     //     formValid[value] = true;
                     // } else {
-                    formValid[value] = /\d{6}/g.test(values[value]) && values[value].length === 6;
+                    formValid[value] = (/\d{6}/g.test(values[value]) || /\d{6}_\d{1}/g.test(values[value])) && (values[value].length === 6 || values[value].length === 8);
                     // }
                     break;
                 case 'material':
@@ -399,6 +399,7 @@ class UploadForm extends React.Component {
                                     id='serviceId'
                                     value={form.selected.serviceId}
                                     error={!formValid.serviceId}
+                                    type='text'
                                     onChange={this.handleChange}
                                     inputProps={{
                                         // disabled: form.selected.altServiceId,
