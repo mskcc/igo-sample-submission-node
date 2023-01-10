@@ -115,6 +115,9 @@ export function getColumns(page, formValues) {
         // no grid? get inital columns
         if (getState().upload.grid.columnFeatures.length === 0) {
             return dispatch(getInitialColumns(page, formValues));
+        //check for dmp grid too
+        } else if (getState().dmp.grid.columnFeatures.length === 0) {
+            return dispatch(getInitialColumns(page, formValues));
         } else {
             let grid = getState().upload.grid;
             let diffValues = util.diff(grid.form, formValues);
