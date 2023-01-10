@@ -219,18 +219,18 @@ export function getInitialColumns(page, formValues, adjustedMaterial) {
                                     if (decision.isConfirmed) {
                                         // Need to adjust serviceId for cohorts before creating submission
                                         const newServiceId = getCohortServiceId(serviceId);
-                                        const newServiceIdNum = newServiceId.split('-')[1];
-                                        // const newFormValues = {
-                                        //     ...updatedFormValues,
-                                        //     serviceId: newServiceId
-                                        // };
-                                        return dispatch(dmpSelect('service_id', newServiceIdNum, true));
+                                        // const newServiceIdNum = newServiceId.split('-')[1];
+                                        const newFormValues = {
+                                            ...updatedFormValues,
+                                            serviceId: newServiceId
+                                        };
+                                        // return dispatch(dmpSelect('serviceId', newServiceIdNum, true));
                                         // return handleDMPCohort(newFormValues);
                                         // return dispatch => {
                                         //     dispatch(dmpSelect('serviceId', newServiceIdNum));
                                         //     dispatch(getColumns(page, newFormValues));
                                         // };
-                                        // return dispatch(getColumns(page, newFormValues));
+                                        return dispatch(getColumns(page, newFormValues));
                                     // isDenied === edit past submission
                                     } else if (decision.isDenied) {
                                         return window.location = 'https://igo.mskcc.org/sample-submission/#/sample-submission/submissions/dmp';
