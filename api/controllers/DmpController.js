@@ -91,11 +91,11 @@ exports.grid = [
 
             // check for duplicate service IDs
             let serviceIdCheckPromise = DmpSubmissionModel.countDocuments({"formValues.serviceId": serviceId}).exec();
-            serviceIdCheckPromise
-                .then((count) => {
-                    if (count && count > 0) {
-                        return apiResponse.errorResponse(res, `Submission could not be created. A request with the iLabs Service ID ${serviceId} already exists.`);
-                    }
+            // serviceIdCheckPromise
+            //     .then((count) => {
+            //         if (count && count > 0) {
+            //             return apiResponse.errorResponse(res, `Submission could not be created. A request with the iLabs Service ID ${serviceId} already exists.`);
+            //         }
 
                     let columnsPromise = cache.get(`${material}-${application}-Columns`, () => util.getDmpColumns(material, application));
                     columnsPromise
@@ -118,10 +118,10 @@ exports.grid = [
                         .catch((reasons) => {
                             return apiResponse.errorResponse(res, reasons);
                         });
-                })
-                .catch((reasons) => {
-                    return apiResponse.errorResponse(res, reasons);
-                });
+                // })
+                // .catch((reasons) => {
+                //     return apiResponse.errorResponse(res, reasons);
+                // });
         }
     },
 ];
