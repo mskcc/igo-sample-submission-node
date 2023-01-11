@@ -309,7 +309,7 @@ exports.getAvailableProjectsFromDmp = (date) => {
         });
 };
 
-// http://virgo1.mskcc.org:8090/display/PD/getCMOSampleRequestDetails
+// DMP
 exports.getProjectFromDmp = (trackingId) => {
     const url = `${DMP_URL}/getCMOSampleRequestDetails?trackingId=${trackingId}`;
     logger.info(`Sending request to ${url}`);
