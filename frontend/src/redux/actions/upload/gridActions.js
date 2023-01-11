@@ -212,7 +212,7 @@ export function getInitialColumns(page, formValues, adjustedMaterial, isEditingP
                     return swal
                                 .serviceIdDecision(
                                     'iLabs Service ID Already Used',
-                                    `The Service ID ${serviceId} has already been used. Please choose if you'd like to edit a past request, or create an additional request cohort. Cancel if you'd like to enter a different serviceId.`
+                                    `The Service ID ${serviceId} has already been used. Please choose if you'd like to edit a past request, or create an additional request cohort. Cancel if you'd like to enter a different Service ID.`
                                 )
                                 .then((decision) => {
                                     // swal is a bit weird with 3 buttons
