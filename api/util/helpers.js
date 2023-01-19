@@ -1180,13 +1180,18 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
             let igoIndex = dmpSample['Index'].replace('DMP0', '');
             let indexEntries = Object.entries(indexResult);
             // Rough logic for translating DMP Dual barcodes to IGO Barcodes
-            let dmpSequence = dmpSample['Index Sequence']
-            let isDual = dmpSequence.split('-').length === 2;
+            let dmpSequence = dmpSample['Index Sequence'];
+            let dualSequence = dmpSample['Index Sequence I5'];
+            let isDual = dmpSequence.split('-').length === 2 || (dualSequence && dualSequence !== '');
+            let fullSequence = dmpSequence;
             let indexMatch = "";
             if (isDual){
-                igoIndex = getDualIndex(dmpSequence, indexEntries);;
-                indexMatch = igoDualIndex;
-            }else{
+                if (dualSequence && dualSequence !== '') {
+                    fullSequence = `${dmpSequence}-${dualSequence}`;
+                }
+                igoIndex = getDualIndex(dmpSequence, indexEntries);
+                indexMatch = igoIndex;
+            } else {
                 indexMatch = indexResult[igoIndex];
             }
     
@@ -1199,7 +1204,7 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
             igoSample = {
                 ...igoSample,
                 index: igoIndex,
-                indexSequence: indexMatch || dmpSequence,
+                indexSequence: indexMatch || fullSequence,
             };
         }
         // ADD ORIGINAL SAMPLE VALUES
