@@ -1189,14 +1189,17 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
                 if (dualSequence && dualSequence !== '') {
                     fullSequence = `${dmpSequence}-${dualSequence}`;
                 }
-                igoIndex = getDualIndex(dmpSequence, indexEntries);
-                indexMatch = igoIndex;
+                const igoDualIndex = getDualIndex(fullSequence, indexEntries);
+                if (igoDualIndex) {
+                    igoIndex = igoDualIndex;
+                    indexMatch = fullSequence;
+                }
             } else {
                 indexMatch = indexResult[igoIndex];
             }
     
             if (isDual && !indexMatch) {
-                rowIssues.push(`${dmpSequence} dual sequence is not known to IGO.`);
+                rowIssues.push(`${fullSequence} dual sequence is not known to IGO.`);
             }
             if (!isDual && !indexMatch){
                 rowIssues.push(`${igoIndex} is not known to IGO.`);
