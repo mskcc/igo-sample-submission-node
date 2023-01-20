@@ -1180,18 +1180,26 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
             let igoIndex = dmpSample['Index'].replace('DMP0', '');
             let indexEntries = Object.entries(indexResult);
             // Rough logic for translating DMP Dual barcodes to IGO Barcodes
-            let dmpSequence = dmpSample['Index Sequence']
-            let isDual = dmpSequence.split('-').length === 2;
+            let dmpSequence = dmpSample['Index Sequence'];
+            let dualSequence = dmpSample['Index Sequence I5'];
+            let isDual = dmpSequence.split('-').length === 2 || (dualSequence);
+            let fullSequence = dmpSequence;
             let indexMatch = "";
             if (isDual){
-                igoIndex = getDualIndex(dmpSequence, indexEntries);;
-                indexMatch = igoDualIndex;
-            }else{
+                if (dualSequence) {
+                    fullSequence = `${dmpSequence}-${dualSequence}`;
+                }
+                const igoDualIndex = getDualIndex(fullSequence, indexEntries);
+                if (igoDualIndex) {
+                    igoIndex = igoDualIndex;
+                    indexMatch = fullSequence;
+                }
+            } else {
                 indexMatch = indexResult[igoIndex];
             }
     
             if (isDual && !indexMatch) {
-                rowIssues.push(`${dmpSequence} dual sequence is not known to IGO.`);
+                rowIssues.push(`${fullSequence} dual sequence is not known to IGO.`);
             }
             if (!isDual && !indexMatch){
                 rowIssues.push(`${igoIndex} is not known to IGO.`);
@@ -1199,7 +1207,7 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
             igoSample = {
                 ...igoSample,
                 index: igoIndex,
-                indexSequence: indexMatch || dmpSequence,
+                indexSequence: indexMatch || fullSequence,
             };
         }
         // ADD ORIGINAL SAMPLE VALUES
