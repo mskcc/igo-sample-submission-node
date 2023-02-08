@@ -361,7 +361,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (DMP Sample ID only)+HemePact': [
+    'DNA (DMP Sample ID only)+IMPACT-Heme': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -523,7 +523,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (Molecular Accession Number only)+HemePact': [
+    'DNA (Molecular Accession Number only)+IMPACT-Heme': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
