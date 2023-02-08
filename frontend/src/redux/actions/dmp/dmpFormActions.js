@@ -21,6 +21,7 @@ export function dmpGetInitialState() {
                         type: DMP_HEADER_SUCCESS,
                         materials: response.payload.materials,
                         applications: response.payload.applications,
+                        capturePanels: response.payload.capturePanels,
                         user: response.payload.user,
                     });
                     return response;
