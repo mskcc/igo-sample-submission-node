@@ -94,6 +94,7 @@ export const initialDmpFormState = {
 
     selected: {
         application: '',
+        capturePanel: '',
         material: '',
         numberOfSamples: '',
         isShared: false,

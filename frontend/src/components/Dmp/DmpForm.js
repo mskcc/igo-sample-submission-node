@@ -2,6 +2,7 @@ import React from 'react';
 import { Translate } from 'react-localize-redux';
  
 import { FormControl, InputAdornment, Paper, withStyles, Typography } from '@material-ui/core';
+import { guessMatch } from '../../util/helpers';
 
 import { Button, Checkbox, Dropdown, Input } from '../index';
 
@@ -16,12 +17,17 @@ class DmpForm extends React.Component {
             formValid: {
                 material: true,
                 application: true,
+                capturePanel: true,
                 numberOfSamples: true,
                 sharedWith: true,
                 serviceId: true,
             },
         };
     }
+
+    showCapturePanelDropdown = () => {
+        return this.state.values.application === 'CustomCapture';
+    };
 
     handleDropdownChange = (event) => {
         const { handleInputChange } = this.props;
@@ -108,6 +114,20 @@ class DmpForm extends React.Component {
                     });
                     formValid[value] = isValidOption && values[value].length > 0;
                     break;
+                // Investigators need to know the panel they're requesting. Case, underscores and spaces are normalized for matching.
+                // The picklist is not public to avoid lab's requesting each other's custom panels without consent.
+                case 'capturePanel':
+                    if (!this.showCapturePanelDropdown()) {
+                        formValid[value] = true;
+                        values[value] = '';
+                        break;
+                    }
+                    let findValidOption = guessMatch(values[value], form.capturePanels);
+                    if (findValidOption) isValidOption = true;
+                    else isValidOption = false;
+                    formValid[value] = isValidOption && values[value].length > 0;
+                    if (formValid[value]) values[value] = findValidOption;
+                    break;
                 case 'sharedWith':
                     if (values.isShared) {
                         if (values.sharedWith === '') {
@@ -150,6 +170,7 @@ class DmpForm extends React.Component {
             this.state.formValid.serviceId &&
             this.state.formValid.material &&
             this.state.formValid.application &&
+            this.state.formValid.capturePanel &&
             this.state.formValid.numberOfSamples &&
             this.state.formValid.sharedWith
         );
@@ -223,6 +244,19 @@ class DmpForm extends React.Component {
                                     label: form.selected.application,
                                 }}
                             />
+
+                            {this.showCapturePanelDropdown() && (
+                                <Input
+                                    id='capturePanel'
+                                    type='text'
+                                    error={!formValid.capturePanel}
+                                    onChange={this.handleChange}
+                                    inputProps={{
+                                        inputProps: { min: 0 },
+                                    }}
+                                    value={form.selected.capturePanel}
+                                />
+                            )}
 
                             <Input
                                 id='numberOfSamples'

@@ -89,6 +89,9 @@ export const DMP_CLEAR = 'DMP_CLEAR';
 
 export function dmpClear(id) {
     return (dispatch) => {
+        if (id === 'application') {
+            dispatch({ type: DMP_CLEAR, payload: { id: 'capturePanel' } });
+        }
         return dispatch({ type: DMP_CLEAR, payload: { id: id } });
     };
 }

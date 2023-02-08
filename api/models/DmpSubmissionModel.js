@@ -8,6 +8,7 @@ const APP_VERSION = process.env.APP_VERSION;
 var FormSchema = new mongoose.Schema({
     sharedWith: { type: String, default: '' },
     application: { type: String, required: true },
+    capturePanel: { type: String, required: false },
     material: { type: String, required: true },
     numberOfSamples: { type: Number, required: true },
     serviceId: { type: String, required: true },
