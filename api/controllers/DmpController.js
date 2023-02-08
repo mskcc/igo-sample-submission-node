@@ -22,19 +22,22 @@ exports.headerValues = [
     function (req, res) {
         const materialPicklist = 'DmpMaterials';
         const applicationsPicklist = 'DmpApplications';
+        const customCapturesPicklist = 'Bait+Selection+Choices';
         let materialsPromise = cache.get(`${materialPicklist}-Picklist`, () => services.getPicklist(materialPicklist));
         let applicationsPromise = cache.get(`${applicationsPicklist}-Picklist`, () => services.getPicklist(applicationsPicklist));
+        let customCapturesPromise = cache.get(`${customCapturesPicklist}-Picklist`, () => services.getPicklist(customCapturesPicklist));
 
-        Promise.all([applicationsPromise, materialsPromise])
+        Promise.all([applicationsPromise, materialsPromise, customCapturesPromise])
             .then((results) => {
                 if (results.some((x) => x.length === 0)) {
                     return apiResponse.errorResponse(res, 'Could not retrieve picklists from LIMS.');
                 }
-                let [applicationsResult, materialsResult] = results;
+                let [applicationsResult, materialsResult, capturePanelResult] = results;
 
                 let responseObject = {
                     applications: applicationsResult,
                     materials: materialsResult,
+                    capturePanels: capturePanelResult,
                 };
                 return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
             })
