@@ -17,6 +17,7 @@ export default function dmpFormReducer(state = initialDmpFormState, action) {
                 initialFetched: true,
                 materials: action.materials,
                 applications: action.applications,
+                capturePanels: action.capturePanels,
             };
 
         case ActionTypes.DMP_HEADER_FAIL:

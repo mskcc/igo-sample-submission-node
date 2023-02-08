@@ -21,6 +21,7 @@ export function dmpGetInitialState() {
                         type: DMP_HEADER_SUCCESS,
                         materials: response.payload.materials,
                         applications: response.payload.applications,
+                        capturePanels: response.payload.capturePanels,
                         user: response.payload.user,
                     });
                     return response;
@@ -89,6 +90,9 @@ export const DMP_CLEAR = 'DMP_CLEAR';
 
 export function dmpClear(id) {
     return (dispatch) => {
+        if (id === 'application') {
+            dispatch({ type: DMP_CLEAR, payload: { id: 'capturePanel' } });
+        }
         return dispatch({ type: DMP_CLEAR, payload: { id: id } });
     };
 }

@@ -195,6 +195,11 @@ export const gridColumns = {
         sendToDmp: true,
         hiddenFrom: 'user',
     },
+    'Capture Panel': {
+        name: 'Capture Panel',
+        columnHeader: 'Capture Panel',
+        data: 'capturePanel'
+    }
 };
 export const submissionColumns = {
     // 'Related IGO Submission ID': {
