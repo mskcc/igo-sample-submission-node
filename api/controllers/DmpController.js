@@ -384,6 +384,8 @@ exports.loadFromDmp = [
                             .then((result) => {
                                 let translatedSubmission = result.parsedSubmission;
                                 let issues = result.translationIssues;
+                                let isAlreadySavedIgoSubmission = retrievedDmpSubmission.relatedIgoSubmission_id;
+                                let isSubmitted = false;
 
                                 // if this has been previously loaded from DMP, overwrite previous submission instead of creating a new one
                                 let relatedIgoSubmission_id = retrievedDmpSubmission.relatedIgoSubmission_id || '';
@@ -393,6 +395,8 @@ exports.loadFromDmp = [
                                     igoSubmission.gridValues = translatedSubmission.gridValues;
                                     igoSubmission.formValues = translatedSubmission.formValues;
                                     igoSubmission.dmpTrackingId = dmpTrackingId;
+
+                                    isSubmitted = igoSubmission.submitted;
 
                                     igoSubmission.save(function (err) {
                                         if (err) {
@@ -408,10 +412,11 @@ exports.loadFromDmp = [
                                                 return apiResponse.errorResponse(res, 'Retrieved DMP submission could not be updated.');
                                             }
                                             // console.log(issues);
-
+                                            const isSubmittedToIgo = isAlreadySavedIgoSubmission && isSubmitted;
                                             return apiResponse.successResponseWithData(res, 'Submission saved.', {
                                                 submission: igoSubmission._doc,
                                                 issues: issues,
+                                                isSubmittedToIgo: isSubmittedToIgo
                                             });
                                         });
                                     });

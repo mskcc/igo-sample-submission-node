@@ -35,43 +35,45 @@ class UploadGrid extends React.Component {
                         {/* {grid.validationMessage} */}
                         {<ValidationPanel validation={grid.validation} />}
                     </div>
-                    <div className={classes.buttons}>
-                        {gridType === 'upload' ? (
-                            <GridButton id='gridSubmit' onClick={handleSubmit} isLoading={false} nothingToSubmit={false} color='primary' />
-                        ) : (
+                    {submissionToEdit && submissionToEdit.isIGOSubmitted ? <div></div> : (
+                        <div className={classes.buttons}>
+                            {gridType === 'upload' ? (
+                                <GridButton id='gridSubmit' onClick={handleSubmit} isLoading={false} nothingToSubmit={false} color='primary' />
+                            ) : (
+                                <GridButton
+                                    id='gridSubmitDmp'
+                                    onClick={handleSubmit}
+                                    isLoading={false}
+                                    nothingToSubmit={false}
+                                    color='primary'
+                                />
+                            )}
+                            {submissionToEdit && (
+                                <GridButton
+                                    id='gridUpdate'
+                                    onClick={handleUpdate}
+                                    isLoading={user.isSaving}
+                                    done={user.saved}
+                                    color='primary'
+                                />
+                            )}
+                            <GridButton id='gridSaveNew' onClick={handleSave} isLoading={user.isSaving} done={user.saved} color='primary' />
                             <GridButton
-                                id='gridSubmitDmp'
-                                onClick={handleSubmit}
+                                id='gridExport'
+                                onClick={this.props.handleDownload}
                                 isLoading={false}
                                 nothingToSubmit={false}
                                 color='primary'
                             />
-                        )}
-                        {submissionToEdit && (
                             <GridButton
-                                id='gridUpdate'
-                                onClick={handleUpdate}
-                                isLoading={user.isSaving}
-                                done={user.saved}
-                                color='primary'
+                                id='gridClear'
+                                onClick={this.props.handleClear}
+                                isLoading={false}
+                                nothingToSubmit={false}
+                                color='secondary'
                             />
-                        )}
-                        <GridButton id='gridSaveNew' onClick={handleSave} isLoading={user.isSaving} done={user.saved} color='primary' />
-                        <GridButton
-                            id='gridExport'
-                            onClick={this.props.handleDownload}
-                            isLoading={false}
-                            nothingToSubmit={false}
-                            color='primary'
-                        />
-                        <GridButton
-                            id='gridClear'
-                            onClick={this.props.handleClear}
-                            isLoading={false}
-                            nothingToSubmit={false}
-                            color='secondary'
-                        />
-                    </div>
+                        </div>
+                    )}
                     <HotTable
                         licenseKey='non-commercial-and-evaluation'
                         id='hot'

@@ -181,6 +181,7 @@ export default function gridReducer(state = initialGridState, action) {
                 rows: action.payload.gridValues,
                 gridType: action.payload.gridType,
                 form: action.payload.formValues,
+                isIGOSubmitted: action.payload.isIGOSubmitted,
             };
 
         case FormActionTypes.CLEAR_FORM:
