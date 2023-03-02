@@ -1181,7 +1181,7 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
             let indexEntries = Object.entries(indexResult);
             // Rough logic for translating DMP Dual barcodes to IGO Barcodes
             let dmpSequence = dmpSample['Index Sequence'];
-            let dualSequence = dmpSample['Index Sequence I5'];
+            let dualSequence = dmpSample['IndexTag I5'];
             let isDual = dmpSequence.split('-').length === 2 || (dualSequence);
             let fullSequence = dmpSequence;
             let indexMatch = "";
