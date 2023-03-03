@@ -248,6 +248,8 @@ export const dryRunSuccess = (message) => {
 };
 
 export const droppedSampleInfo = (droppedSampleInfo, depletedSampleInfo) => {
+    console.log(`dropped: ${droppedSampleInfo}`);
+    console.log(`depleted: ${depletedSampleInfo}`);
     let droppedSampleTitle = '';
     let droppedToText = '';
     let depletedSampleTitle = '';
@@ -255,6 +257,7 @@ export const droppedSampleInfo = (droppedSampleInfo, depletedSampleInfo) => {
     if (droppedSampleInfo) {
         droppedSampleTitle = 'Dropped samples:';
         droppedSampleInfo.forEach(sample => {
+            console.log(sample);
             droppedToText.concat(`<br>InvestigatorID: ${sample.investigatorId}, `);
             if (sample.dmpSampleId) {
                 droppedToText.concat(`DMP Sample ID: ${sample.dmpSampleId}`);
@@ -275,7 +278,7 @@ export const droppedSampleInfo = (droppedSampleInfo, depletedSampleInfo) => {
     Swal.fire({
         title: 'Sample Mismatch',
         html:
-            `${droppedSampleTitle} ${droppedToText} <br><br> ${depletedSampleTitle} ${depletedToText}`,
+            `${droppedSampleTitle} ${droppedToText} <br><br>${depletedSampleTitle} ${depletedToText}`,
         icon: 'info',
         animation: false,
         confirmButtonText: 'OK',
