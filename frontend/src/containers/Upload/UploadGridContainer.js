@@ -13,8 +13,9 @@ class UploadGridContainer extends Component {
             const droppedSamples = submissionToEdit.droppedSamples;
             const depletedSamples = submissionToEdit.depletedSamples;
             if ((droppedSamples && droppedSamples.length) || (depletedSamples && depletedSamples.length)) {
-                swal.droppedSampleInfo(droppedSamples, depletedSamples);
+                // swal.droppedSampleInfo(droppedSamples, depletedSamples);
             }
+            swal.droppedSampleInfo(droppedSamples, depletedSamples);
         }
     };
 
