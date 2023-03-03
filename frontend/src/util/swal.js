@@ -255,9 +255,9 @@ export const droppedSampleInfo = (droppedSampleInfo, depletedSampleInfo) => {
     if (droppedSampleInfo) {
         droppedSampleTitle = 'Dropped samples:';
         droppedSampleInfo.forEach((sample, index) => {
-            droppedToText = droppedToText.concat(`<br><b>${index+1}</b>InvestigatorID: ${sample.investigatorId}, `);
+            droppedToText = droppedToText.concat(`<br><b>${index+1}.</b> InvestigatorID: ${sample.investigatorId}, `);
             if (sample.dmpSampleId) {
-                droppedToText = droppedToText.concat(`DMP Sample ID: ${sample.dmpSampleId}`);
+                droppedToText = droppedToText.concat(`DMP ID: ${sample.dmpSampleId}`);
             } else if (sample.accessionNumber) {
                 droppedToText = droppedToText.concat(`Accession Number: ${sample.accessionNumber}`);
             }
@@ -266,7 +266,7 @@ export const droppedSampleInfo = (droppedSampleInfo, depletedSampleInfo) => {
     if (depletedSampleInfo) {
         depletedSampleTitle = 'Depleted samples:';
         depletedSampleInfo.forEach((sample, index) => {
-            depletedToText = depletedToText.concat(`<br><b>${index+1}</b>Investigator ID: ${sample.investigatorId}, `);
+            depletedToText = depletedToText.concat(`<br><b>${index+1}.</b> Investigator ID: ${sample.investigatorId}, `);
             if (sample.dmpSampleId) {
                 depletedToText = depletedToText.concat(`DMP ID: ${sample.dmpSampleId}`);
             }
