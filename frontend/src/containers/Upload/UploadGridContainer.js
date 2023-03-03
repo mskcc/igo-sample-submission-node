@@ -10,11 +10,59 @@ class UploadGridContainer extends Component {
     componentDidMount() {
         const { submissionToEdit } = this.props;
         if (submissionToEdit) {
-            const droppedSamples = submissionToEdit.droppedSamples;
-            const depletedSamples = submissionToEdit.depletedSamples;
-            if ((droppedSamples && droppedSamples.length) || (depletedSamples && depletedSamples.length)) {
-                // swal.droppedSampleInfo(droppedSamples, depletedSamples);
-            }
+            // const droppedSamples = submissionToEdit.droppedSamples;
+            // const depletedSamples = submissionToEdit.depletedSamples;
+            // if ((droppedSamples && droppedSamples.length) || (depletedSamples && depletedSamples.length)) {
+            //     // swal.droppedSampleInfo(droppedSamples, depletedSamples);
+            // }
+            const droppedSamples = [{
+                investigatorId: 'dropped123',
+                dmpSampleId: 'dmpid789',
+                accessionNumber: 'molecAccNum'
+            },{
+                investigatorId: 'dropped123',
+                dmpSampleId: 'dmpid789',
+                accessionNumber: 'molecAccNum'
+            },{
+                investigatorId: 'dropped123',
+                dmpSampleId: 'dmpid789',
+                accessionNumber: 'molecAccNum'
+            },{
+                investigatorId: 'dropped123',
+                dmpSampleId: 'dmpid789',
+                accessionNumber: 'molecAccNum'
+            },{
+                investigatorId: 'dropped123',
+                dmpSampleId: 'dmpid789',
+                accessionNumber: 'molecAccNum'
+            },{
+                investigatorId: 'dropped123',
+                dmpSampleId: 'dmpid789',
+                accessionNumber: 'molecAccNum'
+            },{
+                investigatorId: 'dropped123',
+                dmpSampleId: 'dmpid789',
+                accessionNumber: 'molecAccNum'
+            }];
+            const depletedSamples = [{
+                investigatorId: 'test123',
+                dmpSampleId: 'dmpid456'
+            },{
+                investigatorId: 'test123',
+                dmpSampleId: 'dmpid456'
+            },{
+                investigatorId: 'test123',
+                dmpSampleId: 'dmpid456'
+            },{
+                investigatorId: 'test123',
+                dmpSampleId: 'dmpid456'
+            },{
+                investigatorId: 'test123',
+                dmpSampleId: 'dmpid456'
+            },{
+                investigatorId: 'test123',
+                dmpSampleId: 'dmpid456'
+            }];
             swal.droppedSampleInfo(droppedSamples, depletedSamples);
         }
     };
