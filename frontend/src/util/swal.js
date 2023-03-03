@@ -247,4 +247,37 @@ export const dryRunSuccess = (message) => {
     });
 };
 
-// PROMOTE END
+export const droppedSampleInfo = (droppedSampleInfo, depletedSampleInfo) => {
+    let droppedSampleTitle = '';
+    let droppedToText = '';
+    let depletedSampleTitle = '';
+    let depletedToText = '';
+    if (droppedSampleInfo) {
+        droppedSampleTitle = 'Dropped samples:';
+        droppedSampleInfo.forEach(sample => {
+            droppedToText.concat(`<br>InvestigatorID: ${sample.investigatorId}, `);
+            if (sample.dmpSampleId) {
+                droppedToText.concat(`DMP Sample ID: ${sample.dmpSampleId}`);
+            } else if (sample.accessionNumber) {
+                droppedToText.concat(`Accession Number: ${sample.accessionNumber}`);
+            }
+        });
+    }
+    if (depletedSampleInfo) {
+        depletedSampleTitle = 'Depleted samples:';
+        depletedSampleInfo.forEach(sample => {
+            depletedToText.concat(`<br>Investigator ID: ${sample.investigatorId}, `);
+            if (sample.dmpSampleId) {
+                depletedToText.concat(`DMP ID: ${sample.dmpSampleId}`);
+            }
+        });
+    }
+    Swal.fire({
+        title: 'Sample Mismatch',
+        html:
+            `${droppedSampleTitle} ${droppedToText} <br><br> ${depletedSampleTitle} ${depletedToText}`,
+        icon: 'info',
+        animation: false,
+        confirmButtonText: 'OK',
+    });
+};

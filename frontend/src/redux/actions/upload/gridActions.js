@@ -356,6 +356,8 @@ export function loadFromDmp(dmpTrackingId, dmpSubmissionId, ownProps) {
                 let page = 'upload';
                 let submission = resp.payload.submission;
                 let hasAlreadyBeenSubmitted = resp.payload.isSubmittedToIgo;
+                let droppedSamples = resp.payload.droppedSamples;
+                let depletedSamples = resp.payload.depletedSamples;
                 let columnPromise = dispatch(getInitialColumns(page, submission.formValues), getState().user.role);
                 Promise.all([columnPromise])
                     .then(() => {
@@ -365,6 +367,8 @@ export function loadFromDmp(dmpTrackingId, dmpSubmissionId, ownProps) {
                                 ...submission,
                                 gridType: page,
                                 isIGOSubmitted: hasAlreadyBeenSubmitted,
+                                droppedSamples,
+                                depletedSamples
                             },
                             message: 'Parsed!',
                         });

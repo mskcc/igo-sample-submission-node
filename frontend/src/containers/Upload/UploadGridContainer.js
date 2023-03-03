@@ -7,6 +7,15 @@ import { util, swal } from '../../util';
 import { UploadGrid } from '../../components';
 
 class UploadGridContainer extends Component {
+    componentDidMount() {
+        const { submissionToEdit } = this.props;
+        const droppedSamples = submissionToEdit.droppedSamples;
+        const depletedSamples = submissionToEdit.depletedSamples;
+        if ((droppedSamples && droppedSamples.length) || (depletedSamples && depletedSamples.length)) {
+            swal.droppedSampleInfo(droppedSamples, depletedSamples);
+        }
+    };
+
     handleChange = (changes, source) => {
         const { handleGridChange } = this.props;        
         handleGridChange(changes);
