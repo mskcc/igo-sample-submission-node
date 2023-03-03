@@ -254,8 +254,8 @@ export const droppedSampleInfo = (droppedSampleInfo, depletedSampleInfo) => {
     let depletedToText = '';
     if (droppedSampleInfo) {
         droppedSampleTitle = 'Dropped samples:';
-        droppedSampleInfo.forEach(sample => {
-            droppedToText = droppedToText.concat(`<br>InvestigatorID: ${sample.investigatorId}, `);
+        droppedSampleInfo.forEach((sample, index) => {
+            droppedToText = droppedToText.concat(`<br><b>${index+1}</b>InvestigatorID: ${sample.investigatorId}, `);
             if (sample.dmpSampleId) {
                 droppedToText = droppedToText.concat(`DMP Sample ID: ${sample.dmpSampleId}`);
             } else if (sample.accessionNumber) {
@@ -265,8 +265,8 @@ export const droppedSampleInfo = (droppedSampleInfo, depletedSampleInfo) => {
     }
     if (depletedSampleInfo) {
         depletedSampleTitle = 'Depleted samples:';
-        depletedSampleInfo.forEach(sample => {
-            depletedToText = depletedToText.concat(`<br>Investigator ID: ${sample.investigatorId}, `);
+        depletedSampleInfo.forEach((sample, index) => {
+            depletedToText = depletedToText.concat(`<br><b>${index+1}</b>Investigator ID: ${sample.investigatorId}, `);
             if (sample.dmpSampleId) {
                 depletedToText = depletedToText.concat(`DMP ID: ${sample.dmpSampleId}`);
             }
@@ -275,9 +275,10 @@ export const droppedSampleInfo = (droppedSampleInfo, depletedSampleInfo) => {
     Swal.fire({
         title: 'Sample Mismatch',
         html:
-            `${droppedSampleTitle} ${droppedToText} <br><br>${depletedSampleTitle} ${depletedToText}`,
+            `<b>${droppedSampleTitle}</b> ${droppedToText} <br><br><b>${depletedSampleTitle}</b> ${depletedToText}`,
         icon: 'info',
         animation: false,
+        customClass: 'swal-wide',
         confirmButtonText: 'OK',
     });
 };
