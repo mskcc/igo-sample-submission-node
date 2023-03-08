@@ -384,6 +384,8 @@ exports.loadFromDmp = [
                             .then((result) => {
                                 let translatedSubmission = result.parsedSubmission;
                                 let issues = result.translationIssues;
+                                let droppedSamples = result.droppedSamples;
+                                let depletedSamples = result.depletedSamples;
                                 let isAlreadySavedIgoSubmission = retrievedDmpSubmission.relatedIgoSubmission_id;
                                 let isSubmitted = false;
 
@@ -416,6 +418,8 @@ exports.loadFromDmp = [
                                             return apiResponse.successResponseWithData(res, 'Submission saved.', {
                                                 submission: igoSubmission._doc,
                                                 issues: issues,
+                                                droppedSamples: droppedSamples,
+                                                depletedSamples: depletedSamples,
                                                 isSubmittedToIgo: isSubmittedToIgo
                                             });
                                         });

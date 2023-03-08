@@ -187,6 +187,8 @@ function submissionsReducer(state = initialState, action) {
                     container: action.payload.formValues.container,
                     username: action.payload.username,
                     isIGOSubmitted: action.payload.isIGOSubmitted,
+                    droppedSamples: action.payload.droppedSamples,
+                    depletedSamples: action.payload.depletedSamples,
                     createdAt: util.parseDate(action.payload.createdAt),
                     updatedAt: util.parseDate(action.payload.updatedAt),
                 },

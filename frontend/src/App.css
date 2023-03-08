@@ -170,3 +170,7 @@ td > div.red-chemistry {
 .right-gap {
   margin-right: auto !important;
 }
+
+.swal-wide {
+  width: 45em !important;
+}

@@ -247,4 +247,38 @@ export const dryRunSuccess = (message) => {
     });
 };
 
-// PROMOTE END
+export const droppedSampleInfo = (droppedSampleInfo, depletedSampleInfo) => {
+    let droppedSampleTitle = '';
+    let droppedToText = '';
+    let depletedSampleTitle = '';
+    let depletedToText = '';
+    if (droppedSampleInfo) {
+        droppedSampleTitle = 'Dropped samples:';
+        droppedSampleInfo.forEach((sample, index) => {
+            droppedToText = droppedToText.concat(`<br><b>${index+1}.</b> InvestigatorID: ${sample.investigatorId}, `);
+            if (sample.dmpSampleId) {
+                droppedToText = droppedToText.concat(`DMP ID: ${sample.dmpSampleId}`);
+            } else if (sample.accessionNumber) {
+                droppedToText = droppedToText.concat(`Accession Number: ${sample.accessionNumber}`);
+            }
+        });
+    }
+    if (depletedSampleInfo) {
+        depletedSampleTitle = 'Depleted samples:';
+        depletedSampleInfo.forEach((sample, index) => {
+            depletedToText = depletedToText.concat(`<br><b>${index+1}.</b> Investigator ID: ${sample.investigatorId}, `);
+            if (sample.dmpSampleId) {
+                depletedToText = depletedToText.concat(`DMP ID: ${sample.dmpSampleId}`);
+            }
+        });
+    }
+    Swal.fire({
+        title: 'Sample Mismatch',
+        html:
+            `<b>${droppedSampleTitle}</b> ${droppedToText} <br><br><b>${depletedSampleTitle}</b> ${depletedToText}`,
+        icon: 'info',
+        animation: false,
+        customClass: 'swal-wide',
+        confirmButtonText: 'OK',
+    });
+};

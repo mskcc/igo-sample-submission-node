@@ -908,30 +908,6 @@ export function cleanDMPFormValues(formValues) {
     return cleanedFormValues;
 }
 
-// export function updateDMPFormValuesForEditing(submission) {
-//     let updatedFormValues = Object.assign({}, submission.formValues);
-//     if (submission.formValues.material === 'DNA') {
-//         if (submission.gridValues[0].molecularPathologyAccessionNumber && submission.gridValues[0].molecularPathologyAccessionNumber !== '') {
-//             updatedFormValues.material = 'DNA (Molecular Accession Number only)';
-//         } else {
-//             updatedFormValues.material = 'DNA (DMP Sample ID only)';
-//         }
-//     }
-//     return updatedFormValues;
-// }
-
-// export function fixOldDMPSubmissions(submission) {
-//     let cleanedSubmission = Object.assign({}, submission);
-//     if (submission.formValues.material === 'DNA') {
-//         if (submission.gridValues[0].molecularPathologyAccessionNumber && submission.gridValues[0].molecularPathologyAccessionNumber !== '') {
-//             cleanedSubmission.formValues.material === 'DNA (Molecular Accession Number only)';
-//         } else {
-//             cleanedSubmission.formValues.material === 'DNA (DMP Sample ID only)';
-//         }
-//     }
-//     return cleanedSubmission;
-// }
-
 export function publishDmpData(submissions, dmpRequestId) {
     // cmorequests will be array of objects with each objects being on submission with an array of samples
     return new Promise((resolve, reject) => {
@@ -991,6 +967,9 @@ export function parseDmpOutput(dmpOutput, submission) {
     return new Promise((resolve, reject) => {
         let dmpSamples = dmpOutput.content['CMO Sample Request Details'];
         let numReturnedSamples = Object.keys(dmpSamples).length;
+        let numOriginalSamples = submission.gridValues.length;
+        let droppedSamples = [];
+        let depletedSamples = [];
         let promises = [];
         let username = submission.username;
 
@@ -1008,8 +987,39 @@ export function parseDmpOutput(dmpOutput, submission) {
         } else {
             promises.push([]);
         }
-        let sampleIdsToDeidentify = [];
 
+        // get sample info for dropped/depleted samples
+        if (numReturnedSamples < numOriginalSamples) {
+            let dmpInvestigatorIds = [];
+
+            //loop through both sample sets to get sample id info
+            Object.entries(dmpSamples).forEach(entry => {
+                const [key, value] = entry;
+                dmpInvestigatorIds.push(key);
+
+                if (!value['Volume (ul)'] || value['Volume (ul)'] === '0.00') {
+                    const sampleInfo = {
+                        investigatorId: key,
+                        dmpSampleId: value['DMP ID']
+                    }
+                    depletedSamples.push(sampleInfo);
+                }
+            });
+            submission.gridValues.forEach((sample) => {
+                const investigatorId = sample.userId;
+                if (!dmpInvestigatorIds.includes(investigatorId)) {
+                    const originalSampleInfo = {
+                        investigatorId: investigatorId,
+                        dmpSampleId: sample.dmpSampleId,
+                        accessionNumber: sample.molecularPathologyAccessionNumber
+                    }
+                    droppedSamples.push(originalSampleInfo);
+                }
+            });
+        }
+
+
+        // let sampleIdsToDeidentify = [];
         // deidentify orginal submission's IDs, not DMP
         // Do only if the original samples exist in the DMP submission
         // submission.gridValues.forEach((originalSample) => {
@@ -1061,7 +1071,7 @@ export function parseDmpOutput(dmpOutput, submission) {
             delete parsedSubmission.formValues._id;
             // translationIssues.push({ sampleMatch: doSamplesMatch(dmpSamples, submission) });
 
-            resolve({ parsedSubmission, translationIssues });
+            resolve({ parsedSubmission, translationIssues, droppedSamples, depletedSamples });
         });
     });
 }
