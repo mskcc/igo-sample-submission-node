@@ -491,16 +491,24 @@ const isValidTumorType = (tumorTypes, newValue) => {
 // Multiselect field
 export const appendAssay = (oldValue, newValue, assays) => {
   //  clear
-  if (newValue === '' || newValue === 'Assay Selection' || newValue === 'Blank') {
-    return '';
+  if (newValue === '' || newValue === 'Assay Selection' || newValue === '_') {
+    if (oldValue === '') {
+      return '';
+    } else {
+      // clear newValue so we append nothing if blank is selected
+      newValue = '';
+    }
   }
   //  append
   let appendedAssay = '';
   let finalAssay = new Set([]);
-  console.log(newValue);
 
   if (oldValue === '') {
     appendedAssay = newValue;
+  } else if (newValue === '') {
+    // we have an oldValue of already selected assays, but the blank option for newValue,
+    // don't clear the whole selection just return the old value
+    return oldValue;
   } else {
     appendedAssay = oldValue + ';' + newValue;
     appendedAssay = appendedAssay.replace(/[;]+/g, ';').trim();
