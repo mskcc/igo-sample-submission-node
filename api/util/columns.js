@@ -274,7 +274,6 @@ export const gridColumns = {
         picklistName: 'ddPCR+Assay',
         allowInvalid: true,
         allowEmpty: true,
-        outsideClickDeselects: true,
     },
     Assay: {
         name: 'Assay(s)',
@@ -289,7 +288,6 @@ export const gridColumns = {
         picklistName: 'ddPCR+Assay',
         allowInvalid: true,
         allowEmpty: true,
-        outsideClickDeselects: true,
     },
     'Estimated % Tumor': {
         name: 'Estimated % Tumor',
