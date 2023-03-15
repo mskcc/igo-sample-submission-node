@@ -491,7 +491,7 @@ const isValidTumorType = (tumorTypes, newValue) => {
 // Multiselect field
 export const appendAssay = (oldValue, newValue, assays) => {
   //  clear
-  if (newValue === '' || newValue === 'Assay Selection' || newValue === ' ') {
+  if (newValue === '' || newValue === 'Assay Selection' || newValue === '_') {
     return '';
   }
   //  append
