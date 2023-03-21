@@ -1285,6 +1285,9 @@ function findOncoMatch(tumorType, sampleClass, oncoResult) {
     if (tumorType.split(':')[0] === 'N/A') {
         return { status: '', tumorType: 'Normal' };
     }
+    if (tumorType.split(':')[0] === 'other' || tumorType.split(':')[0] === 'Other') {
+        return { status: '', tumorType: 'Normal' };
+    }
     var match = oncoResult.find((a) => a.includes(tumorTypeToMatch));
     if (match) {
         let tumorId = match.split(': ')[1];
