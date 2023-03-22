@@ -13,7 +13,7 @@ class UploadGridContainer extends Component {
             // const droppedSamples = submissionToEdit.droppedSamples;
             // const depletedSamples = submissionToEdit.depletedSamples;
             const droppedSamples = [
-                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
+                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345 this is very looooooooooooooooooooooooooooooooooooooooooong'},
                 {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
                 {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
                 {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
@@ -23,7 +23,7 @@ class UploadGridContainer extends Component {
             ];
             const depletedSamples = [
                 {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
-                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
+                {investigatorId: 'investigatorID76543 tesging a suuuuuuuuuuuuuuuuuuuper loooooooooooooooooong iiiiiiiiidddddddddddd', dmpSampleId: 'sampleIDtest12345'},
                 {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
                 {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
                 {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
