@@ -132,6 +132,21 @@ export const gridColumns = {
         data: 'geneAndMutation',
     },
 
+    'Assay(s)': {
+        name: 'Assay(s)',
+        columnHeader: 'Assay(s)',
+        data: 'assay',
+        type: 'dropdown',
+        error: 'Only dropdown options are permitted as values',
+        strict: true,
+        tooltip:
+            'This field is multi-select.  If you are submitting one sample for multiple assays, please select the first, followed by the second, than the third, in the order of priority.',
+        editableCellTemplate: 'uiMultiSelect',
+        picklistName: 'ddPCR+Assay',
+        allowInvalid: true,
+        allowEmpty: true,
+    },
+
     'Sample Approved by CMO': {
         name: 'Sample Approved by CMO',
         columnHeader: 'Sample Approved by CMO',
@@ -448,6 +463,7 @@ export const dmpIntakeForms = {
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
         ['Gene and Mutation', 'Required'],
+        ['Assay(s)', 'Required'],
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
@@ -610,6 +626,7 @@ export const dmpIntakeForms = {
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
         ['Gene and Mutation', 'Required'],
+        ['Assay(s)', 'Required'],
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
@@ -702,6 +719,7 @@ export const dmpIntakeForms = {
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
         ['Gene and Mutation', 'Required'],
+        ['Assay(s)', 'Required'],
         ['Molecular Pathology Accession Number', 'Optional'],
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
