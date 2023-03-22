@@ -10,8 +10,25 @@ class UploadGridContainer extends Component {
     componentDidMount() {
         const { submissionToEdit } = this.props;
         if (submissionToEdit) {
-            const droppedSamples = submissionToEdit.droppedSamples;
-            const depletedSamples = submissionToEdit.depletedSamples;
+            // const droppedSamples = submissionToEdit.droppedSamples;
+            // const depletedSamples = submissionToEdit.depletedSamples;
+            const droppedSamples = [
+                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
+                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
+                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
+                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
+                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
+                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
+                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'}
+            ];
+            const depletedSamples = [
+                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
+                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
+                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
+                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
+                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'},
+                {investigatorId: 'investigatorID76543', dmpSampleId: 'sampleIDtest12345'}
+            ];
             if ((droppedSamples && droppedSamples.length) || (depletedSamples && depletedSamples.length)) {
                 swal.droppedSampleInfo(droppedSamples, depletedSamples);
             }

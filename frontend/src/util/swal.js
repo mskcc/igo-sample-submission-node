@@ -249,33 +249,52 @@ export const dryRunSuccess = (message) => {
 
 export const droppedSampleInfo = (droppedSampleInfo, depletedSampleInfo) => {
     let droppedSampleTitle = '';
-    let droppedToText = '';
+    let droppedTable = '<table>';
     let depletedSampleTitle = '';
-    let depletedToText = '';
+    let depletedTable = '<table>';
     if (droppedSampleInfo) {
-        droppedSampleTitle = 'Dropped samples:';
-        droppedSampleInfo.forEach((sample, index) => {
-            droppedToText = droppedToText.concat(`<br><b>${index+1}.</b> InvestigatorID: ${sample.investigatorId}, `);
+        droppedSampleTitle = 'Samples Dropped or Not Requested:';
+        droppedTable = droppedTable.concat('<tr class="drop-sample-header"><td><b>Investigator ID</b></td>');
+        if (droppedSampleInfo[0].dmpSampleId) {
+            droppedTable = droppedTable.concat('<td><b>DMP Sample ID</b></td></tr>');
+        } else if (droppedSampleInfo[0].accessionNumber) {
+            droppedTable = droppedTable.concat('<td><b>Accession Number</b></td></tr>');
+        }
+        droppedSampleInfo.forEach((sample) => {
             if (sample.dmpSampleId) {
-                droppedToText = droppedToText.concat(`DMP ID: ${sample.dmpSampleId}`);
+                //${sample.investigatorId}, ${sample.dmpSampleId}
+                droppedTable = droppedTable.concat(`<tr><td>${sample.investigatorId}</td><td>${sample.dmpSampleId}</td></tr>`);
+
             } else if (sample.accessionNumber) {
-                droppedToText = droppedToText.concat(`Accession Number: ${sample.accessionNumber}`);
+                //${sample.accessionNumber}
+                droppedTable = droppedTable.concat(`<tr><td>${sample.investigatorId}</td><td>${sample.accessionNumber}</td></tr>`);
             }
         });
+        droppedTable = droppedTable.concat('</table>');
     }
     if (depletedSampleInfo) {
-        depletedSampleTitle = 'Depleted samples:';
-        depletedSampleInfo.forEach((sample, index) => {
-            depletedToText = depletedToText.concat(`<br><b>${index+1}.</b> Investigator ID: ${sample.investigatorId}, `);
+        depletedSampleTitle = 'Depleted Samples:';
+        depletedTable = depletedTable.concat('<tr class="drop-sample-header"><td><b>Investigator ID</b></td>');
+        if (depletedSampleInfo[0].dmpSampleId) {
+            depletedTable = depletedTable.concat('<td><b>DMP Sample ID</b></td></tr>');
+        } else {
+            // if no sample id, just end row
+            depletedTable = depletedTable.concat('</tr>');
+        }
+        depletedSampleInfo.forEach((sample) => {
+            depletedTable = depletedTable.concat(`<tr><td>${sample.investigatorId}</td>`);
             if (sample.dmpSampleId) {
-                depletedToText = depletedToText.concat(`DMP ID: ${sample.dmpSampleId}`);
+                depletedTable = depletedTable.concat(`<td>${sample.dmpSampleId}</td></tr>`);
+            } else {
+                depletedTable = depletedTable.concat('</tr>');
             }
         });
+        depletedTable = depletedTable.concat('</table>');
     }
     Swal.fire({
-        title: 'Sample Mismatch',
+        title: 'Sample Attrition',
         html:
-            `<b>${droppedSampleTitle}</b> ${droppedToText} <br><br><b>${depletedSampleTitle}</b> ${depletedToText}`,
+            `<b>${droppedSampleTitle}</b> ${droppedTable} <br><br><b>${depletedSampleTitle}</b> ${depletedTable}`,
         icon: 'info',
         animation: false,
         customClass: 'swal-wide',
