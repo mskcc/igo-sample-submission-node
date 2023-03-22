@@ -174,3 +174,14 @@ td > div.red-chemistry {
 .swal-wide {
   width: 45em !important;
 }
+
+.sample-drop-table {
+  margin: auto;
+  padding-top: 10px;
+  letter-spacing: 1px;
+  font-size: 0.8rem;
+}
+.sample-drop-table td {
+  border: 1px solid rgb(190,190,190);
+  padding: 5px 10px;
+}

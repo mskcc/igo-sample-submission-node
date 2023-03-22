@@ -249,9 +249,9 @@ export const dryRunSuccess = (message) => {
 
 export const droppedSampleInfo = (droppedSampleInfo, depletedSampleInfo) => {
     let droppedSampleTitle = '';
-    let droppedTable = '<table>';
+    let droppedTable = '<table class="sample-drop-table">';
     let depletedSampleTitle = '';
-    let depletedTable = '<table>';
+    let depletedTable = '<table class="sample-drop-table">';
     if (droppedSampleInfo) {
         droppedSampleTitle = 'Samples Dropped or Not Requested:';
         droppedTable = droppedTable.concat('<tr class="drop-sample-header"><td><b>Investigator ID</b></td>');
