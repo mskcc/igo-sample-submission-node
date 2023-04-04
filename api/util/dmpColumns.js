@@ -547,7 +547,7 @@ export const dmpIntakeForms = {
     'DNA (Molecular Accession Number only)+CMO-CH': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
-        ['DMP Sample ID', 'Required'],
+        ['Molecular Pathology Accession Number', 'Required'],
         ['MRN', 'Required'],
         ['CMO Patient ID', 'Required'],
         ['Normalized Patient ID', 'Required'],
@@ -561,7 +561,7 @@ export const dmpIntakeForms = {
     'DNA (Molecular Accession Number only)+HemePact': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
-        ['DMP Sample ID', 'Required'],
+        ['Molecular Pathology Accession Number', 'Required'],
         ['MRN', 'Required'],
         ['CMO Patient ID', 'Required'],
         ['Normalized Patient ID', 'Required'],
@@ -575,7 +575,7 @@ export const dmpIntakeForms = {
     'DNA (Molecular Accession Number only)+IMPACT-Heme': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
-        ['DMP Sample ID', 'Required'],
+        ['Molecular Pathology Accession Number', 'Required'],
         ['MRN', 'Required'],
         ['CMO Patient ID', 'Required'],
         ['Normalized Patient ID', 'Required'],
@@ -693,7 +693,7 @@ export const dmpIntakeForms = {
     'DNA (Molecular Accession Number only)+MSK-ACCESS_v1': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
-        ['DMP Sample ID', 'Required'],
+        ['Molecular Pathology Accession Number', 'Required'],
         ['MRN', 'Required'],
         ['CMO Patient ID', 'Required'],
         ['Normalized Patient ID', 'Required'],
