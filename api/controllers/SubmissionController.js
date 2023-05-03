@@ -204,7 +204,7 @@ exports.create = [
                 username: res.user.username,
                 formValues: formValues,
                 gridValues: gridValues,
-                dmpTrackingId: gridValues[0].dmpTrackingId || '',
+                dmpTrackingId: formValues.serviceId || '',
             });
         } else {
             submission = new SubmissionModel({
@@ -254,7 +254,7 @@ exports.update = [
         let model = SubmissionModel;
         if (submissionType === 'dmp') {
             model = DmpSubmissionModel;
-            updatedSubmission.dmpTrackingId = gridValues[0].dmpTrackingId || '';
+            updatedSubmission.dmpTrackingId = formValues.serviceId || '';
         }
         console.log(id);
 
@@ -310,7 +310,7 @@ exports.submit = [
                 submissionToSubmit.formValues = formValues;
                 submissionToSubmit.gridValues = gridValues;
                 if (gridType === 'dmp') {
-                    submissionToSubmit.dmpTrackingId = gridValues[0].dmpTrackingId || '';
+                    submissionToSubmit.dmpTrackingId = formValues.serviceId || '';
                 }
 
                 //  save pre LIMS submit so data is safe
