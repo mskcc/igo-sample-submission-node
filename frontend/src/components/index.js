@@ -2,6 +2,7 @@ import Button from './Shared/formComponents/Button.js';
 import Checkbox from './Shared/formComponents/Checkbox.js';
 import Dropdown from './Shared/formComponents/Dropdown.js';
 import Input from './Shared/formComponents/Input.js';
+import MultiSelect from './Shared/formComponents/MultiSelect.js';
 
 import GridButton from './Shared/Button.js';
 import EditPanel from './Upload/EditPanel.js';
@@ -27,6 +28,7 @@ export {
     Dropdown,
     Header,
     Input,
+    MultiSelect,
     Message,
     PromoteGrid,
     SnackMessage,

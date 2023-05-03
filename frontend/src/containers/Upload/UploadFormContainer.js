@@ -5,6 +5,7 @@ import { formActions, dmpFormActions } from '../../redux/actions';
 
 import { swal } from '../../util';
 import { DmpForm, UploadForm } from '../../components';
+import { select } from '../../redux/actions/upload/formActions';
 
 export class UploadFormContainer extends Component {
     componentDidMount() {
@@ -36,6 +37,7 @@ export class UploadFormContainer extends Component {
     };
 
     handleSpeciesChange = (selectedSpecies) => {
+        console.log(selectedSpecies);
         const { clearSpecies } = this.props;
         if (!selectedSpecies) clearSpecies();
     };
@@ -48,6 +50,11 @@ export class UploadFormContainer extends Component {
             isIgoForm ? clear(id) : dmpClear(id);
         }
     };
+    handleChangeMultiple = (value = []) => {
+        if (value.length) {
+            select('species', value);
+        }
+      };
 
     handleClear = () => {
         const { clearForm } = this.props;
@@ -73,6 +80,7 @@ export class UploadFormContainer extends Component {
                             handleApplicationChange={this.handleApplicationChange}
                             handleSpeciesChange={this.handleSpeciesChange}
                             handleInputChange={this.handleInputChange}
+                            handleChangeMultiple={this.handleChangeMultiple}
                             handleClear={this.handleClear}
                         />
                     ) : (

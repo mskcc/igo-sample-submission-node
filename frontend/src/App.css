@@ -186,3 +186,24 @@ td > div.red-chemistry {
   border: 1px solid rgb(190,190,190);
   padding: 5px 10px;
 }
+
+.species-multi-select-container {
+  margin: 16px !important;
+  min-width: 310px !important;
+}
+
+.multi-select-component {
+  width: 100%;
+}
+
+#multi-select-dropdown {
+  margin-top: 45px;
+}
+
+.error {
+  color: var(--mskcc-red);
+}
+
+.grouping-checkbox {
+  margin-top: 25px;
+}

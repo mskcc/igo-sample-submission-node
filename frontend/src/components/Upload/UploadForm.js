@@ -2,7 +2,7 @@ import React from 'react';
 import { Translate } from 'react-localize-redux';
 
 import { FormControl, InputAdornment, Paper, withStyles } from '@material-ui/core';
-import { Button, Checkbox, Dropdown, Input } from '../index';
+import { Button, Checkbox, Dropdown, Input, MultiSelect } from '../index';
 import { guessMatch } from '../../util/helpers';
 
 
@@ -31,10 +31,10 @@ class UploadForm extends React.Component {
 
 
     showGroupingCheckbox = () => {
-        return this.state.values.species === 'Mouse' || this.state.values.species === 'Mouse_GeneticallyModified';
+        return this.state.values.species.includes('Mouse') || this.state.values.species.includes('Mouse_GeneticallyModified');
     };
     showPatientIdTypeDropdown = () => {
-        return this.state.values.species === 'Human';
+        return this.state.values.species.includes('Human');
     };
 
     showCapturePanelDropdown = () => {
@@ -43,7 +43,7 @@ class UploadForm extends React.Component {
     };
     showPatientIdTypeSpecDropdown = () => {
         return (
-            this.state.values.species === 'Human' &&
+            this.state.values.species.includes('Human') &&
             (this.state.values.patientIdType === 'MSK-Patients (or derived from MSK Patients)' ||
                 this.state.values.patientIdType === 'Both MSK-Patients and Non-MSK Patients')
         );
@@ -57,6 +57,16 @@ class UploadForm extends React.Component {
             formValid: { ...this.state.formValid, [event.id]: true },
         });
         this.props.handleInputChange(event.id, event.value);
+    };
+    handleMultiDropdownChange = (values) => {
+        this.setState({
+            values: {
+                ...this.state.values,
+                species: values,
+            },
+            formValid: { ...this.state.formValid, species: true },
+        });
+        this.props.handleChangeMultiple(values);
     };
 
     handleChange = (event) => {
@@ -149,10 +159,15 @@ class UploadForm extends React.Component {
                     break;
 
                 case 'species':
-                    isValidOption = this.props.form.filteredSpecies.some(function(el) {
-                        return el === values[value];
-                    });
-                    formValid[value] = isValidOption && values[value].length > 0;
+                    const selectedSpecies = values[value];
+
+                    isValidOption = selectedSpecies.length > 0;
+                    for (let i = 0; i < selectedSpecies.length; i++) {
+                        if (!this.props.form.filteredSpecies.includes(selectedSpecies[i])) {
+                            isValidOption = false;
+                        }
+                    }
+                    formValid[value] = isValidOption;
                     break;
 
                 case 'patientIdType':
@@ -298,44 +313,26 @@ class UploadForm extends React.Component {
                                     }}
                                     value={form.selected.capturePanel}
                                 />
-                                // <Dropdown
-                                //     id='capturePanel'
-                                //     error={!formValid.capturePanel}
-                                //     onChange={this.handleDropdownChange}
-                                //     items={form.capturePanels.map((option) => ({
-                                //         value: option,
-                                //         label: option,
-                                //     }))}
-                                //     value={{
-                                //         value: form.selected.capturePanel,
-                                //         label: form.selected.capturePanel,
-                                //     }}
-                                // />
                             )}
-                            <FormControl component='fieldset'>
-                                <Dropdown
+                            <FormControl component='fieldset' className='species-multi-select-container'>
+                                <MultiSelect
                                     id='species'
                                     error={!formValid.species}
                                     onSelect={handleSpeciesChange}
-                                    onChange={this.handleDropdownChange}
+                                    onChange={this.handleMultiDropdownChange}
                                     dynamic
                                     loading={form.formIsLoading}
-                                    items={form.filteredSpecies.map((option) => ({
-                                        value: option,
-                                        label: option,
-                                    }))}
-                                    value={{
-                                        value: form.selected.species,
-                                        label: form.selected.species,
-                                    }}
-                                    ic
+                                    items={form.filteredSpecies.map((option) => option)}
+                                    value={form.selected.species}
                                 />
                                 {this.showGroupingCheckbox() && (
-                                    <Checkbox
-                                        id='groupingCheckbox'
-                                        checked={form.selected.groupingChecked}
-                                        onChange={(e) => this.handleCheckbox('groupingChecked')}
-                                    />
+                                    <div className='grouping-checkbox'>
+                                        <Checkbox
+                                            id='groupingCheckbox'
+                                            checked={form.selected.groupingChecked}
+                                            onChange={(e) => this.handleCheckbox('groupingChecked')}
+                                        />
+                                    </div>
                                 )}
                             </FormControl>
 

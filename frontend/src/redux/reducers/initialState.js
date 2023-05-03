@@ -20,7 +20,7 @@ export const initialFormState = {
         material: '',
         serviceId: '',
         numberOfSamples: '',
-        species: '',
+        species: [],
         container: '',
         patientIdType: '',
         patientIdTypeSpecified: '',
