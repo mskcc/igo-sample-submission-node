@@ -566,7 +566,7 @@ export function addDmpColsToSubmissionGrid(submissions, grid, userRole) {
         for (let i = 0; i < submissions.length; i++) {
             let submission = submissions[i];
 
-            let dmpTrackingId = _.isEmpty(submission.formValues.serviceId) ? '' : submission.formValues.serviceId;
+            let dmpTrackingId = submission.formValues.serviceId;
             let isSubmitted = submission.submitted;
 
             const samplesApproved = submission.gridValues.filter((element) => {

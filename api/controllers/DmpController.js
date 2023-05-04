@@ -261,6 +261,7 @@ exports.submit = [
                 let [submissionToSubmit] = results;
                 submissionToSubmit.formValues = util.cleanDMPFormValues(formValues);
                 submissionToSubmit.gridValues = gridValues;
+                submissionToSubmit.dmpTrackingId = formValues.serviceId;
                 submissionToSubmit.submitted = true;
                 submissionToSubmit.transactionId = transactionId;
                 submissionToSubmit.submittedAt = transactionId;

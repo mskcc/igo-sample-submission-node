@@ -252,7 +252,7 @@ export const droppedSampleInfo = (droppedSampleInfo, depletedSampleInfo) => {
     let droppedTable = '<table class="sample-drop-table">';
     let depletedSampleTitle = '';
     let depletedTable = '<table class="sample-drop-table">';
-    if (droppedSampleInfo) {
+    if (droppedSampleInfo && droppedSampleInfo.length > 0) {
         droppedSampleTitle = 'Samples Dropped or Not Requested:';
         droppedTable = droppedTable.concat('<tr class="drop-sample-header"><td><b>Investigator ID</b></td>');
         if (droppedSampleInfo[0].dmpSampleId) {
@@ -272,7 +272,7 @@ export const droppedSampleInfo = (droppedSampleInfo, depletedSampleInfo) => {
         });
         droppedTable = droppedTable.concat('</table>');
     }
-    if (depletedSampleInfo) {
+    if (depletedSampleInfo && depletedSampleInfo.length > 0) {
         depletedSampleTitle = 'Depleted Samples:';
         depletedTable = depletedTable.concat('<tr class="drop-sample-header"><td><b>Investigator ID</b></td>');
         if (depletedSampleInfo[0].dmpSampleId) {
