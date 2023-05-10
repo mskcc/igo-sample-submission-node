@@ -196,7 +196,7 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                 // first 'if' is for backwards compatibility from before we moved seq read length into upload form
                 if (formValues.sequencingReadLength && formValues.sequencingReadLength.length > 0) {
                     if (colDef.picklistName === 'Sequencing+Reads+Requested') {
-                        const fullList = colDef.source;
+                        const fullList = colDef.source.length ? colDef.source : picklists[colDef.picklistName];
                         const standardReads = ['PE100', 'PE150', '26/10/10/90', '28/10/10/88', '50/8/16/49', '50/8/24/49'];
                         const readLengthIsStandard = standardReads.includes(formValues.sequencingReadLength);
                         const newList = fullList.filter((el) => {
