@@ -302,6 +302,11 @@ export function populateGridFromSubmission(submissionId, ownProps) {
                     }
                 }
 
+                // adding some backwards compatibility for move sequencing read length to form
+                if (submission.gridValues[0].sequencingReadLength && submission.gridValues[0].sequencingReadLength.length > 0) {
+                    submission.formValues.sequencingReadLength = submission.gridValues[0].sequencingReadLength;
+                }
+
                 const editingPastSubmission = true;
                 let columnPromise = dispatch(getInitialColumns(page, formValues, adjustedMaterial, editingPastSubmission), getState().user.role);
                 Promise.all([columnPromise])

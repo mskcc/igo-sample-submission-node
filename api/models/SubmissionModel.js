@@ -18,6 +18,7 @@ var FormSchema = new mongoose.Schema({
     patientIdTypeSpecified: { type: String, required: false },
     serviceId: { type: String, required: true },
     species: { type: String, required: true },
+    sequencingReadLength: { type: String, required: false },
 });
 
 var SubmissionSchema = new mongoose.Schema(

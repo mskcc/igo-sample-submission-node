@@ -33,6 +33,7 @@ exports.headerValues = [
                     patientIdTypesResult,
                     patientIdTypesSpecResult,
                     capturePanelResult,
+                    readLengthsResult,
                 ] = results;
                 let currentApplications = applicationsResult.filter(
                     (application) => !constants.deprecatedApplications.includes(application.toLowerCase())
@@ -45,6 +46,7 @@ exports.headerValues = [
                     containers: containers,
                     patientIdTypes: patientIdTypesResult,
                     patientIdTypesSpecified: patientIdTypesSpecResult,
+                    readLengths: readLengthsResult,
                 };
                 return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
             })
@@ -159,6 +161,7 @@ exports.grid = [
     body('container').isLength({ min: 1 }).trim().withMessage('Container must be present.'),
     body('patientIdType').optional(),
     body('groupingChecked').optional(),
+    body('sequencingReadLength').optional(),
     function (req, res) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

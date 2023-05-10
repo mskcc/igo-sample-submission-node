@@ -19,7 +19,7 @@ export const validationPatterns = {
     // plateId: '^MSK-[A-Za-z0-9\\,_-]{10,}$',
 };
 
-export const deprecatedColumns = ['Index Position'];
+export const deprecatedColumns = ['Index Position', 'Sequencing Read Length'];
 export const gridColumns = {
     'Service ID': {
         name: 'Service ID',
@@ -142,19 +142,19 @@ export const gridColumns = {
         strict: true,
         picklistName: 'Specimen+Types',
     },
-    'Sequencing Read Length': {
-        name: 'Sequencing Read Length',
-        columnHeader: 'Sequencing Read Length',
-        data: 'sequencingReadLength',
-        tooltip:
-            'If you are unsure of what read length is needed, please contact your data analyst or IGO.  There are different read lengths for different applications and we are happy to suggest a length. If you do not see your read length listed, please contact IGO immediately',
-        //  FIXME
-        editableCellTemplate: 'ui-grid/dropdownEditor',
-        type: 'autocomplete',
-        error: 'Only dropdown options are permitted as values',
-        strict: true,
-        picklistName: 'Illumina+Sequencing+Run+Types',
-    },
+    // 'Sequencing Read Length': {
+    //     name: 'Sequencing Read Length',
+    //     columnHeader: 'Sequencing Read Length',
+    //     data: 'sequencingReadLength',
+    //     tooltip:
+    //         'If you are unsure of what read length is needed, please contact your data analyst or IGO.  There are different read lengths for different applications and we are happy to suggest a length. If you do not see your read length listed, please contact IGO immediately',
+    //     //  FIXME
+    //     editableCellTemplate: 'ui-grid/dropdownEditor',
+    //     type: 'autocomplete',
+    //     error: 'Only dropdown options are permitted as values',
+    //     strict: true,
+    //     picklistName: 'Illumina+Sequencing+Run+Types',
+    // },
     'Requested Reads': {
         name: 'Requested Reads',
         columnHeader: 'Requested Reads',
@@ -625,6 +625,10 @@ export const formColumns = {
     patientIdType: {
         data: 'patientIdType',
         columnHeader: 'Patient ID Type',
+    },
+    sequencingReadLength: {
+        data: 'sequencingReadLength',
+        columnHeader: 'Sequencing Read Length',
     },
     // altServiceId: {
     //     data: 'altServiceId',

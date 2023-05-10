@@ -82,7 +82,7 @@ export const SELECT = 'SELECT';
 
 export function select(id, value, checkForMismatch = true) {
     return (dispatch) => {
-        if (id === 'species' || id === 'container' || id === 'patientIdType' || id === 'patientIdTypeSpecified') {
+        if (id === 'species' || id === 'container' || id === 'patientIdType' || id === 'patientIdTypeSpecified' || id === 'sequencingReadLength') {
             checkForMismatch && dispatch(checkForChange(id, value));
             return dispatch({
                 type: SELECT,
@@ -98,12 +98,12 @@ export function select(id, value, checkForMismatch = true) {
         }
 
         if (id === 'number_of_samples') {
-            if (value > 199) {
+            if (value > 96) {
                 return dispatch({
                     type: SELECT,
                     payload: { id: id, value: value },
                     message:
-                        'A sample set this large might lead to performance issues. We recommend keeping it below 200 and submitting mutliple requests if necessary.',
+                        'A sample set this large might lead to performance issues. We recommend keeping it below 100 and submitting mutliple requests if necessary.',
                 });
             }
         }
@@ -180,6 +180,12 @@ export const CLEAR_SPECIES = 'CLEAR_SPECIES';
 
 export const clearSpecies = () => {
     return { type: CLEAR_SPECIES };
+};
+
+export const CLEAR_READ_LENGTHS = 'CLEAR_READ_LENGTHS';
+
+export const clearReadLengths = () => {
+    return [{ type: CLEAR_READ_LENGTHS }, { type: CLEARED }];;
 };
 
 export const CLEAR_MATERIAL = 'CLEAR_MATERIAL';

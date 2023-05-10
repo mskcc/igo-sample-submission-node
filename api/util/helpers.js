@@ -192,6 +192,20 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                     }
                 }
 
+                // filter requested reads based on sequencing read length
+                // first 'if' is for backwards compatibility from before we moved seq read length into upload form
+                if (formValues.sequencingReadLength && formValues.sequencingReadLength.length > 0) {
+                    if (colDef.picklistName === 'Sequencing+Reads+Requested') {
+                        const fullList = colDef.source;
+                        const standardReads = ['PE100', 'PE150', '26/10/10/90', '28/10/10/88', '50/8/16/49', '50/8/24/49'];
+                        const readLengthIsStandard = standardReads.includes(formValues.sequencingReadLength);
+                        const newList = fullList.filter((el) => {
+                            return readLengthIsStandard ? !el.includes('total reads') : el.includes('total reads');
+                        });
+                        colDef.source = newList;
+                    }
+                }
+
                 colDef.error = colDef.error ? colDef.error : 'Invalid format.';
                 columns.columnFeatures.push(colDef);
                 colDef.optional = requiredColumns.includes(columnName) ? false : true;
@@ -636,6 +650,7 @@ export function submit(submission, user, transactionId) {
         let recipe = submission.formValues.application;
         let capturePanel = submission.formValues.capturePanel;
         let sampleType = submission.formValues.material;
+        let seqReadLength = submission.formValues.sequencingReadLength || '';
         let samples = submission.gridValues;
         let submittedSamples = [];
         // prep banked sample record
@@ -650,6 +665,7 @@ export function submit(submission, user, transactionId) {
             bankedSample.investigator = submission.username;
             bankedSample.user = process.env.API_USER;
             bankedSample.concentrationUnits = 'ng/uL';
+            bankedSample.sequencingReadLength = seqReadLength;
 
             if (recipe.includes('COVID')) {
                 bankedSample.userId = `${bankedSample.userId}-${serviceId}`;

@@ -1,6 +1,6 @@
 export const constants = {
     containers: ['Plates', 'Micronic Barcoded Tubes', 'Blocks/Slides/Tubes'],
-    headerPicklists: ['Recipe', 'Exemplar+Sample+Types', 'Species', 'PatientIDTypes', 'PatientIdTypesSpecified', 'Bait+Selection+Choices'],
+    headerPicklists: ['Recipe', 'Exemplar+Sample+Types', 'Species', 'PatientIDTypes', 'PatientIdTypesSpecified', 'Bait+Selection+Choices', 'Illumina+Sequencing+Run+Types'],
     containersByMaterial: {
         Tissue: ['Blocks/Slides/Tubes', 'Micronic Barcoded Tubes'],
         Cells: ['Plates', 'Blocks/Slides/Tubes'],

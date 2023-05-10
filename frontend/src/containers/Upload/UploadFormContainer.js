@@ -35,6 +35,11 @@ export class UploadFormContainer extends Component {
         }
     };
 
+    handleReadLengthChange = (selectedReadLength) => {
+        const { clearReadLengths } = this.props;
+        if (!selectedReadLength) clearReadLengths();
+    }
+
     handleSpeciesChange = (selectedSpecies) => {
         const { clearSpecies } = this.props;
         if (!selectedSpecies) clearSpecies();
@@ -72,6 +77,7 @@ export class UploadFormContainer extends Component {
                             handleMaterialChange={this.handleMaterialChange}
                             handleApplicationChange={this.handleApplicationChange}
                             handleSpeciesChange={this.handleSpeciesChange}
+                            handleReadLengthChange={this.handleReadLengthChange}
                             handleInputChange={this.handleInputChange}
                             handleClear={this.handleClear}
                         />
