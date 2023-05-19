@@ -24,7 +24,7 @@
 
         "isShared_label": "I want others to be able to edit or submit these samples on my behalf.",
         "sharedWith_label": "Give permission to:",
-        "sharedWith_helptext": "Please enter MSK usernames or individual user email addresses separated by comma.\n No emails will be sent, this is only used for authorization.",
+        "sharedWith_helptext": "Please enter MSK individual user email addresses separated by comma.\n No emails will be sent, this is only used for authorization.",
 
         "nothing_to_change": "Nothing to change.",
         "fill_me": "Please fill out this field.",

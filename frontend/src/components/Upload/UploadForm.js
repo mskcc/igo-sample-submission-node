@@ -190,7 +190,7 @@ class UploadForm extends React.Component {
                         var valid = true;
                         var regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                         for (var i = 0; i < emails.length; i++) {
-                            if (emails[i] === '' || (!regex.test(emails[i].replace(/\s/g, '')) && !emails[i].includes('mskcc'))) {
+                            if (emails[i] === '' || (regex.test(emails[i].replace(/\s/g, '')) && !emails[i].includes('mskcc'))) {
                                 valid = false;
                             }
                         }
