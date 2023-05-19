@@ -202,6 +202,8 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                         if (specialNonStandardReads.includes(formValues.sequencingReadLength)) {
                             const newList = formValues.sequencingReadLength === 'PE250' ? specialPE250BlockOptions : specialPE300BlockOptions;
                             colDef.source = newList;
+                        } else {
+                            colDef.source = picklists[colDef.picklistName];
                         }
                     }
                 }
