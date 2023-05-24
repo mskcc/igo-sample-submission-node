@@ -196,14 +196,23 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                 // first 'if' is for backwards compatibility from before we moved seq read length into upload form
                 if (formValues.sequencingReadLength && formValues.sequencingReadLength.length > 0) {
                     if (colDef.picklistName === 'Sequencing+Reads+Requested') {
+                        const standardReads = ['PE100', 'PE150', '26/10/10/90', '28/10/10/88', '50/8/16/49', '50/8/24/49'];
                         const specialNonStandardReads = ['PE250', 'PE300'];
                         const specialPE250BlockOptions = ['1 million total reads', '20 million total reads', '100 million total reads', '800 million total reads'];
                         const specialPE300BlockOptions = ['20 million total reads', '100 million total reads'];
-                        if (specialNonStandardReads.includes(formValues.sequencingReadLength)) {
+                        if (formValues.sequencingReadLength === 'Other') {
+                            colDef.source = picklists[colDef.picklistName];
+                        } else if (specialNonStandardReads.includes(formValues.sequencingReadLength)) {
                             const newList = formValues.sequencingReadLength === 'PE250' ? specialPE250BlockOptions : specialPE300BlockOptions;
                             colDef.source = newList;
+                        } else if (standardReads.includes(formValues.sequencingReadLength)) {
+                            // filter out total reads options
+                            const standardList = picklists[colDef.picklistName].filter(item => !item.includes('total reads'));
+                            colDef.source = standardList;
                         } else {
-                            colDef.source = picklists[colDef.picklistName];
+                            // all others have block options
+                            const blockList = picklists[colDef.picklistName].filter(item => item.includes('total reads'));
+                            colDef.source = blockList;
                         }
                     }
                 }
