@@ -25,6 +25,7 @@ class UploadForm extends React.Component {
                 patientIdType: true,
                 patientIdTypeSpecified: true,
                 sharedWith: true,
+                sequencingReadLength: true,
             },
         };
     }
@@ -47,6 +48,31 @@ class UploadForm extends React.Component {
             (this.state.values.patientIdType === 'MSK-Patients (or derived from MSK Patients)' ||
                 this.state.values.patientIdType === 'Both MSK-Patients and Non-MSK Patients')
         );
+    };
+    showReadLengthDropdown = () => {
+        // dont show anything until they select application
+        if (this.state.values.application.length === 0) return false;
+
+        const isAmpliconSeqApplication = this.state.values.application === 'AmpliconSeq';
+        const isCDnaLibrary = this.state.values.material === 'cDNA Library' && this.state.values.application !== 'QC_Discard';
+        const isPooledLibrary = this.state.values.material === 'Pooled Library' && this.state.values.application !== 'GeoMx';
+        const isDNALibrary = this.state.values.material === 'DNA Library';
+        const readLengthNotNeededApplications = [
+            'IMPACT-Heme',
+            'QC_Pickup',
+            'MSK-ACCESS_v1',
+            'SingleCellCNV',
+            'Fingerprinting',
+            'ShallowWGS',
+            'ddPCR',
+            'WholeExomeSequencing',
+            'QC_Discard',
+            'IMPACT505',
+            'CustomCapture',
+            'M-IMPACT_v2',
+            'HemePACT_v4'
+        ];
+        return isAmpliconSeqApplication || isCDnaLibrary || isPooledLibrary || (isDNALibrary && !readLengthNotNeededApplications.includes(this.state.values.application));
     };
     handleDropdownChange = (event) => {
         this.setState({
@@ -120,6 +146,19 @@ class UploadForm extends React.Component {
 
                 case 'application':
                     isValidOption = this.props.form.filteredApplications.some(function(el) {
+                        return el === values[value];
+                    });
+
+                    formValid[value] = isValidOption && values[value].length > 0;
+                    break;
+
+                case 'sequencingReadLength':
+                    if (!this.showReadLengthDropdown()) {
+                        formValid[value] = true;
+                        values[value] = '';
+                        break;
+                    }
+                    isValidOption = this.props.form.readLengths.some(function(el) {
                         return el === values[value];
                     });
 
@@ -229,7 +268,8 @@ class UploadForm extends React.Component {
             this.state.formValid.patientIdType &&
             this.state.formValid.patientIdTypeSpecified &&
             this.state.formValid.capturePanel &&
-            this.state.formValid.sharedWith
+            this.state.formValid.sharedWith &&
+            this.state.formValid.sequencingReadLength
         );
     }
 
@@ -241,6 +281,7 @@ class UploadForm extends React.Component {
             handleApplicationChange,
             handleMaterialChange,
             handleSpeciesChange,
+            handleReadLengthChange,
             gridIsLoading,
             nothingToChange,
             gridNumberOfSamples,
@@ -287,6 +328,23 @@ class UploadForm extends React.Component {
                                     label: form.selected.application,
                                 }}
                             />
+                            {this.showReadLengthDropdown() && (<Dropdown
+                                id='sequencingReadLength'
+                                error={!formValid.sequencingReadLength}
+                                onSelect={handleReadLengthChange}
+                                onChange={this.handleDropdownChange}
+                                items={form.readLengths.map((option) => ({
+                                    value: option,
+                                    label: option,
+                                }))}
+                                loading={form.formIsLoading}
+                                dynamic
+                                value={{
+                                    value: form.selected.sequencingReadLength,
+                                    label: form.selected.sequencingReadLength,
+                                }}
+                            />)}
+
                             {this.showCapturePanelDropdown() && (
                                 <Input
                                     id='capturePanel'
@@ -478,6 +536,7 @@ UploadForm.defaultProps = {
         ],
 
         allSpecies: [{ id: 'test', value: 'test' }],
+        readLengths: [{ id: 'test', value: 'test' }],
         selected: {
             application: '',
             material: '',
@@ -487,6 +546,7 @@ UploadForm.defaultProps = {
             container: '',
             patientIdType: '',
             groupingChecked: false,
+            sequencingReadLength: '',
             // altServiceId: false,
         },
 

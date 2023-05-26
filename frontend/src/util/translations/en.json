@@ -21,6 +21,8 @@
         "patientIdTypeSpecified_label": "Specified Patient ID Type*",
         "groupIdType_helptext": "Select Patient or Group ID Type",
         "groupIdType_label": "Patient or Group  ID Type*",
+        "sequencingReadLength_label": "Sequencing Read Length*",
+        "sequencingReadLength_helptext": "Select Read Length",
 
         "isShared_label": "I want others to be able to edit or submit these samples on my behalf.",
         "sharedWith_label": "Give permission to:",

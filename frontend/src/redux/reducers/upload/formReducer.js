@@ -26,6 +26,7 @@ export default function formReducer(state = initialFormState, action) {
                 filteredContainers: action.form_data.containers,
                 patientIdTypes: action.form_data.patientIdTypes,
                 patientIdTypesSpecified: action.form_data.patientIdTypesSpecified,
+                readLengths: action.form_data.readLengths,
             };
 
         case ActionTypes.RECEIVE_INITIAL_STATE_FAIL:
@@ -225,6 +226,12 @@ export default function formReducer(state = initialFormState, action) {
                 filteredMaterials: state.allMaterials,
                 filteredSpecies: state.allSpecies,
                 selected: { ...state.selected, application: '' },
+                formIsLoading: true,
+            };
+        case ActionTypes.CLEAR_READ_LENGTHS:
+            return {
+                ...state,
+                selected: { ...state.selected, sequencingReadLength: '' },
                 formIsLoading: true,
             };
         case ActionTypes.CLEARED:

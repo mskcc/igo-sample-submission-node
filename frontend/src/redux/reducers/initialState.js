@@ -10,7 +10,7 @@ export const initialFormState = {
     filteredMaterials: [],
     patientIdTypes: [],
     patientIdTypesSpecified: [],
-
+    readLengths: [],
     allSpecies: [],
     filteredSpecies: [],
 
@@ -28,6 +28,7 @@ export const initialFormState = {
         // altServiceId: false,
         isShared: false,
         sharedWith: '',
+        sequencingReadLength: '',
     },
     // selected: {
     //   application: 'MouseWholeGenome',
