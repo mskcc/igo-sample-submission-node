@@ -193,9 +193,8 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                 }
 
                 // filter requested reads based on sequencing read length
-                // first 'if' is for backwards compatibility from before we moved seq read length into upload form
-                if (formValues.sequencingReadLength && formValues.sequencingReadLength.length > 0) {
-                    if (colDef.picklistName === 'Sequencing+Reads+Requested') {
+                if (colDef.picklistName === 'Sequencing+Reads+Requested') {
+                    if (formValues.sequencingReadLength && formValues.sequencingReadLength.length > 0) {
                         const standardReads = ['PE100', 'PE150', '26/10/10/90', '28/10/10/88', '50/8/16/49', '50/8/24/49'];
                         const specialNonStandardReads = ['PE250', 'PE300'];
                         const specialPE250BlockOptions = ['1 million total reads', '20 million total reads', '100 million total reads', '800 million total reads'];
@@ -214,11 +213,11 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                             const standardList = picklists[colDef.picklistName].filter(item => !item.includes('total reads'));
                             colDef.source = standardList;
                         }
+                    } else {
+                        const standardList = picklists[colDef.picklistName].filter(item => !item.includes('total reads'));
+                        colDef.source = standardList;
                     }
-                } else {
-                    const standardList = picklists[colDef.picklistName].filter(item => !item.includes('total reads'));
-                    colDef.source = standardList;
-                }
+                } 
 
                 colDef.error = colDef.error ? colDef.error : 'Invalid format.';
                 columns.columnFeatures.push(colDef);
