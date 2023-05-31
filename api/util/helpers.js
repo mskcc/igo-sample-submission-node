@@ -215,6 +215,9 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                             colDef.source = standardList;
                         }
                     }
+                } else {
+                    const standardList = picklists[colDef.picklistName].filter(item => !item.includes('total reads'));
+                    colDef.source = standardList;
                 }
 
                 colDef.error = colDef.error ? colDef.error : 'Invalid format.';
