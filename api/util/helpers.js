@@ -205,14 +205,14 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                         } else if (specialNonStandardReads.includes(formValues.sequencingReadLength)) {
                             const newList = formValues.sequencingReadLength === 'PE250' ? specialPE250BlockOptions : specialPE300BlockOptions;
                             colDef.source = newList;
-                        } else if (standardReads.includes(formValues.sequencingReadLength)) {
-                            // filter out total reads options
-                            const standardList = picklists[colDef.picklistName].filter(item => !item.includes('total reads'));
-                            colDef.source = standardList;
-                        } else {
-                            // all others have block options
+                        } else if (!standardReads.includes(formValues.sequencingReadLength)) {
+                            // all block options for non standard
                             const blockList = picklists[colDef.picklistName].filter(item => item.includes('total reads'));
                             colDef.source = blockList;
+                        } else {
+                            // filter out total reads options - this is default!
+                            const standardList = picklists[colDef.picklistName].filter(item => !item.includes('total reads'));
+                            colDef.source = standardList;
                         }
                     }
                 }
