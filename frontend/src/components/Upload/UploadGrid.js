@@ -57,7 +57,10 @@ class UploadGrid extends React.Component {
                                     color='primary'
                                 />
                             )}
-                            <GridButton id='gridSaveNew' onClick={handleSave} isLoading={user.isSaving} done={user.saved} color='primary' />
+                            {(submissionToEdit && gridType === 'dmp') ? ('') : (
+                                <GridButton id='gridSaveNew' onClick={handleSave} isLoading={user.isSaving} done={user.saved} color='primary' />
+                            )
+                            }
                             <GridButton
                                 id='gridExport'
                                 onClick={this.props.handleDownload}
