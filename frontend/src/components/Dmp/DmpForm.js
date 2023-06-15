@@ -151,7 +151,7 @@ class DmpForm extends React.Component {
                     }
 
                 case 'numberOfSamples':
-                    formValid[value] = values[value] > 0;
+                    formValid[value] = values[value] > 0 && values[value] < 97;
                     break;
                 default:
                     break;
@@ -267,6 +267,7 @@ class DmpForm extends React.Component {
                                     inputProps: { min: 0 },
                                 }}
                                 value={form.selected.numberOfSamples}
+                                page='dmp'
                             />
 
                             <FormControl component='fieldset'>

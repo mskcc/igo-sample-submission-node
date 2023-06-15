@@ -15,12 +15,6 @@ const EditPanel = ({ submission, role, classes }) => (
                 <br />
                 ID:<span className={classes.field}> {submission.serviceId}</span>
             </span>
-            {submission.dmpTrackingId && (
-                <span>
-                    <br />
-                    DMP Tracking ID:<span className={classes.field}> {submission.dmpTrackingId}</span>
-                </span>
-            )}
             <br />
             Samples: <span className={classes.field}> {submission.numberOfSamples} </span>
             <br />

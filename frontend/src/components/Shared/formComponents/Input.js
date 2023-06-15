@@ -3,7 +3,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
-const Input = ({ id, classes, type, value, onChange, inputProps, error, errorText }) => (
+const Input = ({ id, classes, type, value, onChange, inputProps, error, errorText, page }) => (
     <Translate>
         {({ translate }) => (
             <TextField
@@ -13,7 +13,9 @@ const Input = ({ id, classes, type, value, onChange, inputProps, error, errorTex
                 className={classes.textField}
                 onChange={onChange}
                 label={error ? errorText || translate('upload.form.fill_me') : translate('upload.form.' + id + '_label')}
-                helperText={translate('upload.form.' + id + '_helptext')}
+                helperText={id === 'numberOfSamples' && page === 'dmp'
+                    ? translate('upload.form.' + id + '_helptext') + ' (up to 96 samples)'
+                    : translate('upload.form.' + id + '_helptext')}
                 InputProps={{ ...inputProps, className: classes.input }}
                 type={type || 'number'}
             />
