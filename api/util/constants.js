@@ -16,6 +16,7 @@ export const constants = {
         'cDNA Library': ['Plates'],
         other: ['Plates', 'Micronic Barcoded Tubes', 'Blocks/Slides/Tubes'],
         Nuclei: ['Blocks/Slides/Tubes'],
+        hmwDNA: ['Plates'],
     },
 
     deprecatedApplications: ['nanostring'],
