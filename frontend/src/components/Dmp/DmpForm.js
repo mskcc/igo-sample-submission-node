@@ -340,7 +340,6 @@ const styles = (theme) => ({
         margin: 'auto',
         padding: '1em',
         marginBottom: '4em',
-        marginTop: '-2em'
     },
     message:{
         width: '60%',
