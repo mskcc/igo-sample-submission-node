@@ -211,6 +211,9 @@ class DmpForm extends React.Component {
                                 skicmopm@mskcc.org
                             </a>.
                             {' '}with any questions or concerns.
+                            <br></br>
+                            <br></br>
+                            For requests exceeding 96 samples, please enter 96 samples at a time and differentiate each cohort by labeling the iLabs service ID sequentially with "_1," "_2," and so on.
                         </Typography>
                         <form id='dmp-upload-form' className={classes.form} onSubmit={(e) => this.handleSubmit(e, handleSubmit)}>
                             <Dropdown
@@ -334,7 +337,7 @@ const styles = (theme) => ({
         justifyItems: 'center',
         width: '80%',
         maxWidth: '1700px',
-        margin: '2em auto',
+        margin: 'auto',
         padding: '1em',
         marginBottom: '4em',
     },
