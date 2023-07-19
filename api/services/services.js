@@ -228,7 +228,7 @@ exports.getOnco = () => {
         })
         .catch((error) => {
             logger.error('Error retrieving response from OncoTree');
-            throw error;
+            return {};
         })
         .then((resp) => {
             return formatOncoData(resp);
