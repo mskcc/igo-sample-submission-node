@@ -14,6 +14,8 @@ router.get('/updateStatus', DmpController.updateStatus);
 // router.get('/picklist', DmpController.picklist);
 router.post('/loadFromDmp', DmpController.loadFromDmp);
 
+router.get('/updateOriginalCohortId', DmpController.updateOriginalCohortId);
+
 // IGO endpoints used by DMP
 router.get('/trackingIdList', DmpController.trackingIdList);
 router.get('/igoSampleInformation', DmpController.igoSampleInformation);
