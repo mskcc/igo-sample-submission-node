@@ -430,6 +430,10 @@ export const findIndexMatch = (grid, colIndex, indexId) => {
 /*------------------------------------------------------------------------*/
 
 export const translateTumorType = (tumorTypes, oldValue, newValue) => {
+  // covering for no oncotree data, because we don't really care on our end
+  if (tumorTypes.length === 0) {
+    return newValue;
+  }
   let translatedTumorType = '';
   //  clear
   if (newValue === '') {
@@ -458,7 +462,7 @@ export const translateTumorType = (tumorTypes, oldValue, newValue) => {
         break;
       }
     }
-    translatedTumorType = (tumorId === '' && tumorTypes.length > 0) ? 'ONCONOTFOUND' : tumorId;
+    translatedTumorType = tumorId === '' ? 'ONCONOTFOUND' : tumorId;
   }
   return translatedTumorType;
 };
