@@ -464,7 +464,8 @@ export const translateTumorType = (tumorTypes, oldValue, newValue) => {
 };
 
 const isValidTumorType = (tumorTypes, newValue) => {
-  if (newValue === '' || newValue === 'Normal') {
+  // tumorTypes === [] to ignore validation when oncotree data is empty because we don't really care
+  if (newValue === '' || newValue === 'Normal' || tumorTypes === []) {
     return true;
   } else {
     let matches = tumorTypes.filter((element) => element.includes(newValue));
