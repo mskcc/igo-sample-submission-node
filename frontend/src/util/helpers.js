@@ -458,7 +458,7 @@ export const translateTumorType = (tumorTypes, oldValue, newValue) => {
         break;
       }
     }
-    translatedTumorType = tumorId === '' ? 'ONCONOTFOUND' : tumorId;
+    translatedTumorType = (tumorId === '' && tumorTypes.length > 0) ? 'ONCONOTFOUND' : tumorId;
   }
   return translatedTumorType;
 };
