@@ -403,3 +403,18 @@ export const importSqlSubmissions = () => {
             return resp;
         });
 };
+
+export const updateDmpOriginalCohortId = (serviceId) => {
+    const url = `${Config.NODE_API_ROOT}/dmp/updateOriginalCohortId?serviceId=${serviceId}`;
+    return axios
+        .get(url)
+        .then((resp) => {
+            return resp;
+        })
+        .catch((error) => {
+            throw error;
+        })
+        .then((resp) => {
+            return resp;
+        });
+};

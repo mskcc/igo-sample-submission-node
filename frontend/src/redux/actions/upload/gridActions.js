@@ -224,7 +224,7 @@ export function getInitialColumns(page, formValues, adjustedMaterial, isEditingP
                                             ...updatedFormValues,
                                             serviceId: newServiceId
                                         };
-                                        return dispatch(handleDMPCohort(newFormValues));
+                                        return dispatch(handleDMPCohort(serviceId, newFormValues));
                                     // isDenied === edit past submission
                                     } else if (decision.isDenied) {
                                         return window.location = 'https://igo.mskcc.org/sample-submission/#/sample-submission/submissions/dmp';
@@ -477,8 +477,12 @@ export function handlePatientIds(grid, ids, emptyIds, username) {
     });
 }
 
-export function handleDMPCohort(formValues) {
+export function handleDMPCohort(originalServiceId, formValues) {
     return (dispatch, getState) => {
+        // is not already cohort, update original request with _1
+        if (!originalServiceId.includes('_')) {
+            services.updateDmpOriginalCohortId(originalServiceId);
+        }
         const newServiceId = formValues.serviceId;
         const newServiceIdNum = newServiceId.split('-')[1];
         dispatch(dmpSelect('serviceId', newServiceIdNum));

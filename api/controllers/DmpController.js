@@ -598,3 +598,19 @@ exports.igoSampleInformation = [
             });
     },
 ];
+
+exports.updateOriginalCohortId = [
+    query('serviceId').exists().withMessage('serviceId must be specified.'),
+    function(req, res) {
+        const serviceId = req.query.serviceId;
+        const dmpPromise = DmpSubmissionModel.findOneAndUpdate({ "formValues.serviceId": serviceId }, { "formValues.serviceId": `${serviceId}_1` }, { new: true });
+        Promise.all([dmpPromise])
+            .then(results => {
+                const updatedCohort = results[0];
+                return apiResponse.successResponseWithData(res, 'Operation success', { updatedCohort });
+            })
+            .catch(error => {
+                return apiResponse.errorResponse(res, reasons);
+            });
+    }
+];

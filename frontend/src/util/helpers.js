@@ -235,7 +235,7 @@ export const getCohortServiceId = (serviceId) => {
     const newCohort = cohortNum + 1;
     return `${originalId}_${newCohort}`;
   }
-  return `${serviceId}_1`;
+  return `${serviceId}_2`;
 };
 
 export const rowsWithRowIndex = function(rows) {
