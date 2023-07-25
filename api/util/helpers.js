@@ -101,8 +101,7 @@ const cacheAllPicklists = (limsColumns, allColumns) => {
             .catch((error) => reject(error))
             .then((results) => {
                 if (!results || results.some((x) => x.length === 0)) {
-                    reject('Could not cache picklists.');
-                    return;
+                    logger.error('Could not cache picklists.');
                 }
                 Object.keys(picklists).map((element, index) => {
                     picklists[element] = results[index];

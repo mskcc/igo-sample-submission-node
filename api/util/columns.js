@@ -319,7 +319,7 @@ export const gridColumns = {
         error: 'Only OncoTree Tumor IDs or exact dropdown options are permitted.',
         strict: true,
         picklistName: 'tumorType',
-        tooltip: 'Tumor types taken from http://oncotree.mskcc.org/',
+        tooltip: 'Tumor types taken from http://oncotree.info/',
     },
     'Sample Class': {
         name: 'Sample Class',
