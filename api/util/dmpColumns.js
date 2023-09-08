@@ -14,8 +14,7 @@ const validationPatterns = {
     dmpPatientId: '^P-[0-9]{7}$',
     mrn: '^[0-9]{8}$',
     groupingId: '[A-Za-z0-9\\,_-]{4,}',
-    plateId: '^MSK-[A-Za-z0-9\\,_-]{10,}$',
-    dmpSampleId: ''
+    plateId: '^MSK-[A-Za-z0-9\\,_-]{10,}$'
 };
 export const deprecatedColumns = ['Index Position'];
 export const formattingAdjustments = {
