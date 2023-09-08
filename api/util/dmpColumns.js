@@ -10,11 +10,12 @@ const validationPatterns = {
     alphanumFour: '[0-9a-zA-Z]{4,}',
     alphanumdash: '^[A-Za-z0-9](?!.*__)[A-Za-z0-9\\,_-]{2}[A-Za-z0-9\\,_-]*$',
     cmoId: '^C[-|_].{6}$',
-    dmpSampleId: '^P-[0-9]{7}-.{3}-.{3}$',
+    dmpSampleId: '^P-[0-9]{7}-T[0-9]{2}-[a-zA-Z]{2}[0-9]{1}$',
     dmpPatientId: '^P-[0-9]{7}$',
     mrn: '^[0-9]{8}$',
     groupingId: '[A-Za-z0-9\\,_-]{4,}',
     plateId: '^MSK-[A-Za-z0-9\\,_-]{10,}$',
+    dmpSampleId: ''
 };
 export const deprecatedColumns = ['Index Position'];
 export const formattingAdjustments = {
@@ -38,7 +39,7 @@ export const gridColumns = {
 
     'DMP Sample ID': {
         name: 'DMP Sample ID',
-        pattern: validationPatterns.alphanumdash,
+        pattern: validationPatterns.dmpSampleId,
         columnHeader: 'DMP Sample ID',
         data: 'dmpSampleId',
         error: 'Only valid DMP Sample IDs, e.g. P-0000000-T00-IM0.',
