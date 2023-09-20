@@ -88,9 +88,9 @@ class UploadGrid extends React.Component {
                         headerTooltips={true}
                         manualColumnResize={true}
                         comments={true}
-                        columnSorting={user.isLabMember ? true : false}
-                        filters={user.isPM ? true : false}
-                        dropdownMenu={user.isPM ? ['filter_by_value', 'filter_action_bar'] : false}
+                        columnSorting={user.role === 'lab_member' ? true : false}
+                        filters={user.role === 'cmo_pm' ? true : false}
+                        dropdownMenu={user.role === 'cmo_pm' ? ['filter_by_value', 'filter_action_bar'] : false}
                         ref={this.hotTableComponent}
                         beforeChange={(changes, source) => {
                             // only do something if rows can fit the changes/if
