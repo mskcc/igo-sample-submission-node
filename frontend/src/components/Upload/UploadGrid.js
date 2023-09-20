@@ -88,7 +88,7 @@ class UploadGrid extends React.Component {
                         headerTooltips={true}
                         manualColumnResize={true}
                         comments={true}
-                        columnSorting={user.isPM ? true : false}
+                        columnSorting={user.isLabMember ? true : false}
                         filters={user.isPM ? true : false}
                         dropdownMenu={user.isPM ? ['filter_by_value', 'filter_action_bar'] : false}
                         ref={this.hotTableComponent}
