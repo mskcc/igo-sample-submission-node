@@ -1181,7 +1181,7 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
         igoSampleClass = dmpSampleClass === 'Metastatic' ? 'Metastasis' : dmpSampleClass;
 
         if (dmpSpecimenType === 'N/A') {
-            igoSpecimenType = 'Biopsy';
+            igoSpecimenType = 'other';
         } else if (dmpSpecimenType === 'Cytology') {
             igoSpecimenType = 'other';
             igoPreservation = 'Frozen';
