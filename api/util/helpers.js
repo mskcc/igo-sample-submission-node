@@ -1122,7 +1122,7 @@ function getDualIndex(dualSequence, indexEntries){
 // Tumor Type: Esophagus_Stomach:Esophageal Adenocarcinoma | Tumor Type/tumorType, simply fill and let grid translate,
 //      Concentration (ng/ul): 45.88 | Concentration (ng/ul)/concentration ,
 //      Well Position: D1 | wellPosition, If empty, skip
-//      Preservation (FFPE or Blood): FFPE | Preservation/preservation = preservation === Blood? EDTA-Streck : preservation, SampleOrigin = preservation === FFPE ? Tissue : Whole Blood
+//      Preservation (FFPE or Blood): there are way more options than FFPE/Blood here but they were added later
 // Study of Title: TRAP | not needed,
 //      Collection Year: 2019 | CollectionYear/collectionYear,
 // Sample Approved By CMO:  | not needed,
@@ -1177,7 +1177,7 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
         }
 
         igoPreservation = dmpPreservation === 'Blood' ? 'EDTA-Streck' : dmpPreservation;
-        igoSampleOrigin = dmpPreservation === 'FFPE' ? 'Tissue' : 'Whole Blood';
+        igoSampleOrigin = dmpPreservation === 'FFPE' ? 'Tissue' : dmpPreservation;
         igoSampleClass = dmpSampleClass === 'Metastatic' ? 'Metastasis' : dmpSampleClass;
 
         if (dmpSpecimenType === 'N/A') {
