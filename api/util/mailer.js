@@ -20,9 +20,14 @@ exports.sendNotification = function (submission) {
     let recipients = [emailConfig.notificationRecipients];
 
     let sampleIdsString = '';
+    let projectTitles = [];
     submission.gridValues.map((element) => {
         sampleIdsString += `<br> ${element.userId}`;
+        if (!projectTitles.includes(element.projectTitle)) {
+            projectTitles.push(element.projectTitle);
+        }
     });
+    const projectTitlesString = projectTitles.join(', ');
 
     if (sendToPms(submission.formValues)) {
         recipients.push(emailConfig.cmoPmEmail);
@@ -32,7 +37,7 @@ exports.sendNotification = function (submission) {
     }
     let email = {
         subject: `${emailConfig.subject} ${submission.formValues.serviceId}`,
-        content: `The following ${submission.formValues.material} samples were submitted to IGO for ${submission.formValues.application} by ${submission.username} under service id ${submission.formValues.serviceId}.  <br> ${sampleIdsString} `,
+        content: `The following ${submission.formValues.material} samples were submitted to IGO for ${submission.formValues.application} by ${submission.username} under service id ${submission.formValues.serviceId} for the project(s) titled: ${projectTitlesString}.  <br> ${sampleIdsString} `,
         footer: emailConfig.footer,
     };
     console.log(email);
