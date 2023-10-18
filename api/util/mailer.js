@@ -20,14 +20,9 @@ exports.sendNotification = function (submission) {
     let recipients = [emailConfig.notificationRecipients];
 
     let sampleIdsString = '';
-    let projectTitles = [];
     submission.gridValues.map((element) => {
         sampleIdsString += `<br> ${element.userId}`;
-        if (!projectTitles.includes(element.projectTitle)) {
-            projectTitles.push(element.projectTitle);
-        }
     });
-    const projectTitlesString = projectTitles.join(', ');
 
     if (sendToPms(submission.formValues)) {
         recipients.push(emailConfig.cmoPmEmail);
@@ -37,7 +32,7 @@ exports.sendNotification = function (submission) {
     }
     let email = {
         subject: `${emailConfig.subject} ${submission.formValues.serviceId}`,
-        content: `The following ${submission.formValues.material} samples were submitted to IGO for ${submission.formValues.application} by ${submission.username} under service id ${submission.formValues.serviceId} for the project(s) titled: ${projectTitlesString}.  <br> ${sampleIdsString} `,
+        content: `The following ${submission.formValues.material} samples were submitted to IGO for ${submission.formValues.application} by ${submission.username} under service id ${submission.formValues.serviceId}.  <br> ${sampleIdsString} `,
         footer: emailConfig.footer,
     };
     console.log(email);
@@ -67,17 +62,23 @@ exports.sendDMPSubNotification = function (submission) {
     }
 
     let sampleIdsString = '';
+    let projectTitles = [];
     submission.gridValues.map((element) => {
         if (element.molecularPathologyAccessionNumber && element.molecularPathologyAccessionNumber.length > 0) {
             sampleIdsString += `<br> ${element.molecularPathologyAccessionNumber}`;
         } else {
             sampleIdsString += `<br> ${element.dmpSampleId}`;
         }
+
+        if (!projectTitles.includes(element.projectTitle)) {
+            projectTitles.push(element.projectTitle);
+        }
     });
+    const projectTitlesString = projectTitles.join(', ');
 
     let email = {
         subject: `${subject}`,
-        content: `The following ${submission.gridValues.length} ${submission.formValues.material} samples were submitted for transfer from DMP to IGO for ${submission.formValues.application} by ${submission.username}${serviceIdText}.  <br> ${sampleIdsString} `,
+        content: `The following ${submission.gridValues.length} ${submission.formValues.material} samples were submitted for transfer from DMP to IGO for ${submission.formValues.application} by ${submission.username}${serviceIdText} for the project(s) titled: ${projectTitlesString}.  <br> ${sampleIdsString} `,
         footer: emailConfig.footer,
     };
     console.log(email);
