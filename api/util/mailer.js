@@ -62,17 +62,23 @@ exports.sendDMPSubNotification = function (submission) {
     }
 
     let sampleIdsString = '';
+    let projectTitles = [];
     submission.gridValues.map((element) => {
         if (element.molecularPathologyAccessionNumber && element.molecularPathologyAccessionNumber.length > 0) {
             sampleIdsString += `<br> ${element.molecularPathologyAccessionNumber}`;
         } else {
             sampleIdsString += `<br> ${element.dmpSampleId}`;
         }
+
+        if (!projectTitles.includes(element.projectTitle)) {
+            projectTitles.push(element.projectTitle);
+        }
     });
+    const projectTitlesString = projectTitles.join(', ');
 
     let email = {
         subject: `${subject}`,
-        content: `The following ${submission.gridValues.length} ${submission.formValues.material} samples were submitted for transfer from DMP to IGO for ${submission.formValues.application} by ${submission.username}${serviceIdText}.  <br> ${sampleIdsString} `,
+        content: `The following ${submission.gridValues.length} ${submission.formValues.material} samples were submitted for transfer from DMP to IGO for ${submission.formValues.application} by ${submission.username}${serviceIdText} for the project(s) titled: ${projectTitlesString}.  <br> ${sampleIdsString} `,
         footer: emailConfig.footer,
     };
     console.log(email);
