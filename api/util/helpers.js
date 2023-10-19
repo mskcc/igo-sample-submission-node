@@ -858,11 +858,17 @@ export function loadBankedSamples(queryType, query) {
 
 export function promote(transactionId, requestId, projectId, serviceId, materials, bankedSampleIds, user, dryrun) {
     return new Promise((resolve, reject) => {
+        // remove cohort when promoting
+        let formattedServiceId = serviceId;
+        if (serviceId.includes('_')) {
+            // only use the first 10 characters, i.e. IGO-123456
+            formattedServiceId = serviceId.slice(0,10);
+        }
         let data = {
             transactionId: transactionId,
             requestId: requestId || 'NULL',
             projectId: projectId || 'NULL',
-            serviceId: serviceId,
+            serviceId: formattedServiceId,
             materials: materials,
             bankedId: bankedSampleIds,
             igoUser: user,
