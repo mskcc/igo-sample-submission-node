@@ -241,7 +241,8 @@ exports.submit = [
         let formValues = JSON.parse(req.body.formValues);
         let gridValues = JSON.parse(req.body.gridValues);
         let transactionId = req.body.transactionId;
-        let reviewed = req.body.reviewed;
+        let reviewed = false;
+        // req.body.reviewed;
         let id = req.body.id || undefined;
         let samplesApproved = [];
         if (reviewed) {
