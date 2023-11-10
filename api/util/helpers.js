@@ -1209,7 +1209,7 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
             plateId: dmpSample['Barcode/Plate ID'],
             // not called sex. unclear why.
             gender: dmpSample['Sex'],
-            collectionYear: dmpSample['Collection Year'],\
+            collectionYear: dmpSample['Collection Year'],
             species: 'Human',
             // not called tumorType. unclear why.
             cancerType: igoTumorType,
