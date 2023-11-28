@@ -21,7 +21,7 @@ export const generateRows = (columns, formValues, numberToAdd) => {
   for (let i = 0; i < numberToAdd; i++) {
     for (let j = 0; j < columns.length; j++) {
       if (columns[j].data === 'species' || columns[j].data === 'organism') {
-        rows[i] = { ...rows[i], organism: formValues.species };
+        rows[i] = { ...rows[i], species: formValues.species };
       } else if (columns[j].data === 'patientId' && columns[j].columnHeader === 'Cell Line Name') {
         rows[i] = { ...rows[i], specimenType: 'CellLine' };
       } else {

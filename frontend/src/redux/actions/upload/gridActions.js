@@ -307,6 +307,13 @@ export function populateGridFromSubmission(submissionId, ownProps) {
                     submission.formValues.sequencingReadLength = submission.gridValues[0].sequencingReadLength;
                 }
 
+                // adding backwards compatibility for moving from 'organism' field to 'species' (ugh)
+                if (submission.gridValues[0].organism) {
+                    for (let i = 0; i < submission.gridValues.length; i++) {
+                        submission.gridValues[i].species = formValues.species;
+                    }
+                }
+
                 const editingPastSubmission = true;
                 let columnPromise = dispatch(getInitialColumns(page, formValues, adjustedMaterial, editingPastSubmission), getState().user.role);
                 Promise.all([columnPromise])

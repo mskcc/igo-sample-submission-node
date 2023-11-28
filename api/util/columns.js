@@ -89,7 +89,7 @@ export const gridColumns = {
     Species: {
         name: 'Species',
         columnHeader: 'Species',
-        data: 'organism',
+        data: 'species',
         readOnly: true,
         tooltip: 'If your species is not available, please contact IGO immediately',
         editableCellTemplate: 'ui-grid/dropdownEditor',

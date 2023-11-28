@@ -324,7 +324,7 @@ const fillData = (columns, formValues) => {
                 if (datafieldName === 'species' || datafieldName === 'organism') {
                     rowData[i] = {
                         ...rowData[i],
-                        organism: species,
+                        species: species,
                     };
                 }
                 if (datafieldName === 'preservation') {
@@ -1210,7 +1210,7 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
             // not called sex. unclear why.
             gender: dmpSample['Sex'],
             collectionYear: dmpSample['Collection Year'],
-            organism: 'Human',
+            species: 'Human',
             // not called tumorType. unclear why.
             cancerType: igoTumorType,
             preservation: igoPreservation,
