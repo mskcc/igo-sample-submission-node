@@ -331,7 +331,7 @@ const fillData = (columns, formValues) => {
                     if (material === 'Blood') {
                         rowData[i] = {
                             ...rowData[i],
-                            preservation: 'EDTA-Streck',
+                            preservation: 'EDTA',
                         };
                     }
                     if (material === 'Buffy Coat') {
@@ -1182,7 +1182,7 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
             return;
         }
 
-        igoPreservation = dmpPreservation === 'Blood' ? 'EDTA-Streck' : dmpPreservation;
+        igoPreservation = dmpPreservation === 'Blood' ? 'EDTA' : dmpPreservation;
         igoSampleOrigin = dmpPreservation === 'FFPE' ? 'Tissue' : dmpPreservation;
         igoSampleClass = dmpSampleClass === 'Metastatic' ? 'Metastasis' : dmpSampleClass;
 
