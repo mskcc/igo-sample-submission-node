@@ -331,7 +331,7 @@ const fillData = (columns, formValues) => {
                     if (material === 'Blood') {
                         rowData[i] = {
                             ...rowData[i],
-                            preservation: 'EDTA-Streck',
+                            preservation: 'EDTA',
                         };
                     }
                     if (material === 'Buffy Coat') {
