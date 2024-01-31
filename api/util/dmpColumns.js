@@ -167,7 +167,6 @@ export const gridColumns = {
         strict: true,
         error: 'Only dropdown options are permitted as values',
         picklistName: 'DmpCoverage',
-        hiddenFrom: 'user',
     },
 
     'Amount Requested': {
@@ -364,6 +363,7 @@ export const dmpIntakeForms = {
         ['Sample Type', 'Required'],
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
+        ['Requested Coverage', 'Required'],
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
@@ -541,6 +541,7 @@ export const dmpIntakeForms = {
         ['Sample Type', 'Required'],
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
+        ['Requested Coverage', 'Required'],
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
@@ -779,6 +780,7 @@ export const dmpIntakeForms = {
         ['Sample Type', 'Required'],
         ['Project PI', 'Required'],
         ['Project Title', 'Required'],
+        ['Requested Coverage', 'Required'],
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
