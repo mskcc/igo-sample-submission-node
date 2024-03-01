@@ -11,6 +11,7 @@ export const initialFormState = {
     patientIdTypes: [],
     patientIdTypesSpecified: [],
     readLengths: [],
+    squareSizes: [],
     allSpecies: [],
     filteredSpecies: [],
 
@@ -29,6 +30,7 @@ export const initialFormState = {
         isShared: false,
         sharedWith: '',
         sequencingReadLength: '',
+        squareSize: '',
     },
     // selected: {
     //   application: 'MouseWholeGenome',

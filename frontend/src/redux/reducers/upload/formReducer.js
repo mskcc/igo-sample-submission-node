@@ -27,6 +27,7 @@ export default function formReducer(state = initialFormState, action) {
                 patientIdTypes: action.form_data.patientIdTypes,
                 patientIdTypesSpecified: action.form_data.patientIdTypesSpecified,
                 readLengths: action.form_data.readLengths,
+                squareSizes: action.form_data.squareSizes,
             };
 
         case ActionTypes.RECEIVE_INITIAL_STATE_FAIL:
@@ -226,6 +227,12 @@ export default function formReducer(state = initialFormState, action) {
                 filteredMaterials: state.allMaterials,
                 filteredSpecies: state.allSpecies,
                 selected: { ...state.selected, application: '' },
+                formIsLoading: true,
+            };
+        case ActionTypes.CLEAR_SQUARE_SIZE:
+            return {
+                ...state,
+                selected: { ...state.selected, squareSize: '' },
                 formIsLoading: true,
             };
         case ActionTypes.CLEAR_READ_LENGTHS:

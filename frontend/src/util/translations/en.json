@@ -23,6 +23,8 @@
         "groupIdType_label": "Patient or Group  ID Type*",
         "sequencingReadLength_label": "Sequencing Read Length*",
         "sequencingReadLength_helptext": "Select Read Length",
+        "squareSize_label": "Square Size*",
+        "squareSize_helptext": "Which size square would you like for each sample?",
 
         "isShared_label": "I want others to be able to edit or submit these samples on my behalf.",
         "sharedWith_label": "Give permission to:",

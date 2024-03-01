@@ -19,6 +19,7 @@ var FormSchema = new mongoose.Schema({
     serviceId: { type: String, required: true },
     species: { type: String, required: true },
     sequencingReadLength: { type: String, required: false },
+    squareSize: { type: String, required: false },
 });
 
 var SubmissionSchema = new mongoose.Schema(

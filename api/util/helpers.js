@@ -663,6 +663,7 @@ export function submit(submission, user, transactionId) {
         let capturePanel = submission.formValues.capturePanel;
         let sampleType = submission.formValues.material;
         let seqReadLength = submission.formValues.sequencingReadLength || '';
+        let squareSize = submission.formValues.squareSize || '';
         let samples = submission.gridValues;
         let submittedSamples = [];
         // prep banked sample record
@@ -678,6 +679,7 @@ export function submit(submission, user, transactionId) {
             bankedSample.user = process.env.API_USER;
             bankedSample.concentrationUnits = 'ng/uL';
             bankedSample.sequencingReadLength = seqReadLength;
+            bankedSample.squareSize = squareSize;
 
             if (recipe.includes('COVID')) {
                 bankedSample.userId = `${bankedSample.userId}-${serviceId}`;

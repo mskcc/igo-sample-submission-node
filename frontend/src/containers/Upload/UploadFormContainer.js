@@ -35,10 +35,15 @@ export class UploadFormContainer extends Component {
         }
     };
 
+    handleSquareSizeChange = (selectedSquareSize) => {
+        const { clearSquareSize } = this.props;
+        if (!selectedSquareSize) clearSquareSize();
+    };
+
     handleReadLengthChange = (selectedReadLength) => {
         const { clearReadLengths } = this.props;
         if (!selectedReadLength) clearReadLengths();
-    }
+    };
 
     handleSpeciesChange = (selectedSpecies) => {
         const { clearSpecies } = this.props;
@@ -78,6 +83,7 @@ export class UploadFormContainer extends Component {
                             handleApplicationChange={this.handleApplicationChange}
                             handleSpeciesChange={this.handleSpeciesChange}
                             handleReadLengthChange={this.handleReadLengthChange}
+                            handleSquareSizeChange={this.handleSquareSizeChange}
                             handleInputChange={this.handleInputChange}
                             handleClear={this.handleClear}
                         />
