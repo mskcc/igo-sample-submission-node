@@ -34,6 +34,7 @@ exports.headerValues = [
                     patientIdTypesSpecResult,
                     capturePanelResult,
                     readLengthsResult,
+                    squareSizesResult,
                 ] = results;
                 let currentApplications = applicationsResult.filter(
                     (application) => !constants.deprecatedApplications.includes(application.toLowerCase())
@@ -47,6 +48,7 @@ exports.headerValues = [
                     patientIdTypes: patientIdTypesResult,
                     patientIdTypesSpecified: patientIdTypesSpecResult,
                     readLengths: readLengthsResult,
+                    squareSizes: squareSizesResult,
                 };
                 return apiResponse.successResponseWithData(res, 'Operation success', responseObject);
             })

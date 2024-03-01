@@ -26,6 +26,7 @@ class UploadForm extends React.Component {
                 patientIdTypeSpecified: true,
                 sharedWith: true,
                 sequencingReadLength: true,
+                squareSize: true,
             },
         };
     }
@@ -48,6 +49,9 @@ class UploadForm extends React.Component {
             (this.state.values.patientIdType === 'MSK-Patients (or derived from MSK Patients)' ||
                 this.state.values.patientIdType === 'Both MSK-Patients and Non-MSK Patients')
         );
+    };
+    showSquareSpaceDropdown = () => {
+        return this.state.values.application === '10X_Genomics_Visium';
     };
     showReadLengthDropdown = () => {
         // dont show anything until they select application
@@ -146,6 +150,19 @@ class UploadForm extends React.Component {
 
                 case 'application':
                     isValidOption = this.props.form.filteredApplications.some(function(el) {
+                        return el === values[value];
+                    });
+
+                    formValid[value] = isValidOption && values[value].length > 0;
+                    break;
+
+                case 'squareSize':
+                    if (!this.showSquareSpaceDropdown()) {
+                        formValid[value] = true;
+                        values[value] = '';
+                        break;
+                    }
+                    isValidOption = this.props.form.squareSizes.some(function(el) {
                         return el === values[value];
                     });
 
@@ -270,7 +287,8 @@ class UploadForm extends React.Component {
             this.state.formValid.patientIdTypeSpecified &&
             this.state.formValid.capturePanel &&
             this.state.formValid.sharedWith &&
-            this.state.formValid.sequencingReadLength
+            this.state.formValid.sequencingReadLength &&
+            this.state.formValid.squareSize
         );
     }
 
@@ -283,6 +301,7 @@ class UploadForm extends React.Component {
             handleMaterialChange,
             handleSpeciesChange,
             handleReadLengthChange,
+            handleSquareSizeChange,
             gridIsLoading,
             nothingToChange,
             gridNumberOfSamples,
@@ -329,6 +348,24 @@ class UploadForm extends React.Component {
                                     label: form.selected.application,
                                 }}
                             />
+                            {this.showSquareSpaceDropdown() && (
+                                <Dropdown
+                                    id='squareSize'
+                                    error={!formValid.squareSize}
+                                    onSelect={handleSquareSizeChange}
+                                    onChange={this.handleDropdownChange}
+                                    items={form.squareSizes.map((option) => ({
+                                        value: option,
+                                        label: option,
+                                    }))}
+                                    loading={form.formIsLoading}
+                                    dynamic
+                                    value={{
+                                        value: form.selected.squareSize,
+                                        label: form.selected.squareSize,
+                                    }}
+                                />
+                            )}
                             {this.showReadLengthDropdown() && (<Dropdown
                                 id='sequencingReadLength'
                                 error={!formValid.sequencingReadLength}
@@ -538,6 +575,7 @@ UploadForm.defaultProps = {
 
         allSpecies: [{ id: 'test', value: 'test' }],
         readLengths: [{ id: 'test', value: 'test' }],
+        squareSizes: [{ id: 'test', value: 'test' }],
         selected: {
             application: '',
             material: '',
@@ -548,6 +586,7 @@ UploadForm.defaultProps = {
             patientIdType: '',
             groupingChecked: false,
             sequencingReadLength: '',
+            squareSize: '',
             // altServiceId: false,
         },
 

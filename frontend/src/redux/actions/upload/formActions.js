@@ -82,7 +82,7 @@ export const SELECT = 'SELECT';
 
 export function select(id, value, checkForMismatch = true) {
     return (dispatch) => {
-        if (id === 'species' || id === 'container' || id === 'patientIdType' || id === 'patientIdTypeSpecified' || id === 'sequencingReadLength') {
+        if (id === 'species' || id === 'container' || id === 'patientIdType' || id === 'patientIdTypeSpecified' || id === 'sequencingReadLength' || id === 'squareSize') {
             checkForMismatch && dispatch(checkForChange(id, value));
             return dispatch({
                 type: SELECT,
@@ -185,8 +185,13 @@ export const clearSpecies = () => {
 export const CLEAR_READ_LENGTHS = 'CLEAR_READ_LENGTHS';
 
 export const clearReadLengths = () => {
-    return [{ type: CLEAR_READ_LENGTHS }, { type: CLEARED }];;
+    return [{ type: CLEAR_READ_LENGTHS }, { type: CLEARED }];
 };
+
+export const CLEAR_SQUARE_SIZE = 'CLEAR_SQUARE_SIZE';
+export const clearSquareSize = () => {
+    return [{ type: CLEAR_SQUARE_SIZE }, { type: CLEARED }];
+}
 
 export const CLEAR_MATERIAL = 'CLEAR_MATERIAL';
 
