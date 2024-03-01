@@ -191,7 +191,7 @@ export const clearReadLengths = () => {
 export const CLEAR_SQUARE_SIZE = 'CLEAR_SQUARE_SIZE';
 export const clearSquareSize = () => {
     return [{ type: CLEAR_SQUARE_SIZE }, { type: CLEARED }];
-}
+};
 
 export const CLEAR_MATERIAL = 'CLEAR_MATERIAL';
 
