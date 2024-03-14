@@ -4,6 +4,7 @@ import { Translate } from 'react-localize-redux';
 import { FormControl, InputAdornment, Paper, withStyles } from '@material-ui/core';
 import { Button, Checkbox, Dropdown, Input } from '../index';
 import { guessMatch } from '../../util/helpers';
+import { readableRecipesLib } from '../../util/constants';
 
 
 class UploadForm extends React.Component {
@@ -320,7 +321,7 @@ class UploadForm extends React.Component {
                                 onChange={this.handleDropdownChange}
                                 items={form.filteredApplications.map((option) => ({
                                     value: option,
-                                    label: option,
+                                    label: readableRecipesLib[option],
                                 }))}
                                 loading={form.formIsLoading}
                                 dynamic
