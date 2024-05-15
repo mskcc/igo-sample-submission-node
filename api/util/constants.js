@@ -20,30 +20,30 @@ export const constants = {
 
     deprecatedApplications: ['nanostring'],
 
-    humanApplications: ['expanded_genomics', 'msk-access', 'hemepact', 'archer', 'impact4', 'humanwholegenome', 'methylcaptureseq'],
+    humanApplications: ['expanded_genomics', 'msk-access', 'hemepact', 'archer', 'impact4', 'methyl_capture'],
 
     mouseApplications: ['mousewholegenome ', 'm-impact_v1'],
 
-    humanOrMouseApplications: ['wholeexomesequencing'],
+    humanOrMouseApplications: ['wes_human', 'wes_mouse', 'wgs_deep'],
 
     logger: 'sampleSubmission',
     mrnRedactedString: 'MRN_REDACTED',
 };
 export const emailConfig = {
-    cmoPmEmailApplications: ['HemePACT_v4', 'IMPACT410', 'IMPACT505', 'IMPACT468', 'MSK-ACCESS_v1', 'WholeExomeSequencing'],
+    cmoPmEmailApplications: ['HC_IMPACT-Heme', 'IMPACT410', 'HC_IMPACT', 'IMPACT468', 'HC_ACCESS', 'WES_Human', 'WES_Mouse'],
     singleCellEmailApplications: [
-        'DLP',
-        'MissionBio-Custom',
-        'MissionBio-Heme',
+        'SC_DLP',
+        'User_MissionBio',
         'MissionBio-Myeloid',
         'MissionBio-THS',
-        '10X_Genomics_Multiome',
-        '10X_Genomics_VDJ',
-        '10X_Genomics_GeneExpression-3',
-        '10X_Genomics_GeneExpression-5',
-        '10X_Genomics_ATAC',
-        '10X_Genomics_FeatureBarcoding-3',
-        '10X_Genomics_FeatureBarcoding-5',
+        'SC_Chromium-Multiome',
+        'SC_Chromium-BCR',
+        'SC_Chromium-TCR',
+        'SC_Chromium-GEX-3',
+        'SC_Chromium-GEX-5',
+        'User_Chromium-ATAC',
+        'SC_Chromium-FB-3',
+        'SC_Chromium-FB-5',
     ],
     notificationRecipients: 'zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org, zzPDL_SKI_IGO_DATA@mskcc.org',
     notificationDMPRecipients: 'skicmopm@mskcc.org, zzPDL_SKI_IGO_Sample_and_Project_Management@mskcc.org, zzPDL_SKI_IGO_DATA@mskcc.org',
