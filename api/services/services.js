@@ -124,7 +124,7 @@ exports.getBarcodes = () => {
 };
 
 exports.getMaterials = (application) => {
-    const url = `${LIMS_URL}/getIntakeTerms?recipe=${encodeURIComponent('DNA_CUT&RUN'.replace(/&amp;/g, "&").replace('/', '_PIPI_SLASH_'))}`;
+    const url = `${LIMS_URL}/getIntakeTerms?recipe=${encodeURIComponent(application.replace(/&amp;/g, "&").replace('/', '_PIPI_SLASH_'))}`;
     logger.info(`Sending request to ${url}`);
     return axios
         .get(url, {
