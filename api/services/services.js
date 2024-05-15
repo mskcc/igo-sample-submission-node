@@ -123,7 +123,7 @@ exports.getBarcodes = () => {
 };
 
 exports.getMaterials = (application) => {
-    const url = `${LIMS_URL}/getIntakeTerms?recipe=${application.replace('/', '_PIPI_SLASH_')}`;
+    const url = `${LIMS_URL}/getIntakeTerms?recipe=${encodeURIComponent(application.replace('/', '_PIPI_SLASH_'))}`;
     logger.info(`Sending request to ${url}`);
     return axios
         .get(url, {
@@ -164,10 +164,10 @@ exports.getApplications = (material) => {
         });
 };
 exports.getColumns = (material, application) => {
-    const url = `${LIMS_URL}/getIntakeTerms?type=${material.replace('/', '_PIPI_SLASH_')}&recipe=${application.replace(
+    const url = `${LIMS_URL}/getIntakeTerms?type=${material.replace('/', '_PIPI_SLASH_')}&recipe=${encodeURIComponent(application.replace(
         '/',
         '_PIPI_SLASH_'
-    )}`;
+    ))}`;
     logger.info(`Sending request to ${url}`);
     return axios
         .get(url, {

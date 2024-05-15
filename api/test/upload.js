@@ -62,7 +62,7 @@ describe('Upload', () => {
     });
     describe('/GET materialsAndSpecies', () => {
         it('it should GET materials and species for recipe', (done) => {
-            let recipe = 'HumanWholeGenome';
+            let recipe = 'WGS_Deep';
             chai.request(server)
                 .get('/api/upload/materialsAndSpecies?recipe=' + recipe)
                 // .set("Authorization", "Bearer " + userTestData.token)
