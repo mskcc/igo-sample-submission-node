@@ -124,8 +124,8 @@ exports.getBarcodes = () => {
         });
 };
 
-exports.getMaterials = (encodedApplication) => {
-    const url = `${LIMS_URL}/getIntakeTerms?recipe=${encodedApplication.replace('/', '_PIPI_SLASH_')}`;
+exports.getMaterials = (application) => {
+    const url = `${LIMS_URL}/getIntakeTerms?recipe=${encodeURIComponent(application).replace('/', '_PIPI_SLASH_')}`;
     logger.info(`Sending request to ${url}`);
     return axios
         .get(url, {
@@ -165,8 +165,8 @@ exports.getApplications = (material) => {
             return formatDataMaterialsOrApps(resp);
         });
 };
-exports.getColumns = (material, encodedApplication) => {
-    const url = `${LIMS_URL}/getIntakeTerms?type=${material.replace('/', '_PIPI_SLASH_')}&recipe=${encodedApplication.replace(
+exports.getColumns = (material, application) => {
+    const url = `${LIMS_URL}/getIntakeTerms?type=${material.replace('/', '_PIPI_SLASH_')}&recipe=${encodeURIComponent(application).replace(
         '/',
         '_PIPI_SLASH_'
     )}`;
