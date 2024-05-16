@@ -11,6 +11,7 @@ const LIMS_URL = process.env.LIMS_URL;
 const DMP_URL = process.env.DMP_URL;
 const ONCO_URL = process.env.ONCO_URL;
 
+
 const AXIOS_TIMEOUT = parseInt(process.env.AXIOS_TIMEOUT);
 
 // LIMS is authorized. Avoids certificate verification & "unable to verify the first certificate in nodejs" errors
@@ -123,7 +124,8 @@ exports.getBarcodes = () => {
 };
 
 exports.getMaterials = (application) => {
-    const url = `${LIMS_URL}/getIntakeTerms?recipe=${encodeURIComponent(application.replace('/', '_PIPI_SLASH_'))}`;
+    const application_encoded = encodeURIComponent(application);
+    const url = `${LIMS_URL}/getIntakeTerms?recipe=${application_encoded}`;
     logger.info(`Sending request to ${url}`);
     return axios
         .get(url, {
@@ -164,10 +166,9 @@ exports.getApplications = (material) => {
         });
 };
 exports.getColumns = (material, application) => {
-    const url = `${LIMS_URL}/getIntakeTerms?type=${material.replace('/', '_PIPI_SLASH_')}&recipe=${encodeURIComponent(application.replace(
-        '/',
-        '_PIPI_SLASH_'
-    ))}`;
+    const application_encoded = encodeURIComponent(application);
+    logger.info(`encoded application: ${application_encoded}`)
+    const url = `${LIMS_URL}/getIntakeTerms?type=${material.replace('/', '_PIPI_SLASH_')}&recipe=${application_encoded}`;
     logger.info(`Sending request to ${url}`);
     return axios
         .get(url, {
