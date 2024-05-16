@@ -124,7 +124,12 @@ exports.getBarcodes = () => {
 };
 
 exports.getMaterials = (application) => {
+<<<<<<< Updated upstream
     const url = `${LIMS_URL}/getIntakeTerms?recipe=${application.replace(/&amp;/g, "&").replace('/', '_PIPI_SLASH_')}`;
+=======
+    const application_encoded = encodeURIComponent(application);
+    const url = `${LIMS_URL}/getIntakeTerms?recipe=${application_encoded}`;
+>>>>>>> Stashed changes
     logger.info(`Sending request to ${url}`);
     return axios
         .get(url, {
@@ -165,10 +170,16 @@ exports.getApplications = (material) => {
         });
 };
 exports.getColumns = (material, application) => {
+<<<<<<< Updated upstream
     const url = `${LIMS_URL}/getIntakeTerms?type=${material.replace('/', '_PIPI_SLASH_')}&recipe=${application.replace(/&amp;/g, "&").replace(
         '/',
         '_PIPI_SLASH_'
     )}`;
+=======
+    const application_encoded = encodeURIComponent(application);
+    logger.info(`encoded application: ${application_encoded}`)
+    const url = `${LIMS_URL}/getIntakeTerms?type=${material.replace('/', '_PIPI_SLASH_')}&recipe=${application_encoded}`;
+>>>>>>> Stashed changes
     logger.info(`Sending request to ${url}`);
     return axios
         .get(url, {
