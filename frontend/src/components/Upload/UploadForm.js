@@ -321,7 +321,7 @@ class UploadForm extends React.Component {
                                 onChange={this.handleDropdownChange}
                                 items={form.filteredApplications.map((option) => ({
                                     value: option,
-                                    label: readableRecipesLib[option],
+                                    label: option,
                                 }))}
                                 loading={form.formIsLoading}
                                 dynamic
