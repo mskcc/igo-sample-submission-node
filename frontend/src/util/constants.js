@@ -32,6 +32,7 @@ export const readableRecipesLib = {
     "QC_DNA": "DNA QC",
     "QC_Library": "Library QC",
     "QC_RNA": "RNA QC",
+    "R&D_Other": "IGO R&D Use Only",
     "RNA_Capture": "RNA Capture",
     "RNA_PolyA": "RNA Seq - PolyA",
     "RNA_Ribodeplete": "RNA Seq - Ribodepletion",
