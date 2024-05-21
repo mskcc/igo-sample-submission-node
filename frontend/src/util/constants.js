@@ -1,6 +1,6 @@
 // readable recipe names
 export const readableRecipesLib = {
-    "atac": "ATAC Sequencing",
+    "ATAC": "ATAC Sequencing",
     "HC_ACCESS": "MSK-ACCESS",
     "HC_CMOCH": "CMO-CH",
     "HC_Custom": "Custom Capture",
