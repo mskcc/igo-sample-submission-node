@@ -340,7 +340,7 @@ const fillData = (columns, formValues) => {
                             preservation: 'Frozen',
                         };
                     }
-                    if (material === 'Cells' && application.toUpperCase().includes('10X')) {
+                    if ((material === 'Cells' || material === 'Nuclei') && application.toUpperCase().includes('SC')) {
                         rowData[i] = {
                             ...rowData[i],
                             preservation: 'Fresh',
@@ -915,7 +915,7 @@ export function getDmpColumns(material, application) {
     return new Promise((resolve, reject) => {
         const combination = `${material}+${application}`;
         if (dmpColumns.invalidCombinations.includes(combination)) {
-            if (material === 'DNA Library' && application === 'HumanWholeGenome') {
+            if (material === 'DNA/cDNA Library' && application === 'WGS_Deep') {
                 reject(`HumanWholeGenome requires DNA, please select DNA as the material. `);
             }
             if (material === 'DNA Library' && application === 'CHPanel') {

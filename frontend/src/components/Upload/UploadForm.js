@@ -40,7 +40,7 @@ class UploadForm extends React.Component {
     };
 
     showCapturePanelDropdown = () => {
-        return this.state.values.application === 'CustomCapture' &&
+        return this.state.values.application === 'HC_Custom' &&
             this.state.values.material !== 'Pooled Library';
     };
     showPatientIdTypeSpecDropdown = () => {
@@ -54,23 +54,28 @@ class UploadForm extends React.Component {
         // dont show anything until they select application
         if (this.state.values.application.length === 0) return false;
 
-        const isAmpliconSeqApplication = this.state.values.application === 'AmpliconSeq';
-        const isCDnaLibrary = this.state.values.material === 'cDNA Library' && this.state.values.application !== 'QC_Discard';
-        const isPooledLibrary = this.state.values.material === 'Pooled Library' && this.state.values.application !== 'GeoMx';
-        const isDNALibrary = this.state.values.material === 'DNA Library';
+        const isAmpliconSeqApplication = this.state.values.application === 'DNA_Amplicon' || this.state.values.application === 'User_Amplicon' ;
+        const isCDnaLibrary = this.state.values.material === 'DNA/cDNA Library' && this.state.values.application !== 'QC_Library';
+        const isPooledLibrary = this.state.values.material === 'Pooled Library' && this.state.values.application !== 'ST_GeoMx';
+        const isDNALibrary = this.state.values.material === 'DNA/cDNA Library' && this.state.values.application !== 'QC_Library';
         const readLengthNotNeededApplications = [
-            'IMPACT-Heme',
-            'QC_Pickup',
-            'MSK-ACCESS_v1',
-            'SingleCellCNV',
-            'Fingerprinting',
-            'ShallowWGS',
+            'HC_IMPACT-Heme',
+            'QC_DNA',
+            'QC_Library',
+            'QC_RNA',
+            'HC_ACCESS',
+            'DNA_SingleCellCNV',
+            'User_SingleCellCNV',
+            'FA_CLA',
+            'FA_Fingerprint',
+            'WGS_Shallow',
             'ddPCR',
-            'WholeExomeSequencing',
+            'WES_Human',
+            'WES_Mouse',
             'QC_Discard',
-            'IMPACT505',
-            'CustomCapture',
-            'M-IMPACT_v2',
+            'HC_IMPACT',
+            'HC_Custom',
+            'HC_IMPACT-Mouse',
             'HemePACT_v4'
         ];
         return isAmpliconSeqApplication || isCDnaLibrary || isPooledLibrary || (isDNALibrary && !readLengthNotNeededApplications.includes(this.state.values.application));
