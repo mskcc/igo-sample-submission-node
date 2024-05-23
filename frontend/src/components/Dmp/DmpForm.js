@@ -26,7 +26,7 @@ class DmpForm extends React.Component {
     }
 
     showCapturePanelDropdown = () => {
-        return this.state.values.application === 'CustomCapture';
+        return this.state.values.application === 'HC_Custom';
     };
 
     handleDropdownChange = (event) => {

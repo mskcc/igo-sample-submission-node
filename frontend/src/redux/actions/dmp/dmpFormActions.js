@@ -55,7 +55,7 @@ export function dmpSelect(id, value, showMessage) {
             
         }
 
-        if (id === 'application' && value === 'WholeExomeSequencing') {
+        if (id === 'application' && value === 'WES_Human') {
             return dispatch({
                 type: DMP_SELECT,
                 payload: { id: id, value: value },

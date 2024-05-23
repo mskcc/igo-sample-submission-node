@@ -106,7 +106,7 @@ const sendToPms = (submissionFormValues) => {
 
 const sendToSingleCellTeam = (submissionFormValues) => {
     let isSingleCellApp = emailConfig.singleCellEmailApplications.includes(submissionFormValues.application);
-    let notLibraryOrPool = !(submissionFormValues.material === 'DNA Library' || submissionFormValues.material === 'Pooled Library');
+    let notLibraryOrPool = !(submissionFormValues.material === 'DNA/cDNA Library' || submissionFormValues.material === 'Pooled Library');
     if (isSingleCellApp && notLibraryOrPool) {
         return true;
     } else return false;
