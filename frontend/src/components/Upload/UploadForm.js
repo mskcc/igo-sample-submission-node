@@ -1,6 +1,4 @@
-import React from 'react';
 import { Translate } from 'react-localize-redux';
-
 import { FormControl, InputAdornment, Paper, withStyles } from '@material-ui/core';
 import { Button, Checkbox, Dropdown, Input } from '../index';
 import { guessMatch } from '../../util/helpers';
@@ -285,7 +283,6 @@ class UploadForm extends React.Component {
             classes,
             form,
             handleSubmit,
-            handleApplicationChange,
             handleMaterialChange,
             handleSpeciesChange,
             handleReadLengthChange,
@@ -322,17 +319,17 @@ class UploadForm extends React.Component {
                             <Dropdown
                                 id='application'
                                 error={!formValid.application}
-                                onSelect={handleApplicationChange}
-                                onChange={this.handleDropdownChange}
+                                onSelect={this.handleApplicationChange}
+                                onChange={this.handleApplicationChange}
                                 items={form.filteredApplications.map((option) => ({
                                     value: option,
-                                    label: option,
+                                    label: readableRecipesLib[option],
                                 }))}
                                 loading={form.formIsLoading}
                                 dynamic
                                 value={{
                                     value: form.selected.application,
-                                    label: form.selected.application,
+                                    label: readableRecipesLib[form.selected.application],
                                 }}
                             />
                             {this.showReadLengthDropdown() && (<Dropdown
@@ -558,12 +555,50 @@ UploadForm.defaultProps = {
         },
 
         handleSubmit: () => {},
-        handleApplicationChange: () => {},
+        handleApplicationChange : (selectedOption) => {
+            const selectedKey = Object.keys(readableRecipesLib).find(
+              (key) => readableRecipesLib[key] === selectedOption.value
+            );
+        
+            this.setState({
+                values: {
+                    ...this.state.values,
+                    application: selectedKey,
+                },
+                formValid: { ...this.state.formValid, application: true },
+            });
+            
+            this.props.handleInputChange('application', selectedKey);
+        
+            // Perform the API query using the selected key
+            this.fetchColumns(selectedKey);
+            this.fetchMaterials(selectedKey);
+        },
         handleMaterialChange: () => {},
         handleSpeciesChange: () => {},
         gridIsLoading: () => {},
         nothingToChange: () => {},
     },
+};
+
+fetchColumns = async () => {
+    try {
+        const response = await getColumns(material, key);
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+};
+
+fetchMaterials = async () => {
+    try {
+        const response = await getMaterials(key);
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
 };
 
 const styles = (theme) => ({
