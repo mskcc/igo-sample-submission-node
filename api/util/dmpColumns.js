@@ -349,10 +349,10 @@ export const submissionColumns = {
         readOnly: 'true',
     },
 };
-export const invalidCombinations = ['DNA Library+HumanWholeGenome'];
+export const invalidCombinations = ['DNA/cDNA Library+WGS_Deep'];
 
 export const dmpIntakeForms = {
-    'DNA (DMP Sample ID only)+CustomCapture': [
+    'DNA (DMP Sample ID only)+HC_Custom': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -367,7 +367,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (DMP Sample ID only)+CMO-CH': [
+    'DNA (DMP Sample ID only)+HC_CMOCH': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -395,7 +395,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (DMP Sample ID only)+IMPACT-Heme': [
+    'DNA (DMP Sample ID only)+HC_IMPACT-Heme': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -409,7 +409,35 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (DMP Sample ID only)+QC_Pickup': [
+    'DNA (DMP Sample ID only)+QC_DNA': [
+        ['Approved for DMP', 'Required'],
+        ['DMP to Transfer', 'Required'],
+        ['DMP Sample ID', 'Required'],
+        ['MRN', 'Required'],
+        ['CMO Patient ID', 'Required'],
+        ['Normalized Patient ID', 'Required'],
+        ['Investigator Sample ID', 'Required'],
+        ['Sample Type', 'Required'],
+        ['Project PI', 'Required'],
+        ['Project Title', 'Required'],
+        ['Amount Requested', 'Optional'],
+        ['Tracking ID', 'Optional'],
+    ],
+    'DNA (DMP Sample ID only)+QC_RNA': [
+        ['Approved for DMP', 'Required'],
+        ['DMP to Transfer', 'Required'],
+        ['DMP Sample ID', 'Required'],
+        ['MRN', 'Required'],
+        ['CMO Patient ID', 'Required'],
+        ['Normalized Patient ID', 'Required'],
+        ['Investigator Sample ID', 'Required'],
+        ['Sample Type', 'Required'],
+        ['Project PI', 'Required'],
+        ['Project Title', 'Required'],
+        ['Amount Requested', 'Optional'],
+        ['Tracking ID', 'Optional'],
+    ],
+    'DNA (DMP Sample ID only)+QC_Library': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -437,7 +465,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (DMP Sample ID only)+HumanWholeGenome': [
+    'DNA (DMP Sample ID only)+WGS_Deep': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -452,7 +480,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (DMP Sample ID only)+IMPACT505': [
+    'DNA (DMP Sample ID only)+HC_IMPACT': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -482,7 +510,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (DMP Sample ID only)+WholeExomeSequencing': [
+    'DNA (DMP Sample ID only)+WES_Human': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -514,7 +542,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (DMP Sample ID only)+MSK-ACCESS_v1': [
+    'DNA (DMP Sample ID only)+HC_ACCESS': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -531,7 +559,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (Molecular Accession Number only)+CustomCapture': [
+    'DNA (Molecular Accession Number only)+HC_Custom': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['Molecular Pathology Accession Number', 'Required'],
@@ -546,7 +574,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (Molecular Accession Number only)+CMO-CH': [
+    'DNA (Molecular Accession Number only)+HC_CMOCH': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['Molecular Pathology Accession Number', 'Required'],
@@ -574,7 +602,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (Molecular Accession Number only)+IMPACT-Heme': [
+    'DNA (Molecular Accession Number only)+HC_IMPACT-Heme': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['Molecular Pathology Accession Number', 'Required'],
@@ -588,7 +616,35 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (Molecular Accession Number only)+QC_Pickup': [
+    'DNA (Molecular Accession Number only)+QC_DNA': [
+        ['Approved for DMP', 'Required'],
+        ['DMP to Transfer', 'Required'],
+        ['Molecular Pathology Accession Number', 'Required'],
+        ['MRN', 'Required'],
+        ['CMO Patient ID', 'Required'],
+        ['Normalized Patient ID', 'Required'],
+        ['Investigator Sample ID', 'Required'],
+        ['Sample Type', 'Required'],
+        ['Project PI', 'Required'],
+        ['Project Title', 'Required'],
+        ['Amount Requested', 'Optional'],
+        ['Tracking ID', 'Optional'],
+    ],
+    'DNA (Molecular Accession Number only)+QC_RNA': [
+        ['Approved for DMP', 'Required'],
+        ['DMP to Transfer', 'Required'],
+        ['Molecular Pathology Accession Number', 'Required'],
+        ['MRN', 'Required'],
+        ['CMO Patient ID', 'Required'],
+        ['Normalized Patient ID', 'Required'],
+        ['Investigator Sample ID', 'Required'],
+        ['Sample Type', 'Required'],
+        ['Project PI', 'Required'],
+        ['Project Title', 'Required'],
+        ['Amount Requested', 'Optional'],
+        ['Tracking ID', 'Optional'],
+    ],
+    'DNA (Molecular Accession Number only)+QC_Library': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['Molecular Pathology Accession Number', 'Required'],
@@ -616,7 +672,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (Molecular Accession Number only)+HumanWholeGenome': [
+    'DNA (Molecular Accession Number only)+WGS_Deep': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['Molecular Pathology Accession Number', 'Required'],
@@ -631,7 +687,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (Molecular Accession Number only)+IMPACT505': [
+    'DNA (Molecular Accession Number only)+HC_IMPACT': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['Molecular Pathology Accession Number', 'Required'],
@@ -661,7 +717,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (Molecular Accession Number only)+WholeExomeSequencing': [
+    'DNA (Molecular Accession Number only)+WES_Human': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['Molecular Pathology Accession Number', 'Required'],
@@ -693,7 +749,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (Molecular Accession Number only)+MSK-ACCESS_v1': [
+    'DNA (Molecular Accession Number only)+HC_ACCESS': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['Molecular Pathology Accession Number', 'Required'],
@@ -723,7 +779,7 @@ export const dmpIntakeForms = {
     //     ['Molecular Pathology Accession Number', 'Optional'],
     //     ['Amount Requested', 'Optional'],
     // ],
-    'DNA Library+IMPACT505': [
+    'DNA/cDNA Library+HC_IMPACT': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -737,7 +793,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA Library+ddPCR': [
+    'DNA/cDNA Library+ddPCR': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -753,7 +809,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA Library+WholeExomeSequencing': [
+    'DNA/cDNA Library+WES_Human': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -771,7 +827,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA Library+CustomCapture': [
+    'DNA/cDNA Library+HC_Custom': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -786,7 +842,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA Library+IMPACT-Heme': [
+    'DNA/cDNA Library+HC_IMPACT-Heme': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -800,7 +856,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA Library+QC_Pickup': [
+    'DNA/cDNA Library+QC_DNA': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -814,7 +870,35 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA Library+ImmunoSeq': [
+    'DNA/cDNA Library+QC_Library': [
+        ['Approved for DMP', 'Required'],
+        ['DMP to Transfer', 'Required'],
+        ['DMP Sample ID', 'Required'],
+        ['MRN', 'Required'],
+        ['CMO Patient ID', 'Required'],
+        ['Normalized Patient ID', 'Required'],
+        ['Investigator Sample ID', 'Required'],
+        ['Sample Type', 'Required'],
+        ['Project PI', 'Required'],
+        ['Project Title', 'Required'],
+        ['Amount Requested', 'Optional'],
+        ['Tracking ID', 'Optional'],
+    ],
+    'DNA/cDNA Library+QC_RNA': [
+        ['Approved for DMP', 'Required'],
+        ['DMP to Transfer', 'Required'],
+        ['DMP Sample ID', 'Required'],
+        ['MRN', 'Required'],
+        ['CMO Patient ID', 'Required'],
+        ['Normalized Patient ID', 'Required'],
+        ['Investigator Sample ID', 'Required'],
+        ['Sample Type', 'Required'],
+        ['Project PI', 'Required'],
+        ['Project Title', 'Required'],
+        ['Amount Requested', 'Optional'],
+        ['Tracking ID', 'Optional'],
+    ],
+    'DNA/cDNA Library+ImmunoSeq': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],

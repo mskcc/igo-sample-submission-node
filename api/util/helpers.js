@@ -918,7 +918,7 @@ export function getDmpColumns(material, application) {
             if (material === 'DNA/cDNA Library' && application === 'WGS_Deep') {
                 reject(`HumanWholeGenome requires DNA, please select DNA as the material. `);
             }
-            if (material === 'DNA Library' && application === 'CHPanel') {
+            if (material === 'DNA/cDNA Library' && application === 'CHPanel') {
                 reject(`CHPanel requires DNA, please select DNA as the material. `);
             }
             reject(`We do not accept '${material}' for '${application}'.`);
@@ -937,7 +937,7 @@ export function cleanDMPFormValues(formValues) {
     if (formValues.material === 'DNA (Molecular Accession Number only)' || formValues.material === 'DNA (DMP Sample ID only)' || formValues.material === 'DNA') {
         cleanedFormValues.material = 'DNA';
     } else {
-        cleanedFormValues.material = 'DNA Library';
+        cleanedFormValues.material = 'DNA/cDNA Library';
     }
     return cleanedFormValues;
 }
@@ -1489,7 +1489,7 @@ export function getTransactionIdForMongo() {
 
 function getDmpSpecimenType(material) {
     let dmpMaterial = 'unknown';
-    if (material === 'DNA Library') dmpMaterial = 'Library';
+    if (material === 'DNA/cDNA Library') dmpMaterial = 'Library';
     if (material === 'DNA') dmpMaterial = 'gDNA';
     return dmpMaterial;
 }
