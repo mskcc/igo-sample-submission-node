@@ -749,7 +749,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (Molecular Accession Number only)+HC-ACCESS': [
+    'DNA (Molecular Accession Number only)+HC_ACCESS': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['Molecular Pathology Accession Number', 'Required'],
