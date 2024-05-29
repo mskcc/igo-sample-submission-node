@@ -349,7 +349,7 @@ export const submissionColumns = {
         readOnly: 'true',
     },
 };
-export const invalidCombinations = ['DNA Library+HumanWholeGenome'];
+export const invalidCombinations = ['DNA/cDNA Library+HumanWholeGenome'];
 
 export const dmpIntakeForms = {
     'DNA (DMP Sample ID only)+CustomCapture': [
@@ -723,7 +723,7 @@ export const dmpIntakeForms = {
     //     ['Molecular Pathology Accession Number', 'Optional'],
     //     ['Amount Requested', 'Optional'],
     // ],
-    'DNA Library+IMPACT505': [
+    'DNA/cDNA Library+IMPACT505': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -737,7 +737,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA Library+ddPCR': [
+    'DNA/cDNA Library+ddPCR': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -753,7 +753,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA Library+WholeExomeSequencing': [
+    'DNA/cDNA Library+WholeExomeSequencing': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -771,7 +771,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA Library+CustomCapture': [
+    'DNA/cDNA Library+CustomCapture': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -786,7 +786,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA Library+IMPACT-Heme': [
+    'DNA/cDNA Library+IMPACT-Heme': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -800,7 +800,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA Library+QC_Pickup': [
+    'DNA/cDNA Library+QC_Pickup': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -814,7 +814,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA Library+ImmunoSeq': [
+    'DNA/cDNA Library+ImmunoSeq': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
