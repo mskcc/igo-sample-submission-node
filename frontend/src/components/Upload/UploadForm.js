@@ -330,7 +330,7 @@ class UploadForm extends React.Component {
                                 dynamic
                                 value={{
                                     value: form.selected.application,
-                                    label: readableRecipesLib[form.selected.application],
+                                    label: form.selected.application,
                                 }}
                             />
                             {this.showReadLengthDropdown() && (<Dropdown
