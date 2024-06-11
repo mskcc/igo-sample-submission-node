@@ -404,7 +404,7 @@ export const gridColumns = {
         type: 'autocomplete',
         // optional: "true",
         data: 'recipe',
-        pattern: validationPatterns.alphanum,
+        //pattern: validationPatterns.alphanum,
     },
     'CMO Sample Type': {
         name: 'CMO Sample Type',

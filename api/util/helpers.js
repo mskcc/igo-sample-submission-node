@@ -7,6 +7,8 @@ import CacheService from './cache';
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import { Logform } from 'winston';
+import { reverseReadableRecipesLib } from '../constants';
+
 const fs = require('fs');
 
 var _ = require('lodash');
@@ -659,7 +661,7 @@ function parseDate(mongooseDate) {
 export function submit(submission, user, transactionId) {
     return new Promise((resolve, reject) => {
         let serviceId = submission.formValues.serviceId;
-        let recipe = submission.formValues.application;
+        let recipe = reverseReadableRecipesLib[submission.formValues.application];
         let capturePanel = submission.formValues.capturePanel;
         let sampleType = submission.formValues.material;
         let seqReadLength = submission.formValues.sequencingReadLength || '';

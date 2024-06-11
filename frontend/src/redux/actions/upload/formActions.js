@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Config } from '../../../config.js';
 import { services } from '../../../util/index.js';
 
+import { reverseReadableRecipesLib } from '../../../util/constants';
+
 export const MESSAGE = 'MESSAGE';
 
 export const REQUEST_MATERIALS_AND_APPLICATIONS = 'REQUEST_MATERIALS_AND_APPLICATIONS';
@@ -59,7 +61,7 @@ export function getMaterialsForApplication(selectedApplication, checkForMismatch
         axios
             .get(Config.NODE_API_ROOT + '/upload/materialsAndSpecies', {
                 params: {
-                    recipe: selectedApplication,
+                    recipe: reverseReadableRecipesLib[selectedApplication],
                 },
             })
             .then((response) => {

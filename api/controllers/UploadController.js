@@ -8,7 +8,7 @@ const { logger } = require('../util/winston');
 const ttl = 60 * 60 * 1; // cache for 1 Hour
 const cache = new CacheService(ttl); // Create a new cache service instance
 const { constants } = require('../util/constants');
-
+import { readableRecipesLib, reverseReadableRecipesLib } from '../constants';
 /**
  * Initial State, returns header values for submission form.
  *
@@ -169,7 +169,7 @@ exports.grid = [
         } else {
             let formValues = req.body;
             let material = formValues.material;
-            let application = formValues.application;
+            let application = reverseReadableRecipesLib[formValues.application];
 
             let cleanedMaterial = material;
             // clean up from DMP material choices i.e. DNA (DMP Sample ID only)

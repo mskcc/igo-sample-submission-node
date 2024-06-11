@@ -5,7 +5,7 @@ import { FormControl, InputAdornment, Paper, withStyles } from '@material-ui/cor
 import { Button, Checkbox, Dropdown, Input } from '../index';
 import { guessMatch } from '../../util/helpers';
 import { readableRecipesLib } from '../../util/constants';
-
+import { reverseReadableRecipesLib } from '../../util/constants';
 
 class UploadForm extends React.Component {
     constructor(props) {
@@ -152,7 +152,7 @@ class UploadForm extends React.Component {
 
                 case 'application':
                     isValidOption = this.props.form.filteredApplications.some(function(el) {
-                        return el === values[value];
+                        return el === reverseReadableRecipesLib[values[value]];
                     });
 
                     formValid[value] = isValidOption && values[value].length > 0;
@@ -325,14 +325,14 @@ class UploadForm extends React.Component {
                                 onSelect={handleApplicationChange}
                                 onChange={this.handleDropdownChange}
                                 items={form.filteredApplications.map((option) => ({
-                                    value: option,
-                                    label: option,
+                                    value: readableRecipesLib[option],
+                                    label: readableRecipesLib[option],
                                 }))}
                                 loading={form.formIsLoading}
                                 dynamic
                                 value={{
                                     value: form.selected.application,
-                                    label: form.selected.application,
+                                    label: readableRecipesLib[form.selected.application],
                                 }}
                             />
                             {this.showReadLengthDropdown() && (<Dropdown
