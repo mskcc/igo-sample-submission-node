@@ -327,7 +327,9 @@ class UploadForm extends React.Component {
                                 items={form.filteredApplications.map((option) => ({
                                     value: readableRecipesLib[option],
                                     label: readableRecipesLib[option],
-                                }))}
+                                }))
+                                .sort((a, b) => a.label.localeCompare(b.label)) // Sort alphabetically by label
+                                }
                                 loading={form.formIsLoading}
                                 dynamic
                                 value={{
