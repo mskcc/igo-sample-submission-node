@@ -54,10 +54,10 @@ class UploadForm extends React.Component {
         // dont show anything until they select application
         if (this.state.values.application.length === 0) return false;
 
-        const isAmpliconSeqApplication = this.state.values.application === 'DNA_Amplicon' || this.state.values.application === 'User_Amplicon' ;
-        const isCDnaLibrary = this.state.values.material === 'DNA/cDNA Library' && this.state.values.application !== 'QC_Library';
-        const isPooledLibrary = this.state.values.material === 'Pooled Library' && this.state.values.application !== 'ST_GeoMx';
-        const isDNALibrary = this.state.values.material === 'DNA/cDNA Library' && this.state.values.application !== 'QC_Library';
+        const isAmpliconSeqApplication = reverseReadableRecipesLib[this.state.values.application] === 'DNA_Amplicon' || reverseReadableRecipesLib[this.state.values.application] === 'User_Amplicon' ;
+        const isCDnaLibrary = this.state.values.material === 'DNA/cDNA Library' && reverseReadableRecipesLib[this.state.values.application] !== 'QC_Library';
+        const isPooledLibrary = this.state.values.material === 'Pooled Library' && reverseReadableRecipesLib[this.state.values.application] !== 'ST_GeoMx';
+        const isDNALibrary = this.state.values.material === 'DNA/cDNA Library' && reverseReadableRecipesLib[this.state.values.application] !== 'QC_Library';
         const readLengthNotNeededApplications = [
             'HC_IMPACT-Heme',
             'QC_DNA',
@@ -78,7 +78,7 @@ class UploadForm extends React.Component {
             'HC_IMPACT-Mouse',
             'HemePACT_v4'
         ];
-        return isAmpliconSeqApplication || isCDnaLibrary || isPooledLibrary || (isDNALibrary && !readLengthNotNeededApplications.includes(this.state.values.application));
+        return isAmpliconSeqApplication || isCDnaLibrary || isPooledLibrary || (isDNALibrary && !readLengthNotNeededApplications.includes(reverseReadableRecipesLib[this.state.values.application]));
     };
     handleDropdownChange = (event) => {
         this.setState({
