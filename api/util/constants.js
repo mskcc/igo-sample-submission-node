@@ -23,7 +23,9 @@ export const constants = {
 
     mouseApplications: ['mousewholegenome ', 'm-impact_v1'],
 
-    humanOrMouseApplications: ['wes_human', 'wes_mouse', 'wgs_deep'],
+    humanOrMouseApplications: ['wes_human', 'wes_mouse'],
+
+    humanMouseOrYeastApplications: ['wgs_deep'],
 
     logger: 'sampleSubmission',
     mrnRedactedString: 'MRN_REDACTED',
