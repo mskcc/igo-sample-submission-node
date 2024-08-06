@@ -170,7 +170,9 @@ exports.grid = [
             let formValues = req.body;
             let material = formValues.material;
             let application = reverseReadableRecipesLib[formValues.application];
-
+            if (formValues.application.includes('_') || formValues.application ==='ATAC' || formValues.application === 'PEDPEG') {
+                application = formValues.application;
+            }
             let cleanedMaterial = material;
             // clean up from DMP material choices i.e. DNA (DMP Sample ID only)
             if (material.includes('(')) {

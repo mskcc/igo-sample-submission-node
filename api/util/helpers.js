@@ -663,6 +663,9 @@ export function submit(submission, user, transactionId) {
     return new Promise((resolve, reject) => {
         let serviceId = submission.formValues.serviceId;
         let recipe = reverseReadableRecipesLib[submission.formValues.application];
+        if (submission.formValues.application.includes('_') || submission.formValues.application ==='ATAC' || submission.formValues.application === 'PEDPEG') {
+            recipe = submission.formValues.application;
+        }
         let capturePanel = submission.formValues.capturePanel;
         let sampleType = submission.formValues.material;
         let seqReadLength = submission.formValues.sequencingReadLength || '';
