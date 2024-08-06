@@ -25,7 +25,7 @@ export const constants = {
 
     humanOrMouseApplications: ['wes_human', 'wes_mouse'],
 
-    himanMouseOrYeastApplications: ['wgs_deep'],
+    humanMouseOrYeastApplications: ['wgs_deep'],
 
     logger: 'sampleSubmission',
     mrnRedactedString: 'MRN_REDACTED',
