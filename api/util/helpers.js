@@ -65,6 +65,7 @@ exports.getSpecies = (recipe) => {
     if (constants.humanApplications.includes(recipe.toLowerCase())) return ['Human'];
     if (constants.mouseApplications.includes(recipe.toLowerCase())) return ['Mouse'];
     if (constants.humanOrMouseApplications.includes(recipe.toLowerCase())) return ['Human', 'Mouse'];
+    if(constants.himanMouseOrYeastApplications.includes(recipe.toLowerCase())) return ['Human', 'Mouse', 'S. pombe'];
     else {
         return [];
     }
