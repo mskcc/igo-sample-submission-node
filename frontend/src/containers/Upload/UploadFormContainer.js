@@ -4,17 +4,39 @@ import { connect } from 'react-redux';
 import { formActions, dmpFormActions } from '../../redux/actions';
 
 import { swal } from '../../util';
+import axios from 'axios';
 import { DmpForm, UploadForm } from '../../components';
-
 export class UploadFormContainer extends Component {
-    componentDidMount() {
-        const { formType, upload, dmp, getInitialState, dmpGetInitialState } = this.props;
+    constructor(props){
+        super(props);
+        this.state={
+            materials:[],
+            isloading:false,
+        };
+    }
+     componentDidMount() {
+       const { formType, upload, dmp, getInitialState, dmpGetInitialState } = this.props;
         const isIgoForm = formType === 'upload';
         if (isIgoForm && !upload.form.initialFetched) return getInitialState();
-        if (!isIgoForm && !dmp.form.initialFetched) return dmpGetInitialState();
-        return;
+        if (!isIgoForm && !dmp.form.initialFetched) return dmpGetInitialState(); 
+        //return;    
+console.log("fetching Materials");
+this.fetchMaterials(); 
     }
-
+    fetchMaterials=async()=>{
+        try{
+            this.setState({isloading:true});
+            const response= await axios.get('http://localhost:4020/api/materials');
+            console.log("Fetch materials from API:",response.data);
+            this.setState=({
+                materials:response.data,
+                isloading:false,
+            });
+        } catch(error){
+            console.log('Error fetching materials:',error);
+            this.setState({isloading:false});
+        }
+    };
     handleMaterialChange = (selectedMaterial) => {
         const { getApplicationsForMaterial, clearMaterial } = this.props;
         if (selectedMaterial) {
@@ -25,6 +47,21 @@ export class UploadFormContainer extends Component {
         }
     };
 
+
+// Handle Material Selection change 
+/*handleMaterialChange =async(e)=>{
+    const selectedMaterial=e.target.value;
+    this.setState({selectedMaterial,selectedSpecies:'',selectedConatiner:''});
+    await this.fetchSpeciesAndContainers({material:selectedMaterial});
+};
+
+// Handle Application selection change 
+handleApplicationChange=async(e)=>{
+    const selectedApplication=e.target.value;
+    this.setState({selectedApplication,selectedSpecies:'',selectedContainer:''});
+    await this.fetchSpeciesAndContainers({application:selectedApplication});
+}; 
+*/ 
     handleApplicationChange = (selectedApplication) => {
         const { getMaterialsForApplication, clearApplication } = this.props;
         if (selectedApplication) {
@@ -63,6 +100,7 @@ export class UploadFormContainer extends Component {
 
     render() {
         const { upload, dmp, formType, handleSubmit, submitRowNumberUpdate } = this.props;
+        const {materials, isloading}=this.state;
         return (
             <React.Fragment>
                 {formType === 'upload' ? (
@@ -80,6 +118,8 @@ export class UploadFormContainer extends Component {
                             handleReadLengthChange={this.handleReadLengthChange}
                             handleInputChange={this.handleInputChange}
                             handleClear={this.handleClear}
+                            materials={this.state.materials}
+                            isloading={this.state.isloading}
                         />
                     ) : (
                         <div />
