@@ -28,6 +28,8 @@ class UploadForm extends React.Component {
                 sharedWith: true,
                 sequencingReadLength: true,
             },
+           materials:[],
+            isLoading:false,
         };
     }
 
@@ -280,6 +282,14 @@ class UploadForm extends React.Component {
         );
     }
 
+
+
+    componentDidUpdate(prevProps){
+        if(prevProps.materials!==this.props.materials){
+            console.log('Updated Materials',this.props.materials);
+        }
+    }
+
     render() {
         const {
             classes,
@@ -293,8 +303,12 @@ class UploadForm extends React.Component {
             nothingToChange,
             gridNumberOfSamples,
             submitRowNumberUpdate,
+            materials,
+            isloading
         } = this.props;
-        const { formValid, values } = this.state;
+        const { formValid, value} = this.state;
+
+        console.log('Material in UploadForm',materials);
 
         return (
             <Translate>
@@ -307,11 +321,12 @@ class UploadForm extends React.Component {
                                 onSelect={handleMaterialChange}
                                 onChange={this.handleDropdownChange}
                                 autofocus={true}
-                                items={form.filteredMaterials.map((option) => ({
-                                    value: option,
-                                    label: option,
+                                items={materials.map((option) => ({
+                                    value: option.Material || option.id,
+                                    label: option.Material,
                                 }))}
-                                loading={form.formIsLoading}
+                              loading={isloading}
+                                //loading={form.formIsLoading}
                                 dynamic
                                 value={{
                                     value: form.selected.material,
