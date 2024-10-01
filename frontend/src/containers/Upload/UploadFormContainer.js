@@ -12,76 +12,155 @@ export class UploadFormContainer extends Component {
         this.state={
             materials:[],
             isloading:false,
+            applications:[],
+            species:[],
+            containeer:[],
+            isloading:false,
+            selectedMaterial:"",
+            selectedApplication:"",
         };
     }
-     componentDidMount() {
+   componentDidMount() {
        const { formType, upload, dmp, getInitialState, dmpGetInitialState } = this.props;
         const isIgoForm = formType === 'upload';
         if (isIgoForm && !upload.form.initialFetched) return getInitialState();
         if (!isIgoForm && !dmp.form.initialFetched) return dmpGetInitialState(); 
         //return;    
-console.log("fetching Materials");
-this.fetchMaterials(); 
+        this.fetchMaterials(); 
+        this.fetchApplications();
+        this.fetchSpecies();
+    //this.fetchContainers();
     }
     fetchMaterials=async()=>{
         try{
             this.setState({isloading:true});
             const response= await axios.get('http://localhost:4020/api/materials');
-            console.log("Fetch materials from API:",response.data);
-            this.setState=({
+            if(response.status===200)
+            {
+            this.setState({
                 materials:response.data,
                 isloading:false,
             });
+        }
         } catch(error){
-            console.log('Error fetching materials:',error);
+            console.log("Error fetching materials:",error);
             this.setState({isloading:false});
         }
     };
+
+    fetchApplications=async()=>{
+        try{
+            this.setState({isloading:true});
+            const response= await axios.get('http://localhost:4020/api/applications');
+            if(response.status===200)
+            {
+            this.setState({
+                applications:response.data,
+                isloading:false,
+            });
+        }
+        } catch(error){
+            console.log("Error fetching application:",error);
+            this.setState({isloading:false});
+        }
+    };
+
+
+
     handleMaterialChange = (selectedMaterial) => {
+        console.log("Selected Material:", selectedMaterial);
+        this.setState({selectedMaterial},()=>{
+            //console.log("state after material change",this.state.material);
+        });
+        this.fetchSpecies(this.state.selectedMaterial,this.state.selectedApplication);
+        }; 
+    
+    
+        handleApplicationChange = (selectedApplication) => {
+            console.log("Selected Application:", selectedApplication);
+            this.setState({selectedApplication},()=>{
+               // console.log("state after application change",this.state.application);
+            });
+            this.fetchSpecies(this.state.selectedMaterial,this.state.selectedApplication);
+            }; 
+
+    /*fetchContainers=async(selectedMaterial,selectedApplication)=>{
+        try{
+           // this.setState({isloading:true});
+            const response= await axios.get('http://localhost:4020/api/containers?materials=${selectedMaterial}&application=${selectedApplication}');
+            if(response.status===200)
+            {
+            this.setState({
+                containers:response.data,
+                isloading:false,
+            });
+        }
+        } catch(error){
+            console.log("Error fetching containers:",error);
+            this.setState({isloading:false});
+        }
+    };*/
+
+    fetchSpecies=async(material,application)=>{
+        console.log("Material:", material);
+        console.log("Application:",application);
+           if(material && application){
+            this.setState({isloading:true});
+            try{
+         const response=await axios.get('http://localhost:4020/api/species',{params:{materials:material,applications:application}});
+                this.setState({
+                    species:response.data,
+                    isloading:false,
+                });
+        } catch(error){
+            console.log("Error fetching species:",error);
+            this.setState({isloading:false});
+        }
+    }};
+
+
+
+
+  /*handleMaterialChange = (selectedMaterial) => {
         const { getApplicationsForMaterial, clearMaterial } = this.props;
+        console.log("Selected Material:", selectedMaterial);
         if (selectedMaterial) {
             // get possible applications for this material
             getApplicationsForMaterial(selectedMaterial);
         } else {
             clearMaterial();
         }
-    };
+    };*/
 
 
-// Handle Material Selection change 
-/*handleMaterialChange =async(e)=>{
-    const selectedMaterial=e.target.value;
-    this.setState({selectedMaterial,selectedSpecies:'',selectedConatiner:''});
-    await this.fetchSpeciesAndContainers({material:selectedMaterial});
-};
-
-// Handle Application selection change 
-handleApplicationChange=async(e)=>{
-    const selectedApplication=e.target.value;
-    this.setState({selectedApplication,selectedSpecies:'',selectedContainer:''});
-    await this.fetchSpeciesAndContainers({application:selectedApplication});
-}; 
-*/ 
-    handleApplicationChange = (selectedApplication) => {
+ /*  handleApplicationChange = (selectedApplication) => {
         const { getMaterialsForApplication, clearApplication } = this.props;
+        console.log("Selected Application:", selectedApplication);
         if (selectedApplication) {
             // get possible ,materials for this application
             getMaterialsForApplication(selectedApplication);
         } else {
             clearApplication();
         }
-    };
+    };*/ 
 
     handleReadLengthChange = (selectedReadLength) => {
         const { clearReadLengths } = this.props;
         if (!selectedReadLength) clearReadLengths();
     }
-
+ 
     handleSpeciesChange = (selectedSpecies) => {
         const { clearSpecies } = this.props;
         if (!selectedSpecies) clearSpecies();
     };
+
+
     handleInputChange = (id, value) => {
+        if(id==='material'){
+            this.handleMaterialChange(value);
+        }else if(id==='application'){
+        this.handleApplicationChange(value);
+        }
         const { formType, select, dmpSelect, clear, dmpClear } = this.props;
         const isIgoForm = formType === 'upload';
         if (value) {
@@ -100,7 +179,7 @@ handleApplicationChange=async(e)=>{
 
     render() {
         const { upload, dmp, formType, handleSubmit, submitRowNumberUpdate } = this.props;
-        const {materials, isloading}=this.state;
+        const {materials, isloading,applications,containers,species}=this.state;
         return (
             <React.Fragment>
                 {formType === 'upload' ? (
@@ -120,6 +199,9 @@ handleApplicationChange=async(e)=>{
                             handleClear={this.handleClear}
                             materials={this.state.materials}
                             isloading={this.state.isloading}
+                            applications={this.state.applications}
+                            containers={this.state.containers}
+                            species={this.state.species}
                         />
                     ) : (
                         <div />
