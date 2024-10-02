@@ -31,10 +31,10 @@ export class UploadFormContainer extends Component {
         this.fetchSpecies();
     //this.fetchContainers();
     }
-    fetchMaterials=async()=>{
+    fetchMaterials=async(application='')=>{
+        this.setState({isloading:true});
         try{
-            this.setState({isloading:true});
-            const response= await axios.get('http://localhost:4020/api/materials');
+            const response= await axios.get('http://localhost:4020/api/materials',{params:{application}});
             if(response.status===200)
             {
             this.setState({
@@ -48,10 +48,10 @@ export class UploadFormContainer extends Component {
         }
     };
 
-    fetchApplications=async()=>{
+    fetchApplications=async(material='')=>{
+        this.setState({isloading:true});
         try{
-            this.setState({isloading:true});
-            const response= await axios.get('http://localhost:4020/api/applications');
+            const response= await axios.get('http://localhost:4020/api/applications',{params:{material}});
             if(response.status===200)
             {
             this.setState({
@@ -65,14 +65,13 @@ export class UploadFormContainer extends Component {
         }
     };
 
-
-
     handleMaterialChange = (selectedMaterial) => {
         console.log("Selected Material:", selectedMaterial);
         this.setState({selectedMaterial},()=>{
             //console.log("state after material change",this.state.material);
+            this.fetchApplications(selectedMaterial);
+            this.fetchSpecies();
         });
-        this.fetchSpecies(this.state.selectedMaterial,this.state.selectedApplication);
         }; 
     
     
@@ -80,8 +79,9 @@ export class UploadFormContainer extends Component {
             console.log("Selected Application:", selectedApplication);
             this.setState({selectedApplication},()=>{
                // console.log("state after application change",this.state.application);
+               this.fetchMaterials(selectedApplication);
+               this.fetchSpecies();
             });
-            this.fetchSpecies(this.state.selectedMaterial,this.state.selectedApplication);
             }; 
 
     /*fetchContainers=async(selectedMaterial,selectedApplication)=>{
@@ -104,10 +104,15 @@ export class UploadFormContainer extends Component {
     fetchSpecies=async(material,application)=>{
         console.log("Material:", material);
         console.log("Application:",application);
-           if(material && application){
-            this.setState({isloading:true});
+        const params={};
+        if(material){
+            params.material=material;
+        }
+        if(application){
+            params.application=application;
+        }
             try{
-         const response=await axios.get('http://localhost:4020/api/species',{params:{materials:material,applications:application}});
+         const response=await axios.get('http://localhost:4020/api/species',{params});
                 this.setState({
                     species:response.data,
                     isloading:false,
@@ -115,7 +120,6 @@ export class UploadFormContainer extends Component {
         } catch(error){
             console.log("Error fetching species:",error);
             this.setState({isloading:false});
-        }
     }};
 
 
