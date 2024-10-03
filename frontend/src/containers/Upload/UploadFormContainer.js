@@ -11,10 +11,9 @@ export class UploadFormContainer extends Component {
         super(props);
         this.state={
             materials:[],
-            isloading:false,
             applications:[],
             species:[],
-            containeer:[],
+            containers:[],
             isloading:false,
             selectedMaterial:"",
             selectedApplication:"",
@@ -29,7 +28,7 @@ export class UploadFormContainer extends Component {
         this.fetchMaterials(); 
         this.fetchApplications();
         this.fetchSpecies();
-    //this.fetchContainers();
+        this.fetchContainers();
     }
     fetchMaterials=async(application='')=>{
         this.setState({isloading:true});
@@ -70,7 +69,8 @@ export class UploadFormContainer extends Component {
         this.setState({selectedMaterial},()=>{
             //console.log("state after material change",this.state.material);
             this.fetchApplications(selectedMaterial);
-            this.fetchSpecies();
+            this.fetchSpecies(selectedMaterial,this.state.selectedApplication);
+            this.fetchContainers(selectedMaterial,this.state.selectedApplication);
         });
         }; 
     
@@ -80,7 +80,8 @@ export class UploadFormContainer extends Component {
             this.setState({selectedApplication},()=>{
                // console.log("state after application change",this.state.application);
                this.fetchMaterials(selectedApplication);
-               this.fetchSpecies();
+               this.fetchSpecies(selectedApplication,this.state.selectedMaterial);
+               this.fetchContainers(selectedApplication,this.state.selectedApplication);
             });
             }; 
 
@@ -125,6 +126,29 @@ export class UploadFormContainer extends Component {
 
 
 
+    fetchContainers=async(material,application)=>{
+        console.log("Material:", material);
+        console.log("Application:",application);
+        const params={};
+        if(material){
+            params.material=material;
+        }
+        if(application){
+            params.application=application;
+        }
+            try{
+         const response=await axios.get('http://localhost:4020/api/containers',{params});
+                this.setState({
+                    containers:response.data,
+                    isloading:false,
+                });
+        } catch(error){
+            console.log("Error fetching container:",error);
+            this.setState({isloading:false});
+    }};
+
+
+
   /*handleMaterialChange = (selectedMaterial) => {
         const { getApplicationsForMaterial, clearMaterial } = this.props;
         console.log("Selected Material:", selectedMaterial);
@@ -156,6 +180,11 @@ export class UploadFormContainer extends Component {
     handleSpeciesChange = (selectedSpecies) => {
         const { clearSpecies } = this.props;
         if (!selectedSpecies) clearSpecies();
+    };
+
+    handleContainersChange = (selectedContainers) => {
+        const { clearContainers } = this.props;
+        if (!selectedContainers) clearContainers();
     };
 
 
