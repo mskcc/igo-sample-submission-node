@@ -15,16 +15,6 @@ router.get('/submissions',async(req,res)=>{
 
 
 
-/*router.get('/applications',async(req,res)=>{
-    try{
-        const applications = await
-        UploadSubmission.find({},{Application:1,_id:0});
-                res.status(200).json(applications);
-    }catch(err){
-        res.status(500).json({messaage:'Error fetching Application'+ err.message});
-    }
-}); 
-*/
 
 router.get('/applications',async(req,res)=>{
     const {material}=req.query;
@@ -45,9 +35,12 @@ router.get('/applications',async(req,res)=>{
         const uniqueApplications=Array.from(new Set(allApplications));
         res.status(200).json(uniqueApplications);
     }catch(err){
-        res.status(500).json({messaage:'Error fetching Application'  + err.message});
+        res.status(500).json({message:'Error fetching Application'  + err.message});
     }
 }); 
+
+
+
 
 router.get('/materials',async(req,res)=>{
     let{application}=req.query;
@@ -76,6 +69,40 @@ router.get('/materials',async(req,res)=>{
     }
 }); 
 
+
+
+/*router.get('/materials',async(req,res)=>{
+    let{application}=req.query;
+    console.log("received application:",application);
+    try{
+        let query={};
+        if(application){
+            const applications=application.split(',').map(item=>item.trim());
+           query.Application={$in:applications};
+           console.log("Query used for MongoDB:",query);
+        }
+        const materials = await
+        UploadSubmission.find(query,{Material:1,_id:0});
+        console.log("Materials fetched:",materials);
+        let allMaterials=[];
+        materials.forEach(mat=>{
+                if(Array.isArray(mat.Material))
+        {
+                allMaterials=allMaterials.concat(mat.Material.map(item=>item.trim()));
+            }else{
+                console.log("Material is not an array, ignoring it");
+            }
+        });
+        const uniqueMaterials=Array.from(new Set(allMaterials));
+        console.log("Unique Materials fetched:",uniqueMaterials);
+        res.status(200).json(uniqueMaterials);
+    } catch(err){
+        console.log("Error fetching Materials",err);
+        res.status(500).json({messaage:'Error fetching Materials'+ err.message});
+    }
+});
+*/
+
 router.get('/species',async(req,res)=>{
     try{
         let query={};
@@ -91,39 +118,46 @@ router.get('/species',async(req,res)=>{
         UploadSubmission.find(query,{Species:1,_id:0});
         console.log("Fetched Species",species);
         
-            const allspecies=species.reduce((acc,item)=>{
-                const SpeciesArray=item.Species.split(",").map(item=>item.trim());
-                return acc.concat(SpeciesArray);
-            },[]);
-            const uniqueSpecies=Array.from(new Set(allspecies));
-                res.status(200).json(uniqueSpecies);
+        
+        let uniqueSpecies=[];
+        species.forEach(doc=>{
+            if(doc.Species){
+                const speciesArray=doc.Species.split(',').map(item=>item.trim());
+                uniqueSpecies=[...uniqueSpecies,...speciesArray];
+            }
+        });
+
+        const finalSpecies=Array.from(new Set(uniqueSpecies));
+                res.status(200).json(finalSpecies);
     }catch(err){
-        res.status(500).json({messaage:'Error fetching Species'+ err.message});
+        console.log("Error fetching Species",err);
+        res.status(500).json({message:'Error fetching Species'+ err.message});
     }
 }); 
+
+
+
 
 
 router.get('/containers',async(req,res)=>{
-    const{materials,applications,species}= req.query;
     try{
-        let containers = await
-        UploadSubmission.find({},{Containers:1,Species:1,Material:1,Application:1,_id:0});
-        console.log("Fetched Containers",containers);
-        if(materials){
-            //filteredSpecies=species.filter(s=>s.materials.include(materials));
-        
-            containers=containers.filter(s=>s.Material&&s.Material.includes(materials));
+        let query={};
+        if(req.query.material){
+            const materials=req.query.material.split(',').map(item=>item.trim());
+           query.Material={$in:materials};
         }
-        if(applications){
-            //filteredSpecies=species.filter(s=>s.materials.include(materials));
-        
-            containers=containers.filter(s=>s.Application&&s.Application.includes(applications));
+        if(req.query.application){
+            const applications=req.query.application.split(',').map(item=>item.trim());
+            query.Application={$in:applications};
         }
-                res.status(200).json(containers);
+        const containers=await
+        UploadSubmission.distinct('Containers');
+                res.json(containers);
     }catch(err){
-        res.status(500).json({messaage:'Error fetching Containers'+ err.message});
+        res.status(500).json({message:'Error fetching Containers'+ err.message});
     }
-}); 
+});
+
 
 router.get('/readlength',async(req,res)=>{
     try{
@@ -131,7 +165,7 @@ router.get('/readlength',async(req,res)=>{
         UploadSubmission.find({},{ReadLength:1,_id:0});
                 res.status(200).json(readlength);
     }catch(err){
-        res.status(500).json({messaage:'Error fetching readlength'+ err.message});
+        res.status(500).json({message:'Error fetching readlength'+ err.message});
     }
 }); 
 
