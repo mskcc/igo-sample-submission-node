@@ -1,4 +1,4 @@
- import React, { Component } from 'react';
+import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 import { formActions, dmpFormActions } from '../../redux/actions';
@@ -6,6 +6,7 @@ import { formActions, dmpFormActions } from '../../redux/actions';
 import { swal } from '../../util';
 import axios from 'axios';
 import { DmpForm, UploadForm } from '../../components';
+import { select } from '../../redux/actions/upload/formActions';
 export class UploadFormContainer extends Component {
     constructor(props){
         super(props);
@@ -30,6 +31,16 @@ export class UploadFormContainer extends Component {
         this.fetchSpecies();
         this.fetchContainers();
     }
+    componentDidUpdate(prevProps,prevState){
+        const{selectedMaterial,selectedApplication}=this.state;
+    if(
+        (prevState.selectedMaterial!==selectedMaterial)
+    || (prevState.selectedApplication!==selectedApplication)&&selectedApplication &&selectedMaterial)
+    {
+        this.fetchSpecies(selectedApplication,selectedMaterial);
+        this.fetchContainers(selectedApplication,selectedMaterial);
+    }}
+
     fetchMaterials=async(application='')=>{
         this.setState({isloading:true});
         try{
@@ -69,8 +80,8 @@ export class UploadFormContainer extends Component {
         this.setState({selectedMaterial},()=>{
             //console.log("state after material change",this.state.material);
             this.fetchApplications(selectedMaterial);
-            this.fetchSpecies(selectedMaterial,this.state.selectedApplication);
-            this.fetchContainers(selectedMaterial,this.state.selectedApplication);
+            //this.fetchSpecies(selectedMaterial,this.state.selectedApplication);
+            //this.fetchContainers(selectedMaterial,this.state.selectedApplication);
         });
         }; 
     
@@ -80,8 +91,8 @@ export class UploadFormContainer extends Component {
             this.setState({selectedApplication},()=>{
                // console.log("state after application change",this.state.application);
                this.fetchMaterials(selectedApplication);
-               this.fetchSpecies(selectedApplication,this.state.selectedMaterial);
-               this.fetchContainers(selectedApplication,this.state.selectedApplication);
+               //this.fetchSpecies(selectedApplication,this.state.selectedMaterial);
+               //this.fetchContainers(selectedApplication,this.state.selectedApplication);
             });
             }; 
 
