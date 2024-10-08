@@ -23,13 +23,22 @@ export class UploadFormContainer extends Component {
    componentDidMount() {
        const { formType, upload, dmp, getInitialState, dmpGetInitialState } = this.props;
         const isIgoForm = formType === 'upload';
-        if (isIgoForm && !upload.form.initialFetched) return getInitialState();
+        if (isIgoForm && !upload.form.initialFetched) {
+             getInitialState().then(()=>{
+                this.fetchMaterials(); 
+                this.fetchApplications();
+                this.fetchSpecies();
+                this.fetchContainers();
+             });
+            }
+            else{
+                this.fetchMaterials(); 
+                this.fetchApplications();
+                this.fetchSpecies();
+                this.fetchContainers();
+            }
         if (!isIgoForm && !dmp.form.initialFetched) return dmpGetInitialState(); 
         //return;    
-        this.fetchMaterials(); 
-        this.fetchApplications();
-        this.fetchSpecies();
-        this.fetchContainers();
     }
     componentDidUpdate(prevProps,prevState){
         const{selectedMaterial,selectedApplication}=this.state;
@@ -37,8 +46,8 @@ export class UploadFormContainer extends Component {
         (prevState.selectedMaterial!==selectedMaterial)
     || (prevState.selectedApplication!==selectedApplication)&&selectedApplication &&selectedMaterial)
     {
-        this.fetchSpecies(selectedApplication,selectedMaterial);
-        this.fetchContainers(selectedApplication,selectedMaterial);
+        this.fetchSpecies(selectedMaterial,selectedApplication);
+        this.fetchContainers(selectedMaterial,selectedApplication);
     }}
 
     fetchMaterials=async(application='')=>{
@@ -113,7 +122,7 @@ export class UploadFormContainer extends Component {
         }
     };*/
 
-    fetchSpecies=async(material,application)=>{
+    fetchSpecies=async(material='',application='')=>{
         console.log("Material:", material);
         console.log("Application:",application);
         const params={};
