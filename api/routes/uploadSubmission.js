@@ -9,7 +9,7 @@ router.get('/submissions',async(req,res)=>{
         UploadSubmission.find();
                 res.json(submissions);
     }catch(err){
-        res.status(500).json({messaage:'Error fetching Materials'+ err.message});
+        res.status(500).json({message:'Error fetching Materials'+ err.message});
     }
 });
 
@@ -22,7 +22,7 @@ router.get('/applications',async(req,res)=>{
         let query={};
         if(material){
             const materials=material.split(',').map(item=>item.trim());
-           query.Material={$in:materials};
+           query.Material={$regex:materials.join('|'),$options:'i'};
         }
         const applications = await
         UploadSubmission.find(query,{Application:1,_id:0});
@@ -65,7 +65,7 @@ router.get('/materials',async(req,res)=>{
         console.log("Unique Materials fetched:",uniqueMaterials);
         res.status(200).json(uniqueMaterials);
     }catch(err){
-        res.status(500).json({messaage:'Error fetching Materials'+ err.message});
+        res.status(500).json({message:'Error fetching Materials'+ err.message});
     }
 }); 
 
@@ -108,11 +108,11 @@ router.get('/species',async(req,res)=>{
         let query={};
         if(req.query.material){
             const materials=req.query.material.split(',').map(item=>item.trim());
-           query.Material={$in:materials};
+            query.Material={$regex:materials.join('|'),$options:'i'};
         }
         if(req.query.application){
             const applications=req.query.application.split(',').map(item=>item.trim());
-            query.Application={$in:applications};
+            query.Application={$regex:applications.join('|'),$options:'i'};
         }
         const species = await 
         UploadSubmission.find(query,{Species:1,_id:0});
@@ -139,7 +139,7 @@ router.get('/species',async(req,res)=>{
 
 
 
-router.get('/containers',async(req,res)=>{
+/*router.get('/containers',async(req,res)=>{
     try{
         let query={};
         if(req.query.material){
@@ -157,6 +157,50 @@ router.get('/containers',async(req,res)=>{
         res.status(500).json({message:'Error fetching Containers'+ err.message});
     }
 });
+*/
+
+
+router.get('/containers',async(req,res)=>{
+    try{
+        let query={};
+        if(req.query.material){
+            const materials=req.query.material.split(',').map(item=>item.trim());
+            query.Material={$regex:materials.join('|'),$options:'i'};
+        }
+        if(req.query.application){
+            const applications=req.query.application.split(',').map(item=>item.trim());
+            query.Application={$regex:applications.join('|'),$options:'i'};
+        }
+        console.log("Query used for MongoDB:",query);
+        const containers = await 
+        UploadSubmission.find(query,{Containers:1,_id:0});
+        console.log("Fetched Containers",containers);
+        const finalContainers=containers.map(doc=>{
+            const plainDoc=doc.toObject();
+            console.log("Plain document",plainDoc);
+            if(plainDoc.Containers){
+                console.log("Containers value:",plainDoc.Containers);
+                return plainDoc.Containers.split(',').map(item=>item.trim());
+
+            }else{
+                console.log("No containers field found in document");
+                return null;
+            }  }).filter(container=>container!==null);
+
+            console.log("Final Containers", finalContainers)
+                res.status(200).json(finalContainers);
+    }catch(err){
+        console.log("Error fetching Containers",err);
+        res.status(500).json({message:'Error fetching Containers'+ err.message});
+    }
+}); 
+
+
+
+
+
+
+
 
 
 router.get('/readlength',async(req,res)=>{
@@ -170,5 +214,3 @@ router.get('/readlength',async(req,res)=>{
 }); 
 
 module.exports = router;
-
-
