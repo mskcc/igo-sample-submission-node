@@ -304,6 +304,9 @@ class UploadForm extends React.Component {
             gridNumberOfSamples,
             submitRowNumberUpdate,
             materials,
+            applications,
+            species,
+            containers,
             isloading
         } = this.props;
         const { formValid, value} = this.state;
@@ -322,8 +325,8 @@ class UploadForm extends React.Component {
                                 onChange={this.handleDropdownChange}
                                 autofocus={true}
                                 items={materials.map((option) => ({
-                                    value: option.Material || option.id,
-                                    label: option.Material,
+                                    value: option,
+                                    label: option,
                                 }))}
                               loading={isloading}
                                 //loading={form.formIsLoading}
@@ -339,9 +342,9 @@ class UploadForm extends React.Component {
                                 error={!formValid.application}
                                 onSelect={handleApplicationChange}
                                 onChange={this.handleDropdownChange}
-                                items={form.filteredApplications.map((option) => ({
-                                    value: readableRecipesLib[option],
-                                    label: readableRecipesLib[option],
+                                items={applications.map((option) => ({
+                                    value: option,
+                                    label: option,
                                 }))
                                 .sort((a, b) => a.label.localeCompare(b.label)) // Sort alphabetically by label
                                 }
@@ -402,9 +405,9 @@ class UploadForm extends React.Component {
                                     onChange={this.handleDropdownChange}
                                     dynamic
                                     loading={form.formIsLoading}
-                                    items={form.filteredSpecies.map((option) => ({
-                                        value: option,
-                                        label: option,
+                                    items={species.map((option) => ({
+                                    value: option,
+                                    label: option,
                                     }))}
                                     value={{
                                         value: form.selected.species,
@@ -456,7 +459,7 @@ class UploadForm extends React.Component {
                                 id='container'
                                 error={!formValid.container}
                                 onChange={this.handleDropdownChange}
-                                items={form.filteredContainers.map((option) => ({
+                                items={containers.map((option) => ({
                                     value: option,
                                     label: option,
                                 }))}
