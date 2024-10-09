@@ -15,6 +15,7 @@ export class UploadFormContainer extends Component {
             applications:[],
             species:[],
             containers:[],
+            readLengths:[],
             isloading:false,
             selectedMaterial:"",
             selectedApplication:"",
@@ -100,6 +101,7 @@ export class UploadFormContainer extends Component {
             this.setState({selectedApplication},()=>{
                // console.log("state after application change",this.state.application);
                this.fetchMaterials(selectedApplication);
+               this.fetchReadLength(selectedApplication);
                //this.fetchSpecies(selectedApplication,this.state.selectedMaterial);
                //this.fetchContainers(selectedApplication,this.state.selectedApplication);
             });
@@ -169,6 +171,37 @@ export class UploadFormContainer extends Component {
 
 
 
+
+
+
+
+
+
+
+
+    fetchReadLength=async(application)=>{
+        console.log("Application:",application);
+        const params={};
+        if(application){
+            params.application=application;
+        }
+            try{
+         const response=await axios.get('http://localhost:4020/api/readlength',{params});
+         if(response.status===200){
+                this.setState({
+                    readLengths:response.data,
+                    isloading:false,
+                });
+        } else{
+            this.setState({readLengths:[],isloading:false});
+        } }
+        
+        catch(error){
+            console.log("Error fetching readlengths:",error);
+            this.setState({isloading:false});
+    }};
+
+
   /*handleMaterialChange = (selectedMaterial) => {
         const { getApplicationsForMaterial, clearMaterial } = this.props;
         console.log("Selected Material:", selectedMaterial);
@@ -232,7 +265,7 @@ export class UploadFormContainer extends Component {
 
     render() {
         const { upload, dmp, formType, handleSubmit, submitRowNumberUpdate } = this.props;
-        const {materials, isloading,applications,containers,species}=this.state;
+        const {materials, isloading,applications,containers,species,readLengths}=this.state;
         return (
             <React.Fragment>
                 {formType === 'upload' ? (
@@ -255,6 +288,7 @@ export class UploadFormContainer extends Component {
                             applications={this.state.applications}
                             containers={this.state.containers}
                             species={this.state.species}
+                            readLengths={this.state.readLengths}
                         />
                     ) : (
                         <div />
