@@ -52,7 +52,7 @@ class UploadForm extends React.Component {
                 this.state.values.patientIdType === 'Both MSK-Patients and Non-MSK Patients')
         );
     };
-    showReadLengthDropdown = () => {
+  /*  showReadLengthDropdown = () => {
         // dont show anything until they select application
         if (this.state.values.application.length === 0) return false;
 
@@ -81,7 +81,20 @@ class UploadForm extends React.Component {
             'HemePACT_v4'
         ];
         return isAmpliconSeqApplication || isCDnaLibrary || isPooledLibrary || (isDNALibrary && !readLengthNotNeededApplications.includes(reverseReadableRecipesLib[this.state.values.application]));
-    };
+    */ 
+
+
+        showReadLengthDropdown = () => {
+            // dont show anything until they select application
+           return this.props.readLengths&& this.props.readLengths.length>0;
+        };
+
+
+        
+
+
+
+
     handleDropdownChange = (event) => {
         this.setState({
             values: {
@@ -360,7 +373,7 @@ class UploadForm extends React.Component {
                                 error={!formValid.sequencingReadLength}
                                 onSelect={handleReadLengthChange}
                                 onChange={this.handleDropdownChange}
-                                items={form.readLengths.map((option) => ({
+                                items={this.props.readLengths.map((option) => ({
                                     value: option,
                                     label: option,
                                 }))}
