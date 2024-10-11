@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { formActions, dmpFormActions } from '../../redux/actions';
 
 import { swal } from '../../util';
+import { Config } from '../../config';
 import axios from 'axios';
 import { DmpForm, UploadForm } from '../../components';
 import { select } from '../../redux/actions/upload/formActions';
@@ -54,7 +55,7 @@ export class UploadFormContainer extends Component {
     fetchMaterials=async(application='')=>{
         this.setState({isloading:true});
         try{
-            const response= await axios.get('http://localhost:4020/api/materials',{params:{application}});
+            const response= await axios.get(`${Config.NODE_API_ROOT}/materials`,{params:{application}});
             if(response.status===200)
             {
             this.setState({
@@ -71,7 +72,7 @@ export class UploadFormContainer extends Component {
     fetchApplications=async(material='')=>{
         this.setState({isloading:true});
         try{
-            const response= await axios.get('http://localhost:4020/api/applications',{params:{material}});
+            const response= await axios.get(`${Config.NODE_API_ROOT}/applications`,{params:{material}});
             if(response.status===200)
             {
             this.setState({
@@ -135,7 +136,7 @@ export class UploadFormContainer extends Component {
             params.application=application;
         }
             try{
-         const response=await axios.get('http://localhost:4020/api/species',{params});
+         const response=await axios.get(`${Config.NODE_API_ROOT}/species`,{params});
                 this.setState({
                     species:response.data,
                     isloading:false,
@@ -159,7 +160,7 @@ export class UploadFormContainer extends Component {
             params.application=application;
         }
             try{
-         const response=await axios.get('http://localhost:4020/api/containers',{params});
+         const response=await axios.get(`${Config.NODE_API_ROOT}/containers`,{params});
                 this.setState({
                     containers:response.data,
                     isloading:false,
@@ -186,7 +187,7 @@ export class UploadFormContainer extends Component {
             params.application=application;
         }
             try{
-         const response=await axios.get('http://localhost:4020/api/readlength',{params});
+         const response=await axios.get(`${Config.NODE_API_ROOT}/readlength`,{params});
          if(response.status===200){
                 this.setState({
                     readLengths:response.data,
