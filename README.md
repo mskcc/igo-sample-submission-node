@@ -51,5 +51,7 @@ JWT_SECRET=DEV_COOKIE                 <-    2) Add ecosystem.config.js secret he
 ```
 cd api
 npm install
+nvm install 12 
+nvm use 12
 npm run start
 ```

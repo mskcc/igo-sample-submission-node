@@ -41,6 +41,8 @@ jwtInCookie.configure({ secret: process.env.JWT_SECRET });
 app.use(bodyparser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }));
 app.use(bodyparser.json({limit: '50mb'}));
 
+app.use(express.json());
+
 const corsConfig = {
     origin: true,
     credentials: true,
@@ -68,9 +70,14 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 var apiRouter = require('./routes/api');
+var UploadSubmissionRoutes=require('./routes/uploadsubmission');// Upload submission routes
 var apiResponse = require('./util/apiResponse');
+// var ApplicationRoutes= require('./routes/uploadSubmission');
+
 
 app.use('/api/', apiRouter);
+app.use('/api/', UploadSubmissionRoutes);
+//app.use('/api/',ApplicationRoutes);
 
 app.get('/', function (req, res) {
     res.sendFile(path.join(publicDir, 'index.html'));

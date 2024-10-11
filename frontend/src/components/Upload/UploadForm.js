@@ -28,6 +28,8 @@ class UploadForm extends React.Component {
                 sharedWith: true,
                 sequencingReadLength: true,
             },
+           materials:[],
+            isLoading:false,
         };
     }
 
@@ -50,7 +52,7 @@ class UploadForm extends React.Component {
                 this.state.values.patientIdType === 'Both MSK-Patients and Non-MSK Patients')
         );
     };
-    showReadLengthDropdown = () => {
+  /*  showReadLengthDropdown = () => {
         // dont show anything until they select application
         if (this.state.values.application.length === 0) return false;
 
@@ -79,7 +81,20 @@ class UploadForm extends React.Component {
             'HemePACT_v4'
         ];
         return isAmpliconSeqApplication || isCDnaLibrary || isPooledLibrary || (isDNALibrary && !readLengthNotNeededApplications.includes(reverseReadableRecipesLib[this.state.values.application]));
-    };
+    */ 
+
+
+        showReadLengthDropdown = () => {
+            // dont show anything until they select application
+           return this.props.readLengths&& this.props.readLengths.length>0;
+        };
+
+
+        
+
+
+
+
     handleDropdownChange = (event) => {
         this.setState({
             values: {
@@ -280,6 +295,14 @@ class UploadForm extends React.Component {
         );
     }
 
+
+
+    componentDidUpdate(prevProps){
+        if(prevProps.materials!==this.props.materials){
+            console.log('Updated Materials',this.props.materials);
+        }
+    }
+
     render() {
         const {
             classes,
@@ -293,8 +316,15 @@ class UploadForm extends React.Component {
             nothingToChange,
             gridNumberOfSamples,
             submitRowNumberUpdate,
+            materials,
+            applications,
+            species,
+            containers,
+            isloading
         } = this.props;
-        const { formValid, values } = this.state;
+        const { formValid, value} = this.state;
+
+        console.log('Material in UploadForm',materials);
 
         return (
             <Translate>
@@ -307,11 +337,12 @@ class UploadForm extends React.Component {
                                 onSelect={handleMaterialChange}
                                 onChange={this.handleDropdownChange}
                                 autofocus={true}
-                                items={form.filteredMaterials.map((option) => ({
+                                items={materials.map((option) => ({
                                     value: option,
                                     label: option,
                                 }))}
-                                loading={form.formIsLoading}
+                              loading={isloading}
+                                //loading={form.formIsLoading}
                                 dynamic
                                 value={{
                                     value: form.selected.material,
@@ -324,9 +355,9 @@ class UploadForm extends React.Component {
                                 error={!formValid.application}
                                 onSelect={handleApplicationChange}
                                 onChange={this.handleDropdownChange}
-                                items={form.filteredApplications.map((option) => ({
-                                    value: readableRecipesLib[option],
-                                    label: readableRecipesLib[option],
+                                items={applications.map((option) => ({
+                                    value: option,
+                                    label: option,
                                 }))
                                 .sort((a, b) => a.label.localeCompare(b.label)) // Sort alphabetically by label
                                 }
@@ -342,7 +373,7 @@ class UploadForm extends React.Component {
                                 error={!formValid.sequencingReadLength}
                                 onSelect={handleReadLengthChange}
                                 onChange={this.handleDropdownChange}
-                                items={form.readLengths.map((option) => ({
+                                items={this.props.readLengths.map((option) => ({
                                     value: option,
                                     label: option,
                                 }))}
@@ -387,9 +418,9 @@ class UploadForm extends React.Component {
                                     onChange={this.handleDropdownChange}
                                     dynamic
                                     loading={form.formIsLoading}
-                                    items={form.filteredSpecies.map((option) => ({
-                                        value: option,
-                                        label: option,
+                                    items={species.map((option) => ({
+                                    value: option,
+                                    label: option,
                                     }))}
                                     value={{
                                         value: form.selected.species,
@@ -441,7 +472,7 @@ class UploadForm extends React.Component {
                                 id='container'
                                 error={!formValid.container}
                                 onChange={this.handleDropdownChange}
-                                items={form.filteredContainers.map((option) => ({
+                                items={containers.map((option) => ({
                                     value: option,
                                     label: option,
                                 }))}
