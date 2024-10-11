@@ -30,6 +30,11 @@ router.get('/applications',async(req,res)=>{
             allApplications=allApplications.concat(app.Application.split(",").map(item=>item.trim()));
             }
         });
+
+        if(allApplications.some(app=>["10X GEX", "VDJ", "FB/CH", "or Visium"].includes(app))){
+            allApplications.push("10X GEX, VDJ, FB/CH, or Visium");
+            allApplications=allApplications.filter(app=>!["10X GEX", "VDJ", "FB/CH", "or Visium"].includes(app));
+        }
         const uniqueApplications=Array.from(new Set(allApplications));
         res.status(200).json(uniqueApplications);
     }catch(err){
@@ -45,15 +50,20 @@ router.get('/materials',async(req,res)=>{
     console.log("received application:",application);
     try{
         let query={};
-        if(application){
-            const applications=application.split(',').map(item=>item.trim());
-            query.Application={$in:applications};
-           console.log("Query used for MongoDB:",query);
+        let allMaterials=[];
+        const specialApplication="10X GEX, VDJ, FB/CH, or Visium";
+        if(application && application.trim()===specialApplication){
+
+            query.Application=specialApplication;
         }
+            else if(application){
+                const applications=application.split(',').map(item=>item.trim());
+                query.Application={$in:applications};
+            }
+           console.log("Query used for MongoDB:",query);
         const materials = await
         UploadSubmission.find(query,{Material:1,_id:0});
         console.log("Materials fetched:",materials);
-        let allMaterials=[];
         materials.forEach(mat=>{
             if(mat.Material){
                 allMaterials=allMaterials.concat(mat.Material.split(",").map(item=>item.trim()));
@@ -63,6 +73,7 @@ router.get('/materials',async(req,res)=>{
         console.log("Unique Materials fetched:",uniqueMaterials);
         res.status(200).json(uniqueMaterials);
     }catch(err){
+        console.log("Error Fetching Materials",err)
         res.status(500).json({message:'Error fetching Materials'+ err.message});
     }
 }); 
@@ -79,8 +90,16 @@ router.get('/species',async(req,res)=>{
             query.Material={$regex:materials.join('|'),$options:'i'};
         }
         if(req.query.application){
+            const application=req.query.application.trim();
+            const specialApplication="10X GEX, VDJ, FB/CH, or Visium";
+           if(application===specialApplication){
+
+            query.Application=specialApplication;
+        }
+        else{
             const applications=req.query.application.split(',').map(item=>item.trim());
             query.Application={$in:applications};
+        }
         }
         const species = await 
         UploadSubmission.find(query,{Species:1,_id:0});
@@ -94,7 +113,6 @@ router.get('/species',async(req,res)=>{
                 uniqueSpecies=[...uniqueSpecies,...speciesArray];
             }
         });
-
         const finalSpecies=Array.from(new Set(uniqueSpecies));
                 res.status(200).json(finalSpecies);
     }catch(err){
@@ -105,7 +123,6 @@ router.get('/species',async(req,res)=>{
 
 
 // Routes for Containers
-
 router.get('/containers',async(req,res)=>{
     try{
         let query={};
@@ -114,8 +131,16 @@ router.get('/containers',async(req,res)=>{
             query.Material={$regex:'\\b'+materials.join('\\b|\\b'),$options:'i'};
         }
         if(req.query.application){
+            const application=req.query.application.trim();
+            const specialApplication="10X GEX, VDJ, FB/CH, or Visium";
+           if(application===specialApplication){
+
+            query.Application=specialApplication;
+        }
+        else{
             const applications=req.query.application.split(',').map(item=>item.trim());
             query.Application={$in:applications};
+        }
         }
         console.log("Query used for MongoDB:",query);
         const containers = await 
@@ -150,8 +175,16 @@ router.get('/readlength',async(req,res)=>{
     try{
         let query={};
         if(req.query.application){
+            const application=req.query.application.trim();
+            const specialApplication="10X GEX, VDJ, FB/CH, or Visium";
+           if(application===specialApplication){
+
+            query.Application=specialApplication;
+        }
+        else{
             const applications=req.query.application.split(',').map(item=>item.trim());
             query.Application={$in:applications};
+        }
         }
         else{
             return res.status(200).json([]);
@@ -180,7 +213,6 @@ router.get('/readlength',async(req,res)=>{
         res.status(500).json({message:'Error fetching readlength'+ err.message});
     }
 }); 
-
 
 module.exports = router;
 
