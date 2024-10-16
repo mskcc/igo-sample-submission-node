@@ -70,10 +70,8 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 var apiRouter = require('./routes/api');
-var UploadSubmissionRoutes=require('./routes/uploadsubmission');// Upload submission routes
+var UploadSubmissionRoutes=require('./routes/uploadSubmission');// Upload submission routes
 var apiResponse = require('./util/apiResponse');
-// var ApplicationRoutes= require('./routes/uploadSubmission');
-
 
 app.use('/api/', apiRouter);
 app.use('/api/', UploadSubmissionRoutes);
