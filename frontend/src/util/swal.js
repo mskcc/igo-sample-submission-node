@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import Swal from 'sweetalert2';
 
 export const genericMessage = (type, msg) => {
