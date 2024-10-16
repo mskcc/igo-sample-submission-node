@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable array-callback-return */
 import { Config } from '../config.js';
 import didYouMean from 'didyoumean';
 import { genericMessage } from './swal';

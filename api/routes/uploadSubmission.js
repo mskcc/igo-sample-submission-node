@@ -5,7 +5,8 @@ var router = express.Router();
 
 router.get('/submissions',async(req,res)=>{
     try{
-        const submissions=await
+        const submissions=await 
+        
         UploadSubmission.find();
                 res.json(submissions);
     }catch(err){

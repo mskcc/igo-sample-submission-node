@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 //TODO ERROR HANDLING
 import axios from 'axios';
 import { Config } from '../../../config.js';

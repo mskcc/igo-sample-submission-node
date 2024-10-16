@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 // readable recipe names
 export const readableRecipesLib = {
     "ATAC": "ATAC Sequencing",
