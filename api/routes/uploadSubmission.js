@@ -80,21 +80,13 @@ router.get('/materials',async(req,res)=>{
 }); 
 
 
-
-// Routes for Species
-
 router.get('/species',async(req,res)=>{
     try{
         let query={};
-        if(req.query.material){
-            const materials=req.query.material.split(',').map(item=>item.trim());
-            query.Material={$regex:materials.join('|'),$options:'i'};
-        }
         if(req.query.application){
             const application=req.query.application.trim();
             const specialApplication="10X GEX, VDJ, FB/CH, or Visium";
            if(application===specialApplication){
-
             query.Application=specialApplication;
         }
         else{
@@ -105,8 +97,6 @@ router.get('/species',async(req,res)=>{
         const species = await 
         UploadSubmission.find(query,{Species:1,_id:0});
         console.log("Fetched Species",species);
-        
-        
         let uniqueSpecies=[];
         species.forEach(doc=>{
             if(doc.Species){
@@ -122,6 +112,8 @@ router.get('/species',async(req,res)=>{
     }
 }); 
 
+
+   
 
 // Routes for Containers
 router.get('/containers',async(req,res)=>{
