@@ -341,7 +341,9 @@ class UploadForm extends React.Component {
                                 items={materials.map((option) => ({
                                     value: option,
                                     label: option,
-                                }))}
+                                }))
+                                .sort((a, b) => a.label.localeCompare(b.label)) 
+                                }
                               loading={isloading}
                                 //loading={form.formIsLoading}
                                 dynamic
@@ -377,7 +379,9 @@ class UploadForm extends React.Component {
                                 items={this.props.readLengths.map((option) => ({
                                     value: option,
                                     label: option,
-                                }))}
+                                }))
+                                .sort((a, b) => a.label.localeCompare(b.label)) 
+                                }
                                 loading={form.formIsLoading}
                                 dynamic
                                 value={{
@@ -422,12 +426,15 @@ class UploadForm extends React.Component {
                                     items={species.map((option) => ({
                                     value: option,
                                     label: option,
-                                    }))}
+                                }))
+                                .sort((a, b) => a.label.localeCompare(b.label)) 
+                                }
                                     value={{
                                         value: form.selected.species,
                                         label: form.selected.species,
                                     }}
                                     ic
+                                    disabled={!species}
                                 />
                                 {this.showGroupingCheckbox() && (
                                     <Checkbox
@@ -476,7 +483,9 @@ class UploadForm extends React.Component {
                                 items={containers.map((option) => ({
                                     value: option,
                                     label: option,
-                                }))}
+                                }))
+                                .sort((a, b) => a.label.localeCompare(b.label)) 
+                                }
                                 loading={form.formIsLoading}
                                 value={{
                                     value: form.selected.container,
