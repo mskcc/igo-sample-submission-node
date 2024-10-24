@@ -46,11 +46,13 @@ export class UploadFormContainer extends Component {
     }
     componentDidUpdate(prevProps,prevState){
         const{selectedMaterial,selectedApplication}=this.state;
+        if(prevState.selectedApplication!==selectedApplication && selectedApplication){
+            this.fetchSpecies(selectedApplication);
+        }
     if(
         (prevState.selectedMaterial!==selectedMaterial)
     || (prevState.selectedApplication!==selectedApplication)&&selectedApplication &&selectedMaterial)
     {
-        this.fetchSpecies(selectedMaterial,selectedApplication);
         this.fetchContainers(selectedMaterial,selectedApplication);
     }}
 
@@ -127,26 +129,33 @@ export class UploadFormContainer extends Component {
         }
     };*/
 
-    fetchSpecies=async(material='',application='')=>{
-        console.log("Material:", material);
+    fetchSpecies=async(application)=>{
         console.log("Application:",application);
         const params={};
-        if(material){
-            params.material=material;
-        }
         if(application){
             params.application=application;
         }
-            try{
-         const response=await axios.get(`${Config.NODE_API_ROOT}/species`,{params});
-                this.setState({
-                    species:response.data,
-                    isloading:false,
-                });
-        } catch(error){
-            console.log("Error fetching species:",error);
-            this.setState({isloading:false});
-    }};
+        try{
+            const response=await axios.get(`${Config.NODE_API_ROOT}/species`,{params});
+            if(response.status===200){
+                   this.setState({
+                       species:response.data,
+                       isloading:false,
+                   });
+           } else{
+               this.setState({species:[],isloading:false});
+           } }
+           
+           catch(error){
+               console.log("Error fetching species:",error);
+               this.setState({isloading:false});
+       }};
+   
+
+
+
+
+
 
 
 

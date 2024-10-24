@@ -416,7 +416,7 @@ class UploadForm extends React.Component {
                                 // />
                             )}
                             <FormControl component='fieldset'>
-                                <Dropdown
+                                {species.length>0 && (<Dropdown
                                     id='species'
                                     error={!formValid.species}
                                     onSelect={handleSpeciesChange}
@@ -426,16 +426,15 @@ class UploadForm extends React.Component {
                                     items={species.map((option) => ({
                                     value: option,
                                     label: option,
-                                }))
+                                    }))
                                 .sort((a, b) => a.label.localeCompare(b.label)) 
                                 }
                                     value={{
                                         value: form.selected.species,
                                         label: form.selected.species,
                                     }}
-                                    ic
-                                    disabled={!species}
                                 />
+                                )}
                                 {this.showGroupingCheckbox() && (
                                     <Checkbox
                                         id='groupingCheckbox'
