@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable quotes */
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { Translate } from 'react-localize-redux';
@@ -348,8 +350,8 @@ class UploadForm extends React.Component {
                                 //loading={form.formIsLoading}
                                 dynamic
                                 value={{
-                                    value: form.selected.material,
-                                    label: form.selected.material,
+                                    value: form.selected.material || (materials.length===1 ? materials[0]:" "),
+                                    label: form.selected.material || (materials.length===1 ? materials[0]:" "),
                                 }}
                             />
 
@@ -367,8 +369,8 @@ class UploadForm extends React.Component {
                                 loading={form.formIsLoading}
                                 dynamic
                                 value={{
-                                    value: form.selected.application,
-                                    label: readableRecipesLib[form.selected.application],
+                                    value: form.selected.application || (applications.length===1 ? applications[0]:" "),
+                                    label: readableRecipesLib[form.selected.application] || (applications.length===1 ? applications[0]:" "),
                                 }}
                             />
                             {this.showReadLengthDropdown() && (<Dropdown
@@ -385,8 +387,8 @@ class UploadForm extends React.Component {
                                 loading={form.formIsLoading}
                                 dynamic
                                 value={{
-                                    value: form.selected.sequencingReadLength,
-                                    label: form.selected.sequencingReadLength,
+                                    value: form.selected.sequencingReadLength || (readLengths.length===1 ? readLengths[0]:" "),
+                                    label: form.selected.sequencingReadLength || (readLengths.length===1 ? readLengths[0]:" "),
                                 }}
                             />)}
 
@@ -430,8 +432,8 @@ class UploadForm extends React.Component {
                                 .sort((a, b) => a.label.localeCompare(b.label)) 
                                 }
                                     value={{
-                                        value: form.selected.species,
-                                        label: form.selected.species,
+                                        value: form.selected.species || (species.length===1 ? species[0]:" "),
+                                        label: form.selected.species || (species.length===1 ? species[0]:" "),
                                     }}
                                 />
                                 )}
@@ -487,8 +489,8 @@ class UploadForm extends React.Component {
                                 }
                                 loading={form.formIsLoading}
                                 value={{
-                                    value: form.selected.container,
-                                    label: form.selected.container,
+                                    value: form.selected.container || (containers.length===1 ? containers[0]:" "),
+                                    label: form.selected.container || (containers.length===1 ? containers[0]:" "),
                                 }}
                             />
 

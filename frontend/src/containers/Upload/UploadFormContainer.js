@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable quotes */
 /* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
@@ -45,6 +46,13 @@ export class UploadFormContainer extends Component {
         //return;    
     }
     componentDidUpdate(prevProps,prevState){
+        if(prevState.materials !== this.state.materials){
+            console.log("Materials updated:",this.state.materials);
+        }
+        if(prevState.selectedMaterial!== this.state.selectedMaterial)
+        {
+            console.log("Selected material",this.state.selectedMaterial);
+        }
         const{selectedMaterial,selectedApplication}=this.state;
         if(prevState.selectedApplication!==selectedApplication && selectedApplication){
             this.fetchSpecies(selectedApplication);
@@ -55,7 +63,7 @@ export class UploadFormContainer extends Component {
     {
         this.fetchContainers(selectedMaterial,selectedApplication);
     }}
-
+    
     fetchMaterials=async(application='')=>{
         this.setState({isloading:true});
         try{
@@ -66,6 +74,9 @@ export class UploadFormContainer extends Component {
                 materials:response.data,
                 isloading:false,
             });
+            if(materials.length===1){
+                this.handleMaterialChange(selectedMaterial);
+            }
         }
         } catch(error){
             console.log("Error fetching materials:",error);
@@ -83,6 +94,9 @@ export class UploadFormContainer extends Component {
                 applications:response.data,
                 isloading:false,
             });
+            if(applications.length===1){
+                this.handleApplicationChange(selectedApplication);
+            }
         }
         } catch(error){
             console.log("Error fetching application:",error);
@@ -97,7 +111,7 @@ export class UploadFormContainer extends Component {
             this.fetchApplications(selectedMaterial);
             //this.fetchSpecies(selectedMaterial,this.state.selectedApplication);
             //this.fetchContainers(selectedMaterial,this.state.selectedApplication);
-        });
+        }); 
         }; 
     
     
@@ -142,6 +156,9 @@ export class UploadFormContainer extends Component {
                        species:response.data,
                        isloading:false,
                    });
+                   if(species.length===1){
+                    this.handleSpeciesChange(species[0]);
+                }
            } else{
                this.setState({species:[],isloading:false});
            } }
@@ -151,13 +168,6 @@ export class UploadFormContainer extends Component {
                this.setState({isloading:false});
        }};
    
-
-
-
-
-
-
-
 
 
     fetchContainers=async(material,application)=>{
@@ -176,19 +186,13 @@ export class UploadFormContainer extends Component {
                     containers:response.data,
                     isloading:false,
                 });
+                if(containers.length===1){
+                    this.handleContainersChange(containers[0]);
+                }
         } catch(error){
             console.log("Error fetching container:",error);
             this.setState({isloading:false});
     }};
-
-
-
-
-
-
-
-
-
 
 
     fetchReadLength=async(application)=>{
@@ -204,6 +208,9 @@ export class UploadFormContainer extends Component {
                     readLengths:response.data,
                     isloading:false,
                 });
+                if(readLengths.length===1){
+                    this.handleReadLengthChange(readLengths[0]);
+                }
         } else{
             this.setState({readLengths:[],isloading:false});
         } }
@@ -332,3 +339,5 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UploadFormContainer);
+
+
