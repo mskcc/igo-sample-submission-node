@@ -46,6 +46,7 @@ export class UploadFormContainer extends Component {
         //return;    
     }
     componentDidUpdate(prevProps,prevState){
+        const{selectedMaterial,selectedApplication}=this.state;
         if(prevState.materials !== this.state.materials){
             console.log("Materials updated:",this.state.materials);
         }
@@ -53,7 +54,6 @@ export class UploadFormContainer extends Component {
         {
             console.log("Selected material",this.state.selectedMaterial);
         }
-        const{selectedMaterial,selectedApplication}=this.state;
         if(prevState.selectedApplication!==selectedApplication && selectedApplication){
             this.fetchSpecies(selectedApplication);
         }
@@ -62,7 +62,21 @@ export class UploadFormContainer extends Component {
     || (prevState.selectedApplication!==selectedApplication)&&selectedApplication &&selectedMaterial)
     {
         this.fetchContainers(selectedMaterial,selectedApplication);
-    }}
+    }
+}
+
+
+
+/*autoFillSingleOption =(id,value)=>{
+    this.setState({
+        values:{
+        ...this.state.values,
+        [id]:value,
+    },
+    formValid:{...this.state.formValid,[id]:true},
+});
+this.props.handleInputChange(id,value);
+}; */
     
     fetchMaterials=async(application='')=>{
         this.setState({isloading:true});
@@ -152,8 +166,9 @@ export class UploadFormContainer extends Component {
         try{
             const response=await axios.get(`${Config.NODE_API_ROOT}/species`,{params});
             if(response.status===200){
+                const species= response.data;
                    this.setState({
-                       species:response.data,
+                       species,
                        isloading:false,
                    });
                    if(species.length===1){
@@ -161,8 +176,7 @@ export class UploadFormContainer extends Component {
                 }
            } else{
                this.setState({species:[],isloading:false});
-           } }
-           
+           } }           
            catch(error){
                console.log("Error fetching species:",error);
                this.setState({isloading:false});
@@ -282,6 +296,7 @@ export class UploadFormContainer extends Component {
         });
     };
 
+    
     render() {
         const { upload, dmp, formType, handleSubmit, submitRowNumberUpdate } = this.props;
         const {materials, isloading,applications,containers,species,readLengths}=this.state;
