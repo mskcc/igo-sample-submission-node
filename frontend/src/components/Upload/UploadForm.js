@@ -328,6 +328,10 @@ class UploadForm extends React.Component {
         const { formValid, value} = this.state;
 
         console.log('Material in UploadForm',materials);
+        console.log("sepcies availbale in render method ", species);
+        console.log("selected Species in render method ", form.selected.species);
+        console.log("Dropdown disbaled state render method ",species.length===1);
+        console.log("Form data",form);
 
         return (
             <Translate>
@@ -418,7 +422,7 @@ class UploadForm extends React.Component {
                                 // />
                             )}
                             <FormControl component='fieldset'>
-                                {species.length>0 && (<Dropdown
+                                {species && species.length>0 && (<Dropdown
                                     id='species'
                                     error={!formValid.species}
                                     onSelect={handleSpeciesChange}
@@ -432,9 +436,10 @@ class UploadForm extends React.Component {
                                 .sort((a, b) => a.label.localeCompare(b.label)) 
                                 }
                                     value={{
-                                        value: form.selected.species,
-                                        label: form.selected.species,
+                                        value: form.selected.species ,
+                                        label: form.selected.species ,
                                     }}
+                                    disabled={species.length ===1}
                                 />
                                 )}
                                 {this.showGroupingCheckbox() && (

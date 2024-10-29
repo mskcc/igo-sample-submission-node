@@ -116,6 +116,10 @@ export default function formReducer(state = initialFormState, action) {
                       formIsLoading: false,
                       filteredMaterials: action.materials,
                       filteredSpecies: action.species,
+                      selected:{
+                        ...state.selected,
+                        species:action.species.length ===1 ? action.species[0]:state.selected.species
+                      }
                       // does not update input value quite yet,so don't change to allow validation to pick it up
                       // selected: { ...state.selected, species: action.species[0].id },
                   }

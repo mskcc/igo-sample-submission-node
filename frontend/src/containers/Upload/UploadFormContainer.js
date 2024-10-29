@@ -23,6 +23,7 @@ export class UploadFormContainer extends Component {
             isloading:false,
             selectedMaterial:"",
             selectedApplication:"",
+            isSpeciesDisabled:false,
         };
     }
    componentDidMount() {
@@ -158,7 +159,7 @@ this.props.handleInputChange(id,value);
     };*/
 
     fetchSpecies=async(application)=>{
-        console.log("Application:",application);
+        console.log("Application for species :",application);
         const params={};
         if(application){
             params.application=application;
@@ -167,14 +168,21 @@ this.props.handleInputChange(id,value);
             const response=await axios.get(`${Config.NODE_API_ROOT}/species`,{params});
             if(response.status===200){
                 const species= response.data;
+                console.log(" Fectched Spwcies",species);
                    this.setState({
                        species,
                        isloading:false,
                    });
-                   if(species.length===1){
+                   if(species.length ===1){
+                    console.log(" Only one species found",species[0]);
                     this.handleSpeciesChange(species[0]);
-                }
+                    this.setState({isSpeciesDisabled:true});
+                    }else{
+                        console.log(" Multiple species");
+                        this.setState({isSpeciesDisabled:false});
+                    }
            } else{
+            console.log("No species");
                this.setState({species:[],isloading:false});
            } }           
            catch(error){
@@ -264,8 +272,19 @@ this.props.handleInputChange(id,value);
     }
  
     handleSpeciesChange = (selectedSpecies) => {
-        const { clearSpecies } = this.props;
-        if (!selectedSpecies) clearSpecies();
+        console.log("species changed to :", selectedSpecies);
+        if (!selectedSpecies) 
+            {
+                const {clearSpecies} =this.props;
+                clearSpecies();
+                return;
+            }
+            const {select}=this.props;
+            select('species',selectedSpecies);
+            console.log("Species selected via Redux",selectedSpecies);
+        this.setState({
+            selectedSpecies:selectedSpecies
+        });
     };
 
     handleContainersChange = (selectedContainers) => {
@@ -354,5 +373,3 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UploadFormContainer);
-
-
