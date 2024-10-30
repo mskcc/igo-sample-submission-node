@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import { formActions as ActionTypes } from '../../actions/';
 import { initialFormState } from '../initialState';
 import { gridActions as GridActionTypes } from '../../actions/';
@@ -110,31 +111,47 @@ export default function formReducer(state = initialFormState, action) {
                 formIsLoading: true,
             };
         case ActionTypes.RECEIVE_DATA_FOR_APPLICATION_SUCCESS:
-            return action.species.length > 0
-                ? {
+            if(action.species.length ===1){
+                return {
                       ...state,
                       formIsLoading: false,
                       filteredMaterials: action.materials,
                       filteredSpecies: action.species,
                       selected:{
                         ...state.selected,
-                        species:action.species.length ===1 ? action.species[0]:state.selected.species
+                        species:action.species[0]
                       }
                       // does not update input value quite yet,so don't change to allow validation to pick it up
                       // selected: { ...state.selected, species: action.species[0].id },
-                  }
-                : {
-                      ...state,
-                      formIsLoading: false,
-                      filteredMaterials: action.materials,
-                      filteredSpecies: state.allSpecies,
                   };
+                } else{
+                    return {
+                        ...state,
+                        formIsLoading: false,
+                        filteredMaterials: action.materials,
+                        filteredSpecies: action.species,
+                        selected:{
+                            ...state.selected,
+                            species:''
+                        }
+                    };
+                }
+
         case ActionTypes.RECEIVE_DATA_FOR_APPLICATION_FAIL:
             return {
                 ...state,
                 formIsLoading: false,
                 error: action.error,
             };
+
+            case ActionTypes.RECEIVE_SPECIES_SUCCESS:
+                return{
+                    ...state,
+                    speciesList:action.species,
+                    selectedSpecies:action.species.length===1  ? action.species[0]:
+                    state.selectedSpecies
+                };
+
 
         case ActionTypes.REQUEST_APPLICATIONS_FOR_MATERIAL:
             return {
