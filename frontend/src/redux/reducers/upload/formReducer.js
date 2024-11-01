@@ -102,6 +102,7 @@ export default function formReducer(state = initialFormState, action) {
                 selected: {
                     ...state.selected,
                     application: action.selectedApplication,
+                    species:''
                 },
             };
 
@@ -111,7 +112,6 @@ export default function formReducer(state = initialFormState, action) {
                 formIsLoading: true,
             };
         case ActionTypes.RECEIVE_DATA_FOR_APPLICATION_SUCCESS:
-            if(action.species.length ===1){
                 return {
                       ...state,
                       formIsLoading: false,
@@ -119,23 +119,13 @@ export default function formReducer(state = initialFormState, action) {
                       filteredSpecies: action.species,
                       selected:{
                         ...state.selected,
-                        species:action.species[0]
+                        species:action.species[0].length===1? action.species[0]:state.selected.species ||'',
+                        application:state.selected.application
                       }
                       // does not update input value quite yet,so don't change to allow validation to pick it up
                       // selected: { ...state.selected, species: action.species[0].id },
                   };
-                } else{
-                    return {
-                        ...state,
-                        formIsLoading: false,
-                        filteredMaterials: action.materials,
-                        filteredSpecies: action.species,
-                        selected:{
-                            ...state.selected,
-                            species:''
-                        }
-                    };
-                }
+    
 
         case ActionTypes.RECEIVE_DATA_FOR_APPLICATION_FAIL:
             return {
@@ -148,8 +138,11 @@ export default function formReducer(state = initialFormState, action) {
                 return{
                     ...state,
                     speciesList:action.species,
-                    selectedSpecies:action.species.length===1  ? action.species[0]:
-                    state.selectedSpecies
+                    selected:{
+                    ...state.selected,
+                    species:action.species.length ===1 ?action.species[0]:'',
+                    application:action.application
+                    }
                 };
 
 

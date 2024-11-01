@@ -18,6 +18,7 @@ class UploadForm extends React.Component {
             values: {
                 ...this.props.form.selected,
             },
+            speciesPrepopulated:false,
             formValid: {
                 material: true,
                 application: true,
@@ -303,8 +304,33 @@ class UploadForm extends React.Component {
     componentDidUpdate(prevProps){
         if(prevProps.materials!==this.props.materials){
             console.log('Updated Materials',this.props.materials);
+            console.log("Previous species",prevProps.species);
+            console.log("Current species",this.props.species);
+
+            if(prevProps.form.selected.application !== this.props.form.selected.application){
+                this.fetchSpecies(this.props.form.selected.application);
+            }
+
+            if(!this.state.speciesPrepopulated && this.props.species.length ===1 ){
+                console.log("Species props updated",this.props.species);
+            this.setState({
+                values :{
+                   ...this.state.values,
+                    species: this.props.species[0]
+                },
+                speciesPrepopulated:true
+            });
+            if(prevProps.application!==this.props.application)
+{
+    this.setState({
+        selectedApplication:this.props.application
+    });
+
+}            console.log("Updated Specie in componentdid upadtes",this.props.species[0]);
         }
-    }
+    
+        }
+}
 
     render() {
         const {
@@ -330,7 +356,7 @@ class UploadForm extends React.Component {
         console.log('Material in UploadForm',materials);
         console.log("sepcies availbale in render method ", species);
         console.log("selected Species in render method ", form.selected.species);
-        console.log("Dropdown disbaled state render method ",species.length===1);
+        console.log("Dropdown disbaled state render method ",species[0]);
         console.log("Form data",form);
 
         return (
@@ -422,7 +448,8 @@ class UploadForm extends React.Component {
                                 // />
                             )}
                             <FormControl component='fieldset'>
-                                {species && species.length>0 && (<Dropdown
+                                {species && species.length>0 && 
+                                 (<Dropdown
                                     id='species'
                                     error={!formValid.species}
                                     onSelect={handleSpeciesChange}
@@ -430,14 +457,15 @@ class UploadForm extends React.Component {
                                     dynamic
                                     loading={form.formIsLoading}
                                     items={species.map((option) => ({
-                                    value: option,
+                                    value: option ,
                                     label: option,
                                     }))
                                 .sort((a, b) => a.label.localeCompare(b.label)) 
                                 }
                                     value={{
-                                        value: form.selected.species ,
-                                        label: form.selected.species ,
+
+                                        value: form.selected.species  || (species.length===1 ? species[0]:''),
+                                        label: form.selected.species || (species.length===1 ? species[0]:''),  
                                     }}
                                     disabled={species.length ===1}
                                 />

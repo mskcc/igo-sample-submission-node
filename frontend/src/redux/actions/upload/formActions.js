@@ -189,7 +189,9 @@ export function fetchSpecies(application){
         axios.get(`$ {Config.Node_API_ROOT}/species`,{params:{application}})
         .then((response)=>
         {
-            dispatch({type: 'RECEIVE_SPECIES_SUCCESS',species:response.data});
+            dispatch({type: 'RECEIVE_SPECIES_SUCCESS',species:response.data,
+                application:application
+            });
             if (response.data.length===1)
             {
                 dispatch(select('species',response.data[0]));
@@ -203,6 +205,16 @@ export function fetchSpecies(application){
         });
     };
 }
+
+export function handleApplicationChange(selectedApplication){
+    return (dispatch) =>{
+        dispatch ({ type :'SELECT_APPLICATION',selectedApplication});
+        dispatch (fetchSpecies(selectedApplication));
+    };
+}
+
+
+
 
 export const CLEAR_SPECIES = 'CLEAR_SPECIES';
 

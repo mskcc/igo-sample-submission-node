@@ -10,7 +10,7 @@ import { swal } from '../../util';
 import { Config } from '../../config';
 import axios from 'axios';
 import { DmpForm, UploadForm } from '../../components';
-import { select } from '../../redux/actions/upload/formActions';
+import { clearSpecies, select } from '../../redux/actions/upload/formActions';
 export class UploadFormContainer extends Component {
     constructor(props){
         super(props);
@@ -54,9 +54,6 @@ export class UploadFormContainer extends Component {
         if(prevState.selectedMaterial!== this.state.selectedMaterial)
         {
             console.log("Selected material",this.state.selectedMaterial);
-        }
-        if(prevState.selectedApplication!==selectedApplication && selectedApplication){
-            this.fetchSpecies(selectedApplication);
         }
     if(
         (prevState.selectedMaterial!==selectedMaterial)
@@ -136,6 +133,7 @@ this.props.handleInputChange(id,value);
                // console.log("state after application change",this.state.application);
                this.fetchMaterials(selectedApplication);
                this.fetchReadLength(selectedApplication);
+               this.fetchSpecies(selectedApplication);
                //this.fetchSpecies(selectedApplication,this.state.selectedMaterial);
                //this.fetchContainers(selectedApplication,this.state.selectedApplication);
             });
@@ -176,10 +174,11 @@ this.props.handleInputChange(id,value);
                    if(species.length ===1){
                     console.log(" Only one species found",species[0]);
                     this.handleSpeciesChange(species[0]);
-                    this.setState({isSpeciesDisabled:true});
+                    this.setState({selectedSpecies:species[0],isSpeciesDisabled:true} 
+                    );
                     }else{
                         console.log(" Multiple species");
-                        this.setState({isSpeciesDisabled:false});
+                        this.setState({selectedSpecies:'',isSpeciesDisabled:false});
                     }
            } else{
             console.log("No species");
@@ -365,6 +364,7 @@ this.props.handleInputChange(id,value);
 const mapStateToProps = (state) => ({
     upload: state.upload,
     dmp: state.dmp,
+    select,
 });
 
 const mapDispatchToProps = {
