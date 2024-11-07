@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable quotes */
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { Translate } from 'react-localize-redux';
@@ -16,6 +18,7 @@ class UploadForm extends React.Component {
             values: {
                 ...this.props.form.selected,
             },
+            speciesPrepopulated:false,
             formValid: {
                 material: true,
                 application: true,
@@ -301,8 +304,33 @@ class UploadForm extends React.Component {
     componentDidUpdate(prevProps){
         if(prevProps.materials!==this.props.materials){
             console.log('Updated Materials',this.props.materials);
+            console.log("Previous species",prevProps.species);
+            console.log("Current species",this.props.species);
+
+            if(prevProps.form.selected.application !== this.props.form.selected.application){
+                this.fetchSpecies(this.props.form.selected.application);
+            }
+
+            if(!this.state.speciesPrepopulated && this.props.species.length ===1 ){
+                console.log("Species props updated",this.props.species);
+            this.setState({
+                values :{
+                   ...this.state.values,
+                    species: this.props.species[0]
+                },
+                speciesPrepopulated:true
+            });
+            if(prevProps.application!==this.props.application)
+{
+    this.setState({
+        selectedApplication:this.props.application
+    });
+
+}            console.log("Updated Specie in componentdid upadtes",this.props.species[0]);
         }
-    }
+    
+        }
+}
 
     render() {
         const {
@@ -326,6 +354,10 @@ class UploadForm extends React.Component {
         const { formValid, value} = this.state;
 
         console.log('Material in UploadForm',materials);
+        console.log("sepcies availbale in render method ", species);
+        console.log("selected Species in render method ", form.selected.species);
+        console.log("Dropdown disbaled state render method ",species[0]);
+        console.log("Form data",form);
 
         return (
             <Translate>
@@ -341,7 +373,9 @@ class UploadForm extends React.Component {
                                 items={materials.map((option) => ({
                                     value: option,
                                     label: option,
-                                }))}
+                                }))
+                                .sort((a, b) => a.label.localeCompare(b.label)) 
+                                }
                               loading={isloading}
                                 //loading={form.formIsLoading}
                                 dynamic
@@ -365,8 +399,8 @@ class UploadForm extends React.Component {
                                 loading={form.formIsLoading}
                                 dynamic
                                 value={{
-                                    value: form.selected.application,
-                                    label: readableRecipesLib[form.selected.application],
+                                    value: form.selected.application || (applications.length===1 ? applications[0]:" "),
+                                    label: readableRecipesLib[form.selected.application] || (applications.length===1 ? applications[0]:" "),
                                 }}
                             />
                             {this.showReadLengthDropdown() && (<Dropdown
@@ -377,7 +411,9 @@ class UploadForm extends React.Component {
                                 items={this.props.readLengths.map((option) => ({
                                     value: option,
                                     label: option,
-                                }))}
+                                }))
+                                .sort((a, b) => a.label.localeCompare(b.label)) 
+                                }
                                 loading={form.formIsLoading}
                                 dynamic
                                 value={{
@@ -412,7 +448,8 @@ class UploadForm extends React.Component {
                                 // />
                             )}
                             <FormControl component='fieldset'>
-                                <Dropdown
+                                {species && species.length>0 && 
+                                 (<Dropdown
                                     id='species'
                                     error={!formValid.species}
                                     onSelect={handleSpeciesChange}
@@ -420,15 +457,19 @@ class UploadForm extends React.Component {
                                     dynamic
                                     loading={form.formIsLoading}
                                     items={species.map((option) => ({
-                                    value: option,
+                                    value: option ,
                                     label: option,
-                                    }))}
+                                    }))
+                                .sort((a, b) => a.label.localeCompare(b.label)) 
+                                }
                                     value={{
-                                        value: form.selected.species,
-                                        label: form.selected.species,
+
+                                        value: form.selected.species  || (species.length===1 ? species[0]:''),
+                                        label: form.selected.species || (species.length===1 ? species[0]:''),  
                                     }}
-                                    ic
+                                    disabled={species.length ===1}
                                 />
+                                )}
                                 {this.showGroupingCheckbox() && (
                                     <Checkbox
                                         id='groupingCheckbox'
@@ -476,7 +517,9 @@ class UploadForm extends React.Component {
                                 items={containers.map((option) => ({
                                     value: option,
                                     label: option,
-                                }))}
+                                }))
+                                .sort((a, b) => a.label.localeCompare(b.label)) 
+                                }
                                 loading={form.formIsLoading}
                                 value={{
                                     value: form.selected.container,

@@ -7,6 +7,8 @@ export const initialFormStateMock = {
     filteredContainers: [],
     formIsLoading: true,
     initialFetched: false,
+    speciesList:[],
+    
 
     filteredMaterials: [],
     picklists: {},

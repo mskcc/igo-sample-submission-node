@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable quotes */
 /* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
@@ -9,7 +10,7 @@ import { swal } from '../../util';
 import { Config } from '../../config';
 import axios from 'axios';
 import { DmpForm, UploadForm } from '../../components';
-import { select } from '../../redux/actions/upload/formActions';
+import { clearSpecies, select } from '../../redux/actions/upload/formActions';
 export class UploadFormContainer extends Component {
     constructor(props){
         super(props);
@@ -22,6 +23,7 @@ export class UploadFormContainer extends Component {
             isloading:false,
             selectedMaterial:"",
             selectedApplication:"",
+            isSpeciesDisabled:false,
         };
     }
    componentDidMount() {
@@ -46,14 +48,34 @@ export class UploadFormContainer extends Component {
     }
     componentDidUpdate(prevProps,prevState){
         const{selectedMaterial,selectedApplication}=this.state;
+        if(prevState.materials !== this.state.materials){
+            console.log("Materials updated:",this.state.materials);
+        }
+        if(prevState.selectedMaterial!== this.state.selectedMaterial)
+        {
+            console.log("Selected material",this.state.selectedMaterial);
+        }
     if(
         (prevState.selectedMaterial!==selectedMaterial)
     || (prevState.selectedApplication!==selectedApplication)&&selectedApplication &&selectedMaterial)
     {
-        this.fetchSpecies(selectedMaterial,selectedApplication);
         this.fetchContainers(selectedMaterial,selectedApplication);
-    }}
+    }
+}
 
+
+
+/*autoFillSingleOption =(id,value)=>{
+    this.setState({
+        values:{
+        ...this.state.values,
+        [id]:value,
+    },
+    formValid:{...this.state.formValid,[id]:true},
+});
+this.props.handleInputChange(id,value);
+}; */
+    
     fetchMaterials=async(application='')=>{
         this.setState({isloading:true});
         try{
@@ -64,6 +86,9 @@ export class UploadFormContainer extends Component {
                 materials:response.data,
                 isloading:false,
             });
+            if(materials.length===1){
+                this.handleMaterialChange(selectedMaterial);
+            }
         }
         } catch(error){
             console.log("Error fetching materials:",error);
@@ -81,6 +106,9 @@ export class UploadFormContainer extends Component {
                 applications:response.data,
                 isloading:false,
             });
+            if(applications.length===1){
+                this.handleApplicationChange(selectedApplication);
+            }
         }
         } catch(error){
             console.log("Error fetching application:",error);
@@ -95,7 +123,7 @@ export class UploadFormContainer extends Component {
             this.fetchApplications(selectedMaterial);
             //this.fetchSpecies(selectedMaterial,this.state.selectedApplication);
             //this.fetchContainers(selectedMaterial,this.state.selectedApplication);
-        });
+        }); 
         }; 
     
     
@@ -105,6 +133,7 @@ export class UploadFormContainer extends Component {
                // console.log("state after application change",this.state.application);
                this.fetchMaterials(selectedApplication);
                this.fetchReadLength(selectedApplication);
+               this.fetchSpecies(selectedApplication);
                //this.fetchSpecies(selectedApplication,this.state.selectedMaterial);
                //this.fetchContainers(selectedApplication,this.state.selectedApplication);
             });
@@ -127,28 +156,39 @@ export class UploadFormContainer extends Component {
         }
     };*/
 
-    fetchSpecies=async(material='',application='')=>{
-        console.log("Material:", material);
-        console.log("Application:",application);
+    fetchSpecies=async(application)=>{
+        console.log("Application for species :",application);
         const params={};
-        if(material){
-            params.material=material;
-        }
         if(application){
             params.application=application;
         }
-            try{
-         const response=await axios.get(`${Config.NODE_API_ROOT}/species`,{params});
-                this.setState({
-                    species:response.data,
-                    isloading:false,
-                });
-        } catch(error){
-            console.log("Error fetching species:",error);
-            this.setState({isloading:false});
-    }};
-
-
+        try{
+            const response=await axios.get(`${Config.NODE_API_ROOT}/species`,{params});
+            if(response.status===200){
+                const species= response.data;
+                console.log(" Fectched Spwcies",species);
+                   this.setState({
+                       species,
+                       isloading:false,
+                   });
+                   if(species.length ===1){
+                    console.log(" Only one species found",species[0]);
+                    this.handleSpeciesChange(species[0]);
+                    this.setState({selectedSpecies:species[0],isSpeciesDisabled:true} 
+                    );
+                    }else{
+                        console.log(" Multiple species");
+                        this.setState({selectedSpecies:'',isSpeciesDisabled:false});
+                    }
+           } else{
+            console.log("No species");
+               this.setState({species:[],isloading:false});
+           } }           
+           catch(error){
+               console.log("Error fetching species:",error);
+               this.setState({isloading:false});
+       }};
+   
 
 
     fetchContainers=async(material,application)=>{
@@ -167,19 +207,13 @@ export class UploadFormContainer extends Component {
                     containers:response.data,
                     isloading:false,
                 });
+                if(containers.length===1){
+                    this.handleContainersChange(containers[0]);
+                }
         } catch(error){
             console.log("Error fetching container:",error);
             this.setState({isloading:false});
     }};
-
-
-
-
-
-
-
-
-
 
 
     fetchReadLength=async(application)=>{
@@ -195,6 +229,9 @@ export class UploadFormContainer extends Component {
                     readLengths:response.data,
                     isloading:false,
                 });
+                if(readLengths.length===1){
+                    this.handleReadLengthChange(readLengths[0]);
+                }
         } else{
             this.setState({readLengths:[],isloading:false});
         } }
@@ -234,8 +271,19 @@ export class UploadFormContainer extends Component {
     }
  
     handleSpeciesChange = (selectedSpecies) => {
-        const { clearSpecies } = this.props;
-        if (!selectedSpecies) clearSpecies();
+        console.log("species changed to :", selectedSpecies);
+        if (!selectedSpecies) 
+            {
+                const {clearSpecies} =this.props;
+                clearSpecies();
+                return;
+            }
+            const {select}=this.props;
+            select('species',selectedSpecies);
+            console.log("Species selected via Redux",selectedSpecies);
+        this.setState({
+            selectedSpecies:selectedSpecies
+        });
     };
 
     handleContainersChange = (selectedContainers) => {
@@ -266,6 +314,7 @@ export class UploadFormContainer extends Component {
         });
     };
 
+    
     render() {
         const { upload, dmp, formType, handleSubmit, submitRowNumberUpdate } = this.props;
         const {materials, isloading,applications,containers,species,readLengths}=this.state;
@@ -315,6 +364,7 @@ export class UploadFormContainer extends Component {
 const mapStateToProps = (state) => ({
     upload: state.upload,
     dmp: state.dmp,
+    select,
 });
 
 const mapDispatchToProps = {

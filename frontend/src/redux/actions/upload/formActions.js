@@ -1,3 +1,5 @@
+/* eslint-disable quotes */
+/* eslint-disable no-undef */
 //TODO ERROR HANDLING
 import axios from 'axios';
 
@@ -20,6 +22,8 @@ export const RECEIVE_INITIAL_STATE_SUCCESS = 'RECEIVE_INITIAL_STATE_SUCCESS';
 
 export const RECEIVE_INITIAL_STATE_FAIL = 'RECEIVE_INITIAL_STATE_FAIL';
 export const INITIAL_STATE_RETRIEVED = 'INITIAL_STATE_RETRIEVED';
+export const REQUEST_SPECIES= 'REQUEST_SPECIES';
+export const RECEIVE_SPECIES_SUCCESS ='RECEIVE_SPECIES_SUCCESS';
 
 export function getInitialState() {
     return (dispatch, getState) => {
@@ -177,6 +181,40 @@ export function getApplicationsForMaterial(selectedMaterial, checkForMismatch = 
             });
     };
 }
+
+
+export function fetchSpecies(application){
+    return (dispatch) =>{
+        dispatch ({ type :'REQUEST_SPECIES'});
+        axios.get(`$ {Config.Node_API_ROOT}/species`,{params:{application}})
+        .then((response)=>
+        {
+            dispatch({type: 'RECEIVE_SPECIES_SUCCESS',species:response.data,
+                application:application
+            });
+            if (response.data.length===1)
+            {
+                dispatch(select('species',response.data[0]));
+            }
+        })
+        .catch((error)=>{
+            dispatch({
+                type :'RECEIVE_SPECIES_FAIL',
+                error:error
+            });
+        });
+    };
+}
+
+export function handleApplicationChange(selectedApplication){
+    return (dispatch) =>{
+        dispatch ({ type :'SELECT_APPLICATION',selectedApplication});
+        dispatch (fetchSpecies(selectedApplication));
+    };
+}
+
+
+
 
 export const CLEAR_SPECIES = 'CLEAR_SPECIES';
 
