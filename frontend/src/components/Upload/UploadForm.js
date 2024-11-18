@@ -17,6 +17,7 @@ class UploadForm extends React.Component {
         this.state = {
             values: {
                 ...this.props.form.selected,
+                species :this.props.species.length===1 ? this.props.species[0] :'',
             },
             speciesPrepopulated:false,
             formValid: {
@@ -306,30 +307,8 @@ class UploadForm extends React.Component {
             console.log('Updated Materials',this.props.materials);
             console.log("Previous species",prevProps.species);
             console.log("Current species",this.props.species);
-
-            if(prevProps.form.selected.application !== this.props.form.selected.application){
-                this.fetchSpecies(this.props.form.selected.application);
-            }
-
-            if(!this.state.speciesPrepopulated && this.props.species.length ===1 ){
-                console.log("Species props updated",this.props.species);
-            this.setState({
-                values :{
-                   ...this.state.values,
-                    species: this.props.species[0]
-                },
-                speciesPrepopulated:true
-            });
-            if(prevProps.application!==this.props.application)
-{
-    this.setState({
-        selectedApplication:this.props.application
-    });
-
-}            console.log("Updated Specie in componentdid upadtes",this.props.species[0]);
-        }
-    
-        }
+            
+    }
 }
 
     render() {
@@ -353,11 +332,11 @@ class UploadForm extends React.Component {
         } = this.props;
         const { formValid, value} = this.state;
 
-        console.log('Material in UploadForm',materials);
-        console.log("sepcies availbale in render method ", species);
-        console.log("selected Species in render method ", form.selected.species);
-        console.log("Dropdown disbaled state render method ",species[0]);
-        console.log("Form data",form);
+     console.log('Material in UploadForm',materials);
+ console.log("sepcies availbale in render method ", species);
+ console.log("selected Species in render method ", form.selected.species);
+  console.log("Dropdown disbaled state render method ",species[0]);
+ console.log("Form data",form);
 
         return (
             <Translate>
@@ -464,7 +443,7 @@ class UploadForm extends React.Component {
                                 }
                                     value={{
 
-                                        value: form.selected.species  || (species.length===1 ? species[0]:''),
+                                        value: form.selected.species || (species.length===1 ? species[0]:''),
                                         label: form.selected.species || (species.length===1 ? species[0]:''),  
                                     }}
                                     disabled={species.length ===1}

@@ -23,8 +23,6 @@ export const readableRecipesLib = {
     "Extraction_DNA": "DNA Extraction",
     "Extraction_Dual": "Dual DNA/RNA Extraction",
     "Extraction_RNA": "RNA Extraction",
-    "FA_Custom": "Custom Fragment Analysis",
-    "FA_Fingerprint": "Tumor/Normal Fingerprinting",
     "Methyl_Capture": "Methylation Capture Sequencing",
     "Methyl_WGS": "Whole Genome Methylation Sequencing",
     "Nanopore_AS": "Nanopore Adaptive Sampling",
@@ -38,7 +36,6 @@ export const readableRecipesLib = {
     "QC_Library": "Library QC",
     "QC_RNA": "RNA QC",
     "R&D_Other": "IGO R&D Use Only",
-    "RNA_Capture": "RNA Capture",
     "RNA_PolyA": "RNA Seq - PolyA",
     "RNA_Ribodeplete": "RNA Seq - Ribodepletion",
     "RNA_SMARTer-Cells": "SMARTer from Cells",
@@ -48,7 +45,6 @@ export const readableRecipesLib = {
     "SC_Chromium-BCR": "10X scVDJ (BCR) Sequencing",
     "SC_Chromium-FB-3": "10X 3' Feature Barcode/Hashtag Sequencing",
     "SC_Chromium-FB-5":	"10X 5' Feature Barcode/Hashtag Sequencing",
-    "SC_Chromium-Flex": "10X Flex scRNA-Seq",
     "SC_Chromium-GEX-3": "10X 3' scRNA-Seq",
     "SC_Chromium-GEX-5": "10X 5' scRNA-Seq",
     "SC_Chromium-Multiome": "10X Multiome",
@@ -75,7 +71,10 @@ export const readableRecipesLib = {
     "WES_Mouse": "Mouse Whole Exome Sequencing",
     "WGS_Deep":	"Whole Genome Sequencing (deep or PCR-free)",
     "WGS_Metagenomic": "Metagenomic Sequencing",
-    "WGS_Shallow": "Shallow Whole Genome Sequencing"
+    "WGS_Shallow": "Shallow Whole Genome Sequencing",
+    "GLP_WES": "CCV WES Submissions (GLP)",
+    "GLP_RNA": "CCV RNA-Seq Submissions (GLP)",
+    "OGM": "Optical Genome Mapping (Bionano)"
 };
 export const reverseReadableRecipesLib = {
     "ATAC Sequencing": "ATAC",
@@ -100,8 +99,6 @@ export const reverseReadableRecipesLib = {
     "DNA Extraction": "Extraction_DNA",
     "Dual DNA/RNA Extraction": "Extraction_Dual",
     "RNA Extraction": "Extraction_RNA",
-    "Custom Fragment Analysis": "FA_Custom",
-    "Tumor/Normal Fingerprinting": "FA_Fingerprint",
     "Methylation Capture Sequencing": "Methyl_Capture",
     "Whole Genome Methylation Sequencing": "Methyl_WGS",
     "Nanopore Adaptive Sampling": "Nanopore_AS",
@@ -115,7 +112,6 @@ export const reverseReadableRecipesLib = {
     "Library QC": "QC_Library",
     "RNA QC": "QC_RNA",
     "IGO R&D Use Only": "R&D_Other",
-    "RNA Capture": "RNA_Capture",
     "RNA Seq - PolyA": "RNA_PolyA",
     "RNA Seq - Ribodepletion": "RNA_Ribodeplete",
     "SMARTer from Cells": "RNA_SMARTer-Cells",
@@ -125,7 +121,6 @@ export const reverseReadableRecipesLib = {
     "10X scVDJ (BCR) Sequencing": "SC_Chromium-BCR",
     "10X 3' Feature Barcode/Hashtag Sequencing": "SC_Chromium-FB-3",
     "10X 5' Feature Barcode/Hashtag Sequencing": "SC_Chromium-FB-5",
-    "10X Flex scRNA-Seq": "SC_Chromium-Flex",
     "10X 3' scRNA-Seq": "SC_Chromium-GEX-3",
     "10X 5' scRNA-Seq": "SC_Chromium-GEX-5",
     "10X Multiome": "SC_Chromium-Multiome",
@@ -152,5 +147,9 @@ export const reverseReadableRecipesLib = {
     "Mouse Whole Exome Sequencing": "WES_Mouse",
     "Whole Genome Sequencing (deep or PCR-free)": "WGS_Deep",
     "Metagenomic Sequencing": "WGS_Metagenomic",
-    "Shallow Whole Genome Sequencing": "WGS_Shallow"
+    "Shallow Whole Genome Sequencing": "WGS_Shallow",
+    "CCV WES Submissions (GLP)": "GLP_WES",
+    "CCV RNA-Seq Submissions (GLP)": "GLP_RNA",
+    "Optical Genome Mapping (Bionano)": "OGM"
 };
+

@@ -10,7 +10,7 @@ import { swal } from '../../util';
 import { Config } from '../../config';
 import axios from 'axios';
 import { DmpForm, UploadForm } from '../../components';
-import { clearSpecies, select } from '../../redux/actions/upload/formActions';
+import { clearSpecies, select , fetchSpecies} from '../../redux/actions/upload/formActions';
 export class UploadFormContainer extends Component {
     constructor(props){
         super(props);
@@ -24,6 +24,7 @@ export class UploadFormContainer extends Component {
             selectedMaterial:"",
             selectedApplication:"",
             isSpeciesDisabled:false,
+            speciesList:[],
         };
     }
    componentDidMount() {
@@ -55,6 +56,11 @@ export class UploadFormContainer extends Component {
         {
             console.log("Selected material",this.state.selectedMaterial);
         }
+        if(
+        (prevState.selectedApplication!==selectedApplication)&&selectedApplication)
+        {
+            this.fetchSpecies(selectedApplication);
+        }
     if(
         (prevState.selectedMaterial!==selectedMaterial)
     || (prevState.selectedApplication!==selectedApplication)&&selectedApplication &&selectedMaterial)
@@ -63,18 +69,6 @@ export class UploadFormContainer extends Component {
     }
 }
 
-
-
-/*autoFillSingleOption =(id,value)=>{
-    this.setState({
-        values:{
-        ...this.state.values,
-        [id]:value,
-    },
-    formValid:{...this.state.formValid,[id]:true},
-});
-this.props.handleInputChange(id,value);
-}; */
     
     fetchMaterials=async(application='')=>{
         this.setState({isloading:true});
@@ -86,9 +80,8 @@ this.props.handleInputChange(id,value);
                 materials:response.data,
                 isloading:false,
             });
-            if(materials.length===1){
+        
                 this.handleMaterialChange(selectedMaterial);
-            }
         }
         } catch(error){
             console.log("Error fetching materials:",error);
@@ -106,9 +99,9 @@ this.props.handleInputChange(id,value);
                 applications:response.data,
                 isloading:false,
             });
-            if(applications.length===1){
+
                 this.handleApplicationChange(selectedApplication);
-            }
+
         }
         } catch(error){
             console.log("Error fetching application:",error);
@@ -134,60 +127,36 @@ this.props.handleInputChange(id,value);
                this.fetchMaterials(selectedApplication);
                this.fetchReadLength(selectedApplication);
                this.fetchSpecies(selectedApplication);
+              
                //this.fetchSpecies(selectedApplication,this.state.selectedMaterial);
                //this.fetchContainers(selectedApplication,this.state.selectedApplication);
             });
             }; 
 
-    /*fetchContainers=async(selectedMaterial,selectedApplication)=>{
-        try{
-           // this.setState({isloading:true});
-            const response= await axios.get('http://localhost:4020/api/containers?materials=${selectedMaterial}&application=${selectedApplication}');
-            if(response.status===200)
-            {
-            this.setState({
-                containers:response.data,
-                isloading:false,
-            });
-        }
-        } catch(error){
-            console.log("Error fetching containers:",error);
-            this.setState({isloading:false});
-        }
-    };*/
 
-    fetchSpecies=async(application)=>{
-        console.log("Application for species :",application);
-        const params={};
-        if(application){
-            params.application=application;
-        }
-        try{
-            const response=await axios.get(`${Config.NODE_API_ROOT}/species`,{params});
-            if(response.status===200){
-                const species= response.data;
-                console.log(" Fectched Spwcies",species);
-                   this.setState({
-                       species,
-                       isloading:false,
-                   });
-                   if(species.length ===1){
-                    console.log(" Only one species found",species[0]);
-                    this.handleSpeciesChange(species[0]);
-                    this.setState({selectedSpecies:species[0],isSpeciesDisabled:true} 
-                    );
-                    }else{
-                        console.log(" Multiple species");
-                        this.setState({selectedSpecies:'',isSpeciesDisabled:false});
-                    }
-           } else{
-            console.log("No species");
-               this.setState({species:[],isloading:false});
-           } }           
-           catch(error){
-               console.log("Error fetching species:",error);
-               this.setState({isloading:false});
-       }};
+            fetchSpecies = async (application) => {
+                console.log("Application for species:", application);
+                const params = {};
+                if (application) {
+                    params.application = application;
+                }
+                try {
+                    const response = await axios.get(`${Config.NODE_API_ROOT}/species`, { params });
+                    if (response.status === 200) {
+                        const species = response.data;
+                        console.log("Fetched Species", species);
+                        this.setState({
+                            species,
+                            isloading: false,
+                        });
+                    } 
+                } catch (error) {
+                    console.log("Error fetching species:", error);
+                    this.setState({ isloading: false });
+                }
+            };
+
+
    
 
 
@@ -240,30 +209,6 @@ this.props.handleInputChange(id,value);
             console.log("Error fetching readlengths:",error);
             this.setState({isloading:false});
     }};
-
-
-  /*handleMaterialChange = (selectedMaterial) => {
-        const { getApplicationsForMaterial, clearMaterial } = this.props;
-        console.log("Selected Material:", selectedMaterial);
-        if (selectedMaterial) {
-            // get possible applications for this material
-            getApplicationsForMaterial(selectedMaterial);
-        } else {
-            clearMaterial();
-        }
-    };*/
-
-
- /*  handleApplicationChange = (selectedApplication) => {
-        const { getMaterialsForApplication, clearApplication } = this.props;
-        console.log("Selected Application:", selectedApplication);
-        if (selectedApplication) {
-            // get possible ,materials for this application
-            getMaterialsForApplication(selectedApplication);
-        } else {
-            clearApplication();
-        }
-    };*/ 
 
     handleReadLengthChange = (selectedReadLength) => {
         const { clearReadLengths } = this.props;
@@ -373,3 +318,4 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UploadFormContainer);
+
