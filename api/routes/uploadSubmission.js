@@ -32,9 +32,9 @@ router.get('/applications',async(req,res)=>{
             }
         });
 
-        if(allApplications.some(app=>["10X GEX", "VDJ", "FB/CH", "or Visium"].includes(app))){
+        if(allApplications.some(app=>["10X GEX", "VDJ", "FB/CH or Visium"].includes(app))){
             allApplications.push("10X GEX, VDJ, FB/CH or Visium");
-            allApplications=allApplications.filter(app=>!["10X GEX", "VDJ", "FB/CH", "or Visium"].includes(app));
+            allApplications=allApplications.filter(app=>!["10X GEX", "VDJ", "FB/CH or Visium"].includes(app));
         }
         const uniqueApplications=Array.from(new Set(allApplications));
         res.status(200).json(uniqueApplications);
@@ -48,7 +48,6 @@ router.get('/applications',async(req,res)=>{
 
 router.get('/materials',async(req,res)=>{
     let{application}=req.query;
-    console.log("received application:",application);
     try{
         let query={};
         let allMaterials=[];
@@ -61,17 +60,14 @@ router.get('/materials',async(req,res)=>{
                 const applications=application.split(',').map(item=>item.trim());
                 query.Application={$in:applications};
             }
-           console.log("Query used for MongoDB:",query);
         const materials = await
         UploadSubmission.find(query,{Material:1,_id:0});
-        console.log("Materials fetched:",materials);
         materials.forEach(mat=>{
             if(mat.Material){
                 allMaterials=allMaterials.concat(mat.Material.split(",").map(item=>item.trim()));
             }
         });
         const uniqueMaterials=Array.from(new Set(allMaterials));
-        console.log("Unique Materials fetched:",uniqueMaterials);
         res.status(200).json(uniqueMaterials);
     }catch(err){
         console.log("Error Fetching Materials",err)
@@ -96,7 +92,6 @@ router.get('/species',async(req,res)=>{
         }
         const species = await 
         UploadSubmission.find(query,{Species:1,_id:0});
-        console.log("Fetched Species",species);
         let uniqueSpecies=[];
         species.forEach(doc=>{
             if(doc.Species){
@@ -133,17 +128,12 @@ router.get('/containers',async(req,res)=>{
             query.Application={$in:applications};
         }
         }
-        console.log("Query used for MongoDB:",query);
         const containers = await 
         UploadSubmission.find(query,{Containers:1,_id:0});
-        console.log("Fetched Containers",containers);
-
         let uniqueContainers=new Set();
         containers.forEach(doc=>{
             const plainDoc=doc.toObject();
-            console.log("Plain document",plainDoc);
             if(plainDoc.Containers){
-                console.log("Containers value:",plainDoc.Containers);
                 plainDoc.Containers.split(',').map(item=>item.trim()).forEach(container=>{
                     uniqueContainers.add(container);
                 });
@@ -152,7 +142,6 @@ router.get('/containers',async(req,res)=>{
                 console.log("No containers field found in document");
             }});
             const finalContainers=Array.from(uniqueContainers);
-            console.log("Final Containers", finalContainers)
                 res.status(200).json(finalContainers);
     }catch(err){
         console.log("Error fetching Containers",err);
@@ -180,17 +169,12 @@ router.get('/readlength',async(req,res)=>{
         else{
             return res.status(200).json([]);
         }
-        console.log("Query used for MongoDB:",query);
         const readLengths = await
         UploadSubmission.find(query,{ReadLength:1,_id:0});
-        console.log("ReadLength fetched:",readLengths);
-
         let uniqueReadLengths=new Set();
         readLengths.forEach(doc=>{
             const plainDoc=doc.toObject();
-            console.log("Plain document",plainDoc);
             if(plainDoc.ReadLength){
-                console.log("ReadLength value:",plainDoc.ReadLength);
                 plainDoc.ReadLength.split(',').map(item=>item.trim()).forEach(readLength=>{
                     uniqueReadLengths.add(readLength);
                 });
@@ -198,7 +182,6 @@ router.get('/readlength',async(req,res)=>{
                 console.log("No containers field found in document");
             }});
         const finalReadLengths=Array.from(new Set(uniqueReadLengths));
-        console.log("Final ReadLengths fetched:",finalReadLengths);
                 res.status(200).json(finalReadLengths);
     }catch(err){
         res.status(500).json({message:'Error fetching readlength'+ err.message});
