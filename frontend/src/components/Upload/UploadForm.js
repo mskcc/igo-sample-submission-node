@@ -304,9 +304,6 @@ class UploadForm extends React.Component {
 
     componentDidUpdate(prevProps){
         if(prevProps.materials!==this.props.materials){
-            console.log('Updated Materials',this.props.materials);
-            console.log("Previous species",prevProps.species);
-            console.log("Current species",this.props.species);
             
     }
 }
@@ -332,11 +329,7 @@ class UploadForm extends React.Component {
         } = this.props;
         const { formValid, value} = this.state;
 
-     console.log('Material in UploadForm',materials);
- console.log("sepcies availbale in render method ", species);
- console.log("selected Species in render method ", form.selected.species);
-  console.log("Dropdown disbaled state render method ",species[0]);
- console.log("Form data",form);
+
 
         return (
             <Translate>

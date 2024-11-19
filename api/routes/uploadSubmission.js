@@ -33,7 +33,7 @@ router.get('/applications',async(req,res)=>{
         });
 
         if(allApplications.some(app=>["10X GEX", "VDJ", "FB/CH", "or Visium"].includes(app))){
-            allApplications.push("10X GEX, VDJ, FB/CH, or Visium");
+            allApplications.push("10X GEX, VDJ, FB/CH or Visium");
             allApplications=allApplications.filter(app=>!["10X GEX", "VDJ", "FB/CH", "or Visium"].includes(app));
         }
         const uniqueApplications=Array.from(new Set(allApplications));
@@ -52,7 +52,7 @@ router.get('/materials',async(req,res)=>{
     try{
         let query={};
         let allMaterials=[];
-        const specialApplication="10X GEX, VDJ, FB/CH, or Visium";
+        const specialApplication="10X GEX, VDJ, FB/CH or Visium";
         if(application && application.trim()===specialApplication){
 
             query.Application=specialApplication;
@@ -85,7 +85,7 @@ router.get('/species',async(req,res)=>{
         let query={};
         if(req.query.application){
             const application=req.query.application.trim();
-            const specialApplication="10X GEX, VDJ, FB/CH, or Visium";
+            const specialApplication="10X GEX, VDJ, FB/CH or Visium";
            if(application===specialApplication){
             query.Application=specialApplication;
         }
@@ -111,9 +111,7 @@ router.get('/species',async(req,res)=>{
         res.status(500).json({message:'Error fetching Species'+ err.message});
     }
 }); 
-
-
-   
+  
 
 // Routes for Containers
 router.get('/containers',async(req,res)=>{
@@ -125,7 +123,7 @@ router.get('/containers',async(req,res)=>{
         }
         if(req.query.application){
             const application=req.query.application.trim();
-            const specialApplication="10X GEX, VDJ, FB/CH, or Visium";
+            const specialApplication="10X GEX, VDJ, FB/CH or Visium";
            if(application===specialApplication){
 
             query.Application=specialApplication;
@@ -169,7 +167,7 @@ router.get('/readlength',async(req,res)=>{
         let query={};
         if(req.query.application){
             const application=req.query.application.trim();
-            const specialApplication="10X GEX, VDJ, FB/CH, or Visium";
+            const specialApplication="10X GEX, VDJ, FB/CH or Visium";
            if(application===specialApplication){
 
             query.Application=specialApplication;
