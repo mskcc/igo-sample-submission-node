@@ -144,7 +144,6 @@ export class UploadFormContainer extends Component {
                     const response = await axios.get(`${Config.NODE_API_ROOT}/species`, { params });
                     if (response.status === 200) {
                         const species = response.data;
-                        console.log("Fetched Species", species);
                         this.setState({
                             species,
                             isloading: false,
@@ -225,7 +224,6 @@ export class UploadFormContainer extends Component {
             }
             const {select}=this.props;
             select('species',selectedSpecies);
-            console.log("Species selected via Redux",selectedSpecies);
         this.setState({
             selectedSpecies:selectedSpecies
         });
