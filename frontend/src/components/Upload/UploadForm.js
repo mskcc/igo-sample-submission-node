@@ -138,6 +138,10 @@ class UploadForm extends React.Component {
         e.preventDefault();
         e.stopPropagation();
         if (this.validate()) {
+            const formValues= {...this.state.values};
+            if(!formValues.species || this.props.form.filteredSpecies.length===0){
+                delete formValues.species;
+            }
             handleParentSubmit('upload', {
                 ...this.state.values,
 
@@ -214,6 +218,10 @@ class UploadForm extends React.Component {
                     break;
 
                 case 'species':
+                    if(!values[value] || this.props.form.filteredSpecies.length===0){
+                        formValid[value]=true;
+                        break;
+                    }
                     isValidOption = this.props.form.filteredSpecies.some(function(el) {
                         return el === values[value];
                     });

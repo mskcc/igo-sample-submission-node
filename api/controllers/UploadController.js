@@ -157,7 +157,7 @@ exports.grid = [
     body('material').isLength({ min: 1 }).trim().withMessage('Material must be present.'),
     body('serviceId').isLength({ min: 1 }).trim().withMessage('ServiceId must be present.'),
     body('numberOfSamples').isLength({ min: 1 }).trim().withMessage('NumberOfSamples must be present.'),
-    body('species').isLength({ min: 1 }).trim().withMessage('Species must be present.'),
+    body('species').optional(),
     body('container').isLength({ min: 1 }).trim().withMessage('Container must be present.'),
     body('patientIdType').optional(),
     body('groupingChecked').optional(),
