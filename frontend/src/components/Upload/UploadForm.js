@@ -138,10 +138,6 @@ class UploadForm extends React.Component {
         e.preventDefault();
         e.stopPropagation();
         if (this.validate()) {
-            const formValues= {...this.state.values};
-            if(!formValues.species || this.props.form.filteredSpecies.length===0){
-                delete formValues.species;
-            }
             handleParentSubmit('upload', {
                 ...this.state.values,
 

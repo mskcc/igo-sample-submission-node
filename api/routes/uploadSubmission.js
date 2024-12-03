@@ -31,7 +31,9 @@ router.get('/applications',async(req,res)=>{
             allApplications=allApplications.concat(app.Application.split(",").map(item=>item.trim()));
             }
         });
-
+        if(material && material.includes("DNA")){
+            allApplications = allApplications.filter(app => app !== "ChIP Sequencing (Library)");
+        }
         if(allApplications.some(app=>["10X GEX", "VDJ", "FB/CH or Visium"].includes(app))){
             allApplications.push("10X GEX, VDJ, FB/CH or Visium");
             allApplications=allApplications.filter(app=>!["10X GEX", "VDJ", "FB/CH or Visium"].includes(app));
