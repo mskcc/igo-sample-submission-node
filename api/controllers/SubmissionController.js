@@ -316,7 +316,9 @@ exports.submit = [
                 //  save pre LIMS submit so data is safe
                 submissionToSubmit.save(function (err) {
                     if (err) {
-                        return apiResponse.errorResponse(res, 'Submission could not be saved.');
+                        console.log("Save error Details:",err);
+                        logger.error("DEtailed Save Error",err);
+                        return apiResponse.errorResponse(res, 'Submission could not be saved.'+err.message);
                     }
                 });
                 let submissionPromise = util.submit(submissionToSubmit, res.user, transactionId);
