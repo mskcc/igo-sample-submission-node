@@ -1,4 +1,5 @@
 /* eslint-disable array-callback-return */
+/* eslint-disable no-undef */
 import React, { Component } from 'react';
 import { withStyles, Divider, Paper, IconButton, InputBase } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
@@ -34,13 +35,14 @@ class PromoteGrid extends Component {
     promoteSelected = () => {
         var selected = this.hotTableComponent.current.hotInstance.getSelected();
         if (selected) {
+            var selectedRows = [];
             this.props.promote.rows.map((row) => {
                 if (row.select) {
-                    [].push(row);
+                    selectedRows.push(row);
                 }
             });
 
-            this.props.promoteSamples(this.state.projectId, this.state.requestId, []);
+            this.props.promoteSamples(this.state.projectId, this.state.requestId, selectedRows);
         }
     };
 
