@@ -32,10 +32,10 @@ router.get('/applications',async(req,res)=>{
             }
         });
         if(material =="DNA"){
-            allApplications = allApplications.filter(app => app === "Amplicon Sequencing"|| app==="ChIP Sequencing"|| app==="CMO-CH"|| app==="CRISPR Sequencing" || app==="Custom Capture"|| app==="CUT&RUN Sequencing"|| app==="ddPCR"|| app==="DNA QC"|| app==="IGO R&D Use Only"|| app==="IMPACT"|| app==="IMPACT-Heme"|| app==="Metagenomic Sequencing"|| app==="Methylation Capture Sequencing"|| app==="Mouse IMPACT"|| app==="Mouse Whole Exome Sequencing"|| app==="MSK-ACCESS"|| app==="Nanopore Adaptive Sampling"|| app==="Nanopore Long Read DNA Sequencing"|| app==="Nanopore Short Read DNA Sequencing"|| app==="Shallow Whole Genome Sequencing"|| app==="Single Cell CNV Sequencing"|| app==="Whole Exome Sequencing"|| app==="Whole Genome Methylation Sequencing"|| app==="Whole Genome Sequencing (deep or PCR-free)");
+            allApplications = allApplications.filter(app => app === "Amplicon Sequencing"|| app==="ChIP Sequencing"|| app==="CMO-CH"|| app==="CRISPR Sequencing" || app==="Custom Capture"|| app==="CUT&RUN Sequencing"|| app==="ddPCR"|| app==="DNA QC"|| app==="IGO R&D Use Only"|| app==="IMPACT"|| app==="IMPACT-Heme"|| app==="Metagenomic Sequencing"|| app==="Methylation Capture Sequencing"|| app==="Mouse IMPACT"|| app==="Mouse Whole Exome Sequencing"|| app==="MSK-ACCESS"|| app==="Nanopore Adaptive Sampling"|| app==="Nanopore Long Read DNA Sequencing"|| app==="Nanopore Short Read DNA Sequencing"|| app==="Shallow Whole Genome Sequencing"|| app==="Single Cell CNV Sequencing"|| app==="Whole Exome Sequencing"|| app==="Whole Genome Methylation Sequencing"|| app==="Whole Genome Sequencing (deep or PCR-free)" || app==="MSK-ACCESS-Heme");
         }
         else if(material=="cDNA"){
-            allApplications = allApplications.filter(app => app === "10X 3' Feature Barcode/Hashtag Sequencing"|| app==="10X 3' scRNA-Seq"|| app==="10X 5' Feature Barcode/Hashtag Sequencing"|| app==="10X 5' scRNA-Seq" || app==="10X scVDJ (BCR) Sequencing"|| app==="10X scVDJ (TCR) Sequencing"|| app==="Amplicon Sequencing"|| app==="DNA QC"|| app==="IGO R&D Use Only"|| app==="Custom Capture"|| app==="ddPCR"|| app==="Nanopore 10X cDNA Sequencing"|| app==="Nanopore cDNA Sequencing"|| app==="RNA Seq - Ribodepletion");
+            allApplications = allApplications.filter(app => app === "10X 3' Feature Barcode/Hashtag Sequencing"|| app==="10X 3' scRNA-Seq"|| app==="10X 5' Feature Barcode/Hashtag Sequencing"|| app==="10X 5' scRNA-Seq" || app==="10X scVDJ (BCR) Sequencing"|| app==="10X scVDJ (TCR) Sequencing"|| app==="Amplicon Sequencing"|| app==="DNA QC"|| app==="IGO R&D Use Only"|| app==="Custom Capture"|| app==="ddPCR"|| app==="Nanopore 10X cDNA Sequencing"|| app==="Nanopore cDNA Sequencing"|| app==="RNA Seq - Ribodepletion" || app==="MSK-ACCESS-Heme");
         }
         
         if(allApplications.some(app=>["10X GEX", "VDJ", "FB/CH or Visium"].includes(app))){
@@ -185,7 +185,7 @@ router.get('/readlength',async(req,res)=>{
                     uniqueReadLengths.add(readLength);
                 });
             }else{
-                console.log("No containers field found in document");
+                console.log("No readlength found in document");
             }});
         const finalReadLengths=Array.from(new Set(uniqueReadLengths));
                 res.status(200).json(finalReadLengths);
