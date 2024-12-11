@@ -120,7 +120,7 @@ export class UploadFormContainer extends Component {
         }; 
     
     
-        handleApplicationChange = (selectedApplication) => {
+    handleApplicationChange = (selectedApplication) => {
             console.log("Selected Application:", selectedApplication);
             this.setState({selectedApplication},()=>{
                // console.log("state after application change",this.state.application);
@@ -130,6 +130,7 @@ export class UploadFormContainer extends Component {
               
                //this.fetchSpecies(selectedApplication,this.state.selectedMaterial);
                //this.fetchContainers(selectedApplication,this.state.selectedApplication);
+
             });
             }; 
 
@@ -182,37 +183,52 @@ export class UploadFormContainer extends Component {
             console.log("Error fetching container:",error);
             this.setState({isloading:false});
     }};
-
-
-    fetchReadLength=async(application)=>{
+    
+   fetchReadLength=async(application)=>{
         console.log("Application:",application);
         const params={};
         if(application){
             params.application=application;
-        }
-            try{
+        } try{
          const response=await axios.get(`${Config.NODE_API_ROOT}/readlength`,{params});
+         console.log("API RESPONSE FOR READLENGTHS:",response.data);
          if(response.status===200){
+            console.log("Fetched Read lengths api response :",response.data);
+            const readLengths=response.data;
                 this.setState({
-                    readLengths:response.data,
-                    isloading:false,
+                    readLengths,isloading:false,
                 });
                 if(readLengths.length===1){
+                    console.log("It has a single read length:",readLengths[0]);
                     this.handleReadLengthChange(readLengths[0]);
-                }
-        } else{
+                }} else{
             this.setState({readLengths:[],isloading:false});
         } }
-        
         catch(error){
-            console.log("Error fetching readlengths:",error);
+            console.log("Error fetching readlengths for autofill:",error);
             this.setState({isloading:false});
     }};
 
+
     handleReadLengthChange = (selectedReadLength) => {
+        
+        console.log("Readlength changed to :",selectedReadLength);
         const { clearReadLengths } = this.props;
-        if (!selectedReadLength) clearReadLengths();
+        if (!selectedReadLength) {clearReadLengths();
+    } 
+    const {select} =this.props;
+    if(select) {
+        console.log("Testiing for autofill");
+        select("sequencingReadLength",selectedReadLength);
+        this.setState((prevState) => ({
+            values:{
+                ...prevState.values,
+                sequencingReadLength:selectedReadLength,},
+
+        }),
+        () => console.log("State updated read length:",selectedReadLength) );
     }
+    };
  
     handleSpeciesChange = (selectedSpecies) => {
         console.log("species changed to :", selectedSpecies);
