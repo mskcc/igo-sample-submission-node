@@ -10,7 +10,7 @@ import { swal } from '../../util';
 import { Config } from '../../config';
 import axios from 'axios';
 import { DmpForm, UploadForm } from '../../components';
-import { clearSpecies, select , fetchSpecies} from '../../redux/actions/upload/formActions';
+import { clearSpecies, select , fetchSpecies,fetchReadLength} from '../../redux/actions/upload/formActions';
 export class UploadFormContainer extends Component {
     constructor(props){
         super(props);
@@ -184,7 +184,7 @@ export class UploadFormContainer extends Component {
             this.setState({isloading:false});
     }};
     
-   fetchReadLength=async(application)=>{
+fetchReadLength=async(application)=>{
         console.log("Application:",application);
         const params={};
         if(application){
@@ -229,6 +229,11 @@ export class UploadFormContainer extends Component {
         () => console.log("State updated read length:",selectedReadLength) );
     }
     };
+
+
+
+
+    
  
     handleSpeciesChange = (selectedSpecies) => {
         console.log("species changed to :", selectedSpecies);
@@ -256,6 +261,10 @@ export class UploadFormContainer extends Component {
             this.handleMaterialChange(value);
         }else if(id==='application'){
         this.handleApplicationChange(value);
+        }else if (
+            id ==='sequencingReadLength'
+        ){
+            this.handleReadLengthChange(value);
         }
         const { formType, select, dmpSelect, clear, dmpClear } = this.props;
         const isIgoForm = formType === 'upload';

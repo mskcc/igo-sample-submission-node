@@ -50,6 +50,39 @@ export default function formReducer(state = initialFormState, action) {
                 formIsLoading: true,
             };
 
+
+            case ActionTypes.REQUEST_READ_LENGTH:
+                return {
+                    ...state,
+                    formIsLoading: true,
+                };
+
+
+                case ActionTypes.RECEIVE_READ_LENGTH_SUCCESS:
+             return {
+         ...state,
+         formIsLoading: false,
+         readLengths: action.readLengths,
+         selected: {
+            ...state.selected,
+            // Auto-select if there's only one read length
+            sequencingReadLength: action.readLengths && action.readLengths.length === 1 
+                ? action.readLengths[0] 
+                : state.selected.sequencingReadLength
+        }
+    };
+
+
+            case ActionTypes.RECEIVE_READ_LENGTH_FAIL:
+                return {
+                    ...state,
+                    formIsLoading: true,
+                    error:action.error
+                };
+
+
+
+
         case ActionTypes.RECEIVE_MATERIALS_AND_APPLICATIONS_FAIL:
             return {
                 ...state,

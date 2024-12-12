@@ -95,11 +95,6 @@ class UploadForm extends React.Component {
         };
 
 
-        
-
-
-
-
     handleDropdownChange = (event) => {
         this.setState({
             values: {
@@ -307,10 +302,18 @@ class UploadForm extends React.Component {
 
 
     componentDidUpdate(prevProps){
-        if(prevProps.materials!==this.props.materials){
-            
+        if (prevProps.readLengths !== this.props.readLengths) {
+            if (this.props.readLengths && this.props.readLengths.length === 1) {
+                // Auto-select the single read length
+                console.log("COMPONENT DID UPDATE");
+                this.handleDropdownChange({
+                    id: 'sequencingReadLength',
+                    value: this.props.readLengths[0]
+                });
+            }  
     }
 }
+
 
     render() {
         const {

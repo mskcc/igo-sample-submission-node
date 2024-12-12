@@ -12,6 +12,13 @@ export const MESSAGE = 'MESSAGE';
 
 export const REQUEST_MATERIALS_AND_APPLICATIONS = 'REQUEST_MATERIALS_AND_APPLICATIONS';
 
+export const REQUEST_READ_LENGTH = 'REQUEST_READ_LENGTH';
+
+export const RECEIVE_READ_LENGTH_SUCCESS = 'RECEIVE_READ_LENGTH_SUCCESS';
+
+export const RECEIVE_READ_LENGTH_FAIL = 'RECEIVE_READ_LENGTH_FAIL';
+
+
 export const RECEIVE_MATERIALS_AND_APPLICATIONS_SUCCESS = 'RECEIVE_MATERIALS_AND_APPLICATIONS_SUCCESS';
 
 export const RECEIVE_MATERIALS_AND_APPLICATIONS_FAIL = 'RECEIVE_MATERIALS_AND_APPLICATIONS_FAIL';
@@ -210,9 +217,36 @@ export function handleApplicationChange(selectedApplication){
     return (dispatch) =>{
         dispatch ({ type :'SELECT_APPLICATION',selectedApplication});
         dispatch (fetchSpecies(selectedApplication));
+        dispatch (fetchReadLength(selectedApplication));
     };
 }
 
+
+
+
+export function  fetchReadLength(application){
+    return (dispatch) =>{
+        dispatch ({ type :'REQUEST_READ_LENGTHS'});
+        return axios.get(`${Config.NODE_API_ROOT}/readlength`,{params :{application}})
+        .then((response) =>{
+            const readLengths=response.data;
+            dispatch({
+                type :'RECEIVE_READ_LENGTHS_SUCCESS',
+                readLengths
+            });
+            //auto fill 
+            if(readLengths && readLengths.length ===1){
+                dispatch(select('sequencingReadLength',readLengths[0]));
+            }
+        }
+    ).catch((error)=>{
+        dispatch({
+            type:'RECEIVE_READ_LENGTHS_FAIL',
+            error
+        });
+    });
+    };
+}
 
 
 
