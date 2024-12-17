@@ -10,7 +10,7 @@ import { swal } from '../../util';
 import { Config } from '../../config';
 import axios from 'axios';
 import { DmpForm, UploadForm } from '../../components';
-import { clearSpecies, select , fetchSpecies} from '../../redux/actions/upload/formActions';
+import { clearSpecies, select , fetchSpecies,fetchReadLength} from '../../redux/actions/upload/formActions';
 export class UploadFormContainer extends Component {
     constructor(props){
         super(props);
@@ -120,7 +120,7 @@ export class UploadFormContainer extends Component {
         }; 
     
     
-        handleApplicationChange = (selectedApplication) => {
+    handleApplicationChange = (selectedApplication) => {
             console.log("Selected Application:", selectedApplication);
             this.setState({selectedApplication},()=>{
                // console.log("state after application change",this.state.application);
@@ -130,6 +130,7 @@ export class UploadFormContainer extends Component {
               
                //this.fetchSpecies(selectedApplication,this.state.selectedMaterial);
                //this.fetchContainers(selectedApplication,this.state.selectedApplication);
+
             });
             }; 
 
@@ -182,38 +183,72 @@ export class UploadFormContainer extends Component {
             console.log("Error fetching container:",error);
             this.setState({isloading:false});
     }};
-
-
-    fetchReadLength=async(application)=>{
+    
+fetchReadLength=async(application)=>{
         console.log("Application:",application);
         const params={};
         if(application){
             params.application=application;
+            if(application==="ATAC Sequencing" || application ==="CCV WES Submissions (GLP)" || application ==="CMO-CH" || application ==="Custom Capture" || application ==="ERIL Library Submissions" || application ==="IMPACT" || application ==="IMPACT-Heme" || application ==="Metagenomic Sequencing"|| application ==="Methylation Capture Sequencing"|| application ==="Mouse IMPACT"|| application ==="Mouse Whole Exome Sequencing" || application ==="MSK-ACCESS"|| application ==="MSK-ACCESS-Heme" || application ==="RNA Seq - PolyA" || application ==="RNA Seq - Ribodepletion" || application ==="RNA Seq - SMARTer" || application ==="Shallow Whole Genome Sequencing" || application ==="SMARTer from Cells" || application ==="SmartSeq (384-well)" || application ==="Whole Exome Sequencing"){
+                this.handleReadLengthChange('PE100');
+            } 
+            else if (application ==="CCV RNA-Seq Submissions (GLP)" || application ==="CRISPR Sequencing" || application ==="DLP+" || application ==="MissionBio" || application ==="PED-PEG" || application ==="Single Cell CNV Sequencing" || application ==="TCR Sequencing" || application ==="Whole Genome Methylation Sequencing" || application ==="Whole Genome Sequencing (deep or PCR-free)") {
+                this.handleReadLengthChange('PE150');
+            }
+            else if (application ==="10X 3' Feature Barcode/Hashtag Sequencing" || application ==="10X 3' scRNA-Seq" || application ==="10X 5' Feature Barcode/Hashtag Sequencing" || application ==="10X 5' scRNA-Seq" || application ==="10X GEX, VDJ, FB/CH or Visium"|| application ==="10X scVDJ (BCR) Sequencing"|| application ==="10X scVDJ (TCR) Sequencing" || application ==="Visium") {
+                this.handleReadLengthChange('28/10/10/88');
+            }
+            else if(application ==="GeoMx") {
+                this.handleReadLengthChange('PE28');
+            }
+            else if (application ==="Visium HD" || application ==="Visium HD (Library)"){
+                this.handleReadLengthChange('43/10/10/50');       
+            }
+            else {
+                this.handleReadLengthChange();
+            }
         }
-            try{
+        try{
          const response=await axios.get(`${Config.NODE_API_ROOT}/readlength`,{params});
+         console.log("API RESPONSE FOR READLENGTHS:",response.data);
          if(response.status===200){
+            console.log("Fetched Read lengths api response :",response.data);
+            const readLengths=response.data;
                 this.setState({
-                    readLengths:response.data,
-                    isloading:false,
+                    readLengths,isloading:false,
                 });
                 if(readLengths.length===1){
+                    console.log("It has a single read length:",readLengths[0]);
                     this.handleReadLengthChange(readLengths[0]);
-                }
-        } else{
+                }} else{
             this.setState({readLengths:[],isloading:false});
         } }
-        
         catch(error){
-            console.log("Error fetching readlengths:",error);
+            console.log("Error fetching readlengths for autofill:",error);
             this.setState({isloading:false});
     }};
 
+
     handleReadLengthChange = (selectedReadLength) => {
+        
+        console.log("Readlength changed to :",selectedReadLength);
         const { clearReadLengths } = this.props;
-        if (!selectedReadLength) clearReadLengths();
+        if (!selectedReadLength) {clearReadLengths();
+    } 
+    const {select} =this.props;
+    if(select) {
+        console.log("Testiing for autofill");
+        select("sequencingReadLength",selectedReadLength);
+        this.setState((prevState) => ({
+            values:{
+                ...prevState.values,
+                sequencingReadLength:selectedReadLength,},
+        }),
+        () => console.log("State updated read length:",selectedReadLength) );
     }
- 
+    };
+
+    
     handleSpeciesChange = (selectedSpecies) => {
         console.log("species changed to :", selectedSpecies);
         if (!selectedSpecies) 
@@ -240,6 +275,10 @@ export class UploadFormContainer extends Component {
             this.handleMaterialChange(value);
         }else if(id==='application'){
         this.handleApplicationChange(value);
+        }else if (
+            id ==='sequencingReadLength'
+        ){
+            this.handleReadLengthChange(value);
         }
         const { formType, select, dmpSelect, clear, dmpClear } = this.props;
         const isIgoForm = formType === 'upload';

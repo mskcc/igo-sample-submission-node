@@ -92,12 +92,8 @@ class UploadForm extends React.Component {
         showReadLengthDropdown = () => {
             // dont show anything until they select application
            return this.props.readLengths&& this.props.readLengths.length>0;
+           
         };
-
-
-        
-
-
 
 
     handleDropdownChange = (event) => {
@@ -150,6 +146,8 @@ class UploadForm extends React.Component {
         let formValid = this.state.formValid;
         let isValidOption;
         let values = this.props.form.selected;
+        const qcApplications=['DNA QC','Library QC','RNA QC'];
+        const speciesRequired=!qcApplications.includes(values.application);
         for (let value in values) {
             switch (value) {
                 case 'serviceId':
@@ -214,14 +212,14 @@ class UploadForm extends React.Component {
                     break;
 
                 case 'species':
-                    if(!values[value] || this.props.form.filteredSpecies.length===0){
-                        formValid[value]=true;
-                        break;
-                    }
+                   if(speciesRequired){
                     isValidOption = this.props.form.filteredSpecies.some(function(el) {
                         return el === values[value];
                     });
                     formValid[value] = isValidOption && values[value].length > 0;
+                } else{
+                    formValid[value]=true;
+                }
                     break;
 
                 case 'patientIdType':
@@ -307,10 +305,18 @@ class UploadForm extends React.Component {
 
 
     componentDidUpdate(prevProps){
-        if(prevProps.materials!==this.props.materials){
-            
+        if (prevProps.readLengths !== this.props.readLengths) {
+            if (this.props.readLengths && this.props.readLengths.length === 1) {
+                // Auto-select the single read length
+                console.log("COMPONENT DID UPDATE");
+                this.handleDropdownChange({
+                    id: 'sequencingReadLength',
+                    value: this.props.readLengths[0]
+                });
+            }  
     }
 }
+
 
     render() {
         const {
@@ -440,8 +446,8 @@ class UploadForm extends React.Component {
                                 }
                                     value={{
 
-                                        value: form.selected.species || (species.length===1 ? species[0]:''),
-                                        label: form.selected.species || (species.length===1 ? species[0]:''),  
+                                        value: form.selected.species ,
+                                        label: form.selected.species ,  
                                     }}
                                     disabled={species.length ===1}
                                 />
