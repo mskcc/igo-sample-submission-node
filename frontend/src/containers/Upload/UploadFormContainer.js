@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 import { formActions, dmpFormActions } from '../../redux/actions';
-
+import { getReadLength } from '../../util/readlengthsutil';
 import { swal } from '../../util';
 import { Config } from '../../config';
 import axios from 'axios';
@@ -69,6 +69,21 @@ export class UploadFormContainer extends Component {
     }
 }
 
+
+
+
+/*autoFillSpecies = (application) => {
+    const speciesToAutoFill = ['IMPACT', 'IMPACT-Heme', 'CCV WES Submissions (GLP)', 'CMO-CH', 'Methylation Capture Sequencing', 'MSK-ACCESS', 'MSK-ACCESS-Heme', 'Whole Exome Sequencing'];
+    if (speciesToAutoFill.includes(application)) {
+        this.handleSpeciesChange('Human');
+    }
+};*/
+
+
+
+
+
+
     
     fetchMaterials=async(application='')=>{
         this.setState({isloading:true});
@@ -126,8 +141,7 @@ export class UploadFormContainer extends Component {
                // console.log("state after application change",this.state.application);
                this.fetchMaterials(selectedApplication);
                this.fetchReadLength(selectedApplication);
-               this.fetchSpecies(selectedApplication);
-              
+                this.fetchSpecies(selectedApplication); // Fetch species for other applications
                //this.fetchSpecies(selectedApplication,this.state.selectedMaterial);
                //this.fetchContainers(selectedApplication,this.state.selectedApplication);
 
@@ -184,43 +198,25 @@ export class UploadFormContainer extends Component {
             this.setState({isloading:false});
     }};
     
+
+
+
 fetchReadLength=async(application)=>{
         console.log("Application:",application);
         const params={};
         if(application){
             params.application=application;
-            if(application==="ATAC Sequencing" || application ==="CCV WES Submissions (GLP)" || application ==="CMO-CH" || application ==="Custom Capture" || application ==="ERIL Library Submissions" || application ==="IMPACT" || application ==="IMPACT-Heme" || application ==="Metagenomic Sequencing"|| application ==="Methylation Capture Sequencing"|| application ==="Mouse IMPACT"|| application ==="Mouse Whole Exome Sequencing" || application ==="MSK-ACCESS"|| application ==="MSK-ACCESS-Heme" || application ==="RNA Seq - PolyA" || application ==="RNA Seq - Ribodepletion" || application ==="RNA Seq - SMARTer" || application ==="Shallow Whole Genome Sequencing" || application ==="SMARTer from Cells" || application ==="SmartSeq (384-well)" || application ==="Whole Exome Sequencing"){
-                this.handleReadLengthChange('PE100');
-            } 
-            else if (application ==="CCV RNA-Seq Submissions (GLP)" || application ==="CRISPR Sequencing" || application ==="DLP+" || application ==="MissionBio" || application ==="PED-PEG" || application ==="Single Cell CNV Sequencing" || application ==="TCR Sequencing" || application ==="Whole Genome Methylation Sequencing" || application ==="Whole Genome Sequencing (deep or PCR-free)") {
-                this.handleReadLengthChange('PE150');
-            }
-            else if (application ==="10X 3' Feature Barcode/Hashtag Sequencing" || application ==="10X 3' scRNA-Seq" || application ==="10X 5' Feature Barcode/Hashtag Sequencing" || application ==="10X 5' scRNA-Seq" || application ==="10X GEX, VDJ, FB/CH or Visium"|| application ==="10X scVDJ (BCR) Sequencing"|| application ==="10X scVDJ (TCR) Sequencing" || application ==="Visium") {
-                this.handleReadLengthChange('28/10/10/88');
-            }
-            else if(application ==="GeoMx") {
-                this.handleReadLengthChange('PE28');
-            }
-            else if (application ==="Visium HD" || application ==="Visium HD (Library)"){
-                this.handleReadLengthChange('43/10/10/50');       
-            }
-            else {
-                this.handleReadLengthChange();
-            }
+            const readLength = getReadLength(application); 
+            this.handleReadLengthChange(readLength);
         }
         try{
          const response=await axios.get(`${Config.NODE_API_ROOT}/readlength`,{params});
-         console.log("API RESPONSE FOR READLENGTHS:",response.data);
          if(response.status===200){
-            console.log("Fetched Read lengths api response :",response.data);
             const readLengths=response.data;
                 this.setState({
                     readLengths,isloading:false,
                 });
-                if(readLengths.length===1){
-                    console.log("It has a single read length:",readLengths[0]);
-                    this.handleReadLengthChange(readLengths[0]);
-                }} else{
+             } else{
             this.setState({readLengths:[],isloading:false});
         } }
         catch(error){
@@ -230,14 +226,12 @@ fetchReadLength=async(application)=>{
 
 
     handleReadLengthChange = (selectedReadLength) => {
-        
         console.log("Readlength changed to :",selectedReadLength);
         const { clearReadLengths } = this.props;
         if (!selectedReadLength) {clearReadLengths();
     } 
     const {select} =this.props;
     if(select) {
-        console.log("Testiing for autofill");
         select("sequencingReadLength",selectedReadLength);
         this.setState((prevState) => ({
             values:{
@@ -248,7 +242,6 @@ fetchReadLength=async(application)=>{
     }
     };
 
-    
     handleSpeciesChange = (selectedSpecies) => {
         console.log("species changed to :", selectedSpecies);
         if (!selectedSpecies) 
@@ -257,11 +250,17 @@ fetchReadLength=async(application)=>{
                 clearSpecies();
                 return;
             }
-            const {select}=this.props;
-            select('species',selectedSpecies);
-        this.setState({
-            selectedSpecies:selectedSpecies
-        });
+            const {select} =this.props;
+            if(select) {
+                console.log("Testiing for autofill");
+                select("species",selectedSpecies);
+                this.setState((prevState) => ({
+                    values:{
+                        ...prevState.values,
+                        selectedSpecies:selectedSpecies},
+                }),
+                () => console.log("State updated read length:",selectedSpecies) );
+            }
     };
 
     handleContainersChange = (selectedContainers) => {
