@@ -51,7 +51,7 @@ export default function formReducer(state = initialFormState, action) {
             };
 
 
-            case ActionTypes.REQUEST_READ_LENGTH:
+      /*      case ActionTypes.REQUEST_READ_LENGTH:
                 return {
                     ...state,
                     formIsLoading: true,
@@ -80,7 +80,7 @@ export default function formReducer(state = initialFormState, action) {
                     error:action.error
                 };
 
-
+*/
 
 
         case ActionTypes.RECEIVE_MATERIALS_AND_APPLICATIONS_FAIL:
@@ -135,7 +135,7 @@ export default function formReducer(state = initialFormState, action) {
                 selected: {
                     ...state.selected,
                     application: action.selectedApplication,
-                    species:''
+                   
                 },
             };
 
@@ -152,14 +152,14 @@ export default function formReducer(state = initialFormState, action) {
                       filteredSpecies: action.species,
                       selected:{
                         ...state.selected,
-                        species:action.species[0].length===1? action.species[0]:state.selected.species ||'',
-                        application:state.selected.application
+                        application:state.selected.application,
+                        species: action.species.length === 1 ? action.species[0] : state.selected.species,
                       }
                       // does not update input value quite yet,so don't change to allow validation to pick it up
                       // selected: { ...state.selected, species: action.species[0].id },
                   };
-    
 
+                
         case ActionTypes.RECEIVE_DATA_FOR_APPLICATION_FAIL:
             return {
                 ...state,

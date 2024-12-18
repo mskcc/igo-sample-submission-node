@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
 import { formActions, dmpFormActions } from '../../redux/actions';
-import { getReadLength } from '../../util/readlengthsutil';
+import { getReadLength,getSpeciesForApplication } from '../../util/readlengthsutil';
 import { swal } from '../../util';
 import { Config } from '../../config';
 import axios from 'axios';
@@ -60,6 +60,10 @@ export class UploadFormContainer extends Component {
         (prevState.selectedApplication!==selectedApplication)&&selectedApplication)
         {
             this.fetchSpecies(selectedApplication);
+        }
+
+        if(prevState.species !==this.state.species){
+            console.log("Species updated in container",this.state.species);
         }
     if(
         (prevState.selectedMaterial!==selectedMaterial)
@@ -137,14 +141,18 @@ export class UploadFormContainer extends Component {
     
     handleApplicationChange = (selectedApplication) => {
             console.log("Selected Application:", selectedApplication);
-            this.setState({selectedApplication},()=>{
-               // console.log("state after application change",this.state.application);
+            const species=getSpeciesForApplication(selectedApplication);
+            this.setState({selectedApplication,
+                selectedSpecies:species,
+            },()=>{
+               console.log("state after application change",this.state);
                this.fetchMaterials(selectedApplication);
                this.fetchReadLength(selectedApplication);
-                this.fetchSpecies(selectedApplication); // Fetch species for other applications
-               //this.fetchSpecies(selectedApplication,this.state.selectedMaterial);
-               //this.fetchContainers(selectedApplication,this.state.selectedApplication);
-
+                this.fetchSpecies(selectedApplication); 
+        
+                if(species){
+                    this.handleSpeciesChange(species);
+                }
             });
             }; 
 
@@ -154,6 +162,11 @@ export class UploadFormContainer extends Component {
                 const params = {};
                 if (application) {
                     params.application = application;
+                    const species = getSpeciesForApplication(application); 
+                    if (species) {
+                        console.log("THE species from fetch Species is",species);
+                        this.handleSpeciesChange(species); 
+                    }
                 }
                 try {
                     const response = await axios.get(`${Config.NODE_API_ROOT}/species`, { params });
@@ -162,6 +175,8 @@ export class UploadFormContainer extends Component {
                         this.setState({
                             species,
                             isloading: false,
+                        }, ()=>{
+                            console.log("Species updated in state",species);
                         });
                     } 
                 } catch (error) {
@@ -244,22 +259,22 @@ fetchReadLength=async(application)=>{
 
     handleSpeciesChange = (selectedSpecies) => {
         console.log("species changed to :", selectedSpecies);
+        const {select} =this.props;
         if (!selectedSpecies) 
             {
                 const {clearSpecies} =this.props;
                 clearSpecies();
                 return;
             }
-            const {select} =this.props;
             if(select) {
                 console.log("Testiing for autofill");
                 select("species",selectedSpecies);
                 this.setState((prevState) => ({
                     values:{
                         ...prevState.values,
-                        selectedSpecies:selectedSpecies},
+                        species:selectedSpecies,},
                 }),
-                () => console.log("State updated read length:",selectedSpecies) );
+                () => console.log("State updated species :",selectedSpecies) );
             }
     };
 
@@ -320,7 +335,7 @@ fetchReadLength=async(application)=>{
                             isloading={this.state.isloading}
                             applications={this.state.applications}
                             containers={this.state.containers}
-                            species={this.state.species}
+                            species={this.state.selectedSpecies?[this.state.selectedSpecies]:species}
                             readLengths={this.state.readLengths}
                         />
                     ) : (

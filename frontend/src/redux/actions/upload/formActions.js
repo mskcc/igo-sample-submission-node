@@ -190,41 +190,20 @@ export function getApplicationsForMaterial(selectedMaterial, checkForMismatch = 
 }
 
 
-export function fetchSpecies(application){
-    return (dispatch) =>{
-        dispatch ({ type :'REQUEST_SPECIES'});
-        axios.get(`$ {Config.Node_API_ROOT}/species`,{params:{application}})
-        .then((response)=>
-        {
-            dispatch({type: 'RECEIVE_SPECIES_SUCCESS',species:response.data,
-                application:application
-            });
-            if (response.data.length===1)
-            {
-                dispatch(select('species',response.data[0]));
-            }
-        })
-        .catch((error)=>{
-            dispatch({
-                type :'RECEIVE_SPECIES_FAIL',
-                error:error
-            });
-        });
-    };
-}
+
 
 export function handleApplicationChange(selectedApplication){
     return (dispatch) =>{
         dispatch ({ type :'SELECT_APPLICATION',selectedApplication});
-        dispatch (fetchSpecies(selectedApplication));
         dispatch (fetchReadLength(selectedApplication));
+        dispatch (fetchSpecies(selectedApplication));
     };
 }
 
 
 
 
-export function  fetchReadLength(application){
+/*export function  fetchReadLength(application){
     return (dispatch) =>{
         dispatch ({ type :'REQUEST_READ_LENGTHS'});
         return axios.get(`${Config.NODE_API_ROOT}/readlength`,{params :{application}})
@@ -247,7 +226,7 @@ export function  fetchReadLength(application){
     });
     };
 }
-
+*/
 
 
 export const CLEAR_SPECIES = 'CLEAR_SPECIES';

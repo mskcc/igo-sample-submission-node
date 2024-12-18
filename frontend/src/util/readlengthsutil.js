@@ -16,3 +16,20 @@ export const getReadLength = (application) => {
 };
 
 
+export const getSpeciesForApplication = (application) => {
+    if (application === "IMPACT" || 
+        application === "IMPACT-Heme" || 
+        application === "MSK-ACCESS" || 
+        application === "MSK-ACCESS-Heme" || 
+        application === "CCV RNA-Seq Submissions (GLP)" || 
+        application === "CCV WES Submissions (GLP)" || 
+        application === "CMO-CH" || 
+        application === "Methylation Capture Sequencing" || 
+        application === "PED-PEG" || 
+        application === "Whole Exome Sequencing") {
+        return 'Human';
+    } else {
+        return;
+    }
+};
+

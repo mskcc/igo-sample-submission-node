@@ -315,6 +315,9 @@ class UploadForm extends React.Component {
                 });
             }  
     }
+    if(prevProps.species!==this.props.species){
+        console.log("Species prop updated in form",this.props.species);
+    }
 }
 
 
@@ -449,7 +452,6 @@ class UploadForm extends React.Component {
                                         value: form.selected.species ,
                                         label: form.selected.species ,  
                                     }}
-                                    disabled={species.length ===1}
                                 />
                                 )}
                                 {this.showGroupingCheckbox() && (
