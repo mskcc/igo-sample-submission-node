@@ -50,11 +50,11 @@ export class UploadFormContainer extends Component {
     componentDidUpdate(prevProps,prevState){
         const{selectedMaterial,selectedApplication}=this.state;
         if(prevState.materials !== this.state.materials){
-            console.log("Materials updated:",this.state.materials);
+            //console.log("Materials updated:",this.state.materials);
         }
         if(prevState.selectedMaterial!== this.state.selectedMaterial)
         {
-            console.log("Selected material",this.state.selectedMaterial);
+           // console.log("Selected material",this.state.selectedMaterial);
         }
         if(
         (prevState.selectedApplication!==selectedApplication)&&selectedApplication)
@@ -129,54 +129,47 @@ export class UploadFormContainer extends Component {
     };
 
     handleMaterialChange = (selectedMaterial) => {
-        console.log("Selected Material:", selectedMaterial);
+       // console.log("Selected Material:", selectedMaterial);
         this.setState({selectedMaterial},()=>{
-            //console.log("state after material change",this.state.material);
             this.fetchApplications(selectedMaterial);
             //this.fetchSpecies(selectedMaterial,this.state.selectedApplication);
             //this.fetchContainers(selectedMaterial,this.state.selectedApplication);
         }); 
         }; 
     
-    
-    handleApplicationChange = (selectedApplication) => {
-            console.log("Selected Application:", selectedApplication);
-            const species=getSpeciesForApplication(selectedApplication);
-            this.setState({selectedApplication,
-                selectedSpecies:species,
-            },()=>{
-               console.log("state after application change",this.state);
-               this.fetchMaterials(selectedApplication);
-               this.fetchReadLength(selectedApplication);
-                this.fetchSpecies(selectedApplication); 
-        
-                if(species){
-                    this.handleSpeciesChange(species);
-                }
-            });
-            }; 
 
+handleApplicationChange = (selectedApplication) => {
+    console.log("Selected Application:", selectedApplication);
+    const species = getSpeciesForApplication(selectedApplication);
+    this.setState({ selectedApplication , selectedSpecies:species}, () => {
+        console.log("Selected Application after application change :", this.state);
+        if(species)
+            {
+                console.log("Selected species from handle application change :", species);
+                this.handleSpeciesChange(species);
+            }       
+        this.fetchMaterials(selectedApplication);
+        this.fetchReadLength(selectedApplication);
+        this.fetchSpecies(selectedApplication);
+       
+    });
+};
 
             fetchSpecies = async (application) => {
                 console.log("Application for species:", application);
                 const params = {};
                 if (application) {
                     params.application = application;
-                    const species = getSpeciesForApplication(application); 
-                    if (species) {
-                        console.log("THE species from fetch Species is",species);
-                        this.handleSpeciesChange(species); 
-                    }
                 }
                 try {
                     const response = await axios.get(`${Config.NODE_API_ROOT}/species`, { params });
                     if (response.status === 200) {
-                        const species = response.data;
+                        const fetchedspecies = response.data;
                         this.setState({
-                            species,
+                            species:fetchedspecies,
                             isloading: false,
                         }, ()=>{
-                            console.log("Species updated in state",species);
+                            console.log("Species updated in state",fetchedspecies);
                         });
                     } 
                 } catch (error) {
@@ -190,8 +183,8 @@ export class UploadFormContainer extends Component {
 
 
     fetchContainers=async(material,application)=>{
-        console.log("Material:", material);
-        console.log("Application:",application);
+       // console.log("Material:", material);
+        //console.log("Application:",application);
         const params={};
         if(material){
             params.material=material;
@@ -205,10 +198,9 @@ export class UploadFormContainer extends Component {
                     containers:response.data,
                     isloading:false,
                 });
-                if(containers.length===1){
-                    this.handleContainersChange(containers[0]);
-                }
-        } catch(error){
+        if (material === "Blocks" && application === "CosMx") {
+            this.handleContainersChange("Blocks/Slides/Tubes");
+        }}catch(error){
             console.log("Error fetching container:",error);
             this.setState({isloading:false});
     }};
@@ -217,7 +209,7 @@ export class UploadFormContainer extends Component {
 
 
 fetchReadLength=async(application)=>{
-        console.log("Application:",application);
+      //  console.log("Application:",application);
         const params={};
         if(application){
             params.application=application;
@@ -241,7 +233,6 @@ fetchReadLength=async(application)=>{
 
 
     handleReadLengthChange = (selectedReadLength) => {
-        console.log("Readlength changed to :",selectedReadLength);
         const { clearReadLengths } = this.props;
         if (!selectedReadLength) {clearReadLengths();
     } 
@@ -257,31 +248,32 @@ fetchReadLength=async(application)=>{
     }
     };
 
-    handleSpeciesChange = (selectedSpecies) => {
-        console.log("species changed to :", selectedSpecies);
-        const {select} =this.props;
-        if (!selectedSpecies) 
-            {
-                const {clearSpecies} =this.props;
-                clearSpecies();
-                return;
-            }
-            if(select) {
-                console.log("Testiing for autofill");
-                select("species",selectedSpecies);
-                this.setState((prevState) => ({
-                    values:{
-                        ...prevState.values,
-                        species:selectedSpecies,},
-                }),
-                () => console.log("State updated species :",selectedSpecies) );
-            }
-    };
+
+handleSpeciesChange = (selectedSpecies) => {
+    console.log("Species changed to :",selectedSpecies);
+    const { clearSpecies } = this.props;
+    if (!selectedSpecies) {clearSpecies();
+} 
+const {select} =this.props;
+if(select) {
+    select("species",selectedSpecies);
+    this.setState((prevState) => ({
+        selectedSpecies,
+        values:{
+            ...prevState.values,
+            species:selectedSpecies,},
+    }),
+    () => console.log("State updated species:",selectedSpecies));
+}
+};
+
 
     handleContainersChange = (selectedContainers) => {
         const { clearContainers } = this.props;
         if (!selectedContainers) clearContainers();
-    };
+        const {select} =this.props;
+    }
+    
 
 
     handleInputChange = (id, value) => {
@@ -293,6 +285,10 @@ fetchReadLength=async(application)=>{
             id ==='sequencingReadLength'
         ){
             this.handleReadLengthChange(value);
+        }else if (
+            id ==='species'
+        ){
+            this.handleSpeciesChange(value);
         }
         const { formType, select, dmpSelect, clear, dmpClear } = this.props;
         const isIgoForm = formType === 'upload';
@@ -335,7 +331,7 @@ fetchReadLength=async(application)=>{
                             isloading={this.state.isloading}
                             applications={this.state.applications}
                             containers={this.state.containers}
-                            species={this.state.selectedSpecies?[this.state.selectedSpecies]:species}
+                            species={this.state.species}
                             readLengths={this.state.readLengths}
                         />
                     ) : (

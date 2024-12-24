@@ -9,11 +9,11 @@ import { Button, Checkbox, Dropdown, Input } from '../index';
 import { guessMatch } from '../../util/helpers';
 import { readableRecipesLib } from '../../util/constants';
 import { reverseReadableRecipesLib } from '../../util/constants';
+import {getSpeciesForApplication} from '../../util/readlengthsutil';
 
 class UploadForm extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
             values: {
                 ...this.props.form.selected,
@@ -97,14 +97,27 @@ class UploadForm extends React.Component {
 
 
     handleDropdownChange = (event) => {
+        console.log("Dropdown change Event",event);
+        console.log("Species before change",this.state.values.species);
+        console.log("Dropdown change===",event.id,"Value:",event.value);
+        const application =event.value;
+        const species = getSpeciesForApplication(application);
         this.setState({
             values: {
                 ...this.state.values,
                 [event.id]: event.value,
+               species:this.state.values.species || species,
             },
-            formValid: { ...this.state.formValid, [event.id]: true },
-        });
+            formValid: { ...this.state.formValid, [event.id]: true },}, ()=>
+            {
+                console.log("Species after change",this.state.values.species);
+            }
+        );
         this.props.handleInputChange(event.id, event.value);
+        if(species){
+        console.log("Species prepopulated as :",this.state.values.species);
+            this.props.handleInputChange('species',this.state.values.species);
+        }
     };
 
     handleChange = (event) => {
@@ -308,7 +321,6 @@ class UploadForm extends React.Component {
         if (prevProps.readLengths !== this.props.readLengths) {
             if (this.props.readLengths && this.props.readLengths.length === 1) {
                 // Auto-select the single read length
-                console.log("COMPONENT DID UPDATE");
                 this.handleDropdownChange({
                     id: 'sequencingReadLength',
                     value: this.props.readLengths[0]
@@ -319,7 +331,6 @@ class UploadForm extends React.Component {
         console.log("Species prop updated in form",this.props.species);
     }
 }
-
 
     render() {
         const {
@@ -441,7 +452,7 @@ class UploadForm extends React.Component {
                                     onChange={this.handleDropdownChange}
                                     dynamic
                                     loading={form.formIsLoading}
-                                    items={species.map((option) => ({
+                                    items={this.props.species.map((option) => ({
                                     value: option ,
                                     label: option,
                                     }))
