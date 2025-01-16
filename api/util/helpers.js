@@ -197,7 +197,7 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                 // filter requested reads based on sequencing read length
                 if (colDef.picklistName === 'Sequencing+Reads+Requested') {
                     if (formValues.sequencingReadLength && formValues.sequencingReadLength.length > 0) {
-                        const standardReads = ['PE100', 'PE150', '26/10/10/90', '28/10/10/88', '50/8/16/49', '50/8/24/49'];
+                        const standardReads = ['PE100', 'PE150', '26/10/10/90', '28/10/10/88', '50/8/16/49', '50/8/24/50'];
                         const specialNonStandardReads = ['PE250', 'PE300'];
                         const specialPE250BlockOptions = ['1 million total reads', '20 million total reads', '100 million total reads', '800 million total reads'];
                         const specialPE300BlockOptions = ['20 million total reads', '100 million total reads'];
