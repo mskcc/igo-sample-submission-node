@@ -274,6 +274,7 @@ export const gridColumns = {
         picklistName: 'ddPCR+Assay',
         allowInvalid: true,
         allowEmpty: true,
+        transformPicklistValues: (values) => values.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
     },
     Assay: {
         name: 'Assay(s)',
@@ -288,6 +289,7 @@ export const gridColumns = {
         picklistName: 'ddPCR+Assay',
         allowInvalid: true,
         allowEmpty: true,
+        transformPicklistValues: (values) => values.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
     },
     'Estimated % Tumor': {
         name: 'Estimated % Tumor',

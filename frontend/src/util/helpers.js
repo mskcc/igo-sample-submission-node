@@ -495,31 +495,31 @@ const isValidTumorType = (tumorTypes, newValue) => {
   }
 };
 
-// Multiselect field
-export const appendAssay = (oldValue, newValue, assays) => {
-  //  clear
+export const appendAssay = (oldValue, newValue,assays) => {
+  
+  const sortedAssays = [...assays].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+  // Clear
   if (newValue === '' || newValue === 'Assay Selection' || newValue === '_') {
     if (oldValue === '') {
       return '';
     } else {
-      // clear newValue so we append nothing if blank is selected
       newValue = '';
     }
   }
-  //  append
+  
+  // Append
   let appendedAssay = '';
   let finalAssay = new Set([]);
 
   if (oldValue === '') {
     appendedAssay = newValue;
   } else if (newValue === '') {
-    // we have an oldValue of already selected assays, but the blank option for newValue,
-    // don't clear the whole selection just return the old value
     return oldValue;
   } else {
     appendedAssay = oldValue + ';' + newValue;
     appendedAssay = appendedAssay.replace(/[;]+/g, ';').trim();
   }
+  
   let assayValues = appendedAssay.split(';');
   for (let i = 0; i < assayValues.length; i++) {
     const assay = assayValues[i];
@@ -527,7 +527,12 @@ export const appendAssay = (oldValue, newValue, assays) => {
       finalAssay.add(assay);
     }
   }
-  return [...finalAssay].join(';');
+  
+  // Sort the final assays alphabetically before returning
+  const sortedFinalAssays = [...finalAssay].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+  console.log('The final combined assays is ', sortedFinalAssays);
+  
+  return sortedFinalAssays.join(';');
 };
 
 /*------------ AUTOFILL ------------*/
