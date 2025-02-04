@@ -495,9 +495,10 @@ const isValidTumorType = (tumorTypes, newValue) => {
   }
 };
 
-export const appendAssay = (oldValue, newValue,assays) => {
-  
+export const appendAssay = (oldValue, newValue, assays) => {
+ 
   const sortedAssays = [...assays].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+ 
   // Clear
   if (newValue === '' || newValue === 'Assay Selection' || newValue === '_') {
     if (oldValue === '') {
@@ -506,20 +507,29 @@ export const appendAssay = (oldValue, newValue,assays) => {
       newValue = '';
     }
   }
-  
-  // Append
+ 
+  // Append or Delete
   let appendedAssay = '';
   let finalAssay = new Set([]);
-
   if (oldValue === '') {
     appendedAssay = newValue;
   } else if (newValue === '') {
     return oldValue;
   } else {
-    appendedAssay = oldValue + ';' + newValue;
-    appendedAssay = appendedAssay.replace(/[;]+/g, ';').trim();
+    // Split old and new values into arrays
+    let oldAssayValues = oldValue.split(';');
+    let newAssayValues = newValue.split(';');
+    // Determine if we are appending or deleting
+    if (newAssayValues.every(val => oldAssayValues.includes(val))) {
+      // Deleting: Keep only the new values
+      appendedAssay = newAssayValues.join(';');
+    } else {
+      
+      // Appending: Add new values to old values
+      appendedAssay = oldValue + ';' + newValue;
+      appendedAssay = appendedAssay.replace(/[;]+/g, ';').trim();
+    }
   }
-  
   let assayValues = appendedAssay.split(';');
   for (let i = 0; i < assayValues.length; i++) {
     const assay = assayValues[i];
@@ -527,13 +537,10 @@ export const appendAssay = (oldValue, newValue,assays) => {
       finalAssay.add(assay);
     }
   }
-  
   // Sort the final assays alphabetically before returning
   const sortedFinalAssays = [...finalAssay].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
-  console.log('The final combined assays is ', sortedFinalAssays);
-  
   return sortedFinalAssays.join(';');
-};
+};   
 
 /*------------ AUTOFILL ------------*/
 //  Fills sex for identical patients
