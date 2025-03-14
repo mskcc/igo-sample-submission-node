@@ -409,7 +409,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (DMP Sample ID only)+DNA_Pickup': [
+    'DNA (DMP Sample ID only)+QC_DNA': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -437,7 +437,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (DMP Sample ID only)+Library_Pickup': [
+    'DNA (DMP Sample ID only)+QC_Library': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -615,7 +615,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (Molecular Accession Number only)+DNA_Pickup': [
+    'DNA (Molecular Accession Number only)+QC_DNA': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['Molecular Pathology Accession Number', 'Required'],
@@ -643,7 +643,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA (Molecular Accession Number only)+Library_Pickup': [
+    'DNA (Molecular Accession Number only)+QC_Library': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['Molecular Pathology Accession Number', 'Required'],
@@ -854,7 +854,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA/cDNA Library+DNA_Pickup': [
+    'DNA/cDNA Library+QC_DNA': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
@@ -868,7 +868,7 @@ export const dmpIntakeForms = {
         ['Amount Requested', 'Optional'],
         ['Tracking ID', 'Optional'],
     ],
-    'DNA/cDNA Library+Library_Pickup': [
+    'DNA/cDNA Library+QC_Library': [
         ['Approved for DMP', 'Required'],
         ['DMP to Transfer', 'Required'],
         ['DMP Sample ID', 'Required'],
