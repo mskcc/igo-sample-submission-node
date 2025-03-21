@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import { Logform } from 'winston';
 import { reverseReadableRecipesLib } from '../constants';
+import {naToExtractMapping} from './gridconstants';
 
 const fs = require('fs');
 
@@ -186,6 +187,8 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                     );
                     colDef = { ...colDef, ...formattingAdjustments };
                 }
+
+            
                 if (colDef.picklistName && !colDef.source) {
                     if (colDef.data === 'index') {
                         colDef.barcodeHash = picklists[colDef.picklistName];
@@ -193,6 +196,72 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                         colDef.source = picklists[colDef.picklistName];
                     }
                 }
+               
+      /*          if (colDef.picklistName === 'Sample+Origins') {
+                    // Get the application from form values
+                    const application = formValues.application;
+                    
+                    // Define the application to sample origin mapping
+                    const applicationToSampleOrigin = {
+                        // Applications that use FFPE and Fresh or Frozen only
+                        "Amplicon Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "ChIP Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "CRISPR Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "CUT&RUN Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "Single Cell CNV Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "MSK-ACCESS": ["FFPE", "Fresh or Frozen"],
+                        "MSK-ACCESS-Heme": ["FFPE", "Fresh or Frozen"],
+                        "CMO-CH": ["FFPE", "Fresh or Frozen"],
+                        "IMPACT": ["FFPE", "Fresh or Frozen"],
+                        "IMPACT-Heme": ["FFPE", "Fresh or Frozen"],
+                        "Mouse IMPACT": ["FFPE", "Fresh or Frozen"],
+                        "Nanopore cDNA Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "Nanopore 10X cDNA Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "Nanopore Direct RNA Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "RNA Capture": ["FFPE", "Fresh or Frozen"],
+                        "RNA Seq - Ribodepletion": ["FFPE", "Fresh or Frozen"],
+                        "TCR Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "Whole Exome Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "Mouse Whole Exome Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "Shallow Whole Genome Sequencing": ["FFPE", "Fresh or Frozen"],
+                        
+                        // Applications that use Organoid set only
+                        "DNA Extraction": ["Organoid - kidney/liver/brain", "Organoid - other", "Non-organoid"],
+                        "Nanopore Long Read DNA Sequencing": ["Organoid - kidney/liver/brain", "Organoid - other", "Non-organoid"]
+                    };
+                    
+                    // Filter source based on application
+                    if (application && applicationToSampleOrigin[application]) {
+                        // If application is found in the mapping, use only those sample origins
+                        colDef.source = applicationToSampleOrigin[application];
+                    } else {
+                        // If application is not found or not set, use all options from the picklist
+                        colDef.source = picklists[colDef.picklistName];
+                    }
+                } 
+
+                */
+
+                if (colDef.picklistName === 'Specimen+Types') {
+                    const application = formValues.application;
+                    const material = formValues.material;
+                    const specimenTypeMapping = {
+                        "TCR Sequencing": {
+                            "Buffy Coat": ["Blood or Buffy coats"],
+                            "Cells": ["Sorted T cells", "Lymphoid tissue", "Non-lymphoid"],
+                            "RNA": ["Sorted T cells", "Blood or Buffy coats", "Lymphoid tissue", "Non-lymphoid"],
+                            "Tissue": ["Lymphoid tissue", "Non-lymphoid"]
+                        }
+                    };
+                    if (application && material && 
+                        specimenTypeMapping[application] && 
+                        specimenTypeMapping[application][material]) {
+                        colDef.source = specimenTypeMapping[application][material];
+                    } else {
+                        colDef.source = picklists[colDef.picklistName];
+                    }
+                }
+
 
                 // filter requested reads based on sequencing read length
                 if (colDef.picklistName === 'Sequencing+Reads+Requested') {
@@ -371,6 +440,7 @@ const fillData = (columns, formValues) => {
                         };
                     }
                 }
+                
                 if (datafieldName === 'patientId' && colDef.columnHeader === 'Cell Line Name') {
                     rowData[i] = { ...rowData[i], specimenType: 'CellLine' };
                 }
