@@ -153,7 +153,7 @@
       "Tissue": ["DNA"],
       "Whole Blood": ["DNA"]
     },
-    "Methyl Capture Sequencing": {
+    "Methylation Capture Sequencing": {
       "Blocks": ["DNA", "hmwDNA"],
       "Curls/Punches": ["DNA", "hmwDNA"],
       "Buffy Coat": ["DNA", "hmwDNA"],
@@ -222,7 +222,7 @@
       "CSF": ["DNA", "cfDNA"],
       "Plasma": ["DNA", "cfDNA"]
     },
-    "Optical Genome Mapping (OGM)": {
+    "Optical Genome Mapping (Bionano)": {
       "Cells": ["uhmwDNA"],
       "Tissue": ["uhmwDNA"],
       "Whole Blood": ["uhmwDNA"]
@@ -509,7 +509,7 @@
       "Tissue": ["Fixed Frozen", "Frozen", "OCT", "RLT Buffer"],
       "Whole Blood": ["EDTA", "Streck"]
     },
-    "Methyl Capture Sequencing": {
+    "Methylation Capture Sequencing": {
       "Blocks": ["FFPE", "OCT"],
       "Curls/Punches": ["FFPE", "OCT"],
       "Buffy Coat": ["Frozen"],
@@ -578,7 +578,7 @@
       "CSF": ["Frozen"],
       "Plasma": ["Frozen"]
     },
-    "Optical Genome Mapping (OGM)": {
+    "Optical Genome Mapping (Bionano)": {
       "Cells": ["Viably Frozen"],
       "Tissue": ["Frozen"],
       "Whole Blood": ["EDTA"]
@@ -800,18 +800,6 @@
     "Single Cell CNV Sequencing": {
       "PE150": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"]
     },
-    "Custom Capture": {
-      "PE100": ["250X", "500X", "1000X"]
-    },
-    "Whole Genome Methylation Sequencing": {
-      "PE150": ["1X", "10X", "30X", "40X", "80X", "150X"]
-    },
-    "Nanopore cDNA Sequencing": {
-      "": ["30-40M", "60-80M"]
-    },
-    "Nanopore Long Read DNA Sequencing": {
-      "": ["40X", "80X"]
-    },
     "IGO R&D Use Only": {
       "50/8/16/50": ["1X", "10X", "30X", "40X", "50X", "60X", "70X", "80X", "100X", "150X", "250X", "500X", "1000X", "5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M", "750K-1M total", "3-4M total", "10-20M total", "80-100M total", "350-400M total", "1.4-1.8B total", "3.6-3.8B total", "10-11B total"],
       "Other": ["1X", "10X", "30X", "40X", "50X", "60X", "70X", "80X", "100X", "150X", "250X", "500X", "1000X", "5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M", "750K-1M total", "3-4M total", "10-20M total", "80-100M total", "350-400M total", "1.4-1.8B total", "3.6-3.8B total", "10-11B total"],
@@ -842,7 +830,7 @@
     "RNA Seq - SMARTer": {
       "PE100": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"]
     },
-    "Amplicon Sequencing (User)": {
+    "Amplicon Sequencing (Library)": {
       "Other": ["750K-1M total", "3-4M total", "10-20M total", "80-100M total", "350-400M total", "1.4-1.8B total", "3.6-3.8B total", "10-11B total"],
       "PE50": ["750K-1M total", "3-4M total", "10-20M total", "80-100M total", "350-400M total", "1.4-1.8B total", "3.6-3.8B total", "10-11B total"],
       "PE75": ["750K-1M total", "3-4M total", "10-20M total", "80-100M total", "350-400M total", "1.4-1.8B total", "3.6-3.8B total", "10-11B total"],
@@ -855,7 +843,7 @@
       "PE100": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"],
       "PE150": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"]
     },
-    "ATAC Sequencing (User)": {
+    "ATAC Sequencing (Library)": {
       "Other": ["750K-1M total", "3-4M total", "10-20M total", "80-100M total", "350-400M total", "1.4-1.8B total", "3.6-3.8B total", "10-11B total"],
       "PE50": ["750K-1M total", "3-4M total", "10-20M total", "80-100M total", "350-400M total", "1.4-1.8B total", "3.6-3.8B total", "10-11B total"],
       "PE75": ["750K-1M total", "3-4M total", "10-20M total", "80-100M total", "350-400M total", "1.4-1.8B total", "3.6-3.8B total", "10-11B total"],
@@ -870,7 +858,7 @@
       "PE100": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"],
       "PE150": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"]
     },
-    "ChIP Sequencing (User)": {
+    "ChIP Sequencing (Library)": {
       "Other": ["750K-1M total", "3-4M total", "10-20M total", "80-100M total", "350-400M total", "1.4-1.8B total", "3.6-3.8B total", "10-11B total"],
       "PE50": ["750K-1M total", "3-4M total", "10-20M total", "80-100M total", "350-400M total", "1.4-1.8B total", "3.6-3.8B total", "10-11B total"],
       "PE75": ["750K-1M total", "3-4M total", "10-20M total", "80-100M total", "350-400M total", "1.4-1.8B total", "3.6-3.8B total", "10-11B total"],
@@ -884,11 +872,11 @@
     "10X GEX, VDJ, FB/CH, or Visium": {
       "PE28/88": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"]
     },
-    "10X scATAC Sequencing (User)": {
+    "10X scATAC Sequencing (Library)": {
       "50/8/24/50": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"],
       "50/8/16/50": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"]
     },
-    "CUT&RUN Sequencing (User)": {
+    "CUT&RUN Sequencing (Library)": {
       "Other": ["750K-1M total", "3-4M total", "10-20M total", "80-100M total", "350-400M total", "1.4-1.8B total", "3.6-3.8B total", "10-11B total"],
       "PE50": ["750K-1M total", "3-4M total", "10-20M total", "80-100M total", "350-400M total", "1.4-1.8B total", "3.6-3.8B total", "10-11B total"],
       "PE75": ["750K-1M total", "3-4M total", "10-20M total", "80-100M total", "350-400M total", "1.4-1.8B total", "3.6-3.8B total", "10-11B total"],
@@ -944,11 +932,11 @@
       "PE100": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"],
       "PE150": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"]
     },
-    "Single Cell CNV Sequencing (User)": {
+    "Single Cell CNV Sequencing (Library)": {
       "PE100": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"],
       "PE150": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"]
     },
-    "Visium HD (User)": {
+    "Visium HD (Library)": {
       "PE43/50": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"]
     },
     "Whole Genome Bisulfite Sequencing": {
@@ -977,6 +965,23 @@
       "PE100": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"],
       "PE150": ["5-10M", "10-20M", "20-30M", "30-40M", "40-50M", "50-60M", "60-80M", "80-100M", "100-120M", "120-140M", "140-160M", "160-180M", "180-200M", ">200M"]
     },
+  }
+
+
+  export const coverageMapping = {
+  
+    "Custom Capture": {
+      "PE100": ["250X", "500X", "1000X"]
+    },
+    "Whole Genome Methylation Sequencing": {
+      "PE150": ["1X", "10X", "30X", "40X", "80X", "150X"]
+    },
+    "Nanopore Long Read DNA Sequencing": {
+      "": ["40X", "80X"]
+    },
+    "Nanopore cDNA Sequencing": {
+      "": ["30-40M", "60-80M"]
+    },
     "Whole Exome Sequencing": {
       "PE100": ["30X", "40X", "70X", "80X", "100X", "150X", "250X"]
     },
@@ -986,4 +991,5 @@
     "Whole Genome Sequencing (deep or PCR-free)": {
       "PE150": ["1X", "5X", "10X", "30X", "40X", "50X", "60X", "70X", "80X", "100X", "120X"]
     },
+  
   }
