@@ -221,8 +221,8 @@ export const gridColumns = {
         data: 'cellCount',
         tooltip:
             'Please tell us the number of cells in your sorted population.  This number is important for us to provide you with the best extraction results.',
-        pattern: validationPatterns.number,
-        error: 'Numbers only, please.',
+       // pattern: validationPatterns.number,
+       // error: 'Numbers only, please.',
     },
     'Volume (uL)': {
         name: 'Volume (uL)',
