@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import { Logform } from 'winston';
 import { reverseReadableRecipesLib } from '../constants';
-import {naToExtractMapping} from './gridconstants';
+import {naToExtractMapping,preservationMapping,sequencingMapping,coverageMapping } from './gridconstants';
 
 const fs = require('fs');
 
@@ -263,8 +263,68 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                 }
 
 
+
+                if (colDef.picklistName === 'Nucleic+Acid+Type+to+Extract' && colDef.data === 'naToExtract') {
+                    const application = formValues.application;
+                    const material = formValues.material;
+                    if (naToExtractMapping && application && material && 
+                        naToExtractMapping[application] && 
+                        naToExtractMapping[application][material]) {
+                        colDef.source = naToExtractMapping[application][material];
+                    } else {
+                        colDef.source = picklists[colDef.picklistName];
+                    }
+                }
+
+
+        if (colDef.picklistName === 'Preservation') {
+        const application = formValues.application;
+        const material = formValues.material;
+    
+        if (preservationMapping && 
+        application && 
+        material && 
+        preservationMapping[application] && 
+        preservationMapping[application][material]) {
+        colDef.source = preservationMapping[application][material];
+    } else {
+        colDef.source = picklists[colDef.picklistName];
+    }
+}
+
+
+if (colDef.picklistName === 'Sequencing+Reads+Requested') {
+    const application = formValues.application;
+    const sequencingReadLength = formValues.sequencingReadLength;   
+    if (sequencingReadLength && 
+        application && 
+        sequencingMapping && 
+        sequencingMapping[application] && 
+        sequencingMapping[application][sequencingReadLength]) {
+        colDef.source = sequencingMapping[application][sequencingReadLength];
+    } else {
+        colDef.source = picklists[colDef.picklistName];
+    }
+}
+
+
+
+if (colDef.picklistName === 'Sequencing+Coverage+Requested') {
+    const application = formValues.application;
+    const sequencingReadLength = formValues.sequencingReadLength;   
+    if (sequencingReadLength ||
+        application ||
+        coverageMapping || 
+        coverageMapping[application] || 
+        coverageMapping[application][sequencingReadLength]) {
+        colDef.source = coverageMapping[application][sequencingReadLength];
+    } else {
+        colDef.source = picklists[colDef.picklistName];
+    }
+}
+
                 // filter requested reads based on sequencing read length
-                if (colDef.picklistName === 'Sequencing+Reads+Requested') {
+         /*       if (colDef.picklistName === 'Sequencing+Reads+Requested') {
                     if (formValues.sequencingReadLength && formValues.sequencingReadLength.length > 0) {
                         const standardReads = ['PE100', 'PE150', '26/10/10/90', '28/10/10/88', '50/8/16/49', '50/8/24/50'];
                         const specialNonStandardReads = ['PE250', 'PE300'];
@@ -288,7 +348,8 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                         const standardList = picklists[colDef.picklistName].filter(item => !item.includes('total reads'));
                         colDef.source = standardList;
                     }
-                } 
+                } */
+
 
                 colDef.error = colDef.error ? colDef.error : 'Invalid format.';
                 columns.columnFeatures.push(colDef);
@@ -418,6 +479,19 @@ const fillData = (columns, formValues) => {
                             preservation: 'Fresh',
                         };
                     }
+                    else if (preservationMapping && 
+                        application && 
+                        material && 
+                        preservationMapping[application] && 
+                        preservationMapping[application][material] &&
+                        preservationMapping[application][material].length === 1) {
+                   
+                   rowData[i] = {
+                       ...rowData[i],
+                       preservation: preservationMapping[application][material][0]
+                   };
+                   console.log(`Auto-filled preservation for row ${i} with ${preservationMapping[application][material][0]}`);
+                }
                 }
                 if (datafieldName === 'sampleOrigin') {
                     if (material === 'Blood') {
@@ -440,7 +514,22 @@ const fillData = (columns, formValues) => {
                         };
                     }
                 }
-                
+
+                if (datafieldName === 'naToExtract') {
+                    
+                    if (naToExtractMapping && application && material && 
+                        naToExtractMapping[application] && 
+                        naToExtractMapping[application][material] && 
+                        naToExtractMapping[application][material].length === 1) {
+                        
+                        rowData[i] = {
+                            ...rowData[i],
+                            naToExtract: naToExtractMapping[application][material][0]
+                        };
+                        
+                        console.log(`Auto-filled naToExtract for row ${i} with ${naToExtractMapping[application][material][0]}`);
+                    }
+                }
                 if (datafieldName === 'patientId' && colDef.columnHeader === 'Cell Line Name') {
                     rowData[i] = { ...rowData[i], specimenType: 'CellLine' };
                 }
@@ -1355,12 +1444,12 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
 }
 
 /**
- * Well Position A1,A2...A12,B1,B2...H12
- * Well Position Rows = A-H
- * Well Position Columns = 1-12
- * A1 < B1, A2 > B1 => compare numbers/cols first, then letters/rows
- * Eg. If 3 < 4 already sorted. if 4 > 3, compare letters to sort
- */
+* Well Position A1,A2...A12,B1,B2...H12
+* Well Position Rows = A-H
+* Well Position Columns = 1-12
+* A1 < B1, A2 > B1 => compare numbers/cols first, then letters/rows
+* Eg. If 3 < 4 already sorted. if 4 > 3, compare letters to sort
+*/
 function compareByWellPosition(a, b) {
     let aRow = a.wellPosition[0];
     let aColumn = parseInt(a.wellPosition.slice(1));
@@ -1384,12 +1473,12 @@ function compareByWellPosition(a, b) {
 }
 
 /**
- * Find closes match to DMP returned tumor type in OncoList.
- * DMP usually returns tumor types as "Esophagus_Stomach:Stomach Adenocarcinoma"
- * @param {string} tumorType
- * @param {array} oncoResult
- * @return {object} {tumorType: string, status: string}
- */
+* Find closes match to DMP returned tumor type in OncoList.
+* DMP usually returns tumor types as "Esophagus_Stomach:Stomach Adenocarcinoma"
+* @param {string} tumorType
+* @param {array} oncoResult
+* @return {object} {tumorType: string, status: string}
+*/
 function findOncoMatch(tumorType, sampleClass, oncoResult) {
     let tumorTypeToMatch = tumorType.split(':')[1];
     if (tumorType.split(':')[0] === 'N/A') {
