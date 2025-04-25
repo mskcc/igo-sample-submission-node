@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import { Logform } from 'winston';
 import { reverseReadableRecipesLib } from '../constants';
+import {naToExtractMapping } from './gridconstants';
 
 const fs = require('fs');
 
@@ -186,6 +187,8 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                     );
                     colDef = { ...colDef, ...formattingAdjustments };
                 }
+
+            
                 if (colDef.picklistName && !colDef.source) {
                     if (colDef.data === 'index') {
                         colDef.barcodeHash = picklists[colDef.picklistName];
@@ -193,9 +196,76 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                         colDef.source = picklists[colDef.picklistName];
                     }
                 }
+               
+      /*          if (colDef.picklistName === 'Sample+Origins') {
+                    // Get the application from form values
+                    const application = formValues.application;
+                    
+                    // Define the application to sample origin mapping
+                    const applicationToSampleOrigin = {
+                        // Applications that use FFPE and Fresh or Frozen only
+                        "Amplicon Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "ChIP Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "CRISPR Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "CUT&RUN Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "Single Cell CNV Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "MSK-ACCESS": ["FFPE", "Fresh or Frozen"],
+                        "MSK-ACCESS-Heme": ["FFPE", "Fresh or Frozen"],
+                        "CMO-CH": ["FFPE", "Fresh or Frozen"],
+                        "IMPACT": ["FFPE", "Fresh or Frozen"],
+                        "IMPACT-Heme": ["FFPE", "Fresh or Frozen"],
+                        "Mouse IMPACT": ["FFPE", "Fresh or Frozen"],
+                        "Nanopore cDNA Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "Nanopore 10X cDNA Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "Nanopore Direct RNA Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "RNA Capture": ["FFPE", "Fresh or Frozen"],
+                        "RNA Seq - Ribodepletion": ["FFPE", "Fresh or Frozen"],
+                        "TCR Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "Whole Exome Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "Mouse Whole Exome Sequencing": ["FFPE", "Fresh or Frozen"],
+                        "Shallow Whole Genome Sequencing": ["FFPE", "Fresh or Frozen"],
+                        
+                        // Applications that use Organoid set only
+                        "DNA Extraction": ["Organoid - kidney/liver/brain", "Organoid - other", "Non-organoid"],
+                        "Nanopore Long Read DNA Sequencing": ["Organoid - kidney/liver/brain", "Organoid - other", "Non-organoid"]
+                    };
+                    
+                    // Filter source based on application
+                    if (application && applicationToSampleOrigin[application]) {
+                        // If application is found in the mapping, use only those sample origins
+                        colDef.source = applicationToSampleOrigin[application];
+                    } else {
+                        // If application is not found or not set, use all options from the picklist
+                        colDef.source = picklists[colDef.picklistName];
+                    }
+                } 
+
+                */
+
+
+
+                if (colDef.picklistName === 'Nucleic+Acid+Type+to+Extract' && colDef.data === 'naToExtract') {
+                    const application = formValues.application;
+                    const material = formValues.material;
+                    if (naToExtractMapping && application && material && 
+                        naToExtractMapping[application] && 
+                        naToExtractMapping[application][material]) {
+                        colDef.source = naToExtractMapping[application][material];
+                    } else {
+                        colDef.source = picklists[colDef.picklistName];
+                    }
+                }
+
+
+
+
+
+
+
+
 
                 // filter requested reads based on sequencing read length
-                if (colDef.picklistName === 'Sequencing+Reads+Requested') {
+               if (colDef.picklistName === 'Sequencing+Reads+Requested') {
                     if (formValues.sequencingReadLength && formValues.sequencingReadLength.length > 0) {
                         const standardReads = ['PE100', 'PE150', '26/10/10/90', '28/10/10/88', '50/8/16/49', '50/8/24/50'];
                         const specialNonStandardReads = ['PE250', 'PE300'];
@@ -220,6 +290,7 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                         colDef.source = standardList;
                     }
                 } 
+
 
                 colDef.error = colDef.error ? colDef.error : 'Invalid format.';
                 columns.columnFeatures.push(colDef);
@@ -349,6 +420,7 @@ const fillData = (columns, formValues) => {
                             preservation: 'Fresh',
                         };
                     }
+                    
                 }
                 if (datafieldName === 'sampleOrigin') {
                     if (material === 'Blood') {
@@ -368,6 +440,20 @@ const fillData = (columns, formValues) => {
                         rowData[i] = {
                             ...rowData[i],
                             specimenType: 'Blood',
+                        };
+                    }
+                }
+
+                if (datafieldName === 'naToExtract') {
+                    
+                    if (naToExtractMapping && application && material && 
+                        naToExtractMapping[application] && 
+                        naToExtractMapping[application][material] && 
+                        naToExtractMapping[application][material].length === 1) {
+                        
+                        rowData[i] = {
+                            ...rowData[i],
+                            naToExtract: naToExtractMapping[application][material][0]
                         };
                     }
                 }
@@ -1285,12 +1371,12 @@ function translateDmpToBankedSample(dmpSamples, submission, oncoResult, indexRes
 }
 
 /**
- * Well Position A1,A2...A12,B1,B2...H12
- * Well Position Rows = A-H
- * Well Position Columns = 1-12
- * A1 < B1, A2 > B1 => compare numbers/cols first, then letters/rows
- * Eg. If 3 < 4 already sorted. if 4 > 3, compare letters to sort
- */
+* Well Position A1,A2...A12,B1,B2...H12
+* Well Position Rows = A-H
+* Well Position Columns = 1-12
+* A1 < B1, A2 > B1 => compare numbers/cols first, then letters/rows
+* Eg. If 3 < 4 already sorted. if 4 > 3, compare letters to sort
+*/
 function compareByWellPosition(a, b) {
     let aRow = a.wellPosition[0];
     let aColumn = parseInt(a.wellPosition.slice(1));
@@ -1314,12 +1400,12 @@ function compareByWellPosition(a, b) {
 }
 
 /**
- * Find closes match to DMP returned tumor type in OncoList.
- * DMP usually returns tumor types as "Esophagus_Stomach:Stomach Adenocarcinoma"
- * @param {string} tumorType
- * @param {array} oncoResult
- * @return {object} {tumorType: string, status: string}
- */
+* Find closes match to DMP returned tumor type in OncoList.
+* DMP usually returns tumor types as "Esophagus_Stomach:Stomach Adenocarcinoma"
+* @param {string} tumorType
+* @param {array} oncoResult
+* @return {object} {tumorType: string, status: string}
+*/
 function findOncoMatch(tumorType, sampleClass, oncoResult) {
     let tumorTypeToMatch = tumorType.split(':')[1];
     if (tumorType.split(':')[0] === 'N/A') {
@@ -1477,7 +1563,6 @@ export function translateSqlSubmissions(sqlSubmissions) {
             return [];
         }
     }
-
     return parsedSubmissions;
 }
 
