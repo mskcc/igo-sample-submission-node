@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import { Logform } from 'winston';
 import { reverseReadableRecipesLib } from '../constants';
-import {naToExtractMapping,preservationMapping,sequencingMapping,coverageMapping } from './gridconstants';
+import {naToExtractMapping } from './gridconstants';
 
 const fs = require('fs');
 
@@ -242,26 +242,6 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
 
                 */
 
-                if (colDef.picklistName === 'Specimen+Types') {
-                    const application = formValues.application;
-                    const material = formValues.material;
-                    const specimenTypeMapping = {
-                        "TCR Sequencing": {
-                            "Buffy Coat": ["Blood or Buffy coats"],
-                            "Cells": ["Sorted T cells", "Lymphoid tissue", "Non-lymphoid"],
-                            "RNA": ["Sorted T cells", "Blood or Buffy coats", "Lymphoid tissue", "Non-lymphoid"],
-                            "Tissue": ["Lymphoid tissue", "Non-lymphoid"]
-                        }
-                    };
-                    if (application && material && 
-                        specimenTypeMapping[application] && 
-                        specimenTypeMapping[application][material]) {
-                        colDef.source = specimenTypeMapping[application][material];
-                    } else {
-                        colDef.source = picklists[colDef.picklistName];
-                    }
-                }
-
 
 
                 if (colDef.picklistName === 'Nucleic+Acid+Type+to+Extract' && colDef.data === 'naToExtract') {
@@ -277,54 +257,15 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                 }
 
 
-        if (colDef.picklistName === 'Preservation') {
-        const application = formValues.application;
-        const material = formValues.material;
-    
-        if (preservationMapping && 
-        application && 
-        material && 
-        preservationMapping[application] && 
-        preservationMapping[application][material]) {
-        colDef.source = preservationMapping[application][material];
-    } else {
-        colDef.source = picklists[colDef.picklistName];
-    }
-}
-
-
-if (colDef.picklistName === 'Sequencing+Reads+Requested') {
-    const application = formValues.application;
-    const sequencingReadLength = formValues.sequencingReadLength;   
-    if (sequencingReadLength && 
-        application && 
-        sequencingMapping && 
-        sequencingMapping[application] && 
-        sequencingMapping[application][sequencingReadLength]) {
-        colDef.source = sequencingMapping[application][sequencingReadLength];
-    } else {
-        colDef.source = picklists[colDef.picklistName];
-    }
-}
 
 
 
-if (colDef.picklistName === 'Sequencing+Coverage+Requested') {
-    const application = formValues.application;
-    const sequencingReadLength = formValues.sequencingReadLength;   
-    if (sequencingReadLength ||
-        application ||
-        coverageMapping || 
-        coverageMapping[application] || 
-        coverageMapping[application][sequencingReadLength]) {
-        colDef.source = coverageMapping[application][sequencingReadLength];
-    } else {
-        colDef.source = picklists[colDef.picklistName];
-    }
-}
+
+
+
 
                 // filter requested reads based on sequencing read length
-         /*       if (colDef.picklistName === 'Sequencing+Reads+Requested') {
+               if (colDef.picklistName === 'Sequencing+Reads+Requested') {
                     if (formValues.sequencingReadLength && formValues.sequencingReadLength.length > 0) {
                         const standardReads = ['PE100', 'PE150', '26/10/10/90', '28/10/10/88', '50/8/16/49', '50/8/24/50'];
                         const specialNonStandardReads = ['PE250', 'PE300'];
@@ -348,7 +289,7 @@ if (colDef.picklistName === 'Sequencing+Coverage+Requested') {
                         const standardList = picklists[colDef.picklistName].filter(item => !item.includes('total reads'));
                         colDef.source = standardList;
                     }
-                } */
+                } 
 
 
                 colDef.error = colDef.error ? colDef.error : 'Invalid format.';
@@ -479,19 +420,7 @@ const fillData = (columns, formValues) => {
                             preservation: 'Fresh',
                         };
                     }
-                    else if (preservationMapping && 
-                        application && 
-                        material && 
-                        preservationMapping[application] && 
-                        preservationMapping[application][material] &&
-                        preservationMapping[application][material].length === 1) {
-                   
-                   rowData[i] = {
-                       ...rowData[i],
-                       preservation: preservationMapping[application][material][0]
-                   };
-                   console.log(`Auto-filled preservation for row ${i} with ${preservationMapping[application][material][0]}`);
-                }
+                    
                 }
                 if (datafieldName === 'sampleOrigin') {
                     if (material === 'Blood') {
@@ -526,8 +455,6 @@ const fillData = (columns, formValues) => {
                             ...rowData[i],
                             naToExtract: naToExtractMapping[application][material][0]
                         };
-                        
-                        console.log(`Auto-filled naToExtract for row ${i} with ${naToExtractMapping[application][material][0]}`);
                     }
                 }
                 if (datafieldName === 'patientId' && colDef.columnHeader === 'Cell Line Name') {
@@ -1636,7 +1563,6 @@ export function translateSqlSubmissions(sqlSubmissions) {
             return [];
         }
     }
-
     return parsedSubmissions;
 }
 
