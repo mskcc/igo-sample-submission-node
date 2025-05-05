@@ -256,34 +256,47 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                     }
                 }
 
-                if (colDef.picklistName === 'Sequencing+Reads+Requested') { 
-                    const application = formValues.application; 
-                    const sequencingReadLength = formValues.sequencingReadLength;    
-                    if (sequencingReadLength &&  
-                        application &&  
-                        sequencingMapping &&  
-                        sequencingMapping[application] &&  
-                        sequencingMapping[application][sequencingReadLength]) { 
-                        colDef.source = sequencingMapping[application][sequencingReadLength]; 
-                    } else { 
-                        colDef.source = picklists[colDef.picklistName]; 
-                    } 
-                } 
-                
-                if (colDef.picklistName === 'Sequencing+Coverage+Requested') { 
-                    const application = formValues.application; 
-                    const sequencingReadLength = formValues.sequencingReadLength;    
-                    if (sequencingReadLength || application ||  coverageMapping ||
-                        coverageMapping[application] ||coverageMapping[application][sequencingReadLength]) { 
-                        colDef.source = coverageMapping[application][sequencingReadLength]; 
-                    } else { 
-                        colDef.source = picklists[colDef.picklistName]; 
-                    } 
-                } 
+                    // Sequencing Reads Requested
+                if (colDef.picklistName === 'Sequencing+Reads+Requested') {
+                    const application = formValues.application;
+                    const sequencingReadLength = formValues.sequencingReadLength;
+
+                    if (
+                        sequencingReadLength &&
+                        application &&
+                        sequencingMapping &&
+                        sequencingMapping[application] &&
+                        sequencingMapping[application][sequencingReadLength]
+                    ) {
+                        colDef.source = sequencingMapping[application][sequencingReadLength];
+                    } else {
+                        colDef.source = picklists[colDef.picklistName];
+                    }
+                }
+
+                // Sequencing Coverage Requested
+                if (colDef.picklistName === 'Sequencing+Coverage+Requested') {
+                    const application = formValues.application;
+                    const sequencingReadLength = formValues.sequencingReadLength;
+
+                    if (
+                        sequencingReadLength &&
+                        application &&
+                        coverageMapping &&
+                        coverageMapping[application] &&
+                        coverageMapping[application][sequencingReadLength]
+                    ) {
+                        colDef.source = coverageMapping[application][sequencingReadLength];
+                    } else {
+                        colDef.source = picklists[colDef.picklistName];
+                    }
+                }
+
+
                 
 
                 // filter requested reads based on sequencing read length
-             /*  if (colDef.picklistName === 'Sequencing+Reads+Requested') {
+           /*    if (colDef.picklistName === 'Sequencing+Reads+Requested') {
                     if (formValues.sequencingReadLength && formValues.sequencingReadLength.length > 0) {
                         const standardReads = ['PE100', 'PE150', '26/10/10/90', '28/10/10/88', '50/8/16/49', '50/8/24/50'];
                         const specialNonStandardReads = ['PE250', 'PE300'];
@@ -308,7 +321,9 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                         colDef.source = standardList;
                     }
                 } 
-                    */
+                
+                */
+
 
                 colDef.error = colDef.error ? colDef.error : 'Invalid format.';
                 columns.columnFeatures.push(colDef);
