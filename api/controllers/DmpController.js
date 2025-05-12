@@ -395,10 +395,12 @@ exports.loadFromDmp = [
                                 let username = retrievedDmpSubmission.username;
 
                                 SubmissionModel.findOrCreateSub(relatedIgoSubmission_id, username).then((igoSubmission) => {
+                                    console.log("IGO grid values" + translatedSubmission.gridValues);
+                                    console.log("IGO form values" + translatedSubmission.formValues);
                                     igoSubmission.gridValues = translatedSubmission.gridValues;
                                     igoSubmission.formValues = translatedSubmission.formValues;
                                     igoSubmission.dmpTrackingId = dmpTrackingId;
-
+                                    
                                     isSubmitted = igoSubmission.submitted;
 
                                     igoSubmission.save(function (err) {
