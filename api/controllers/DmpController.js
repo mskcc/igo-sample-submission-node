@@ -425,6 +425,9 @@ exports.loadFromDmp = [
                                             });
                                         });
                                     });
+                                })
+                                .catch((err) => {
+                                    return apiResponse.errorResponse(res, `Error in findOrCreateSub: ${err}`);
                                 });
                             })
                             .catch((reasons) => {
