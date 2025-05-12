@@ -393,7 +393,7 @@ exports.loadFromDmp = [
                                 // if this has been previously loaded from DMP, overwrite previous submission instead of creating a new one
                                 let relatedIgoSubmission_id = retrievedDmpSubmission.relatedIgoSubmission_id || '';
                                 let username = retrievedDmpSubmission.username;
-
+                                console.log("Calling findOrCreateSub... relatedIgoSubmission_id = " + relatedIgoSubmission_id + " user = " + username);
                                 SubmissionModel.findOrCreateSub(relatedIgoSubmission_id, username).then((igoSubmission) => {
                                     console.log("IGO grid values" + translatedSubmission.gridValues);
                                     console.log("IGO form values" + translatedSubmission.formValues);
