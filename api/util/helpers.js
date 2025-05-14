@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import { Logform } from 'winston';
 import { reverseReadableRecipesLib } from '../constants';
-import {naToExtractMapping,coverageMapping,sequencingMapping } from './gridconstants';
+import {naToExtractMapping,coverageMapping,sequencingMapping,preservationMapping } from './gridconstants';
 
 const fs = require('fs');
 
@@ -256,6 +256,20 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                     }
                 }
 
+                if (colDef.picklistName === 'Preservation') { 
+                    const application = formValues.application; 
+                    const material = formValues.material; 
+                    if (preservationMapping && 
+                    application &&  
+                    material &&  
+                    preservationMapping[application] &&  
+                    preservationMapping[application][material]) { 
+                    colDef.source = preservationMapping[application][material]; 
+                } else { 
+                colDef.source = picklists[colDef.picklistName]; 
+                            }
+            } 
+            
                     // Sequencing Reads Requested
                 if (colDef.picklistName === 'Sequencing+Reads+Requested') {
                     const application = formValues.application;
@@ -291,10 +305,8 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                         colDef.source = picklists[colDef.picklistName];
                     }
                 }
-
-
                 
-
+                
                 // filter requested reads based on sequencing read length
            /*    if (colDef.picklistName === 'Sequencing+Reads+Requested') {
                     if (formValues.sequencingReadLength && formValues.sequencingReadLength.length > 0) {
@@ -453,7 +465,17 @@ const fillData = (columns, formValues) => {
                             preservation: 'Fresh',
                         };
                     }
-                    
+                    else if (preservationMapping &&  
+                        application &&  
+                        material &&  
+                        preservationMapping[application] &&  
+                        preservationMapping[application][material] && 
+                        preservationMapping[application][material].length === 1) { 
+                        rowData[i] = { 
+                       ...rowData[i], 
+                       preservation: preservationMapping[application][material][0] 
+                   }; 
+                } 
                 }
                 if (datafieldName === 'sampleOrigin') {
                     if (material === 'Blood') {
