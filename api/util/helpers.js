@@ -244,6 +244,30 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
 
 
 
+
+
+                if (colDef.picklistName === 'Specimen+Types') {
+                    const application = formValues.application;
+                    const material = formValues.material;
+                    const specimenTypeMapping = {
+                        "TCR Sequencing": {
+                            "Buffy Coat": ["Blood or Buffy coats"],
+                            "Cells": ["Sorted T cells", "Lymphoid tissue", "Non-lymphoid"],
+                            "RNA": ["Sorted T cells", "Blood or Buffy coats", "Lymphoid tissue", "Non-lymphoid"],
+                            "Tissue": ["Lymphoid tissue", "Non-lymphoid"]
+                        }
+                    };
+                    if (application && material && 
+                        specimenTypeMapping[application] && 
+                        specimenTypeMapping[application][material]) {
+                        colDef.source = specimenTypeMapping[application][material];
+                    } else {
+                        colDef.source = picklists[colDef.picklistName];
+                    }
+                }
+
+
+
                 if (colDef.picklistName === 'Nucleic+Acid+Type+to+Extract' && colDef.data === 'naToExtract') {
                     const application = formValues.application;
                     const material = formValues.material;
@@ -269,7 +293,7 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                 colDef.source = picklists[colDef.picklistName]; 
                             }
             } 
-            
+
                     // Sequencing Reads Requested
                 if (colDef.picklistName === 'Sequencing+Reads+Requested') {
                     const application = formValues.application;
@@ -490,8 +514,8 @@ const fillData = (columns, formValues) => {
                         };
                     }
                 }
-                if (datafieldName === 'specimenType') {
-                    if (material === 'Blood' || material === 'Buffy Coat') {
+                if (datafieldName === 'specimenType') {    
+                    if (material === 'Blood' || material === 'Buffy Coat') {  
                         rowData[i] = {
                             ...rowData[i],
                             specimenType: 'Blood',
