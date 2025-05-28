@@ -1193,23 +1193,23 @@ export function parseDmpOutput(dmpOutput, submission) {
             promises.push([]);
         }
 
-        // get sample info for dropped/depleted samples
-        if (numReturnedSamples < numOriginalSamples) {
-            let dmpInvestigatorIds = [];
+        // ALWAYS check for depleted samples first
+        let dmpInvestigatorIds = [];
+        Object.entries(dmpSamples).forEach(entry => {
+            const [key, value] = entry;
+            dmpInvestigatorIds.push(key);
 
-            //loop through both sample sets to get sample id info
-            Object.entries(dmpSamples).forEach(entry => {
-                const [key, value] = entry;
-                dmpInvestigatorIds.push(key);
-
-                if (!value['Volume (ul)'] || value['Volume (ul)'] === '0.00') {
-                    const sampleInfo = {
-                        investigatorId: key,
-                        dmpSampleId: value['DMP ID']
-                    }
-                    depletedSamples.push(sampleInfo);
+            if (!value['Volume (ul)'] || value['Volume (ul)'] === '0.00') {
+                const sampleInfo = {
+                    investigatorId: key,
+                    dmpSampleId: value['DMP ID']
                 }
-            });
+                depletedSamples.push(sampleInfo);
+            }
+        });
+
+        // get sample info for dropped samples only when samples are missing
+        if (numReturnedSamples < numOriginalSamples) {
             submission.gridValues.forEach((sample) => {
                 const investigatorId = sample.userId;
                 if (!dmpInvestigatorIds.includes(investigatorId)) {
