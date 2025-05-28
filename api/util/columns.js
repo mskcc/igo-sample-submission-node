@@ -16,6 +16,7 @@ export const validationPatterns = {
     dmpPatientId: '^P-[0-9]{7}$',
     mrn: '^[0-9]{8}$',
     groupingId: '[A-Za-z0-9\\,_-]{4,}',
+    molecularAccessionNumber: '^(M(2[5-9]|[3-9][0-9]|100)-)?\\d{6,10}(\\.(2|22))?$'
     // plateId: '^MSK-[A-Za-z0-9\\,_-]{10,}$',
 };
 
@@ -203,7 +204,7 @@ export const gridColumns = {
         tooltip: 'Actual barcode sequence based on tag you choose display only',
         enableCellEdit: 'false',
     },
-    'Nucleic Acid Type to Extract': {
+   'Nucleic Acid Type to Extract': {
         name: 'Nucleic Acid Type to Extract',
         columnHeader: 'Nucleic Acid Type to Extract',
         data: 'naToExtract',
@@ -214,15 +215,15 @@ export const gridColumns = {
         strict: true,
         picklistName: 'Nucleic+Acid+Type+to+Extract',
         width: 190,
-    },
+    }, 
     'Cell Count': {
         name: 'Cell Count',
         columnHeader: 'Cell Count',
         data: 'cellCount',
         tooltip:
             'Please tell us the number of cells in your sorted population.  This number is important for us to provide you with the best extraction results.',
-       // pattern: validationPatterns.number,
-       // error: 'Numbers only, please.',
+        pattern: validationPatterns.number,
+        error: 'Numbers only, please.',
     },
     'Volume (uL)': {
         name: 'Volume (uL)',
