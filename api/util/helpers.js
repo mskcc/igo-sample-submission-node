@@ -268,7 +268,7 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
 
 
 
-                if (colDef.picklistName === 'Nucleic+Acid+Type+to+Extract' && colDef.data === 'naToExtract') {
+            /*    if (colDef.picklistName === 'Nucleic+Acid+Type+to+Extract' && colDef.data === 'naToExtract') {
                     const application = formValues.application;
                     const material = formValues.material;
                     if (naToExtractMapping && application && material && 
@@ -278,7 +278,7 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                     } else {
                         colDef.source = picklists[colDef.picklistName];
                     }
-                }
+                } */ 
 
                 if (colDef.picklistName === 'Preservation') { 
                     const application = formValues.application; 
@@ -523,7 +523,7 @@ const fillData = (columns, formValues) => {
                     }
                 }
 
-                if (datafieldName === 'naToExtract') {
+          /*      if (datafieldName === 'naToExtract') {
                     
                     if (naToExtractMapping && application && material && 
                         naToExtractMapping[application] && 
@@ -535,7 +535,7 @@ const fillData = (columns, formValues) => {
                             naToExtract: naToExtractMapping[application][material][0]
                         };
                     }
-                }
+                } */ 
                 if (datafieldName === 'patientId' && colDef.columnHeader === 'Cell Line Name') {
                     rowData[i] = { ...rowData[i], specimenType: 'CellLine' };
                 }
@@ -1193,23 +1193,23 @@ export function parseDmpOutput(dmpOutput, submission) {
             promises.push([]);
         }
 
-        // get sample info for dropped/depleted samples
-        if (numReturnedSamples < numOriginalSamples) {
-            let dmpInvestigatorIds = [];
+        // ALWAYS check for depleted samples first
+        let dmpInvestigatorIds = [];
+        Object.entries(dmpSamples).forEach(entry => {
+            const [key, value] = entry;
+            dmpInvestigatorIds.push(key);
 
-            //loop through both sample sets to get sample id info
-            Object.entries(dmpSamples).forEach(entry => {
-                const [key, value] = entry;
-                dmpInvestigatorIds.push(key);
-
-                if (!value['Volume (ul)'] || value['Volume (ul)'] === '0.00') {
-                    const sampleInfo = {
-                        investigatorId: key,
-                        dmpSampleId: value['DMP ID']
-                    }
-                    depletedSamples.push(sampleInfo);
+            if (!value['Volume (ul)'] || value['Volume (ul)'] === '0.00') {
+                const sampleInfo = {
+                    investigatorId: key,
+                    dmpSampleId: value['DMP ID']
                 }
-            });
+                depletedSamples.push(sampleInfo);
+            }
+        });
+
+        // get sample info for dropped samples only when samples are missing
+        if (numReturnedSamples < numOriginalSamples) {
             submission.gridValues.forEach((sample) => {
                 const investigatorId = sample.userId;
                 if (!dmpInvestigatorIds.includes(investigatorId)) {
@@ -1750,3 +1750,6 @@ const countIdRequests = (id, username) => {
         if (err) logger.error(err);
     });
 };
+
+
+

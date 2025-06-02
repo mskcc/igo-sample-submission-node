@@ -1,5 +1,6 @@
 var express = require('express');
 const UploadSubmission= require('../models/UploadSubmissionModel');
+const { naToExtractMapping } = require('../util/gridconstants');
 //const UploadSubmissionController = require('../controllers/UploadSubmissionController');
 var router = express.Router();
 
@@ -194,7 +195,83 @@ router.get('/readlength',async(req,res)=>{
     }
 }); 
 
-module.exports = router;
 
+
+
+
+
+router.get('/nucleic-acid-types', async (req, res) => {
+    try {
+        const { material, application } = req.query;
+        
+        // Both parameters are required
+        if (!material || !application) {
+            return res.status(400).json({ 
+                error: 'Both material and application parameters are required' 
+            });
+        }
+        
+        const materialTrimmed = material.trim();
+        const applicationTrimmed = application.trim();
+        
+        console.log(`Looking for nucleic acid types for: ${materialTrimmed} + ${applicationTrimmed}`);
+        
+        // Step 1: Validate that this material + application combination exists in MongoDB
+        let query = {};
+        query.Material = { $regex: `\\b${materialTrimmed.replace(/\s+/g, '\\s+')}\\b`, $options: 'i' };
+        
+        // Handle special application case (same logic as your other routes)
+        const specialApplication = "10X GEX, VDJ, FB/CH or Visium";
+        if (applicationTrimmed === specialApplication) {
+            query.Application = specialApplication;
+        } else {
+            query.Application = applicationTrimmed;
+        }
+        
+        // Check if this combination exists in MongoDB
+        const existsInDB = await UploadSubmission.findOne(query, { _id: 1 });
+        
+        if (!existsInDB) {
+            console.log(`Combination ${materialTrimmed} + ${applicationTrimmed} not found in MongoDB`);
+            return res.status(200).json([]);
+        }
+        
+        
+        if (!naToExtractMapping[applicationTrimmed]) {
+            console.log(`Application "${applicationTrimmed}" not found in nucleic acid mapping`);
+            return res.status(200).json([]);
+        }
+        
+        const applicationMapping = naToExtractMapping[applicationTrimmed];
+        const availableMaterials = Object.keys(applicationMapping);
+        
+        // Find matching material in the JavaScript mapping
+        const matchingMaterial = availableMaterials.find(mappedMaterial => 
+            mappedMaterial.toLowerCase() === materialTrimmed.toLowerCase()
+        ) || availableMaterials.find(mappedMaterial => 
+            mappedMaterial.toLowerCase().includes(materialTrimmed.toLowerCase()) ||
+            materialTrimmed.toLowerCase().includes(mappedMaterial.toLowerCase())
+        );
+        
+        if (!matchingMaterial) {
+            console.log(`Material "${materialTrimmed}" not found in nucleic acid JavaScript mapping for "${applicationTrimmed}"`);
+            return res.status(200).json([]);
+        }
+        
+        // Get nucleic acid types from JavaScript mapping
+        const nucleicTypes = applicationMapping[matchingMaterial] || [];
+        
+        console.log(`✅ Found nucleic acid types from JavaScript mapping for ${matchingMaterial} + ${applicationTrimmed}:`, nucleicTypes);
+        
+        res.status(200).json(nucleicTypes);
+        
+    } catch (err) {
+        console.log("Error fetching Nucleic Acid Types", err);
+        res.status(500).json({ 
+            message: 'Error fetching nucleic acid types: ' + err.message 
+        });
+    }
+});
+module.exports = router;
 
 

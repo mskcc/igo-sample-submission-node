@@ -16,10 +16,11 @@ export const validationPatterns = {
     dmpPatientId: '^P-[0-9]{7}$',
     mrn: '^[0-9]{8}$',
     groupingId: '[A-Za-z0-9\\,_-]{4,}',
+    molecularAccessionNumber: '^(M(2[5-9]|[3-9][0-9]|100)-)?\\d{6,10}(\\.(2|22))?$'
     // plateId: '^MSK-[A-Za-z0-9\\,_-]{10,}$',
 };
 
-export const deprecatedColumns = ['Index Position', 'Sequencing Read Length'];
+export const deprecatedColumns = ['Index Position', 'Sequencing Read Length','Nucleic Acid Type to Extract', 'Nucleic Acid Type to Extract', 'Index Sequence', 'Barcode Position', 'Index Sequence', 'Nucleic Acid Type to Extract'];
 export const gridColumns = {
     'Service ID': {
         name: 'Service ID',
@@ -203,7 +204,7 @@ export const gridColumns = {
         tooltip: 'Actual barcode sequence based on tag you choose display only',
         enableCellEdit: 'false',
     },
-    'Nucleic Acid Type to Extract': {
+ /*  'Nucleic Acid Type to Extract': {
         name: 'Nucleic Acid Type to Extract',
         columnHeader: 'Nucleic Acid Type to Extract',
         data: 'naToExtract',
@@ -214,7 +215,7 @@ export const gridColumns = {
         strict: true,
         picklistName: 'Nucleic+Acid+Type+to+Extract',
         width: 190,
-    },
+    },  */ 
     'Cell Count': {
         name: 'Cell Count',
         columnHeader: 'Cell Count',
@@ -641,3 +642,4 @@ export const formColumns = {
 export const noShowColumns = ['_id', 'groupingChecked', 'cmoPatientId', 'normalizedPatientId'];
 
 export const noShowEmptyColumns = ['patientIdType', 'sharedWith'];
+
