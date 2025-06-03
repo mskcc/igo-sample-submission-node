@@ -20,9 +20,11 @@ export class UploadFormContainer extends Component {
             species:[],
             containers:[],
             readLengths:[],
+            nucleicAcidTypes: [],
             isloading:false,
             selectedMaterial:"",
             selectedApplication:"",
+            selectedNucleicAcidType: "",
             isSpeciesDisabled:false,
             speciesList:[],
         };
@@ -66,7 +68,31 @@ export class UploadFormContainer extends Component {
     || (prevState.selectedApplication!==selectedApplication)&&selectedApplication &&selectedMaterial)
     {
         this.fetchContainers(selectedMaterial,selectedApplication);
+        
     }
+    if (((prevState.selectedMaterial !== selectedMaterial) || 
+             (prevState.selectedApplication !== selectedApplication)) &&
+            selectedMaterial && selectedApplication) {
+            this.fetchNucleicAcidTypes(selectedMaterial, selectedApplication);
+        }
+        if (prevState.nucleicAcidTypes !== this.state.nucleicAcidTypes) {
+            const { nucleicAcidTypes } = this.state;
+            console.log("🔄 Nucleic acid types changed:", nucleicAcidTypes);
+            
+            if (nucleicAcidTypes.length === 1) {
+                console.log("🎯 Auto-selecting single nucleic acid type:", nucleicAcidTypes[0]);
+                const { select } = this.props;
+                if (select) {
+                    select("nucleicAcidTypeToExtract", nucleicAcidTypes[0]);
+                }
+            } else if (nucleicAcidTypes.length === 0) {
+                console.log("❌ Clearing nucleic acid type - no options available");
+                const { select } = this.props;
+                if (select) {
+                    select("nucleicAcidTypeToExtract", '');
+                }
+            }
+        }
 }
 
     
@@ -109,6 +135,43 @@ export class UploadFormContainer extends Component {
         }
     };
 
+
+
+    fetchNucleicAcidTypes = async (material, application) => {
+        console.log("🔍 Fetching nucleic acid types from JS mapping for:", material, application);
+        
+        if (!material || !application) {
+            this.setState({ nucleicAcidTypes: [] });
+            return;
+        }
+        
+        const params = { material, application };
+        
+        try {
+            const response = await axios.get(`${Config.NODE_API_ROOT}/nucleic-acid-types`, { params });
+            
+            if (response.status === 200) {
+                const nucleicAcidTypes = response.data;
+                console.log("✅ Received nucleic acid types from JS mapping:", nucleicAcidTypes);
+                
+                this.setState({ nucleicAcidTypes, isloading: false });
+                
+                // Auto-select if only one option
+                if (nucleicAcidTypes.length === 1) {
+                    console.log("🎯 Auto-selecting single nucleic acid type:", nucleicAcidTypes[0]);
+                    this.handleNucleicAcidTypeChange(nucleicAcidTypes[0]);
+                } else if (nucleicAcidTypes.length === 0) {
+                    console.log("❌ No nucleic acid types available for this combination");
+                    this.handleNucleicAcidTypeChange('');
+                }
+            }
+        } catch (error) {
+            console.log("💥 Error fetching nucleic acid types:", error);
+            this.setState({ nucleicAcidTypes: [], isloading: false });
+        }
+    };
+
+
     handleMaterialChange = (selectedMaterial) => {
         console.log("Selected Material:", selectedMaterial);
         this.setState({selectedMaterial},()=>{
@@ -133,6 +196,16 @@ export class UploadFormContainer extends Component {
 
             });
             }; 
+
+            handleNucleicAcidTypeChange = (selectedNucleicAcidType) => {
+                console.log("🧬 Nucleic acid type changed to:", selectedNucleicAcidType);
+                
+                const { select } = this.props;
+                if (select) {
+                    select("nucleicAcidTypeToExtract", selectedNucleicAcidType);
+                    this.setState({ selectedNucleicAcidType });
+                }
+            };
 
 
             fetchSpecies = async (application) => {
@@ -279,6 +352,8 @@ fetchReadLength=async(application)=>{
             id ==='sequencingReadLength'
         ){
             this.handleReadLengthChange(value);
+        }else if (id === 'nucleicAcidTypeToExtract') { 
+            this.handleNucleicAcidTypeChange(value);
         }
         const { formType, select, dmpSelect, clear, dmpClear } = this.props;
         const isIgoForm = formType === 'upload';
@@ -315,6 +390,7 @@ fetchReadLength=async(application)=>{
                             handleApplicationChange={this.handleApplicationChange}
                             handleSpeciesChange={this.handleSpeciesChange}
                             handleReadLengthChange={this.handleReadLengthChange}
+                            handleNucleicAcidTypeChange={this.handleNucleicAcidTypeChange}
                             handleInputChange={this.handleInputChange}
                             handleClear={this.handleClear}
                             materials={this.state.materials}
@@ -323,6 +399,7 @@ fetchReadLength=async(application)=>{
                             containers={this.state.containers}
                             species={this.state.species}
                             readLengths={this.state.readLengths}
+                            nucleicAcidTypes={this.state.nucleicAcidTypes}
                         />
                     ) : (
                         <div />
@@ -355,4 +432,6 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UploadFormContainer);
+
+
 
