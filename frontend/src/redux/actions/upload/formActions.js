@@ -31,6 +31,11 @@ export const RECEIVE_INITIAL_STATE_FAIL = 'RECEIVE_INITIAL_STATE_FAIL';
 export const INITIAL_STATE_RETRIEVED = 'INITIAL_STATE_RETRIEVED';
 export const REQUEST_SPECIES= 'REQUEST_SPECIES';
 export const RECEIVE_SPECIES_SUCCESS ='RECEIVE_SPECIES_SUCCESS';
+export const REQUEST_NUCLEIC_ACID_TYPES = 'REQUEST_NUCLEIC_ACID_TYPES';
+export const RECEIVE_NUCLEIC_ACID_TYPES_SUCCESS = 'RECEIVE_NUCLEIC_ACID_TYPES_SUCCESS';
+export const RECEIVE_NUCLEIC_ACID_TYPES_FAIL = 'RECEIVE_NUCLEIC_ACID_TYPES_FAIL';
+export const CLEAR_NUCLEIC_ACID_TYPES = 'CLEAR_NUCLEIC_ACID_TYPES';
+
 
 export function getInitialState() {
     return (dispatch, getState) => {
@@ -222,7 +227,41 @@ export function handleApplicationChange(selectedApplication){
 }
 
 
+export function fetchNucleicAcidTypes(material, application) {
+    return (dispatch) => {
+        dispatch({ type: REQUEST_NUCLEIC_ACID_TYPES });
+        
+        return axios.get(`${Config.NODE_API_ROOT}/nucleic-acid-types`, {
+            params: { material, application }
+        })
+        .then((response) => {
+            const nucleicAcidTypes = response.data;
+            console.log("✅ Redux: Received nucleic acid types from JS mapping:", nucleicAcidTypes);
+            
+            dispatch({
+                type: RECEIVE_NUCLEIC_ACID_TYPES_SUCCESS,
+                nucleicAcidTypes,
+                material,
+                application
+            });
+            
+            // Auto-select if only one option
+            if (nucleicAcidTypes && nucleicAcidTypes.length === 1) {
+                dispatch(select('nucleicAcidTypeToExtract', nucleicAcidTypes[0]));
+            }
+        })
+        .catch((error) => {
+            dispatch({
+                type: RECEIVE_NUCLEIC_ACID_TYPES_FAIL,
+                error: error
+            });
+        });
+    };
+}
 
+export const clearNucleicAcidTypes = () => {
+    return { type: CLEAR_NUCLEIC_ACID_TYPES };
+};
 
 export function  fetchReadLength(application){
     return (dispatch) =>{
@@ -294,3 +333,5 @@ export const checkForChange = (field, value) => {
         }
     };
 };
+
+

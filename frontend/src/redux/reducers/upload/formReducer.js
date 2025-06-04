@@ -73,6 +73,45 @@ export default function formReducer(state = initialFormState, action) {
     };
 
 
+
+
+    case ActionTypes.REQUEST_NUCLEIC_ACID_TYPES:
+    return {
+        ...state,
+        formIsLoading: true,
+    };
+
+case ActionTypes.RECEIVE_NUCLEIC_ACID_TYPES_SUCCESS:
+    return {
+        ...state,
+        formIsLoading: false,
+        nucleicAcidTypes: action.nucleicAcidTypes,
+        selected: {
+            ...state.selected,
+            // Auto-select if there's only one nucleic acid type
+            nucleicAcidTypeToExtract: action.nucleicAcidTypes && action.nucleicAcidTypes.length === 1 
+                ? action.nucleicAcidTypes[0] 
+                : state.selected.nucleicAcidTypeToExtract
+        }
+    };
+
+case ActionTypes.RECEIVE_NUCLEIC_ACID_TYPES_FAIL:
+    return {
+        ...state,
+        formIsLoading: false,
+        error: action.error
+    };
+
+case ActionTypes.CLEAR_NUCLEIC_ACID_TYPES:
+    return {
+        ...state,
+        nucleicAcidTypes: [],
+        selected: {
+            ...state.selected,
+            nucleicAcidTypeToExtract: ''
+        }
+    };
+
             case ActionTypes.RECEIVE_READ_LENGTH_FAIL:
                 return {
                     ...state,
@@ -309,3 +348,7 @@ export default function formReducer(state = initialFormState, action) {
             return state;
     }
 }
+ 
+
+
+
