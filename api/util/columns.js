@@ -16,7 +16,7 @@ export const validationPatterns = {
     dmpPatientId: '^P-[0-9]{7}$',
     mrn: '^[0-9]{8}$',
     groupingId: '[A-Za-z0-9\\,_-]{4,}',
-    molecularAccessionNumber: '^(M(2[5-9]|[3-9][0-9]|100)-)?\\d{6,10}(\\.(2|22))?$'
+     molecularAccessionNumber: '^(M(2[5-9]|[3-9][0-9]|100)-)?\\d{6,10}(\\.\\d+)?$'
     // plateId: '^MSK-[A-Za-z0-9\\,_-]{10,}$',
 };
 
