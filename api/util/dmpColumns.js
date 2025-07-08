@@ -16,8 +16,6 @@ const validationPatterns = {
     groupingId: '[A-Za-z0-9\\,_-]{4,}',
     plateId: '^MSK-[A-Za-z0-9\\,_-]{10,}$',
    molecularAccessionNumber: '^(M([1-9]|[1-9][0-9]|100)-)?\\d{6,10}(\\.\\d+)?$'
-
-
 };
 export const deprecatedColumns = ['Index Position'];
 export const formattingAdjustments = {

@@ -29,6 +29,7 @@ export const initialFormState = {
         isShared: false,
         sharedWith: '',
         sequencingReadLength: '',
+        nucleicAcidTypeToExtract: '',
     },
     // selected: {
     //   application: 'MouseWholeGenome',
@@ -103,3 +104,6 @@ export const initialDmpFormState = {
         serviceId: '',
     },
 };
+
+
+

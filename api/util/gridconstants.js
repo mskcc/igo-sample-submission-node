@@ -585,7 +585,7 @@
   }
 
 
-  export const preservationMapping = {
+  /*export const preservationMapping = {
     "ATAC Sequencing": {
       "Cells": ["Fresh", "Viably Frozen"],
       "Nuclei": ["Fresh", "Viably Frozen"]
@@ -996,9 +996,99 @@
       "Whole Blood": ["EDTA", "Streck"]
     }
   };
+  */
 
 
+  export const preservationMapping = {
+  "Blocks": {
+    "DNA": ["FFPE","OCT"],
+    "DNA and RNA": ["FFPE","OCT"],
+    "RNA": ["FFPE","OCT"],
+    "hmwDNA": ["OCT"]
+  },
+  "Bone Marrow Biopsy": {
+    "DNA": ["Frozen"],
+    "DNA and RNA": ["Frozen"],
+    "RNA": ["Frozen"],
+    "hmwDNA": ["Frozen"]
+  },
+  "Buccal Swab": {
+    "DNA": ["Fresh"]
+  },
+  "Buffy Coat": {
+    "DNA": ["Frozen"],
+    "DNA and RNA": ["Frozen"],
+    "RNA": ["Frozen"],
+    "hmwDNA": ["Frozen"]
+  },
+  "CSF": {
+    "DNA": ["Frozen"],
+    "DNA and RNA": ["Frozen"],
+    "RNA": ["Frozen"],
+    "cfDNA": ["Frozen"],
+    "hmwDNA": ["Frozen"]
+  },
+  "Cells": {
+    "DNA": ["Fixed Frozen","Frozen","RLT Buffer","RNALater","Viably Frozen"],
+    "DNA and RNA": ["Fixed Frozen","Frozen","RLT Buffer","RNALater","Trizol","Trizol LS","Viably Frozen"],
+    "RNA": ["Fixed Frozen","Frozen","RLT Buffer","RNALater","Trizol","Trizol LS","Viably Frozen"],
+    "general": ["Fresh","Viably Frozen"],
+    "hmwDNA": ["Frozen","Viably Frozen"]
+  },
+  "Curls/Punches": {
+    "DNA": ["FFPE","OCT"],
+    "DNA and RNA": ["FFPE","OCT"],
+    "RNA": ["FFPE","OCT"],
+    "hmwDNA": ["OCT"]
+  },
+  "Fingernails": {
+    "DNA": ["Fresh"]
+  },
+  "Nuclei": {
+    "DNA": ["Frozen","Viably Frozen"],
+    "DNA and RNA": ["Frozen"],
+    "RNA": ["Frozen"],
+    "general": ["Fresh","Viably Frozen"],
+    "hmwDNA": ["Frozen","Viably Frozen"]
+  },
+  "Plasma": {
+    "DNA": ["Frozen"],
+    "DNA and RNA": ["Frozen"],
+    "RNA": ["Frozen"],
+    "cfDNA": ["Frozen"],
+    "hmwDNA": ["Frozen"]
+  },
+  "Saliva": {
+    "DNA": ["Fresh"]
+  },
+  "Slides": {
+    "DNA": ["FFPE"],
+    "DNA and RNA": ["FFPE"],
+    "RNA": ["FFPE"]
+  },
+  "Tissue": {
+    "DNA": ["Fixed Frozen","Frozen","OCT","RLT Buffer","RNALater"],
+    "DNA and RNA": ["Fixed Frozen","Frozen","OCT","RLT Buffer","RNALater"],
+    "RNA": ["Fixed Frozen","Frozen","OCT","RLT Buffer","RNALater","Trizol"],
+    "hmwDNA": ["Frozen","OCT"]
+  },
+  "Whole Blood": {
+    "DNA": ["EDTA","Streck"],
+    "DNA and RNA": ["PAXgene"],
+    "RNA": ["PAXgene"],
+    "hmwDNA": ["EDTA","Streck"]
+  }
+};
 
+
+  export const specimenTypeMapping = {
+                        "TCR Sequencing": {
+                            "Buffy Coat": ["Blood or Buffy coats"],
+                            "Cells": ["Sorted T cells", "Lymphoid tissue", "Non-lymphoid"],
+                            "RNA": ["Sorted T cells", "Blood or Buffy coats", "Lymphoid tissue", "Non-lymphoid"],
+                            "Tissue": ["Lymphoid tissue", "Non-lymphoid"]
+                        }
+                    };
 
 
 

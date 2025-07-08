@@ -1,3 +1,4 @@
+
 {
     "upload.form": {
         "material_label": "Material*",
@@ -23,6 +24,11 @@
         "groupIdType_label": "Patient or Group  ID Type*",
         "sequencingReadLength_label": "Sequencing Read Length*",
         "sequencingReadLength_helptext": "Select Read Length",
+        "nucleicAcidType_label": "Nucleic Acid Type To Extract*",
+        "nucleicAcidType_helptext": "Select Nucleic Acid Type",
+        "nucleicAcidTypeToExtract_label": "Nucleic Acid Type To Extract*",
+        "nucleicAcidTypeToExtract_helptext": "Select Nucleic Acid Type",
+
 
         "isShared_label": "I want others to be able to edit or submit these samples on my behalf.",
         "sharedWith_label": "Give permission to:",
@@ -61,3 +67,6 @@
         "dmp_panel_title": "Ready to pull from DMP"
     }
 }
+
+
+

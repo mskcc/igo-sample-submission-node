@@ -18,6 +18,7 @@ class UploadForm extends React.Component {
             values: {
                 ...this.props.form.selected,
                 species :this.props.species.length===1 ? this.props.species[0] :'',
+                nucleicAcidTypeToExtract: this.props.form.selected.nucleicAcidTypeToExtract || '', 
             },
             speciesPrepopulated:false,
             formValid: {
@@ -32,6 +33,7 @@ class UploadForm extends React.Component {
                 patientIdTypeSpecified: true,
                 sharedWith: true,
                 sequencingReadLength: true,
+                nucleicAcidTypeToExtract: true,
             },
            materials:[],
             isLoading:false,
@@ -50,6 +52,10 @@ class UploadForm extends React.Component {
         return this.state.values.application === 'HC_Custom' &&
             this.state.values.material !== 'Pooled Library';
     };
+    showNucleicAcidTypesDropdown = () => {
+        return this.props.nucleicAcidTypes && this.props.nucleicAcidTypes.length > 0;
+    };
+
     showPatientIdTypeSpecDropdown = () => {
         return (
             this.state.values.species === 'Human' &&
@@ -188,6 +194,17 @@ class UploadForm extends React.Component {
 
                     formValid[value] = isValidOption && values[value].length > 0;
                     break;
+                    case 'nucleicAcidTypeToExtract':
+                    if (!this.showNucleicAcidTypesDropdown()) {
+                        formValid[value] = true;
+                        values[value] = '';
+                        break;
+                    }
+                    isValidOption = this.props.nucleicAcidTypes.some(function(el) {
+                        return el === values[value];
+                    });
+                    formValid[value] = isValidOption && values[value].length > 0;
+                    break;
 
                 // Investigators need to know the panel they're requesting. Case, underscores and spaces are normalized for matching.
                 // The picklist is not public to avoid lab's requesting each other's custom panels without consent.
@@ -298,7 +315,7 @@ class UploadForm extends React.Component {
             this.state.formValid.patientIdTypeSpecified &&
             this.state.formValid.capturePanel &&
             this.state.formValid.sharedWith &&
-            this.state.formValid.sequencingReadLength
+            this.state.formValid.sequencingReadLength && this.state.formValid.nucleicAcidTypeToExtract
         );
     }
 
@@ -315,6 +332,52 @@ class UploadForm extends React.Component {
                 });
             }  
     }
+    if (prevProps.nucleicAcidTypes !== this.props.nucleicAcidTypes) {
+        console.log("🔄 UploadForm: nucleicAcidTypes changed from", prevProps.nucleicAcidTypes, "to", this.props.nucleicAcidTypes);
+        
+        if (this.props.nucleicAcidTypes && this.props.nucleicAcidTypes.length === 1) {
+            const selectedValue = this.props.nucleicAcidTypes[0];
+            console.log("COMPONENT DID UPDATE - Auto-selecting nucleic acid type:", selectedValue);
+            
+            // Update local state first
+            this.setState({
+                values: {
+                    ...this.state.values,
+                    nucleicAcidTypeToExtract: selectedValue
+                },
+                formValid: {
+                    ...this.state.formValid,
+                    nucleicAcidTypeToExtract: true
+                }
+            }, () => {
+                // Then trigger the onChange to update parent/Redux
+                this.handleDropdownChange({
+                    id: 'nucleicAcidTypeToExtract',
+                    value: selectedValue
+                });
+            });
+            
+        } else if (this.props.nucleicAcidTypes && this.props.nucleicAcidTypes.length === 0) {
+            console.log("COMPONENT DID UPDATE - Clearing nucleic acid type");
+            
+            this.setState({
+                values: {
+                    ...this.state.values,
+                    nucleicAcidTypeToExtract: ''
+                },
+                formValid: {
+                    ...this.state.formValid,
+                    nucleicAcidTypeToExtract: true
+                }
+            }, () => {
+                this.handleDropdownChange({
+                    id: 'nucleicAcidTypeToExtract',
+                    value: ''
+                });
+            });
+        }
+    }
+
 }
 
 
@@ -327,12 +390,14 @@ class UploadForm extends React.Component {
             handleMaterialChange,
             handleSpeciesChange,
             handleReadLengthChange,
+            handleNucleicAcidTypeChange,
             gridIsLoading,
             nothingToChange,
             gridNumberOfSamples,
             submitRowNumberUpdate,
             materials,
             applications,
+            nucleicAcidTypes,
             species,
             containers,
             isloading
@@ -403,6 +468,27 @@ class UploadForm extends React.Component {
                                     label: form.selected.sequencingReadLength,
                                 }}
                             />)}
+                                    {this.showNucleicAcidTypesDropdown() && (
+                                    <Dropdown
+                                        key={`nucleic-${form.selected.nucleicAcidTypeToExtract || this.state.values.nucleicAcidTypeToExtract || 'empty'}`}
+                                        id='nucleicAcidTypeToExtract'
+                                        error={!formValid.nucleicAcidTypeToExtract}
+                                        onSelect={handleNucleicAcidTypeChange}
+                                        onChange={this.handleDropdownChange}
+                                        items={nucleicAcidTypes.map((option) => ({
+                                            value: option,
+                                            label: option,
+                                        })).sort((a, b) => a.label.localeCompare(b.label))}
+                                        loading={form.formIsLoading}
+                                        dynamic
+                                        value={{
+                                            // Use Redux state first, then local state as fallback
+                                            value: form.selected.nucleicAcidTypeToExtract || this.state.values.nucleicAcidTypeToExtract || '',
+                                            label: form.selected.nucleicAcidTypeToExtract || this.state.values.nucleicAcidTypeToExtract || '',
+                                        }}
+                                        disabled={nucleicAcidTypes.length === 1}
+                                    />
+                                )}
 
                             {this.showCapturePanelDropdown() && (
                                 <Input

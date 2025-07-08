@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import { Logform } from 'winston';
 import { reverseReadableRecipesLib } from '../constants';
-import {naToExtractMapping,coverageMapping,sequencingMapping,preservationMapping } from './gridconstants';
+import {coverageMapping,sequencingMapping,preservationMapping , specimenTypeMapping} from './gridconstants';
 
 const fs = require('fs');
 
@@ -249,14 +249,7 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                 if (colDef.picklistName === 'Specimen+Types') {
                     const application = formValues.application;
                     const material = formValues.material;
-                    const specimenTypeMapping = {
-                        "TCR Sequencing": {
-                            "Buffy Coat": ["Blood or Buffy coats"],
-                            "Cells": ["Sorted T cells", "Lymphoid tissue", "Non-lymphoid"],
-                            "RNA": ["Sorted T cells", "Blood or Buffy coats", "Lymphoid tissue", "Non-lymphoid"],
-                            "Tissue": ["Lymphoid tissue", "Non-lymphoid"]
-                        }
-                    };
+                    
                     if (application && material && 
                         specimenTypeMapping[application] && 
                         specimenTypeMapping[application][material]) {
@@ -268,7 +261,7 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
 
 
 
-                if (colDef.picklistName === 'Nucleic+Acid+Type+to+Extract' && colDef.data === 'naToExtract') {
+            /*    if (colDef.picklistName === 'Nucleic+Acid+Type+to+Extract' && colDef.data === 'naToExtract') {
                     const application = formValues.application;
                     const material = formValues.material;
                     if (naToExtractMapping && application && material && 
@@ -278,21 +271,22 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                     } else {
                         colDef.source = picklists[colDef.picklistName];
                     }
-                }
+                } */ 
 
-                if (colDef.picklistName === 'Preservation') { 
-                    const application = formValues.application; 
-                    const material = formValues.material; 
-                    if (preservationMapping && 
-                    application &&  
-                    material &&  
-                    preservationMapping[application] &&  
-                    preservationMapping[application][material]) { 
-                    colDef.source = preservationMapping[application][material]; 
-                } else { 
-                colDef.source = picklists[colDef.picklistName]; 
-                            }
-            } 
+                                if (colDef.picklistName === 'Preservation') { 
+                        const material = formValues.material; 
+                        const nucleicAcidType = formValues.nucleicAcidTypeToExtract;
+                        
+                        if (preservationMapping && 
+                            material && 
+                            nucleicAcidType && 
+                            preservationMapping[material] &&
+                            preservationMapping[material][nucleicAcidType]) { 
+                            colDef.source = preservationMapping[material][nucleicAcidType]; 
+                        } else { 
+                            colDef.source = picklists[colDef.picklistName]; 
+                        }
+                    }
 
                     // Sequencing Reads Requested
                 if (colDef.picklistName === 'Sequencing+Reads+Requested') {
@@ -489,17 +483,17 @@ const fillData = (columns, formValues) => {
                             preservation: 'Fresh',
                         };
                     }
-                    else if (preservationMapping &&  
-                        application &&  
-                        material &&  
-                        preservationMapping[application] &&  
-                        preservationMapping[application][material] && 
-                        preservationMapping[application][material].length === 1) { 
-                        rowData[i] = { 
-                       ...rowData[i], 
-                       preservation: preservationMapping[application][material][0] 
-                   }; 
-                } 
+                   else if (preservationMapping && 
+    material && 
+    formValues.nucleicAcidTypeToExtract &&
+    preservationMapping[material] && 
+    preservationMapping[material][formValues.nucleicAcidTypeToExtract] &&
+    preservationMapping[material][formValues.nucleicAcidTypeToExtract].length === 1) { 
+    rowData[i] = { 
+        ...rowData[i], 
+        preservation: preservationMapping[material][formValues.nucleicAcidTypeToExtract][0] 
+    }; 
+}
                 }
                 if (datafieldName === 'sampleOrigin') {
                     if (material === 'Blood') {
@@ -523,7 +517,7 @@ const fillData = (columns, formValues) => {
                     }
                 }
 
-                if (datafieldName === 'naToExtract') {
+          /*      if (datafieldName === 'naToExtract') {
                     
                     if (naToExtractMapping && application && material && 
                         naToExtractMapping[application] && 
@@ -535,7 +529,7 @@ const fillData = (columns, formValues) => {
                             naToExtract: naToExtractMapping[application][material][0]
                         };
                     }
-                }
+                } */ 
                 if (datafieldName === 'patientId' && colDef.columnHeader === 'Cell Line Name') {
                     rowData[i] = { ...rowData[i], specimenType: 'CellLine' };
                 }
@@ -1750,3 +1744,6 @@ const countIdRequests = (id, username) => {
         if (err) logger.error(err);
     });
 };
+
+
+
