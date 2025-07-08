@@ -75,7 +75,11 @@ export const readableRecipesLib = {
     "WGS_Shallow": "Shallow Whole Genome Sequencing",
     "GLP_WES": "CCV WES Submissions (GLP)",
     "GLP_RNA": "CCV RNA-Seq Submissions (GLP)",
-    "OGM": "Optical Genome Mapping (Bionano)"
+    "OGM": "Optical Genome Mapping (Bionano)",
+    "SC_Chromium-OCM": "10x Genomics scRNA-Seq w/ On-Chip Multiplexing",
+    "SC_SCD-WGS": "iCell8 scWGS",
+    "User_DLP": "DLP (User)",
+    "SC_Chromium-Flex": "10X Flex scRNA-Seq"
 };
 export const reverseReadableRecipesLib = {
     "ATAC Sequencing": "ATAC",
@@ -152,6 +156,10 @@ export const reverseReadableRecipesLib = {
     "Shallow Whole Genome Sequencing": "WGS_Shallow",
     "CCV WES Submissions (GLP)": "GLP_WES",
     "CCV RNA-Seq Submissions (GLP)": "GLP_RNA",
-    "Optical Genome Mapping (Bionano)": "OGM"
+    "Optical Genome Mapping (Bionano)": "OGM",
+    "10x Genomics scRNA-Seq w/ On-Chip Multiplexing":"SC_Chromium-OCM",
+    "iCell8 scWGS":"SC_SCD-WGS",
+    "DLP (User)":"User_DLP",
+    "10X Flex scRNA-Seq":"SC_Chromium-Flex"
 };
 
