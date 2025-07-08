@@ -1,0 +1,80 @@
+name: CI/CD Pipeline for IGO Sample Submission
+on:
+  workflow_dispatch:  # Manual trigger only
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'  # Default to dev for easier testing
+        type: choice
+        options:
+          - dev
+          - production
+
+jobs:
+  deploy-to-dev:
+    name: Deploy to DEV (`dlviigoapps1`)
+    runs-on: self-hosted
+    if: github.event.inputs.environment == 'dev'  # Only run when dev is selected
+    environment: dev
+    steps:
+      - name: Deploy to DEV
+        run: |
+          echo "🚀 Deploying to DEV on dlviigoapps1..."
+          cd /srv/prep/deployments/igo-sample-submission-node
+          git pull
+          # Make sure we're on main branch
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          if [[ "$CURRENT_BRANCH" != "main" ]]; then
+            echo "❌ You can only deploy 'main' branch to DEV."
+            exit 1
+          fi
+          cd frontend/
+          npm run build
+          # Ensure public directory exists
+          mkdir -p ../api/public/
+          cp -rT build/ ../api/public/
+          cd ..
+          cp -rT api/ /srv/www/sample-submission/
+          echo "🔁 Checking if app exists in PM2..."
+          if pm2 list | grep -q "sample-submission"; then
+            echo "App exists, restarting..."
+            pm2 restart sample-submission
+          else
+            echo "App doesn't exist, starting..."
+            cd /srv/www/sample-submission/
+            pm2 start app.js --name sample-submission
+          fi
+          sleep 5
+          if ! pm2 show sample-submission | grep -q "status.*online"; then
+            echo "❌ PM2 process 'sample-submission' failed to start!"
+            pm2 logs sample-submission --lines 50
+            exit 1
+          fi
+          echo "✅ Deployment completed successfully"
+
+  deploy-to-prod:
+    name: Deploy to PROD (`plviigoapps1`)
+    runs-on: [self-hosted, prod, sample-submission-prod]
+    if: github.event.inputs.environment == 'production'
+    environment: production
+    steps:
+      - name: Deploy to PROD
+        run: |
+          echo "🚀 Deploying to PROD on plviigoapps1..."
+          cd /srv/deployments/igo-sample-submission-node
+          git pull
+          # Verify that the current branch is main (ONLY DEPLOY main BRANCH TO PROD)
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          if [[ "$CURRENT_BRANCH" != "main" ]]; then
+            echo "❌ You can only deploy the 'main' branch to PROD."
+            exit 1
+          fi
+          cd frontend/
+          npm run build
+          cp -rT build/ ../api/public/
+          cd ..
+          cp -rT api/ /srv/www/sample-submission/
+          chmod -R 775 /srv/www/sample-submission/public/
+          pm2 restart sample-submission
+          echo "✅ PROD Deployment completed successfully"
