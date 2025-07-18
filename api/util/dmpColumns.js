@@ -15,7 +15,7 @@ const validationPatterns = {
     mrn: '^[0-9]{8}$',
     groupingId: '[A-Za-z0-9\\,_-]{4,}',
     plateId: '^MSK-[A-Za-z0-9\\,_-]{10,}$',
-   molecularAccessionNumber: '^(M([1-9]|[1-9][0-9]|100)-)?\\d{6,10}(\\.\\d+)?$'
+   molecularAccessionNumber: '^(M([1-9]|[1-9][0-9]|100)-)?\\d{3,10}(\\.\\d+)?$'
 };
 export const deprecatedColumns = ['Index Position'];
 export const formattingAdjustments = {
@@ -126,7 +126,7 @@ export const gridColumns = {
         columnHeader: 'Molecular Pathology Accession Number',
         data: 'molecularPathologyAccessionNumber',
         pattern: validationPatterns.molecularAccessionNumber,
-        error: 'Must be 6–10 digits, optionally prefixed by M1–M100, and  optionally suffix with a decimal point .',
+        error: 'Must be 3–10 digits, optionally prefixed by M1–M100, and  optionally suffix with a decimal point .',
     },
 
     'Gene and Mutation': {
