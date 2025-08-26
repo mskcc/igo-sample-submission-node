@@ -78,7 +78,8 @@ export const readableRecipesLib = {
      "SC_Chromium-OCM": "10x Genomics scRNA-Seq w/ On-Chip Multiplexing",
     "SC_SCD-WGS": "iCell8 scWGS",
      "User_DLP": "DLP (User)",
-     "SC_Chromium-Flex": "10X Flex scRNA-Seq"
+     "SC_Chromium-Flex": "10X Flex scRNA-Seq",
+     "Extraction_DNA-MMF":"DNA Extraction from Lysate (MMF only)"
 };
 export const reverseReadableRecipesLib = {
     "ATAC Sequencing": "ATAC",
@@ -159,6 +160,7 @@ export const reverseReadableRecipesLib = {
     "10x Genomics scRNA-Seq w/ On-Chip Multiplexing":"SC_Chromium-OCM",
     "iCell8 scWGS":"SC_SCD-WGS",
     "DLP (User)":"User_DLP",
-    "10X Flex scRNA-Seq":"SC_Chromium-Flex"
+    "10X Flex scRNA-Seq":"SC_Chromium-Flex",
+    "DNA Extraction from Lysate (MMF only)":"Extraction_DNA-MMF"
 
 };
