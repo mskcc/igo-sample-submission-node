@@ -277,6 +277,9 @@ fetchReadLength=async(application)=>{
             else if (application ==="Visium HD" || application ==="Visium HD (Library)"){
                 this.handleReadLengthChange('43/10/10/50');       
             }
+            else if(application ==="10X Flex scRNA-Seq"){
+                this.handleReadLengthChange('PE28/88');
+            }
             else {
                 this.handleReadLengthChange();
             }
