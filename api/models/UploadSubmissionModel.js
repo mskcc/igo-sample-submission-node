@@ -9,7 +9,4 @@ var UploadSubmissionSchema = new mongoose.Schema({
     Species:{type: String, required:true}
 },{collection:'uploadsubmission'});
 
-
-
 module.exports = mongoose.model("uploadsubmission", UploadSubmissionSchema);
-

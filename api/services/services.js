@@ -218,6 +218,45 @@ exports.submit = (bankedSample) => {
         });
 };
 
+exports.submitBulk = (bankedSamples) => {
+    const url = `${LIMS_URL}/setBankedSamples`;
+    logger.info(`Sending bulk request to ${url} for ${bankedSamples.length} samples`);
+    
+    // Format the request body according to the LimsRest bulk endpoint format
+    const requestBody = {
+        samples: bankedSamples
+    };
+    
+    return axios
+        .post(
+            url,
+            requestBody,
+            {
+                auth: { ...LIMS_AUTH },
+                httpsAgent: agent,
+                ...axiosConfig,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        )
+        .then((resp) => {
+            info(url);
+            return resp;
+        })
+        .catch((error) => {
+            errorlog(url);
+            if (error.response) {
+                throw error.response.data;
+            } else {
+                throw error;
+            }
+        })
+        .then((resp) => {
+            return formatData(resp);
+        });
+};
+
 exports.getOnco = () => {
     const url = ONCO_URL;
     logger.info('Sending request to OncoTree');
