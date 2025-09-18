@@ -817,7 +817,7 @@ function parseDate(mongooseDate) {
     return humanReadable;
 }
 
-//  Submits submission to BankedSample. Returns array of created recordIds
+//  Submits submission to BankedSample using bulk endpoint. Returns array of created recordIds
 export function submit(submission, user, transactionId) {
     return new Promise((resolve, reject) => {
         let serviceId = submission.formValues.serviceId;
@@ -829,8 +829,10 @@ export function submit(submission, user, transactionId) {
         let sampleType = submission.formValues.material;
         let seqReadLength = submission.formValues.sequencingReadLength || '';
         let samples = submission.gridValues;
-        let submittedSamples = [];
-        // prep banked sample record
+        
+        // Prepare all banked samples for bulk submission
+        let bankedSamples = [];
+        
         for (let i = 0; i < samples.length; i++) {
             let bankedSample = Object.assign({}, samples[i]);
             bankedSample.serviceId = serviceId;
@@ -852,6 +854,7 @@ export function submit(submission, user, transactionId) {
                 var match = /([A-Za-z]+)(\d+)/.exec(bankedSample.wellPosition);
                 if (!match) {
                     reject('Invalid Well Position.');
+                    return;
                 } else {
                     bankedSample.rowPos = match[1];
                     bankedSample.colPos = match[2];
@@ -870,17 +873,17 @@ export function submit(submission, user, transactionId) {
                 }
             });
 
-            services
-                .submit(bankedSample)
-                .then((response) => {
-                    logger.info(`Submitted ${bankedSample.userId}.`);
-                    submittedSamples.push(response);
-                    if (submittedSamples.length === samples.length) {
-                        resolve(submittedSamples);
-                    }
-                })
-                .catch((err) => reject(`Submit failed at sample ${bankedSample.userId}, index ${bankedSample.rowIndex}. ${err}`));
+            bankedSamples.push(bankedSample);
         }
+
+        // Submit all samples in bulk
+        services
+            .submitBulk(bankedSamples)
+            .then((response) => {
+                logger.info(`Bulk submitted ${bankedSamples.length} samples.`);
+                resolve(response.results || response);
+            })
+            .catch((err) => reject(`Bulk submit failed: ${err}`));
     });
 }
 
