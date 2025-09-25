@@ -821,6 +821,7 @@ function parseDate(mongooseDate) {
 export function submit(submission, user, transactionId) {
     return new Promise((resolve, reject) => {
         let serviceId = submission.formValues.serviceId;
+        let naToExtract = submission.formValues.nucleicAcidTypeToExtract;
         let recipe = reverseReadableRecipesLib[submission.formValues.application];
         if (submission.formValues.application.includes('_') || submission.formValues.application ==='ATAC' || submission.formValues.application === 'PEDPEG') {
             recipe = submission.formValues.application;
@@ -836,6 +837,7 @@ export function submit(submission, user, transactionId) {
         for (let i = 0; i < samples.length; i++) {
             let bankedSample = Object.assign({}, samples[i]);
             bankedSample.serviceId = serviceId;
+            bankedSample.nucleicAcidTypeToExtract = naToExtract;
             bankedSample.recipe = recipe;
             bankedSample.capturePanel = capturePanel;
             bankedSample.sampleType = sampleType;
