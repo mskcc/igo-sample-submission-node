@@ -18,7 +18,7 @@
         "container_helptext": "Select Container",
         "patientIdType_label": "Patient ID Type*",
         "patientIdType_helptext": "Select Patient ID Type",
-        "patientIdTypeSpecified_helptext": "MRN, DMP-ID (P-0000000) or CMO-ID (C-A1B2C3 or C-A1B2C3) ",
+        "patientIdTypeSpecified_helptext": "MRN ",
         "patientIdTypeSpecified_label": "Specified Patient ID Type*",
         "groupIdType_helptext": "Select Patient or Group ID Type",
         "groupIdType_label": "Patient or Group  ID Type*",
