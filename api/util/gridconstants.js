@@ -20,7 +20,8 @@
       "Whole Blood": ["DNA", "RNA", "hmwDNA"]
     },
     "cfDNA Extraction": {
-      "Plasma": ["cfDNA"]
+      "Plasma": ["cfDNA"],
+       "Urine": ["cfDNA"]
     },
     "DNA Extraction": {
       "Blocks": ["DNA", "hmwDNA"],
@@ -643,6 +644,9 @@
     "RNA": ["Frozen"],
     "cfDNA": ["Frozen"],
     "hmwDNA": ["Frozen"]
+  },
+   "Urine": {                    
+    "cfDNA": ["Frozen"]
   },
   "Saliva": {
     "DNA": ["Fresh"]
