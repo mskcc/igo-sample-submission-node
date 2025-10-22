@@ -282,10 +282,7 @@ router.get('/readlength', async (req, res) => {
         
         const matchingMaterial = availableMaterials.find(mappedMaterial => 
             mappedMaterial.toLowerCase() === materialTrimmed.toLowerCase()
-        ) || availableMaterials.find(mappedMaterial => 
-            mappedMaterial.toLowerCase().includes(materialTrimmed.toLowerCase()) ||
-            materialTrimmed.toLowerCase().includes(mappedMaterial.toLowerCase())
-        );
+        ) 
         
         if (!matchingMaterial) {
             console.log(`Material "${materialTrimmed}" not found in nucleic acid JavaScript mapping for "${applicationTrimmed}"`);
