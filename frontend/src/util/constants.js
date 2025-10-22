@@ -58,7 +58,7 @@ export const readableRecipesLib = {
     "ST_Visium-HD": "Visium HD",
     "User_Visium-HD": "Visium HD (Library)",
     "ST_Xenium": "Xenium",
-    "TCR_IGO": "TCR Sequencing",
+    "TCR_IGO": "Human TCR Sequencing",
     "User_Chromium": "10X GEX, VDJ, FB/CH or Visium",
     "User_Methyl": "Methylation Sequencing",
     "User_MissionBio": "MissionBio",
@@ -80,7 +80,8 @@ export const readableRecipesLib = {
     "SC_SCD-WGS": "iCell8 scWGS",
     "User_DLP": "DLP (User)",
     "SC_Chromium-Flex": "10X Flex scRNA-Seq",
-    "Extraction_DNA-MMF":"DNA Extraction from Lysate (MMF only)"
+    "Extraction_DNA-MMF":"DNA Extraction from Lysate (MMF only)",
+    "TCR_AIR": " Mouse TCR Sequencing"
     
 };
 export const reverseReadableRecipesLib = {
@@ -141,7 +142,7 @@ export const reverseReadableRecipesLib = {
     "Visium HD": "ST_Visium-HD",
     "Visium HD (Library)": "User_Visium-HD",
     "Xenium": "ST_Xenium",
-    "TCR Sequencing": "TCR_IGO",
+    "Human TCR Sequencing": "TCR_IGO",
     "10X GEX, VDJ, FB/CH or Visium": "User_Chromium",
     "Methylation Sequencing": "User_Methyl",
     "MissionBio": "User_MissionBio",
@@ -163,6 +164,7 @@ export const reverseReadableRecipesLib = {
     "iCell8 scWGS":"SC_SCD-WGS",
     "DLP (User)":"User_DLP",
     "10X Flex scRNA-Seq":"SC_Chromium-Flex",
-    "DNA Extraction from Lysate (MMF only)" :"Extraction_DNA-MMF"
+    "DNA Extraction from Lysate (MMF only)" :"Extraction_DNA-MMF",
+      "Mouse TCR Sequencing": "TCR_AIR"
 };
 

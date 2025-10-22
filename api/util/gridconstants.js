@@ -287,11 +287,16 @@
       "Tissue": ["RNA"],
       "Whole Blood": ["RNA"]
     },
-    "TCR Sequencing": {
+    "Human TCR Sequencing": {
       "Buffy Coat": ["RNA"],
       "Cells": ["RNA"],
       "Tissue": ["RNA"]
     },
+    "Mouse TCR Sequencing": {
+  "Buffy Coat": ["RNA"],
+  "Cells": ["RNA"],
+  "Tissue": ["RNA"]
+},
     "Whole Exome Sequencing": {
       "Blocks": ["DNA"],
       "Curls/Punches": ["DNA"],
@@ -683,17 +688,23 @@
       "Blocks": ["FFPE", "Fixed Frozen"],
       "Slides": ["FFPE", "Fixed Frozen"],
       "Tissue": ["FFPE", "Fixed Frozen"]
-}
+},
   };
 
 
   export const specimenTypeMapping = {
-                        "TCR Sequencing": {
+                        "Human TCR Sequencing": {
                             "Buffy Coat": ["Blood or Buffy coats"],
                             "Cells": ["Sorted T cells", "Lymphoid tissue", "Non-lymphoid"],
                             "RNA": ["Sorted T cells", "Blood or Buffy coats", "Lymphoid tissue", "Non-lymphoid"],
                             "Tissue": ["Lymphoid tissue", "Non-lymphoid"]
-                        }
+                        },
+                        "Mouse TCR Sequencing": {
+    "Buffy Coat": ["Blood or Buffy coats"],
+    "Cells": ["Sorted T cells", "Lymphoid tissue", "Non-lymphoid"],
+    "RNA": ["Sorted T cells", "Blood or Buffy coats", "Lymphoid tissue", "Non-lymphoid"],
+    "Tissue": ["Lymphoid tissue", "Non-lymphoid"]
+}
                     };
 
 
