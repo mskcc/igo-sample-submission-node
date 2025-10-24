@@ -625,7 +625,8 @@
     "DNA and RNA": ["Fixed Frozen","Frozen","RLT Buffer","RNALater","Trizol","Trizol LS","Viably Frozen"],
     "RNA": ["Fixed Frozen","Frozen","RLT Buffer","RNALater","Trizol","Trizol LS","Viably Frozen"],
     "general": ["Fresh","Viably Frozen"],
-    "hmwDNA": ["Frozen","Viably Frozen"]
+    "hmwDNA": ["Frozen","Viably Frozen"],
+    "uhmwDNA":["Viably Frozen"]
   },
   "Curls/Punches": {
     "DNA": ["FFPE","OCT"],
@@ -665,7 +666,8 @@
     "DNA": ["Fixed Frozen","Frozen","OCT","RLT Buffer","RNALater"],
     "DNA and RNA": ["Fixed Frozen","Frozen","OCT","RLT Buffer","RNALater"],
     "RNA": ["Fixed Frozen","Frozen","OCT","RLT Buffer","RNALater","Trizol"],
-    "hmwDNA": ["Frozen","OCT"]
+    "hmwDNA": ["Frozen","OCT"],
+    "uhmwDNA":['Frozen']
   },
   "Whole Blood": {
     "DNA": ["EDTA","Streck"],
