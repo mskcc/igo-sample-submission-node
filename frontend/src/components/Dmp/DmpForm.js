@@ -205,7 +205,7 @@ class DmpForm extends React.Component {
                                 FAQ
                             </a>
                             {' '}for support on the{' '}
-                            <a href='https://cmo.mskcc.org/index.php/requesting-leftover-genetic-material/#Leftover_Genomic_Materialnbspfromnbspthe_DMP' target='_blank'>
+                            <a href='https://cmo.mskcc.org/index.php/requesting-leftover-genetic-material/' target='_blank'>
                                 CMO website
                             </a>.
                             {' '}Please reach out to{' '}
