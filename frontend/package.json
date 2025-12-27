@@ -82,7 +82,7 @@
         "webpack-dev-server": "^3.11.0",
         "webpack-manifest-plugin": "2.0.4",
         "workbox-webpack-plugin": "3.6.3",
-        "xlsx": "^0.14.5"
+        "xlsx": "^0.17.0"
     },
     "scripts": {
         "start": "BROWSER=none node scripts/start.js",
