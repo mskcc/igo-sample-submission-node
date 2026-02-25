@@ -74,22 +74,16 @@ export class UploadPage extends Component {
                         </div>
                         <ul style={{ color: '#333', fontSize: '1rem', lineHeight: '2', paddingLeft: '24px', margin: 0 }}>
                             <li>
-                                The Diagnostic Molecular Pathology (DMP) team is temporarily unable to receive or process residual DNA or leftover library transfer requests due to staffing and system changes.
+                                The Diagnostic Molecular Pathology (DMP) and CMO PM teams are <strong>temporarily unable to receive or process residual DNA or leftover library transfer requests</strong> due to staffing and system changes.
                             </li>
                             <li>
-                                Please do not place any requests for transfer of leftover material from the DMP at this time.
+                                This pause also includes inquiries regarding the <strong>status of leftover material, QC data, and available volumes</strong>.
                             </li>
                             <li>
-                                The &ldquo;Submit&rdquo; button on the DMP sample submission website will be disabled for the duration of this pause.
+                                You may contact the CMO PM team (<a href='mailto:skicmopm@mskcc.org'>skicmopm@mskcc.org</a>) for closure updates in approximately <strong>4–6 weeks</strong>.
                             </li>
                             <li>
-                                If you have recently submitted sample information through this site, it will be unsubmitted and returned to you.
-                            </li>
-                            <li>
-                                You may contact the CMO PM team (<a href='mailto:skicmopm@mskcc.org'>skicmopm@mskcc.org</a>) for closure updates in approximately 4–6 weeks.
-                            </li>
-                            <li>
-                                In the interim, please consider reaching out to the Biobank directly to explore available source material.
+                                In the interim, please consider reaching out to the <strong>Biobank</strong> directly to explore available source material.
                             </li>
                         </ul>
                     </Paper>
