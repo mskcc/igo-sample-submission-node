@@ -33,7 +33,7 @@ export const constants = {
 export const emailConfig = {
     cmoPmEmailApplications: ['HC_IMPACT-Heme', 'IMPACT410', 'HC_IMPACT', 'IMPACT468', 'HC_ACCESS', 'WES_Human', 'WES_Mouse'],
     singleCellEmailApplications: [
-        'SC_DLP',
+        'SC_SCD-WGS',
         'User_MissionBio',
         'MissionBio-Myeloid',
         'MissionBio-THS',
