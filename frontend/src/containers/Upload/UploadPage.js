@@ -48,10 +48,19 @@ export class UploadPage extends Component {
     };
 
     render() {
-        const { gridType, grid } = this.props;
-
+        const { gridType, grid, user } = this.props;
+    
+        // Wait for user data to load before making access decisions
+        if (gridType === 'dmp' && Config.DMP_PAUSED && !user.username) {
+            return null;
+        }
+    
+        // Allow CMO PM team and specific users (e.g. Denisha) through
+        const isDmpAllowed = user.role === 'cmo_pm'
+            || (Config.DMP_ALLOWED_USERS || []).includes(user.username);
+    
         // Block access to DMP page when submissions are paused
-        if (gridType === 'dmp' && Config.DMP_PAUSED) {
+        if (gridType === 'dmp' && Config.DMP_PAUSED && !isDmpAllowed) {
             return (
                 <div style={{ display: 'flex', justifyContent: 'center', padding: '2em' }}>
                     <Paper
@@ -114,6 +123,7 @@ const mapStateToProps = (state) => ({
     form: state.upload.form,
     // submissionToEdit: state.upload.submissions.submissionToEdit,
     dmpForm: state.dmp.form,
+    user: state.user,
 });
 
 export default withLocalize(
