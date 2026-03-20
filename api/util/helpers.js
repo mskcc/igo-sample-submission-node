@@ -115,6 +115,17 @@ const cacheAllPicklists = (limsColumns, allColumns) => {
     });
 };
 
+
+
+// TCR recipes display Collection Year as "Timepoint" and Clinical Info as "Timepoint Label"
+function getTcrColumnHeader(dataField, columnHeader, application) {
+    const recipe = reverseReadableRecipesLib[application];
+    if (recipe === 'TCR_IGO' || recipe === 'TCR_AIR') {
+        if (dataField === 'collectionYear') return 'Timepoint';
+        if (dataField === 'clinicalInfo') return 'Timepoint Label';
+    }
+    return columnHeader;
+}
 export function generateGrid(limsColumnList, userRole, formValues, type = 'upload') {
     let allColumns = submitColumns;
     if (type == 'dmp') {
@@ -244,6 +255,21 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
 
 
 
+                if (colDef.picklistName === 'Sample+Origins') {
+    const application = formValues.application;
+    const material = formValues.material;
+    const recipe = reverseReadableRecipesLib[application];
+    const isTCR = recipe === 'TCR_IGO' || recipe === 'TCR_AIR';
+
+    if (isTCR && material === 'RNA') {
+        colDef.source = ['PBMCs (Survey)', 'Tissue (Survey)', 'Experimental'];
+    } else if (isTCR && material === 'Cells') {
+        colDef.source = ['PBMCs (Survey)', 'Experimental'];
+    } else {
+        colDef.source = picklists[colDef.picklistName];
+    }
+}
+
 
 
                 if (colDef.picklistName === 'Specimen+Types') {
@@ -354,6 +380,13 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                 
                 */
 
+
+
+                // TCR recipes: rename columns for investigator-facing display
+const renamedHeader = getTcrColumnHeader(colDef.data, colDef.columnHeader, formValues.application);
+if (renamedHeader !== colDef.columnHeader) {
+    colDef = { ...colDef, columnHeader: renamedHeader };
+}
 
                 colDef.error = colDef.error ? colDef.error : 'Invalid format.';
                 columns.columnFeatures.push(colDef);
@@ -922,7 +955,7 @@ export function generateSubmissionExcel(submission, role) {
             if (!isNoShowCol) {
                 for (let key in submitColumns.gridColumns) {
                     if (submitColumns.gridColumns[key].data === element) {
-                        colDef = submitColumns.gridColumns[key].columnHeader;
+                        colDef = getTcrColumnHeader(element, submitColumns.gridColumns[key].columnHeader, submission.formValues.application);
                         break;
                     }
                 }
