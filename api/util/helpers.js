@@ -119,7 +119,7 @@ const cacheAllPicklists = (limsColumns, allColumns) => {
 
 // TCR recipes display Collection Year as "Timepoint" and Clinical Info as "Timepoint Label"
 function getTcrColumnHeader(dataField, columnHeader, application) {
-    const recipe = reverseReadableRecipesLib[application];
+    const recipe = reverseReadableRecipesLib[application] || application;
     if (recipe === 'TCR_IGO' || recipe === 'TCR_AIR') {
         if (dataField === 'collectionYear') return 'Timepoint';
         if (dataField === 'clinicalInfo') return 'Timepoint Label';
@@ -258,15 +258,16 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                 if (colDef.picklistName === 'Sample+Origins') {
     const application = formValues.application;
     const material = formValues.material;
-    const recipe = reverseReadableRecipesLib[application];
+    const recipe = reverseReadableRecipesLib[application] || application;
     const isTCR = recipe === 'TCR_IGO' || recipe === 'TCR_AIR';
 
+    const tcrOnlyOptions = ['PBMCs (Survey)', 'Tissue (Survey)', 'Experimental'];
     if (isTCR && material === 'RNA') {
         colDef.source = ['PBMCs (Survey)', 'Tissue (Survey)', 'Experimental'];
     } else if (isTCR && material === 'Cells') {
         colDef.source = ['PBMCs (Survey)', 'Experimental'];
     } else {
-        colDef.source = picklists[colDef.picklistName];
+        colDef.source = picklists[colDef.picklistName].filter(opt => !tcrOnlyOptions.includes(opt));
     }
 }
 
