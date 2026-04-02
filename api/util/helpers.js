@@ -477,13 +477,7 @@ const fillData = (columns, formValues) => {
                             preservation: 'Frozen',
                         };
                     }
-                    if(material==='Whole Blood') {
-                            rowData[i] = {
-                            ...rowData[i],
-                            preservation: 'Streck',
-                                            };
-                                        }
-                     if ((material === 'Cells' || material === 'Nuclei') && application.toUpperCase().includes('SC')) {
+                    if ((material === 'Cells' || material === 'Nuclei') && application.toUpperCase().includes('SC')) {
                         rowData[i] = {
                             ...rowData[i],
                             preservation: 'Fresh',
