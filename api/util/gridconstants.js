@@ -71,13 +71,13 @@
       "Buffy Coat": ["DNA"],
       "Plasma": ["DNA", "cfDNA"],
       "CSF": ["DNA", "cfDNA"],
-      "Whole Blood": ["DNA"]
+      "Whole Blood": ["DNA", "cfDNA"]
     },
     "MSK-ACCESS-Heme": {
       "Buffy Coat": ["DNA"],
       "CSF": ["DNA", "cfDNA"],
       "Plasma": ["DNA", "cfDNA"],
-      "Whole Blood": ["DNA"]
+      "Whole Blood": ["DNA", "cfDNA"]
     },
     "CMO-CH": {
       "Bone Marrow Biopsy": ["DNA"],

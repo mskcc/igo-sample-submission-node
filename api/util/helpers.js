@@ -449,8 +449,7 @@ const fillAdditionalRows = (columns, formValues) => {
 const fillData = (columns, formValues) => {
     return new Promise((resolve) => {
         let rowData = [];
-        let { material, numberOfSamples, application, species } = formValues;
-
+        let { material, numberOfSamples, application, species, nucleicAcidTypeToExtract } = formValues;
         for (var i = 0; i < numberOfSamples; i++) {
             columns.columnFeatures.map((colDef) => {
                 let datafieldName = colDef.data;
@@ -483,17 +482,23 @@ const fillData = (columns, formValues) => {
                             preservation: 'Fresh',
                         };
                     }
-                   else if (preservationMapping && 
-    material && 
-    formValues.nucleicAcidTypeToExtract &&
-    preservationMapping[material] && 
-    preservationMapping[material][formValues.nucleicAcidTypeToExtract] &&
-    preservationMapping[material][formValues.nucleicAcidTypeToExtract].length === 1) { 
-    rowData[i] = { 
-        ...rowData[i], 
-        preservation: preservationMapping[material][formValues.nucleicAcidTypeToExtract][0] 
-    }; 
-}
+                    if (material === 'Whole Blood' && (application === 'cfDNA Extraction' || nucleicAcidTypeToExtract === 'cfDNA')) {
+                        rowData[i] = {
+                            ...rowData[i],
+                            preservation: 'Streck',
+                        };
+                    }
+                }
+                else if (preservationMapping && 
+                        material && 
+                        formValues.nucleicAcidTypeToExtract &&
+                        preservationMapping[material] && 
+                        preservationMapping[material][formValues.nucleicAcidTypeToExtract] &&
+                        preservationMapping[material][formValues.nucleicAcidTypeToExtract].length === 1) { 
+                            rowData[i] = { 
+                            ...rowData[i], 
+                            preservation: preservationMapping[material][formValues.nucleicAcidTypeToExtract][0] 
+                            }; 
                 }
                 if (datafieldName === 'sampleOrigin') {
                     if (material === 'Blood') {
