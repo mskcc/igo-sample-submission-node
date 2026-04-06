@@ -449,7 +449,7 @@ const fillAdditionalRows = (columns, formValues) => {
 const fillData = (columns, formValues) => {
     return new Promise((resolve) => {
         let rowData = [];
-        let { material, numberOfSamples, application, species, nucleicAcidTypeToExtract } = formValues;
+        let { material, numberOfSamples, application, species } = formValues;
         for (var i = 0; i < numberOfSamples; i++) {
             columns.columnFeatures.map((colDef) => {
                 let datafieldName = colDef.data;
@@ -482,7 +482,8 @@ const fillData = (columns, formValues) => {
                             preservation: 'Fresh',
                         };
                     }
-                    if (material === 'Whole Blood' && (application === 'cfDNA Extraction' || nucleicAcidTypeToExtract === 'cfDNA')) {
+                    if (material === 'Whole Blood' && (application === 'cfDNA Extraction' || (
+                        formValues.nucleicAcidTypeToExtract && formValues.nucleicAcidTypeToExtract === 'cfDNA'))) {
                         rowData[i] = {
                             ...rowData[i],
                             preservation: 'Streck',

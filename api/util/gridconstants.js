@@ -673,7 +673,8 @@
     "DNA": ["EDTA","Streck"],
     "DNA and RNA": ["PAXgene"],
     "RNA": ["PAXgene"],
-    "hmwDNA": ["EDTA","Streck"]
+    "hmwDNA": ["EDTA","Streck"],
+    "cfDNA": ["Streck"]
   },
   "10X Genomics scRNA-Seq w/ On-Chip Multiplexing": {
       "Cells": ["Fresh"],
