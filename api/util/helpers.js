@@ -476,12 +476,6 @@ const fillData = (columns, formValues) => {
                             preservation: 'Frozen',
                         };
                     }
-                    if ((material === 'Cells' || material === 'Nuclei') && application.toUpperCase().includes('SC')) {
-                        rowData[i] = {
-                            ...rowData[i],
-                            preservation: 'Fresh',
-                        };
-                    }
                     if (material === 'Whole Blood' && (application === 'cfDNA Extraction' || (
                         formValues.nucleicAcidTypeToExtract && formValues.nucleicAcidTypeToExtract === 'cfDNA'))) {
                         rowData[i] = {
@@ -489,8 +483,12 @@ const fillData = (columns, formValues) => {
                             preservation: 'Streck',
                         };
                     }
-                }
-                else if (preservationMapping && 
+                    if ((material === 'Cells' || material === 'Nuclei') && application.toUpperCase().includes('SC')) {
+                        rowData[i] = {
+                            ...rowData[i],
+                            preservation: 'Fresh',
+                        };
+                    } else if (preservationMapping && 
                         material && 
                         formValues.nucleicAcidTypeToExtract &&
                         preservationMapping[material] && 
@@ -500,6 +498,7 @@ const fillData = (columns, formValues) => {
                             ...rowData[i], 
                             preservation: preservationMapping[material][formValues.nucleicAcidTypeToExtract][0] 
                             }; 
+                        }
                 }
                 if (datafieldName === 'sampleOrigin') {
                     if (material === 'Blood') {
