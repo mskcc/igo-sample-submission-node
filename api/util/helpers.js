@@ -253,25 +253,27 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
 
                 */
 
-
-
+                
                 if (colDef.picklistName === 'Sample+Origins') {
-    const application = formValues.application;
-    const material = formValues.material;
-    const recipe = reverseReadableRecipesLib[application] || application;
-    const isTCR = recipe === 'TCR_IGO' || recipe === 'TCR_AIR';
-
-    const tcrOnlyOptions = ['PBMCs (Survey)', 'Tissue (Survey)', 'Experimental'];
-    if (isTCR && material === 'RNA') {
-        colDef.source = ['PBMCs (Survey)', 'Tissue (Survey)', 'Experimental'];
-    } else if (isTCR && material === 'Cells') {
-        colDef.source = ['PBMCs (Survey)', 'Experimental'];
-    } else {
-        colDef.source = picklists[colDef.picklistName].filter(opt => !tcrOnlyOptions.includes(opt));
-    }
-}
-
-
+                    const application = formValues.application;
+                    const material = formValues.material;
+                    const recipe = reverseReadableRecipesLib[application] || application;
+                    const isTCR = recipe === 'TCR_IGO' || recipe === 'TCR_AIR';
+                
+                    const tcrOptions = {
+                        Cells: ['PBMCs', 'T cells'],
+                        Tissue: ['Lymphoid tissue', 'Non-lymphoid tissue'],
+                        RNA: ['Whole blood', 'PBMCs', 'T cells', 'Lymphoid tissue', 'Non-lymphoid tissue'],
+                    };
+                
+                    const tcrOnlyOptions = Object.values(tcrOptions).flat();
+                
+                    if (isTCR && tcrOptions[material]) {
+                        colDef.source = tcrOptions[material];
+                    } else {
+                        colDef.source = picklists[colDef.picklistName].filter(opt => !tcrOnlyOptions.includes(opt));
+                    }
+                }
 
                 if (colDef.picklistName === 'Specimen+Types') {
                     const application = formValues.application;
