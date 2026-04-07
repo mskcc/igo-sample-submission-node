@@ -450,7 +450,6 @@ const fillData = (columns, formValues) => {
     return new Promise((resolve) => {
         let rowData = [];
         let { material, numberOfSamples, application, species } = formValues;
-
         for (var i = 0; i < numberOfSamples; i++) {
             columns.columnFeatures.map((colDef) => {
                 let datafieldName = colDef.data;
@@ -477,29 +476,29 @@ const fillData = (columns, formValues) => {
                             preservation: 'Frozen',
                         };
                     }
-                    if(material==='Whole Blood') {
-                            rowData[i] = {
+                    if (material === 'Whole Blood' && (application === 'cfDNA Extraction' || (
+                        formValues.nucleicAcidTypeToExtract && formValues.nucleicAcidTypeToExtract === 'cfDNA'))) {
+                        rowData[i] = {
                             ...rowData[i],
                             preservation: 'Streck',
-                                            };
-                                        }
-                     if ((material === 'Cells' || material === 'Nuclei') && application.toUpperCase().includes('SC')) {
+                        };
+                    }
+                    if ((material === 'Cells' || material === 'Nuclei') && application.toUpperCase().includes('SC')) {
                         rowData[i] = {
                             ...rowData[i],
                             preservation: 'Fresh',
                         };
-                    }
-                   else if (preservationMapping && 
-    material && 
-    formValues.nucleicAcidTypeToExtract &&
-    preservationMapping[material] && 
-    preservationMapping[material][formValues.nucleicAcidTypeToExtract] &&
-    preservationMapping[material][formValues.nucleicAcidTypeToExtract].length === 1) { 
-    rowData[i] = { 
-        ...rowData[i], 
-        preservation: preservationMapping[material][formValues.nucleicAcidTypeToExtract][0] 
-    }; 
-}
+                    } else if (preservationMapping && 
+                        material && 
+                        formValues.nucleicAcidTypeToExtract &&
+                        preservationMapping[material] && 
+                        preservationMapping[material][formValues.nucleicAcidTypeToExtract] &&
+                        preservationMapping[material][formValues.nucleicAcidTypeToExtract].length === 1) { 
+                            rowData[i] = { 
+                            ...rowData[i], 
+                            preservation: preservationMapping[material][formValues.nucleicAcidTypeToExtract][0] 
+                            }; 
+                        }
                 }
                 if (datafieldName === 'sampleOrigin') {
                     if (material === 'Blood') {
