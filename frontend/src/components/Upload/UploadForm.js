@@ -332,6 +332,28 @@ class UploadForm extends React.Component {
                 });
             }  
     }
+   
+   
+   
+   
+    if (prevProps.species !== this.props.species) {
+        if (this.props.species && this.props.species.length === 1) {
+            console.log("COMPONENT DID UPDATE - Auto-selecting species:", this.props.species[0]);  
+            this.setState({
+                values: {
+                    ...this.state.values,
+                    species: this.props.species[0]
+                },
+                formValid: {
+                    ...this.state.formValid,
+                    species: true
+                }
+            });
+            if (this.props.handleSpeciesChange) {
+                this.props.handleSpeciesChange(this.props.species[0]);
+            }
+        }
+    }
     if (prevProps.nucleicAcidTypes !== this.props.nucleicAcidTypes) {
         console.log("🔄 UploadForm: nucleicAcidTypes changed from", prevProps.nucleicAcidTypes, "to", this.props.nucleicAcidTypes);
         
@@ -518,6 +540,7 @@ class UploadForm extends React.Component {
                             <FormControl component='fieldset'>
                                 {species && species.length>0 && 
                                  (<Dropdown
+                                    key={`species-${form.selected.species || this.state.values.species || 'empty'}`}
                                     id='species'
                                     error={!formValid.species}
                                     onSelect={handleSpeciesChange}

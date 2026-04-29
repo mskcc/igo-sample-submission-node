@@ -334,7 +334,8 @@ fetchReadLength=async(application)=>{
                 return;
             }
             const {select}=this.props;
-            select('species',selectedSpecies);
+            console.log("[diag] select typeof:", typeof select, "result of calling select:", select('species',selectedSpecies));
+            console.log("[diag] Redux form.selected.species after dispatch:", this.props.upload && this.props.upload.form && this.props.upload.form.selected && this.props.upload.form.selected.species);
         this.setState({
             selectedSpecies:selectedSpecies
         });
