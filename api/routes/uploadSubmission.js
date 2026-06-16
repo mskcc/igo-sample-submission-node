@@ -28,8 +28,8 @@ function buildMaterialQuery(material) {
 function buildApplicationQuery(application) {
     if (!application) return {};
     
-    const specialApplication = "10X GEX, VDJ, FB/CH or Visium";
-    
+    const specialApplication = "10x GEX, VDJ, FB/CH, Flex, or Visium";
+
     if (application.trim() === specialApplication) {
         return { Application: specialApplication };
     }
@@ -99,9 +99,9 @@ router.get('/applications', async (req, res) => {
         }
         
        
-        if (allApplications.some(app => ["10X GEX", "VDJ", "FB/CH or Visium"].includes(app))) {
-            allApplications.push("10X GEX, VDJ, FB/CH or Visium");
-            allApplications = allApplications.filter(app => !["10X GEX", "VDJ", "FB/CH or Visium"].includes(app));
+        if (allApplications.some(app => ["10x GEX", "VDJ", "FB/CH", "Flex", "or Visium"].includes(app))) {
+            allApplications.push("10x GEX, VDJ, FB/CH, Flex, or Visium");
+            allApplications = allApplications.filter(app => !["10x GEX", "VDJ", "FB/CH", "Flex", "or Visium"].includes(app));
         }
         
         const uniqueApplications = Array.from(new Set(allApplications));

@@ -58,7 +58,7 @@ export const readableRecipesLib = {
     "User_Visium-HD": "Visium HD (Library)",
     "ST_Xenium": "Xenium",
     "TCR_IGO": "Human TCR Sequencing",
-    "User_Chromium": "10X GEX, VDJ, FB/CH or Visium",
+    "User_Chromium": "10x GEX, VDJ, FB/CH, Flex, or Visium",
     "User_Methyl": "Methylation Sequencing",
     "User_MissionBio": "MissionBio",
     "User_RNA":	"RNA Sequencing",
@@ -80,8 +80,15 @@ export const readableRecipesLib = {
     "User_DLP": "DLP (User)",
     "SC_Chromium-Flex": "10X Flex scRNA-Seq",
     "Extraction_DNA-MMF":"DNA Extraction from Lysate (MMF only)",
-    "TCR_AIR": " Mouse TCR Sequencing"
-    
+    "TCR_AIR": " Mouse TCR Sequencing",
+    "SC_Chromium-Flex-FB": "10x Flex Feature Barcoding",
+    "SC_Chromium-OCM-3": "10x 3' scRNA-Seq w/ On-Chip Multiplexing",
+    "SC_Chromium-OCM-5": "10x 5' scRNA-Seq w/ On-Chip Multiplexing",
+    "SC_Chromium-OCM-BCR": "10x OCM BCR",
+    "SC_Chromium-OCM-FB-3": "10x 3' OCM Feature Barcoding",
+    "SC_Chromium-OCM-FB-5": "10x 5' OCM Feature Barcoding",
+    "SC_Chromium-OCM-TCR": "10x OCM TCR",
+    "User_Nanopore": "Nanopore Library Sequencing"
 };
 export const reverseReadableRecipesLib = {
     "ATAC Sequencing": "ATAC",
@@ -142,7 +149,7 @@ export const reverseReadableRecipesLib = {
     "Visium HD (Library)": "User_Visium-HD",
     "Xenium": "ST_Xenium",
     "Human TCR Sequencing": "TCR_IGO",
-    "10X GEX, VDJ, FB/CH or Visium": "User_Chromium",
+    "10x GEX, VDJ, FB/CH, Flex, or Visium": "User_Chromium",
     "Methylation Sequencing": "User_Methyl",
     "MissionBio": "User_MissionBio",
     "RNA Sequencing": "User_RNA",
@@ -163,6 +170,14 @@ export const reverseReadableRecipesLib = {
     "DLP (User)":"User_DLP",
     "10X Flex scRNA-Seq":"SC_Chromium-Flex",
     "DNA Extraction from Lysate (MMF only)" :"Extraction_DNA-MMF",
-      "Mouse TCR Sequencing": "TCR_AIR"
+      "Mouse TCR Sequencing": "TCR_AIR",
+    "10x Flex Feature Barcoding": "SC_Chromium-Flex-FB",
+    "10x 3' scRNA-Seq w/ On-Chip Multiplexing": "SC_Chromium-OCM-3",
+    "10x 5' scRNA-Seq w/ On-Chip Multiplexing": "SC_Chromium-OCM-5",
+    "10x OCM BCR": "SC_Chromium-OCM-BCR",
+    "10x 3' OCM Feature Barcoding": "SC_Chromium-OCM-FB-3",
+    "10x 5' OCM Feature Barcoding": "SC_Chromium-OCM-FB-5",
+    "10x OCM TCR": "SC_Chromium-OCM-TCR",
+    "Nanopore Library Sequencing": "User_Nanopore"
 };
 
