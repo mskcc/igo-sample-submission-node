@@ -269,7 +269,7 @@ fetchReadLength=async(application)=>{
                 this.handleReadLengthChange('PE150');
             }
             else if (application ==="10X 3' Feature Barcode/Hashtag Sequencing" || application ==="10X 3' scRNA-Seq" || application ==="10X 5' Feature Barcode/Hashtag Sequencing" || application ==="10X 5' scRNA-Seq" || application ==="10X GEX, VDJ, FB/CH or Visium"|| application ==="10X scVDJ (BCR) Sequencing"|| application ==="10X scVDJ (TCR) Sequencing" || application ==="Visium") {
-                this.handleReadLengthChange('28/10/10/88');
+                this.handleReadLengthChange('28/9/9/90');
             }
             else if(application ==="GeoMx") {
                 this.handleReadLengthChange('PE28');
