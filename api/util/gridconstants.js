@@ -60,12 +60,19 @@
       "Tissue": ["RNA"],
       "Whole Blood": ["RNA"]
     },
-    "CCV RNA-Seq Submissions (GLP)": {
-      "Tissue": ["RNA"]
+    "OCCV RNA-Seq Submissions (GXP)": {
+      "Tissue": ["RNA"],
+      "Blocks": ["RNA"]
     },
-    "CCV WES Submissions (GLP)": {
+    "OCCV WES Submissions (GXP)": {
       "Blocks": ["DNA"],
-      "Whole Blood": ["DNA"]
+      "Whole Blood": ["DNA"],
+      "Tissue": ["DNA"]
+    },
+    "OCCV Dual Submissions (RNA+WES)": {
+      "Tissue": ["DNA and RNA"],
+      "Blocks": ["DNA and RNA"],
+      "Other": ["DNA and RNA"]
     },
     "MSK-ACCESS": {
       "Buffy Coat": ["DNA"],
