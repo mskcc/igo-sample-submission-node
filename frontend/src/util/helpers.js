@@ -521,8 +521,14 @@ export const appendAssay = (oldValue, newValue, assays) => {
     let newAssayValues = newValue.split(';');
     // Determine if we are appending or deleting
     if (newAssayValues.every(val => oldAssayValues.includes(val))) {
-      // Deleting: Keep only the new values
-      appendedAssay = newAssayValues.join(';');
+      if (newAssayValues.length === 1) {
+        // IGODATA-646: re-selecting a single already-chosen assay toggles it OFF
+        // (removes only it), instead of wiping every other selected assay.
+        appendedAssay = oldAssayValues.filter(val => val !== newAssayValues[0]).join(';');
+      } else {
+        // multi-value (paste): keep prior behavior
+        appendedAssay = newAssayValues.join(';');
+      }
     } else {
       
       // Appending: Add new values to old values
