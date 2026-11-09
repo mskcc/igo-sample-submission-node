@@ -207,7 +207,18 @@ function fillColumns(columns, limsColumnList, formValues = {}, picklists, allCol
                         colDef.source = picklists[colDef.picklistName];
                     }
                 }
-               
+
+                // IGODATA-646: float "Assay_Optimization" to the top of the ddPCR Assay
+                // dropdown. LimsRest (GetPickListTask) returns every picklist sorted
+                // alphabetically, so pin it here, after that sort; other values (incl. any
+                // added later) stay alphabetical below it.
+                if (colDef.picklistName === 'ddPCR+Assay' && Array.isArray(colDef.source)) {
+                    const pinned = 'Assay_Optimization';
+                    if (colDef.source.includes(pinned)) {
+                        colDef.source = [pinned, ...colDef.source.filter((v) => v !== pinned)];
+                    }
+                }
+
       /*          if (colDef.picklistName === 'Sample+Origins') {
                     // Get the application from form values
                     const application = formValues.application;
