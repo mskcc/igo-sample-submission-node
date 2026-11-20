@@ -278,7 +278,7 @@ fetchReadLength=async(application)=>{
                 this.handleReadLengthChange('43/10/10/50');       
             }
             else if(application ==="10X Flex scRNA-Seq"){
-                this.handleReadLengthChange('PE28/88');
+                this.handleReadLengthChange('28/9/9/90');
             }
             else {
                 this.handleReadLengthChange();
